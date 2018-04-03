@@ -1,0 +1,322 @@
+﻿<Window x:Class="C_SlideShow.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:C_SlideShow"
+        mc:Ignorable="d"
+        Title="C-SlideShow"
+        Background="Transparent"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        Topmost="False"
+        AllowDrop="True"
+        Height="480" 
+        Width="640"
+        MinWidth="190"
+        MinHeight="150"
+        
+        >
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="SliderDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid x:Name="MainGrid" Background="Transparent">
+        <Grid x:Name="BaseGrid_ForAlphaChannel" Background="White" Visibility="Hidden"></Grid>
+        <Grid x:Name="BaseGrid" Background="White">
+            <Grid x:Name="MainContent" Margin="5">
+                <local:TileContainer
+                    Margin="10"
+                    x:Name="TileContainer1"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="top">
+                </local:TileContainer>
+                <local:TileContainer
+                    x:Name="TileContainer2"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="top">
+                </local:TileContainer>
+                <local:TileContainer
+                    x:Name="TileContainer3"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="top">
+                </local:TileContainer>
+            </Grid>
+        </Grid>
+        <Rectangle x:Name="FullScreenBase_TopLeft" Fill="Black" Visibility="Hidden"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+        <Rectangle x:Name="FullScreenBase_BottomRight" Fill="Black" Visibility="Hidden"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom"></Rectangle>
+
+        <!-- システムボタン -->
+        <StackPanel x:Name="SystemButtonWrapper" Orientation="Horizontal" 
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Visibility="Hidden"
+                    Opacity="0.9"
+                    Margin="10">
+            <StackPanel.Resources>
+                <Style x:Key="SystemButtonStyle" TargetType="Button">
+                    <Setter Property="Width" Value="22"></Setter>
+                    <Setter Property="Height" Value="22"></Setter>
+                    <Setter Property="Margin" Value="1,0"></Setter>
+                    <Setter Property="Background" Value="White"></Setter>
+                </Style>
+            </StackPanel.Resources>
+            <Button x:Name="SystemButton_Minimize" Style="{StaticResource SystemButtonStyle}"
+                    Click="SystemButton_Minimize_Click">
+                <Image Source="Resources\minimize.png" 
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       Width="16" Height="16"></Image>
+            </Button>
+            <Button x:Name="SystemButton_Maximize" Style="{StaticResource SystemButtonStyle}"
+                    Click="SystemButton_Maximize_Click">
+                <Image x:Name="SystemButton_Maximize_Image" Source="Resources\maximize.png" 
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       Width="16" Height="16"></Image>
+            </Button>
+            <Button x:Name="SystemButton_Close" Style="{StaticResource SystemButtonStyle}"
+                    Click="SystemButton_Close_Click">
+                <Image Source="Resources\close.png" 
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       Width="16" Height="16"></Image>
+            </Button>
+            
+        </StackPanel>
+
+
+        <Border Margin="10,10,10,0" 
+                x:Name="ToolbarWrapper"
+                Opacity="0.9"
+                Visibility="Hidden"
+                VerticalAlignment="Top" HorizontalAlignment="Center"
+                Background="Transparent">
+            <WrapPanel Orientation="Horizontal"
+                       ItemHeight="30">
+                <WrapPanel.Resources>
+                    <Style x:Key="ToolbarMenuStyle" TargetType="Menu">
+                        <Setter Property="Background" Value="Transparent"></Setter>
+                    </Style>
+                    <Style x:Key="ToolbarMenuBorderStyle" TargetType="Border">
+                        <Setter Property="Background" Value="White"></Setter>
+                        <Setter Property="Margin" Value="2"></Setter>
+                    </Style>
+                    <Style x:Key="ToolbarMenuItemStyle" TargetType="MenuItem">
+                        <Setter Property="BorderBrush" Value="Gray"></Setter>
+                        <Setter Property="Height" Value="26"></Setter>
+                        <Setter Property="Width" Value="40"></Setter>
+                        <!--<Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="Red"></Setter>
+                            </Trigger>
+                        </Style.Triggers>-->
+                    </Style>
+                    <Style x:Key="ToolbarButtonStyle" TargetType="Button">
+                        <Setter Property="Background" Value="White"></Setter>
+                        <Setter Property="BorderBrush" Value="Gray"></Setter>
+                        <Setter Property="Height" Value="26"></Setter>
+                        <Setter Property="Width" Value="40"></Setter>
+                        <Setter Property="Margin" Value="2"></Setter>
+                        <Setter Property="VerticalAlignment" Value="Top"></Setter>
+                    </Style>
+                </WrapPanel.Resources>
+
+                <!-- フォルダ読み込み -->
+                <Button Style="{StaticResource ToolbarButtonStyle}"
+                        ToolTip="フォルダを指定して読み込み"
+                        x:Name="Toolbar_OpenFolder"
+                        Click="Toolbar_OpenFolder_Click"
+                        >
+                    <Image Source="Resources\folder_open.png" 
+                            RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Width="16" Height="16"
+                           ></Image>
+                </Button>
+
+                <!-- 行列 -->
+                <Border Style="{StaticResource ToolbarMenuBorderStyle}">
+                    <Menu Style="{StaticResource ToolbarMenuStyle}">
+                        <MenuItem x:Name="MenuItem_Matrix"
+                            ToolTip="行数・列数の設定"
+                                    Style="{StaticResource ToolbarMenuItemStyle}"
+                                      >
+                            <MenuItem.Header>
+                                <Border Width="25" Height="15">
+                                    <Image Source="Resources\grid.png" Width="16" Height="16"
+                                        RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                           ></Image>
+                                </Border>
+                            </MenuItem.Header>
+                            <MenuItem x:Name="MenuItem_MatrixSelecter"  StaysOpenOnClick="True">
+                                <MenuItem.Template>
+                                    <ControlTemplate>
+                                        <local:MatrixSelecter x:Name="MatrixSelecter" MatrixSelected="MatrixSelecter_MatrixSelected"></local:MatrixSelecter>
+                                    </ControlTemplate>
+                                </MenuItem.Template>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+                </Border>
+
+                <!-- アスペクト比 -->
+                <Border Style="{StaticResource ToolbarMenuBorderStyle}">
+                    <Menu Style="{StaticResource ToolbarMenuStyle}">
+                        <MenuItem Style="{StaticResource ToolbarMenuItemStyle}"
+                            ToolTip="グリッドのアスペクト比"
+                                  >
+                            <MenuItem.Header>
+                                <Border Margin="-5,0,0,0"
+                                        Width="35" 
+                                        >
+                                    <TextBlock x:Name="Toolbar_AspectRate_Text" TextAlignment="Center" Text="4 : 3"></TextBlock>
+                                </Border>
+                            </MenuItem.Header>
+                                <MenuItem Header="4 : 3"  Tag="4_3"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_4_3"/>
+                                <MenuItem Header="3 : 4"  Tag="3_4"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_3_4"/>
+                                <MenuItem Header="16 : 9" Tag="16_9" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_16_9"/>
+                                <MenuItem Header="9 : 16" Tag="9_16" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_9_16"/>
+                                <MenuItem Header="3 : 2"  Tag="3_2"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_3_2"/>
+                                <MenuItem Header="2 : 3"  Tag="2_3"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_2_3"/>
+                                <MenuItem Header="1 : 1"  Tag="1_1"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_1_1"/>
+                        </MenuItem>
+                    </Menu>
+                </Border>
+
+                <!-- 再生ボタン -->
+                <Button x:Name="Toolbar_Play"
+                        ToolTip="再生 / 停止"
+                        Click="Toolbar_Play_Click"
+                        Style="{StaticResource ToolbarButtonStyle}"
+                        Width="50" 
+                        >
+                    <Image Source="Resources\play.png" 
+                           x:Name="Toolbar_Play_Image"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Width="16" Height="16"></Image>
+                </Button>
+
+                <!-- スライドの設定 -->
+                <Border Style="{StaticResource ToolbarMenuBorderStyle}">
+                    <Menu Style="{StaticResource ToolbarMenuStyle}">
+                        <MenuItem Style="{StaticResource ToolbarMenuItemStyle}"
+                                x:Name="MenuItem_SlideSetting"
+                                ToolTip="スライドに関する設定"
+                                      >
+                            <MenuItem.Header>
+                                <Border Width="25">
+                                    <Image x:Name="MenuItem_SlideSetting_Image" Source="Resources\slide_left.png" Width="16" Height="16"
+                                        RenderOptions.BitmapScalingMode="NearestNeighbor"></Image>
+                                </Border>
+                            </MenuItem.Header>
+                            <MenuItem StaysOpenOnClick="True"
+                                x:Name="MenuItem_SlideSettingDialog"
+                                >
+                                <MenuItem.Template>
+                                    <ControlTemplate>
+                                        <local:SlideSettingDialog x:Name="SlideSettingDialog"></local:SlideSettingDialog>
+                                    </ControlTemplate>
+                                </MenuItem.Template>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+                </Border>
+
+                <!-- 更新ボタン -->
+                <Button Style="{StaticResource ToolbarButtonStyle}"
+                        x:Name="Toolbar_Reload"
+                        Click="Toolbar_Reload_Click"
+                        ToolTip="フォルダ再読込">
+                    <Image Source="Resources\reload.png" 
+                           x:Name="Toolbar_Reload_Image"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Width="16" Height="16"></Image>
+                </Button>
+
+                <!-- 設定 -->
+                <Border Style="{StaticResource ToolbarMenuBorderStyle}">
+                    <Menu Style="{StaticResource ToolbarMenuStyle}">
+                        <MenuItem Style="{StaticResource ToolbarMenuItemStyle}"
+                                  x:Name="MenuItem_Setting"
+                            ToolTip="その他の設定"
+                                      >
+                            <MenuItem.Header>
+                                <Border Width="25">
+                                    <Image Source="Resources\setting.png" Width="16" Height="16"
+                                        RenderOptions.BitmapScalingMode="NearestNeighbor"></Image>
+                                </Border>
+                            </MenuItem.Header>
+                            <MenuItem StaysOpenOnClick="True"
+                                      x:Name="MenuItem_SettingDialog">
+                                <MenuItem.Template>
+                                    <ControlTemplate>
+                                        <local:SettingDialog x:Name="SettingDialog"></local:SettingDialog>
+                                    </ControlTemplate>
+                                </MenuItem.Template>
+                            </MenuItem>
+                        </MenuItem>
+                    </Menu>
+                </Border>
+            </WrapPanel>
+        </Border>
+
+
+
+
+        <Border x:Name="ResizeGrip"
+                Visibility="Visible"
+                BorderThickness="5"
+                BorderBrush="Gray"
+                >
+        </Border>
+
+        <Border x:Name="PageInfo"
+                Background="White"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="34"
+                Padding="2"
+                CornerRadius="3"
+                Opacity="0.8"
+                Visibility="Hidden"
+                >
+            <TextBlock x:Name="PageInfoText"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Height="16"
+                       Foreground="Black"
+                       Background="White"
+                       Text=""
+                       FontWeight="Bold"
+                       >
+            </TextBlock>
+        </Border>
+
+        <Border x:Name="SeekbarWrapper"
+            Background="White"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Bottom"
+            Margin="10,10"
+            Padding="2,1"
+            Opacity="0.6"
+            Visibility="Hidden"
+            CornerRadius="5"
+            MaxWidth="400"
+            MaxHeight="400"
+            >
+            <Slider x:Name="Seekbar"
+                Foreground="Black"
+                Background="White"
+                HorizontalAlignment="Stretch"
+                Orientation="Horizontal"
+                Thumb.DragCompleted="Seekbar_DragCompleted"
+                Thumb.DragStarted="Seekbar_DragStarted"
+                Style="{StaticResource CustomSliderStyle}"
+                >
+            </Slider>
+        </Border>
+    </Grid>
+</Window>
