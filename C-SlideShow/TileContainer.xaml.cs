@@ -317,19 +317,18 @@ namespace C_SlideShow
                 {
                     if (BitmapPresenter.FileInfo.Count < 1) throw new Exception();
 
-                    Image image = tile.Image;
-                    MainGrid.Children.Add(image);
+                    MainGrid.Children.Add(tile.Image);
 
-                    ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
-                    tile.filePath = iFileInfo.FilePath;
-
+                    tile.ImageFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
                     BitmapPresenter.SlideIndex(tile.ByPlayback);
-                    BitmapImage bitmap = BitmapPresenter.LoadBitmap(tile.filePath);
+
+                    if(tile.ImageFileInfo.bitmapBuffer == null)
+                        tile.ImageFileInfo.bitmapBuffer = BitmapPresenter.LoadBitmap(tile.ImageFileInfo); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>
                         {
-                            tile.Image.Source = bitmap;
+                            tile.Image.Source = tile.ImageFileInfo.bitmapBuffer;
                             Grid.SetColumn(tile.Image, tile.Col);
                             Grid.SetRow(tile.Image, tile.Row);
                         })
@@ -374,10 +373,8 @@ namespace C_SlideShow
 
             foreach (Tile tile in this.tiles)
             {
-                Image image = tile.Image;
-                MainGrid.Children.Add(image);
-                ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
-                tile.filePath = iFileInfo.FilePath;
+                MainGrid.Children.Add(tile.Image);
+                tile.ImageFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
                 BitmapPresenter.SlideIndex(tile.ByPlayback);
             }
 
@@ -391,12 +388,13 @@ namespace C_SlideShow
 #endif
                 foreach(Tile tile in tiles)
                 {
-                    BitmapImage bitmap = BitmapPresenter.LoadBitmap(tile.filePath); // エラー時はnullが返る
+                    if(tile.ImageFileInfo.bitmapBuffer == null)
+                        tile.ImageFileInfo.bitmapBuffer = BitmapPresenter.LoadBitmap(tile.ImageFileInfo); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>
                         {
-                            tile.Image.Source = bitmap;
+                            tile.Image.Source = tile.ImageFileInfo.bitmapBuffer;
                             Grid.SetColumn(tile.Image, tile.Col);
                             Grid.SetRow(tile.Image, tile.Row);
                         })

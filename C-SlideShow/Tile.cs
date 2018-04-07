@@ -24,7 +24,8 @@ namespace C_SlideShow
         public int Row { set; get; }
         public int Col { set; get; }
         public bool ByPlayback { get; set; } // タイルの設置が巻き戻しによるものか
-        public string filePath { get; set; }
+        //public string filePath { get; set; }
+        public ImageFileInfo ImageFileInfo { get; set; }
         public bool IsDummy { get; set; }
 
         public Tile(Image image)

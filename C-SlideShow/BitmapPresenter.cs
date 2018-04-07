@@ -248,8 +248,9 @@ namespace C_SlideShow
         }
 
 
-        public BitmapImage LoadBitmap(string filePath)
+        public BitmapImage LoadBitmap(ImageFileInfo imageFileInfo)
         {
+            string filePath = imageFileInfo.FilePath;
             if (filePath == DummyFilePath || filePath == "") return null;
 
             var source = new BitmapImage();
@@ -308,7 +309,11 @@ namespace C_SlideShow
         }
 
 
-        public void FilledWithDummyFileInfo(int grids)
+        /// <summary>
+        /// ファイル総数がグリッド数の倍数にならないことで生じるFileInfoの空きをダミーで埋める
+        /// </summary>
+        /// <param name="grids"></param>
+        public void FillVacantWithDummyFileInfo(int grids)
         {
             if (FileInfo.Count < 1) return;
 

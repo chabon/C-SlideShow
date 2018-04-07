@@ -197,7 +197,7 @@ namespace C_SlideShow
 
             // init bitmap presenter
             int grids = Setting.TempProfile.NumofRow * Setting.TempProfile.NumofCol;
-            bitmapPresenter.FilledWithDummyFileInfo(grids);
+            bitmapPresenter.FillVacantWithDummyFileInfo(grids);
             if (firstIndex > bitmapPresenter.NumofImageFile - 1) firstIndex = 0;
             bitmapPresenter.NextIndex = firstIndex;
 
@@ -782,7 +782,7 @@ namespace C_SlideShow
         {
             int grids = Setting.TempProfile.NumofCol * Setting.TempProfile.NumofRow;
             bitmapPresenter.Sort(order);
-            bitmapPresenter.FilledWithDummyFileInfo(grids);
+            bitmapPresenter.FillVacantWithDummyFileInfo(grids);
             ChangeCurrentImageIndex(0);
         }
 
