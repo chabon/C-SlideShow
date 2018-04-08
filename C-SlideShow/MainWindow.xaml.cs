@@ -195,11 +195,13 @@ namespace C_SlideShow
             if(tileContainers.Any( tc => tc.IsActiveSliding || tc.IsContinuousSliding))
                 StopSlideShow();
 
-            // init bitmap presenter
+            // set up bitmap presenter
             int grids = Setting.TempProfile.NumofRow * Setting.TempProfile.NumofCol;
-            bitmapPresenter.FilledWithDummyFileInfo(grids);
+            bitmapPresenter.FillFileInfoVacancyWithDummy(grids);
             if (firstIndex > bitmapPresenter.NumofImageFile - 1) firstIndex = 0;
             bitmapPresenter.NextIndex = firstIndex;
+            int totalBmpWidth = 1920; // todo: 設定可能にする
+            bitmapPresenter.BitmapDecodePixelWidth = totalBmpWidth / Setting.TempProfile.NumofCol;
 
             // init container
             int idx = 0;
@@ -782,7 +784,7 @@ namespace C_SlideShow
         {
             int grids = Setting.TempProfile.NumofCol * Setting.TempProfile.NumofRow;
             bitmapPresenter.Sort(order);
-            bitmapPresenter.FilledWithDummyFileInfo(grids);
+            bitmapPresenter.FillFileInfoVacancyWithDummy(grids);
             ChangeCurrentImageIndex(0);
         }
 

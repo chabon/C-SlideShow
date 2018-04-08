@@ -24,10 +24,11 @@ namespace C_SlideShow
     {
         public List<ImageFileInfo> FileInfo { get; set; }
         public static string DummyFilePath = ":dummy";
+        public int BitmapDecodePixelWidth { get; set; } = 640;
         public int NextIndex { get; set; }
         public int PrevIndex { get; set; }
 
-        string[] allowedExt = { ".jpg", ".png", ".jpeg", ".gif" };
+        string[] allowedExt = { ".jpg", ".png", ".jpeg", ".bmp", ".gif" };
         ZipArchive zipArchive;
 
         #region property
@@ -272,6 +273,7 @@ namespace C_SlideShow
                         source.BeginInit();
                         source.CacheOption = BitmapCacheOption.OnLoad;
                         source.CreateOptions = BitmapCreateOptions.None;
+                        source.DecodePixelWidth = BitmapDecodePixelWidth;
                         source.StreamSource = memoryStream;
                         source.EndInit();
                         source.Freeze();
@@ -291,6 +293,7 @@ namespace C_SlideShow
                     source.BeginInit();
                     source.CacheOption = BitmapCacheOption.OnLoad;
                     source.CreateOptions = BitmapCreateOptions.None;
+                    source.DecodePixelWidth = BitmapDecodePixelWidth;
                     source.UriSource = new Uri(filePath);
                     source.EndInit();
                     source.Freeze();
@@ -308,7 +311,12 @@ namespace C_SlideShow
         }
 
 
-        public void FilledWithDummyFileInfo(int grids)
+        /// <summary>
+        /// ファイル総数が、グリッドの整数倍でないことによる空きを、ダミーファイル情報で埋める
+        /// 埋めることにより、全体をスクロールし終わった時にズレがなくなる
+        /// </summary>
+        /// <param name="grids"></param>
+        public void FillFileInfoVacancyWithDummy(int grids)
         {
             if (FileInfo.Count < 1) return;
 
