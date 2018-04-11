@@ -204,15 +204,13 @@ namespace C_SlideShow
             bitmapPresenter.BitmapDecodePixelWidth = totalBmpWidth / Setting.TempProfile.NumofCol;
 
             // init container
-            int idx = 0;
             foreach(TileContainer tc in tileContainers)
             {
                 tc.InitSlideDerection(Setting.TempProfile.SlideDirection);
                 tc.InitGrid(Setting.TempProfile.NumofRow, Setting.TempProfile.NumofCol);
-                tc.InitSizeAndPos(Setting.TempProfile.TileWidth, Setting.TempProfile.TileHeight, idx);
+                tc.InitSizeAndPos(Setting.TempProfile.TileWidth, Setting.TempProfile.TileHeight);
                 tc.InitWrapPoint();
                 tc.InitTileOrigin(Setting.TempProfile.TileOrigin, Setting.TempProfile.TileOrientation, true);
-                idx++;
             }
 
             // load image
@@ -477,7 +475,7 @@ namespace C_SlideShow
             }
         }
 
-        private void ChangeTileSize(int width, int height)
+        private void ChangeAspectRatio(int width, int height)
         {
             Setting.TempProfile.TileWidth = width;
             Setting.TempProfile.TileHeight = height;
@@ -499,15 +497,13 @@ namespace C_SlideShow
         {
             bitmapPresenter.NextIndex = index;
             StopSlideShow();
-            int idx = 0;
 
             TileContainer.ReleaseBitmapLoadThread();
 
             foreach(TileContainer tc in tileContainers)
             {
-                tc.InitSizeAndPos(Setting.TempProfile.TileWidth, Setting.TempProfile.TileHeight, idx);
+                tc.InitSizeAndPos(Setting.TempProfile.TileWidth, Setting.TempProfile.TileHeight);
                 tc.LoadImageToGrid(false, true);
-                idx++;
             }
 
             bitmapPresenter.PrevIndex = index;
@@ -519,7 +515,7 @@ namespace C_SlideShow
         public void FitMainContentToWindow()
         {
             double zoomFactor = (this.Width - MainContent.Margin.Left * 2 ) / this.tileContainers[0].Width;
-            this.MainContent.RenderTransform = new ScaleTransform(zoomFactor, zoomFactor);
+            this.MainContent.LayoutTransform = new ScaleTransform(zoomFactor, zoomFactor);
         }
 
         public void UpdateWindowSize()
@@ -578,9 +574,36 @@ namespace C_SlideShow
         {
             Profile pf = Setting.TempProfile;
 
-            // アス比
-            string aRateTxt = pf.TileWidth.ToString() + " : " + pf.TileHeight.ToString();
-            Toolbar_AspectRate_Text.Text = aRateTxt;
+            // アス比 ボタン
+            if( pf.NonFixAspectRatio )
+            {
+                Toolbar_AspectRate_Text.Text = "Free";
+            }
+            else
+            {
+                string aRateTxt = pf.TileWidth.ToString() + " : " + pf.TileHeight.ToString();
+                Toolbar_AspectRate_Text.Text = aRateTxt;
+            }
+
+            // アス比 チェックマーク更新
+            foreach( var child in LogicalTreeHelper.GetChildren( MenuItem_AspectRatio ) )
+            {
+                MenuItem i = child as MenuItem;
+                if(i != null)
+                {
+                    i.IsChecked = false;
+
+                    if( !pf.NonFixAspectRatio && i.Tag.ToString() != "FREE")
+                    {
+                        string[] str = i.Tag.ToString().Split('_');
+                        int w = int.Parse(str[0]);
+                        int h = int.Parse(str[1]);
+                        if(w == pf.TileWidth && h == pf.TileHeight ) i.IsChecked = true;
+                    }
+                }
+            }
+            if( pf.NonFixAspectRatio ) Toolbar_AspectRate_Free.IsChecked = true;
+
 
             // 再生 / 停止
             if (intervalSlideTimer.IsEnabled)
@@ -727,7 +750,7 @@ namespace C_SlideShow
             this.MainContent.Margin = new Thickness(origin.X, origin.Y, 0, 0);
 
             // 拡大率
-            this.MainContent.RenderTransform = new ScaleTransform(zoomFactor, zoomFactor);
+            this.MainContent.LayoutTransform = new ScaleTransform(zoomFactor, zoomFactor);
         }
 
         public void ApplyAllowTransparency()

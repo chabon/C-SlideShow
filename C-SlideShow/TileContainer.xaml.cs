@@ -42,6 +42,7 @@ namespace C_SlideShow
         public static bool reqireThreadRelease = false;
 
         // プロパティ
+        public int Order { get; set; } // 自身の並び順
         public MainWindow MainWindow { get; set; }
         public BitmapPresenter BitmapPresenter { get; set; }
         public TileContainer ForwardContainer { get; set; }
@@ -90,8 +91,8 @@ namespace C_SlideShow
         public TileContainer()
         {
             InitializeComponent();
-
             tiles = new List<Tile>();
+            
         }
 
         public void InitSlideDerection(SlideDirection dir)
@@ -128,7 +129,7 @@ namespace C_SlideShow
             }
         }
 
-        public void InitSizeAndPos(int tileWidth, int tileHeight, int index)
+        public void InitSizeAndPos(int tileWidth, int tileHeight)
         {
             this.Width = tileWidth * MainGrid.ColumnDefinitions.Count;
             this.MainGrid.Width = this.Width;
@@ -138,16 +139,16 @@ namespace C_SlideShow
             switch (slideDirection)
             {
                 case SlideDirection.Left:
-                    this.Margin = new Thickness(index * this.Width,0,0,0);
+                    this.Margin = new Thickness(Order * this.Width,0,0,0);
                     break;
                 case SlideDirection.Top:
-                    this.Margin = new Thickness(0, index * this.Height,0,0);
+                    this.Margin = new Thickness(0, Order * this.Height,0,0);
                     break;
                 case SlideDirection.Right:
-                    this.Margin = new Thickness(-index * this.Width,0,0,0);
+                    this.Margin = new Thickness(-Order * this.Width,0,0,0);
                     break;
                 case SlideDirection.Bottom:
-                    this.Margin = new Thickness(0, -index * this.Height,0,0);
+                    this.Margin = new Thickness(0, -Order * this.Height,0,0);
                     break;
             }
         }
@@ -352,11 +353,6 @@ namespace C_SlideShow
                 }
                 catch 
                 {
-                    //Grid g = new Grid();
-                    //g.Background = new SolidColorBrush(Colors.Gray);
-                    //Grid.SetColumn(g, tile.Col);
-                    //Grid.SetRow(g, tile.Row);
-                    //MainGrid.Children.Add(g);
                     BitmapPresenter.SlideIndex(tile.ByPlayback);
                 }
                 finally

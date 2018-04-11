@@ -66,6 +66,8 @@ namespace C_SlideShow
         [DataMember]
         public int TileHeight { get; set; }
 
+        [DataMember]
+        public bool NonFixAspectRatio { get; set; }
 
         // スライドの設定
         [DataMember]
@@ -139,6 +141,7 @@ namespace C_SlideShow
             // アスペクト比設定
             TileWidth = 4;
             TileHeight = 3;
+            NonFixAspectRatio = false;
 
             // 行列設定
             NumofRow = 2;

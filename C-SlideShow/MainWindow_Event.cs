@@ -66,6 +66,80 @@ namespace C_SlideShow
             this.SizeChanged += (s, e) =>
             {
                 if (ignoreResizeEvent) return;
+
+                // アス比非固定時
+                if( Setting.TempProfile.NonFixAspectRatio )
+                {
+                    // 現在のプロファイル
+                    Profile pf = Setting.TempProfile;
+
+                    // 現在の順番でコンテナを取得
+                    List<TileContainer> currentContainers;
+                    switch (pf.SlideDirection)
+                    {
+                        case SlideDirection.Left:
+                        default:
+                            currentContainers = tileContainers.OrderBy(c => c.Margin.Left).ToList();
+                            break;
+                        case SlideDirection.Top:
+                            currentContainers = tileContainers.OrderBy(c => c.Margin.Top).ToList();
+                            break;
+                        case SlideDirection.Right:
+                            currentContainers = tileContainers.OrderByDescending(c => c.Margin.Left).ToList();
+                            break;
+                        case SlideDirection.Bottom:
+                            currentContainers = tileContainers.OrderByDescending(c => c.Margin.Top).ToList();
+                            break;
+                    }
+                    //Debug.WriteLine("Current top container: " + currentContainers[0].Order);
+
+                    // タイルサイズ、コンテナサイズの決定
+                    double w = (this.Width - MainContent.Margin.Left * 2) / pf.NumofCol;
+                    double h = (this.Height - MainContent.Margin.Left * 2) / pf.NumofRow;
+                    pf.TileWidth = 1000;
+                    pf.TileHeight = (int)(pf.TileWidth * h / w);
+                    double containerWidth = pf.TileWidth * pf.NumofCol;
+                    double containerHeight = pf.TileHeight * pf.NumofRow;
+
+                    foreach(TileContainer tc in currentContainers )
+                    {
+                        tc.Width = containerWidth;
+                        tc.MainGrid.Width = tc.Width;
+                        tc.Height = containerHeight;
+                        tc.MainGrid.Height = tc.Height;
+                    }
+
+                    // 位置を正規化
+                    currentContainers[0].Margin = new Thickness(0);
+                    switch( pf.SlideDirection )
+                    {
+                        case SlideDirection.Left:
+                        default:
+                            currentContainers[1].Margin = new Thickness(containerWidth, 0, 0, 0);
+                            currentContainers[2].Margin = new Thickness(2 * containerWidth, 0, 0, 0);
+                            break;
+                        case SlideDirection.Top:
+                            currentContainers[1].Margin = new Thickness(0, containerHeight, 0, 0);
+                            currentContainers[2].Margin = new Thickness(0, 2 * containerHeight, 0, 0);
+                            break;
+                        case SlideDirection.Right:
+                            currentContainers[1].Margin = new Thickness(-containerWidth, 0, 0, 0);
+                            currentContainers[2].Margin = new Thickness(-2 * containerWidth, 0, 0, 0);
+                            break;
+                        case SlideDirection.Bottom:
+                            currentContainers[1].Margin = new Thickness(0, -containerHeight, 0, 0);
+                            currentContainers[2].Margin = new Thickness(0, -2 * containerHeight, 0, 0);
+                            break;
+                    }
+
+                    // 折返し座標、スタート座標の更新
+                    foreach( TileContainer tc in tileContainers )
+                    {
+                        tc.InitWrapPoint();
+                    }
+                }
+
+                // アス比固定・非固定に関わらず拡大縮小
                 FitMainContentToWindow();
             };
 
@@ -248,11 +322,24 @@ namespace C_SlideShow
             MenuItem item = sender as MenuItem;
             if(item != null)
             {
-                string[] str = item.Tag.ToString().Split('_');
-                int w = int.Parse(str[0]);
-                int h = int.Parse(str[1]);
+                // 非固定を選択
+                if(item.Tag.ToString() == "FREE" )
+                {
+                    Setting.TempProfile.NonFixAspectRatio = true;
+                    UpdateToolbarViewing();
+                    return;
+                }
 
-                ChangeTileSize(w, h);
+                // 固定値を選択
+                else
+                {
+                    Setting.TempProfile.NonFixAspectRatio = false;
+                    string[] str = item.Tag.ToString().Split('_');
+                    int w = int.Parse(str[0]);
+                    int h = int.Parse(str[1]);
+
+                    ChangeAspectRatio(w, h);
+                }
             }
         }
 

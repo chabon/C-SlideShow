@@ -370,7 +370,7 @@ namespace C_SlideShow
             /* ---------------------------------------------------- */
             //    メインウインドウ アス比固定処理 
             /* ---------------------------------------------------- */
-            if (msg == WM_SIZING)
+            if (msg == WM_SIZING && !mainWindow.Setting.TempProfile.NonFixAspectRatio)
             {
                 RECT r = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
                 int w = r.right - r.left;
@@ -379,7 +379,8 @@ namespace C_SlideShow
                 h -= (int)mainWindow.MainContent.Margin.Top * 2;
                 int dw = (int)(h * mainWindow.FixedRate + 0.5) - w;
                 int dh = (int)(w / mainWindow.FixedRate + 0.5) - h;
-                switch(wParam.ToInt32()) {
+                switch( wParam.ToInt32() )
+                {
                     case WMSZ_TOP:
                     case WMSZ_BOTTOM:
                         r.right += dw;
@@ -389,19 +390,19 @@ namespace C_SlideShow
                         r.bottom += dh;
                         break;
                     case WMSZ_TOPLEFT:
-                        if(dw > 0) r.left -= dw;
+                        if( dw > 0 ) r.left -= dw;
                         else r.top -= dh;
                         break;
                     case WMSZ_TOPRIGHT:
-                        if(dw > 0) r.right += dw;
+                        if( dw > 0 ) r.right += dw;
                         else r.top -= dh;
                         break;
                     case WMSZ_BOTTOMLEFT:
-                        if(dw > 0) r.left -= dw;
+                        if( dw > 0 ) r.left -= dw;
                         else r.bottom += dh;
                         break;
                     case WMSZ_BOTTOMRIGHT:
-                        if(dw > 0) r.right += dw;
+                        if( dw > 0 ) r.right += dw;
                         else r.bottom += dh;
                         break;
                 }

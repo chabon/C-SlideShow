@@ -31,18 +31,20 @@
         <Grid x:Name="BaseGrid" Background="White">
             <Grid x:Name="MainContent" Margin="5">
                 <local:TileContainer
-                    Margin="10"
+                    Order="0"
                     x:Name="TileContainer1"
                     HorizontalAlignment="Left"
                     VerticalAlignment="top">
                 </local:TileContainer>
                 <local:TileContainer
                     x:Name="TileContainer2"
+                    Order="1"
                     HorizontalAlignment="Left"
                     VerticalAlignment="top">
                 </local:TileContainer>
                 <local:TileContainer
                     x:Name="TileContainer3"
+                    Order="2"
                     HorizontalAlignment="Left"
                     VerticalAlignment="top">
                 </local:TileContainer>
@@ -167,6 +169,7 @@
                     <Menu Style="{StaticResource ToolbarMenuStyle}">
                         <MenuItem Style="{StaticResource ToolbarMenuItemStyle}"
                             ToolTip="グリッドのアスペクト比"
+                            x:Name="MenuItem_AspectRatio"
                                   >
                             <MenuItem.Header>
                                 <Border Margin="-5,0,0,0"
@@ -175,13 +178,15 @@
                                     <TextBlock x:Name="Toolbar_AspectRate_Text" TextAlignment="Center" Text="4 : 3"></TextBlock>
                                 </Border>
                             </MenuItem.Header>
-                                <MenuItem Header="4 : 3"  Tag="4_3"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_4_3"/>
-                                <MenuItem Header="3 : 4"  Tag="3_4"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_3_4"/>
-                                <MenuItem Header="16 : 9" Tag="16_9" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_16_9"/>
-                                <MenuItem Header="9 : 16" Tag="9_16" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_9_16"/>
-                                <MenuItem Header="3 : 2"  Tag="3_2"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_3_2"/>
-                                <MenuItem Header="2 : 3"  Tag="2_3"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_2_3"/>
-                                <MenuItem Header="1 : 1"  Tag="1_1"  Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_1_1"/>
+                                <MenuItem Header="非固定" Tag="FREE" IsCheckable="True" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_Free"/>
+                                <Separator/>
+                                <MenuItem Header="4 : 3"  Tag="4_3"  IsCheckable="True" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_4_3"/>
+                                <MenuItem Header="3 : 4"  Tag="3_4"  IsCheckable="True" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_3_4"/>
+                                <MenuItem Header="16 : 9" Tag="16_9" IsCheckable="True" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_16_9"/>
+                                <MenuItem Header="9 : 16" Tag="9_16" IsCheckable="True" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_9_16"/>
+                                <MenuItem Header="3 : 2"  Tag="3_2"  IsCheckable="True" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_3_2"/>
+                                <MenuItem Header="2 : 3"  Tag="2_3"  IsCheckable="True" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_2_3"/>
+                                <MenuItem Header="1 : 1"  Tag="1_1"  IsCheckable="True" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_1_1"/>
                         </MenuItem>
                     </Menu>
                 </Border>
