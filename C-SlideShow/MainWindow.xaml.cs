@@ -67,12 +67,12 @@ namespace C_SlideShow
                      (Keyboard.GetKeyStates(Key.RightCtrl) & KeyStates.Down) == KeyStates.Down;
             }
         }
-        public double FixedRate
+        public double MainContentAspectRatio
         {
             get
             {
-                return (double)(Setting.TempProfile.TileWidth * Setting.TempProfile.NumofCol)
-                    / ( Setting.TempProfile.TileHeight * Setting.TempProfile.NumofRow );
+                return (double)(Setting.TempProfile.AspectRatioH * Setting.TempProfile.NumofCol)
+                    / ( Setting.TempProfile.AspectRatioV * Setting.TempProfile.NumofRow );
             }
         }
 
@@ -208,7 +208,7 @@ namespace C_SlideShow
             {
                 tc.InitSlideDerection(Setting.TempProfile.SlideDirection);
                 tc.InitGrid(Setting.TempProfile.NumofRow, Setting.TempProfile.NumofCol);
-                tc.InitSizeAndPos(Setting.TempProfile.TileWidth, Setting.TempProfile.TileHeight);
+                tc.InitSizeAndPos(Setting.TempProfile.AspectRatioH, Setting.TempProfile.AspectRatioV);
                 tc.InitWrapPoint();
                 tc.InitTileOrigin(Setting.TempProfile.TileOrigin, Setting.TempProfile.TileOrientation, true);
             }
@@ -475,10 +475,10 @@ namespace C_SlideShow
             }
         }
 
-        private void ChangeAspectRatio(int width, int height)
+        private void ChangeAspectRatio(int h, int v)
         {
-            Setting.TempProfile.TileWidth = width;
-            Setting.TempProfile.TileHeight = height;
+            Setting.TempProfile.AspectRatioH = h;
+            Setting.TempProfile.AspectRatioV = v;
             InitMainContent(bitmapPresenter.CurrentIndex);
             UpdateToolbarViewing();
 
@@ -502,7 +502,7 @@ namespace C_SlideShow
 
             foreach(TileContainer tc in tileContainers)
             {
-                tc.InitSizeAndPos(Setting.TempProfile.TileWidth, Setting.TempProfile.TileHeight);
+                tc.InitSizeAndPos(Setting.TempProfile.AspectRatioH, Setting.TempProfile.AspectRatioV);
                 tc.LoadImageToGrid(false, true);
             }
 
@@ -521,8 +521,8 @@ namespace C_SlideShow
         public void UpdateWindowSize()
         {
             //// サイズ変更後の枠内の比率
-            double w = Setting.TempProfile.TileWidth * Setting.TempProfile.NumofCol;
-            double h = Setting.TempProfile.TileHeight * Setting.TempProfile.NumofRow;
+            double w = Setting.TempProfile.AspectRatioH * Setting.TempProfile.NumofCol;
+            double h = Setting.TempProfile.AspectRatioV * Setting.TempProfile.NumofRow;
             double nextRate = h / w;
 
             // サイズ変更前の枠内面積
@@ -581,7 +581,7 @@ namespace C_SlideShow
             }
             else
             {
-                string aRateTxt = pf.TileWidth.ToString() + " : " + pf.TileHeight.ToString();
+                string aRateTxt = pf.AspectRatioH.ToString() + " : " + pf.AspectRatioV.ToString();
                 Toolbar_AspectRate_Text.Text = aRateTxt;
             }
 
@@ -598,7 +598,7 @@ namespace C_SlideShow
                         string[] str = i.Tag.ToString().Split('_');
                         int w = int.Parse(str[0]);
                         int h = int.Parse(str[1]);
-                        if(w == pf.TileWidth && h == pf.TileHeight ) i.IsChecked = true;
+                        if(w == pf.AspectRatioH && h == pf.AspectRatioV ) i.IsChecked = true;
                     }
                 }
             }
@@ -706,13 +706,13 @@ namespace C_SlideShow
 
         public void UpdateFullScreenView()
         {
-            // 拡大率計算
-            double monitorRate = Width / Height;
+            // 拡大率、コンテンツ座標計算
+            double monitorRatio = Width / Height;
             double zoomFactor;
             Point origin;
-            double w = Setting.TempProfile.TileWidth * Setting.TempProfile.NumofCol;
-            double h = Setting.TempProfile.TileHeight * Setting.TempProfile.NumofRow;
-            if(FixedRate > monitorRate)
+            double w = tileContainers[0].TileWidth * Setting.TempProfile.NumofCol;
+            double h = tileContainers[0].TileHeight * Setting.TempProfile.NumofRow;
+            if(MainContentAspectRatio > monitorRatio)
             {
                 // モニターよりも横長 → 拡大率はモニターの幅と比べて決まる
                 zoomFactor = Width / w;
@@ -725,7 +725,7 @@ namespace C_SlideShow
                 FullScreenBase_TopLeft.Visibility = Visibility.Visible;
                 FullScreenBase_BottomRight.Visibility = Visibility.Visible;
             }
-            else if(FixedRate < monitorRate)
+            else if(MainContentAspectRatio < monitorRatio)
             {
                 // モニターよりも縦長
                 zoomFactor = Height / h;

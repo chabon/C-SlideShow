@@ -377,8 +377,8 @@ namespace C_SlideShow
                 int h = r.bottom - r.top;
                 w -= (int)mainWindow.MainContent.Margin.Left * 2;
                 h -= (int)mainWindow.MainContent.Margin.Top * 2;
-                int dw = (int)(h * mainWindow.FixedRate + 0.5) - w;
-                int dh = (int)(w / mainWindow.FixedRate + 0.5) - h;
+                int dw = (int)(h * mainWindow.MainContentAspectRatio + 0.5) - w;
+                int dh = (int)(w / mainWindow.MainContentAspectRatio + 0.5) - h;
                 switch( wParam.ToInt32() )
                 {
                     case WMSZ_TOP:

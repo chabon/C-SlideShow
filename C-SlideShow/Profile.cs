@@ -61,10 +61,10 @@ namespace C_SlideShow
 
         // アスペクト比設定
         [DataMember]
-        public int TileWidth { get; set; }
+        public int AspectRatioH { get; set; }
 
         [DataMember]
-        public int TileHeight { get; set; }
+        public int AspectRatioV { get; set; }
 
         [DataMember]
         public bool NonFixAspectRatio { get; set; }
@@ -139,8 +139,8 @@ namespace C_SlideShow
         public Profile()
         {
             // アスペクト比設定
-            TileWidth = 4;
-            TileHeight = 3;
+            AspectRatioH = 4;
+            AspectRatioV = 3;
             NonFixAspectRatio = false;
 
             // 行列設定
@@ -183,6 +183,8 @@ namespace C_SlideShow
         public void DefaultDeserializing(StreamingContext sc)
         {
             //WindowRect = new Rect(50, 50, 400, 300);
+            AspectRatioH = 4;
+            AspectRatioV = 3;
         }
 
     }

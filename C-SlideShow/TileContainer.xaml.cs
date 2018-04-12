@@ -28,6 +28,8 @@ namespace C_SlideShow
     /// </summary>
     public partial class TileContainer : UserControl
     {
+        static public int StandardTileWidth = 1000; // タイルの幅の基準
+
         List<Tile> tiles;
         SlideDirection slideDirection;
         Point startPoint;
@@ -46,6 +48,8 @@ namespace C_SlideShow
         public MainWindow MainWindow { get; set; }
         public BitmapPresenter BitmapPresenter { get; set; }
         public TileContainer ForwardContainer { get; set; }
+        public int TileWidth { get; private set; }
+        public int TileHeight { get; private set; }
         public bool IsActiveSliding { get; set; }
         public bool IsContinuousSliding { get; set; }
         public bool IsHorizontalSlide
@@ -129,13 +133,27 @@ namespace C_SlideShow
             }
         }
 
-        public void InitSizeAndPos(int tileWidth, int tileHeight)
+        public void InitSize(int aspectRatioH, int aspectRatioV)
         {
-            this.Width = tileWidth * MainGrid.ColumnDefinitions.Count;
-            this.MainGrid.Width = this.Width;
-            this.Height = tileHeight * MainGrid.RowDefinitions.Count;
-            this.MainGrid.Height = this.Height;
+            // タイルサイズ
+            int mod = StandardTileWidth % aspectRatioH;
+            TileWidth = StandardTileWidth - mod;
+            int p = TileWidth / aspectRatioH;
+            TileHeight = aspectRatioV * p;
 
+            // コンテナサイズ
+            this.Width = TileWidth * MainGrid.ColumnDefinitions.Count;
+            this.MainGrid.Width = this.Width;
+            this.Height = TileHeight * MainGrid.RowDefinitions.Count;
+            this.MainGrid.Height = this.Height;
+        }
+
+        public void InitSizeAndPos(int aspectRatioH, int aspectRatioV)
+        {
+            // サイズ
+            InitSize(aspectRatioH, aspectRatioV);
+
+            // 座標
             switch (slideDirection)
             {
                 case SlideDirection.Left:

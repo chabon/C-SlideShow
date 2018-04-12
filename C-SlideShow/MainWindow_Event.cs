@@ -96,17 +96,17 @@ namespace C_SlideShow
                     // タイルサイズ、コンテナサイズの決定
                     double w = (this.Width - MainContent.Margin.Left * 2) / pf.NumofCol;
                     double h = (this.Height - MainContent.Margin.Left * 2) / pf.NumofRow;
-                    pf.TileWidth = 1000;
-                    pf.TileHeight = (int)(pf.TileWidth * h / w);
-                    double containerWidth = pf.TileWidth * pf.NumofCol;
-                    double containerHeight = pf.TileHeight * pf.NumofRow;
 
-                    foreach(TileContainer tc in currentContainers )
+                    pf.AspectRatioH = TileContainer.StandardTileWidth;
+                    pf.AspectRatioV = (int)(pf.AspectRatioH * h / w);
+
+                    int containerWidth = pf.AspectRatioH * pf.NumofCol;
+                    int containerHeight = pf.AspectRatioV * pf.NumofRow;
+
+                    foreach( TileContainer tc in tileContainers )
                     {
-                        tc.Width = containerWidth;
-                        tc.MainGrid.Width = tc.Width;
-                        tc.Height = containerHeight;
-                        tc.MainGrid.Height = tc.Height;
+                        tc.InitSize(pf.AspectRatioH, pf.AspectRatioV);
+                        tc.InitWrapPoint();
                     }
 
                     // 位置を正規化
@@ -132,11 +132,6 @@ namespace C_SlideShow
                             break;
                     }
 
-                    // 折返し座標、スタート座標の更新
-                    foreach( TileContainer tc in tileContainers )
-                    {
-                        tc.InitWrapPoint();
-                    }
                 }
 
                 // アス比固定・非固定に関わらず拡大縮小
