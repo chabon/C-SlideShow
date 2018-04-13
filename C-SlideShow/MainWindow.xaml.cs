@@ -71,8 +71,8 @@ namespace C_SlideShow
         {
             get
             {
-                return (double)(Setting.TempProfile.AspectRatioH * Setting.TempProfile.NumofCol)
-                    / ( Setting.TempProfile.AspectRatioV * Setting.TempProfile.NumofRow );
+                return (double)(tileContainers[0].Width)
+                    / ( tileContainers[0].Height );
             }
         }
 
@@ -99,6 +99,9 @@ namespace C_SlideShow
             this.AllowsTransparency = Setting.TempProfile.AllowTransparency;
 
             InitializeComponent();
+
+            // debug
+            //Setting.TempProfile.TilePadding = 10;
 
             // init
             InitControls();
@@ -195,22 +198,25 @@ namespace C_SlideShow
             if(tileContainers.Any( tc => tc.IsActiveSliding || tc.IsContinuousSliding))
                 StopSlideShow();
 
+            // profile
+            Profile pf = Setting.TempProfile;
+
             // set up bitmap presenter
-            int grids = Setting.TempProfile.NumofRow * Setting.TempProfile.NumofCol;
+            int grids = pf.NumofRow * pf.NumofCol;
             bitmapPresenter.FillFileInfoVacancyWithDummy(grids);
             if (firstIndex > bitmapPresenter.NumofImageFile - 1) firstIndex = 0;
             bitmapPresenter.NextIndex = firstIndex;
-            int totalBmpWidth = 1920; // todo: 設定可能にする
-            bitmapPresenter.BitmapDecodePixelWidth = totalBmpWidth / Setting.TempProfile.NumofCol;
+            bitmapPresenter.BitmapDecodePixelWidth = pf.BitmapDecodeTotalPixelWidth / pf.NumofCol;
 
             // init container
             foreach(TileContainer tc in tileContainers)
             {
-                tc.InitSlideDerection(Setting.TempProfile.SlideDirection);
-                tc.InitGrid(Setting.TempProfile.NumofRow, Setting.TempProfile.NumofCol);
-                tc.InitSizeAndPos(Setting.TempProfile.AspectRatioH, Setting.TempProfile.AspectRatioV);
+                tc.InitSlideDerection(pf.SlideDirection);
+                tc.InitGrid(pf.NumofRow, pf.NumofCol);
+                tc.InitGridLineColor(pf.GridLineColor);
+                tc.InitSizeAndPos(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
                 tc.InitWrapPoint();
-                tc.InitTileOrigin(Setting.TempProfile.TileOrigin, Setting.TempProfile.TileOrientation, true);
+                tc.InitTileOrigin(pf.TileOrigin, pf.TileOrientation, true);
             }
 
             // load image
@@ -502,7 +508,7 @@ namespace C_SlideShow
 
             foreach(TileContainer tc in tileContainers)
             {
-                tc.InitSizeAndPos(Setting.TempProfile.AspectRatioH, Setting.TempProfile.AspectRatioV);
+                tc.InitSizeAndPos(Setting.TempProfile.AspectRatioH, Setting.TempProfile.AspectRatioV, Setting.TempProfile.TilePadding);
                 tc.LoadImageToGrid(false, true);
             }
 
@@ -521,8 +527,8 @@ namespace C_SlideShow
         public void UpdateWindowSize()
         {
             //// サイズ変更後の枠内の比率
-            double w = Setting.TempProfile.AspectRatioH * Setting.TempProfile.NumofCol;
-            double h = Setting.TempProfile.AspectRatioV * Setting.TempProfile.NumofRow;
+            double w = tileContainers[0].Width;
+            double h = tileContainers[0].Height;
             double nextRate = h / w;
 
             // サイズ変更前の枠内面積
@@ -710,8 +716,8 @@ namespace C_SlideShow
             double monitorRatio = Width / Height;
             double zoomFactor;
             Point origin;
-            double w = tileContainers[0].TileWidth * Setting.TempProfile.NumofCol;
-            double h = tileContainers[0].TileHeight * Setting.TempProfile.NumofRow;
+            double w = tileContainers[0].Width;
+            double h = tileContainers[0].Height;
             if(MainContentAspectRatio > monitorRatio)
             {
                 // モニターよりも横長 → 拡大率はモニターの幅と比べて決まる

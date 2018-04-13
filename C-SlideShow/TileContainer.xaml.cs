@@ -48,8 +48,24 @@ namespace C_SlideShow
         public MainWindow MainWindow { get; set; }
         public BitmapPresenter BitmapPresenter { get; set; }
         public TileContainer ForwardContainer { get; set; }
-        public int TileWidth { get; private set; }
-        public int TileHeight { get; private set; }
+        public int InnerTileWidth { get; private set; } // マージンを含まない(アス比に対応)
+        public int InnerTileHeight { get; private set; }
+        public int TileWidth
+        {
+            get
+            {
+                return InnerTileWidth + (int)tiles[0].Border.BorderThickness.Left * 2
+                    + (int)tiles[0].Border.Margin.Left * 2;
+            }
+        }
+        public int TileHeight
+        {
+            get
+            {
+                return InnerTileHeight + (int)tiles[0].Border.BorderThickness.Left * 2
+                    + (int)tiles[0].Border.Margin.Left * 2;
+            }
+        }
         public bool IsActiveSliding { get; set; }
         public bool IsContinuousSliding { get; set; }
         public bool IsHorizontalSlide
@@ -129,29 +145,62 @@ namespace C_SlideShow
             tiles.Clear();
             for(int i=0; i < numofRow * numofCol; i++)
             {
-                tiles.Add(new Tile( new Image() ));
+                tiles.Add(new Tile());
+            }
+
+            foreach(Tile tile in tiles )
+            {
+                tile.Border.PreviewMouseRightButtonDown += (s, e) =>
+                {
+                    //MessageBox.Show("hogehoge");
+                };
+
             }
         }
 
-        public void InitSize(int aspectRatioH, int aspectRatioV)
+        public void InitGridLineColor(Color color)
         {
-            // タイルサイズ
-            int mod = StandardTileWidth % aspectRatioH;
-            TileWidth = StandardTileWidth - mod;
-            int p = TileWidth / aspectRatioH;
-            TileHeight = aspectRatioV * p;
+            foreach(Tile tile in tiles )
+            {
+                tile.Border.BorderBrush = new SolidColorBrush(color);
+            }
 
-            // コンテナサイズ
-            this.Width = TileWidth * MainGrid.ColumnDefinitions.Count;
-            this.MainGrid.Width = this.Width;
-            this.Height = TileHeight * MainGrid.RowDefinitions.Count;
-            this.MainGrid.Height = this.Height;
         }
 
-        public void InitSizeAndPos(int aspectRatioH, int aspectRatioV)
+        public void InitSize(int aspectRatioH, int aspectRatioV, int tilePadding)
+        {
+            // タイルのインナーサイズ(Paddingを抜いたサイズ)
+            int mod = StandardTileWidth % aspectRatioH;
+            InnerTileWidth = StandardTileWidth - mod;
+            int p = InnerTileWidth / aspectRatioH;
+            InnerTileHeight = aspectRatioV * p;
+
+            // タイルPaddingの適用
+            foreach(Tile tile in tiles )
+            {
+                if(tilePadding == 0)
+                    tile.Border.BorderThickness = new Thickness(0);
+                else
+                {
+                    tile.Border.BorderThickness = new Thickness(tilePadding + 2);
+                    tile.Border.Margin = new Thickness(-2); // これと↑の-2は隣のGridとの境目を完全に消すため
+                }
+            }
+
+            // コンテナサイズ
+            Width = InnerTileWidth * MainGrid.ColumnDefinitions.Count;
+            Width += tilePadding * MainGrid.ColumnDefinitions.Count * 2;
+            MainGrid.Width = this.Width;
+
+            Height = InnerTileHeight * MainGrid.RowDefinitions.Count;
+            Height += tilePadding * MainGrid.RowDefinitions.Count * 2;
+            MainGrid.Height = this.Height;
+        }
+
+        public void InitSizeAndPos(int aspectRatioH, int aspectRatioV, int tilePadding)
         {
             // サイズ
-            InitSize(aspectRatioH, aspectRatioV);
+            InitSize(aspectRatioH, aspectRatioV, tilePadding);
 
             // 座標
             switch (slideDirection)
@@ -321,9 +370,17 @@ namespace C_SlideShow
                     break;
             }
 
-            //LoadTilesImage();
-            //LoadTilesImageAsync();
+            // グリッドにボーダーとイメージをセット
+            foreach(Tile tile in tiles )
+            {
+                MainGrid.Children.Add(tile.Border);
+                tile.Border.Child = tile.Image;
 
+                Grid.SetColumn(tile.Border, tile.Col);
+                Grid.SetRow(tile.Border, tile.Row);
+            }
+
+            // 画像をロード
             if (bAsync) LoadTileImageAsync();
             else LoadTileImage();
         }
@@ -336,9 +393,6 @@ namespace C_SlideShow
                 {
                     if (BitmapPresenter.FileInfo.Count < 1) throw new Exception();
 
-                    Image image = tile.Image;
-                    MainGrid.Children.Add(image);
-
                     ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
                     tile.filePath = iFileInfo.FilePath;
 
@@ -349,25 +403,8 @@ namespace C_SlideShow
                         new Action(() =>
                         {
                             tile.Image.Source = bitmap;
-                            Grid.SetColumn(tile.Image, tile.Col);
-                            Grid.SetRow(tile.Image, tile.Row);
                         })
                     );
-                    //string filePath = BitmapPresenter.PickImageFileInfo(tile.ByPlayback).FilePath;
-                    //BitmapPresenter.SlideIndex(tile.ByPlayback);
-                    //Task.Run(() =>
-                    //{
-                    //    //Image newImage = new Image();
-                    //    //newImage.Source = BitmapPresenter.LoadBitmap(filePath);
-                    //    image.Dispatcher.BeginInvoke(
-                    //        new Action(() =>
-                    //        {
-                    //            //image = newImage;
-                    //            image.Source = BitmapPresenter.LoadBitmap(filePath);
-                    //        })
-                    //    );
-                    //    //Thread.Sleep(500);
-                    //});
                 }
                 catch 
                 {
@@ -388,8 +425,6 @@ namespace C_SlideShow
 
             foreach (Tile tile in this.tiles)
             {
-                Image image = tile.Image;
-                MainGrid.Children.Add(image);
                 ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
                 tile.filePath = iFileInfo.FilePath;
                 BitmapPresenter.SlideIndex(tile.ByPlayback);
@@ -411,8 +446,6 @@ namespace C_SlideShow
                         new Action(() =>
                         {
                             tile.Image.Source = bitmap;
-                            Grid.SetColumn(tile.Image, tile.Col);
-                            Grid.SetRow(tile.Image, tile.Row);
                         })
                     );
                     Debug.WriteLine("Total Memory = {0} KB", GC.GetTotalMemory(true) / 1024);

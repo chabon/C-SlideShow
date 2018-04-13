@@ -42,6 +42,16 @@ namespace C_SlideShow
     [DataContract(Name = "Profile")]
     public class Profile
     {
+        // ダイアログ未実装
+        [DataMember]
+        public int TilePadding { get; set; }
+
+        [DataMember]
+        public Color GridLineColor { get; set; }
+
+        [DataMember]
+        public int BitmapDecodeTotalPixelWidth { get; set; }
+
         // 行列設定
         [DataMember]
         public int NumofRow { get; set; }
@@ -138,6 +148,11 @@ namespace C_SlideShow
 
         public Profile()
         {
+            // ダイアログ未実装
+            TilePadding = 0;
+            GridLineColor = Colors.LightGray;
+            BitmapDecodeTotalPixelWidth = 1920;
+
             // アスペクト比設定
             AspectRatioH = 4;
             AspectRatioV = 3;

@@ -20,16 +20,18 @@ namespace C_SlideShow
 {
     public class Tile
     {
-        public Image Image { get; set; }
+        public Image Image { get; private set; }
+        public Border Border { get; private set; }
         public int Row { set; get; }
         public int Col { set; get; }
         public bool ByPlayback { get; set; } // タイルの設置が巻き戻しによるものか
         public string filePath { get; set; }
         public bool IsDummy { get; set; }
 
-        public Tile(Image image)
+        public Tile()
         {
-            Image = image;
+            Image = new Image();
+            Border = new Border();
             IsDummy = false;
         }
 

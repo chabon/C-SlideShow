@@ -81,6 +81,9 @@
       <DependentUpon>TileContainer.xaml</DependentUpon>
     </Compile>
     <Compile Include="BitmapPresenter.cs" />
+    <Compile Include="TileExpantionPanel.xaml.cs">
+      <DependentUpon>TileExpantionPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UIHelper.cs" />
     <Compile Include="Win32.cs" />
     <Page Include="MainWindow.xaml">
@@ -116,6 +119,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="TileContainer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TileExpantionPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -93,24 +93,26 @@ namespace C_SlideShow
                     }
                     //Debug.WriteLine("Current top container: " + currentContainers[0].Order);
 
-                    // タイルサイズ、コンテナサイズの決定
+                    // タイルサイズ(アス比)、コンテナサイズの決定
                     double w = (this.Width - MainContent.Margin.Left * 2) / pf.NumofCol;
                     double h = (this.Height - MainContent.Margin.Left * 2) / pf.NumofRow;
+                    double gridRatio = h / w;
 
                     pf.AspectRatioH = TileContainer.StandardTileWidth;
-                    pf.AspectRatioV = (int)(pf.AspectRatioH * h / w);
-
-                    int containerWidth = pf.AspectRatioH * pf.NumofCol;
-                    int containerHeight = pf.AspectRatioV * pf.NumofRow;
+                    int gridWidth = pf.AspectRatioH + pf.TilePadding * 2;
+                    int gridHeight = (int)( gridWidth * gridRatio );
+                    pf.AspectRatioV = gridHeight - pf.TilePadding * 2;
 
                     foreach( TileContainer tc in tileContainers )
                     {
-                        tc.InitSize(pf.AspectRatioH, pf.AspectRatioV);
+                        tc.InitSize(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
                         tc.InitWrapPoint();
                     }
 
                     // 位置を正規化
                     currentContainers[0].Margin = new Thickness(0);
+                    double containerWidth = tileContainers[0].Width;
+                    double containerHeight = tileContainers[0].Height;
                     switch( pf.SlideDirection )
                     {
                         case SlideDirection.Left:

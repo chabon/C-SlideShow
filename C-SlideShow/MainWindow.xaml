@@ -55,40 +55,6 @@
         <Rectangle x:Name="FullScreenBase_BottomRight" Fill="Black" Visibility="Hidden"
                    HorizontalAlignment="Right" VerticalAlignment="Bottom"></Rectangle>
 
-        <!-- システムボタン -->
-        <StackPanel x:Name="SystemButtonWrapper" Orientation="Horizontal" 
-                    HorizontalAlignment="Right" VerticalAlignment="Top"
-                    Visibility="Hidden"
-                    Opacity="0.9"
-                    Margin="10">
-            <StackPanel.Resources>
-                <Style x:Key="SystemButtonStyle" TargetType="Button">
-                    <Setter Property="Width" Value="22"></Setter>
-                    <Setter Property="Height" Value="22"></Setter>
-                    <Setter Property="Margin" Value="1,0"></Setter>
-                    <Setter Property="Background" Value="White"></Setter>
-                </Style>
-            </StackPanel.Resources>
-            <Button x:Name="SystemButton_Minimize" Style="{StaticResource SystemButtonStyle}"
-                    Click="SystemButton_Minimize_Click">
-                <Image Source="Resources\minimize.png" 
-                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                       Width="16" Height="16"></Image>
-            </Button>
-            <Button x:Name="SystemButton_Maximize" Style="{StaticResource SystemButtonStyle}"
-                    Click="SystemButton_Maximize_Click">
-                <Image x:Name="SystemButton_Maximize_Image" Source="Resources\maximize.png" 
-                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                       Width="16" Height="16"></Image>
-            </Button>
-            <Button x:Name="SystemButton_Close" Style="{StaticResource SystemButtonStyle}"
-                    Click="SystemButton_Close_Click">
-                <Image Source="Resources\close.png" 
-                       RenderOptions.BitmapScalingMode="NearestNeighbor"
-                       Width="16" Height="16"></Image>
-            </Button>
-            
-        </StackPanel>
 
 
         <Border Margin="10,10,10,0" 
@@ -269,6 +235,40 @@
         </Border>
 
 
+        <!-- システムボタン -->
+        <StackPanel x:Name="SystemButtonWrapper" Orientation="Horizontal" 
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Visibility="Hidden"
+                    Opacity="0.9"
+                    Margin="10">
+            <StackPanel.Resources>
+                <Style x:Key="SystemButtonStyle" TargetType="Button">
+                    <Setter Property="Width" Value="22"></Setter>
+                    <Setter Property="Height" Value="22"></Setter>
+                    <Setter Property="Margin" Value="1,0"></Setter>
+                    <Setter Property="Background" Value="White"></Setter>
+                </Style>
+            </StackPanel.Resources>
+            <Button x:Name="SystemButton_Minimize" Style="{StaticResource SystemButtonStyle}"
+                    Click="SystemButton_Minimize_Click">
+                <Image Source="Resources\minimize.png" 
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       Width="16" Height="16"></Image>
+            </Button>
+            <Button x:Name="SystemButton_Maximize" Style="{StaticResource SystemButtonStyle}"
+                    Click="SystemButton_Maximize_Click">
+                <Image x:Name="SystemButton_Maximize_Image" Source="Resources\maximize.png" 
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       Width="16" Height="16"></Image>
+            </Button>
+            <Button x:Name="SystemButton_Close" Style="{StaticResource SystemButtonStyle}"
+                    Click="SystemButton_Close_Click">
+                <Image Source="Resources\close.png" 
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       Width="16" Height="16"></Image>
+            </Button>
+            
+        </StackPanel>
 
 
         <Border x:Name="ResizeGrip"
