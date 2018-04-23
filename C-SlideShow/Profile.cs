@@ -149,7 +149,7 @@ namespace C_SlideShow
         public Profile()
         {
             // ダイアログ未実装
-            TilePadding = 0;
+            TilePadding = 3;
             GridLineColor = Colors.LightGray;
             BitmapDecodeTotalPixelWidth = 1920;
 

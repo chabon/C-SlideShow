@@ -11,6 +11,7 @@ namespace C_SlideShow
         public string FilePath;
         public DateTimeOffset LastWriteTime;
         public DateTimeOffset CreationTime;
+        public long Length = 0; // ファイルサイズ(byte)
 
         public ImageFileInfo()
         {

@@ -25,13 +25,15 @@ namespace C_SlideShow
         public int Row { set; get; }
         public int Col { set; get; }
         public bool ByPlayback { get; set; } // タイルの設置が巻き戻しによるものか
-        public string filePath { get; set; }
+        public string FilePath { get; set; }
         public bool IsDummy { get; set; }
+        public TileContainer ParentConteiner { get; set; }
 
         public Tile()
         {
             Image = new Image();
             Border = new Border();
+            Border.Background = new SolidColorBrush(Colors.Transparent);
             IsDummy = false;
         }
 

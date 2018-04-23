@@ -30,7 +30,6 @@ namespace C_SlideShow
     {
         static public int StandardTileWidth = 1000; // タイルの幅の基準
 
-        List<Tile> tiles;
         SlideDirection slideDirection;
         Point startPoint;
         Point wrapPoint; // この座標までスライドすると最初(startPoint)に戻る
@@ -45,6 +44,7 @@ namespace C_SlideShow
 
         // プロパティ
         public int Order { get; set; } // 自身の並び順
+        public List<Tile> Tiles { get; private set; }
         public MainWindow MainWindow { get; set; }
         public BitmapPresenter BitmapPresenter { get; set; }
         public TileContainer ForwardContainer { get; set; }
@@ -54,16 +54,14 @@ namespace C_SlideShow
         {
             get
             {
-                return InnerTileWidth + (int)tiles[0].Border.BorderThickness.Left * 2
-                    + (int)tiles[0].Border.Margin.Left * 2;
+                return (int)Tiles[0].Border.DesiredSize.Width;
             }
         }
         public int TileHeight
         {
             get
             {
-                return InnerTileHeight + (int)tiles[0].Border.BorderThickness.Left * 2
-                    + (int)tiles[0].Border.Margin.Left * 2;
+                return (int)Tiles[0].Border.DesiredSize.Height;
             }
         }
         public bool IsActiveSliding { get; set; }
@@ -111,7 +109,7 @@ namespace C_SlideShow
         public TileContainer()
         {
             InitializeComponent();
-            tiles = new List<Tile>();
+            Tiles = new List<Tile>();
             
         }
 
@@ -142,25 +140,19 @@ namespace C_SlideShow
                 MainGrid.RowDefinitions.Add(r);
             }
 
-            tiles.Clear();
+            Tiles.Clear();
             for(int i=0; i < numofRow * numofCol; i++)
             {
-                tiles.Add(new Tile());
-            }
+                Tile tile = new Tile();
+                tile.ParentConteiner = this;
 
-            foreach(Tile tile in tiles )
-            {
-                tile.Border.PreviewMouseRightButtonDown += (s, e) =>
-                {
-                    //MessageBox.Show("hogehoge");
-                };
-
+                Tiles.Add(tile);
             }
         }
 
         public void InitGridLineColor(Color color)
         {
-            foreach(Tile tile in tiles )
+            foreach(Tile tile in Tiles )
             {
                 tile.Border.BorderBrush = new SolidColorBrush(color);
             }
@@ -176,7 +168,7 @@ namespace C_SlideShow
             InnerTileHeight = aspectRatioV * p;
 
             // タイルPaddingの適用
-            foreach(Tile tile in tiles )
+            foreach(Tile tile in Tiles )
             {
                 if(tilePadding == 0)
                     tile.Border.BorderThickness = new Thickness(0);
@@ -324,54 +316,54 @@ namespace C_SlideShow
                     if(orie == TileOrientation.Horizontal)
                     {
                         for (int i = 0; i < rowCnt; i++) for (int j = 0; j < colCnt; j++)
-                            { tiles[k].SetGridPos(i, j, isPlayback); k++; }
+                            { Tiles[k].SetGridPos(i, j, isPlayback); k++; }
                     }
                     else
                     {
                         for (int j = 0; j < colCnt; j++) for (int i = 0; i < rowCnt; i++)
-                            { tiles[k].SetGridPos(i, j, isPlayback); k++; }
+                            { Tiles[k].SetGridPos(i, j, isPlayback); k++; }
                     }
                     break;
                 case TileOrigin.TopRight:
                     if(orie == TileOrientation.Horizontal)
                     {
                         for (int i = 0; i < rowCnt; i++) for (int j = colCnt -1; j >= 0; j--)
-                            { tiles[k].SetGridPos(i, j, isPlayback); k++; }
+                            { Tiles[k].SetGridPos(i, j, isPlayback); k++; }
                     }
                     else
                     {
                         for (int j = colCnt -1; j >= 0; j--) for (int i = 0; i < rowCnt; i++)
-                            { tiles[k].SetGridPos(i, j, isPlayback); k++; }
+                            { Tiles[k].SetGridPos(i, j, isPlayback); k++; }
                     }
                     break;
                 case TileOrigin.BottomLeft:
                     if(orie == TileOrientation.Horizontal)
                     {
                         for (int i = rowCnt -1 ; i >= 0; i--) for (int j = 0; j < colCnt; j++)
-                            { tiles[k].SetGridPos(i, j, isPlayback); k++; }
+                            { Tiles[k].SetGridPos(i, j, isPlayback); k++; }
                     }
                     else
                     {
                         for (int j = 0; j < colCnt; j++) for (int i = rowCnt -1; i >= 0; i--)
-                            { tiles[k].SetGridPos(i, j, isPlayback); k++; }
+                            { Tiles[k].SetGridPos(i, j, isPlayback); k++; }
                     }
                     break;
                 case TileOrigin.BottomRight:
                     if(orie == TileOrientation.Horizontal)
                     {
                         for (int i = rowCnt -1; i >=0; i--) for (int j = colCnt -1; j >=0; j--)
-                            { tiles[k].SetGridPos(i, j, isPlayback); k++; }
+                            { Tiles[k].SetGridPos(i, j, isPlayback); k++; }
                     }
                     else
                     {
                         for (int j = colCnt -1; j >=0; j--) for (int i = rowCnt -1; i >=0; i--)
-                            { tiles[k].SetGridPos(i, j, isPlayback); k++; }
+                            { Tiles[k].SetGridPos(i, j, isPlayback); k++; }
                     }
                     break;
             }
 
             // グリッドにボーダーとイメージをセット
-            foreach(Tile tile in tiles )
+            foreach(Tile tile in Tiles )
             {
                 MainGrid.Children.Add(tile.Border);
                 tile.Border.Child = tile.Image;
@@ -388,16 +380,16 @@ namespace C_SlideShow
 
         private void LoadTileImage()
         {
-            tiles.ForEach(tile => {
+            Tiles.ForEach(tile => {
                 try
                 {
-                    if (BitmapPresenter.FileInfo.Count < 1) throw new Exception();
+                    if (BitmapPresenter.ImgFileInfo.Count < 1) throw new Exception();
 
                     ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
-                    tile.filePath = iFileInfo.FilePath;
+                    tile.FilePath = iFileInfo.FilePath;
 
                     BitmapPresenter.SlideIndex(tile.ByPlayback);
-                    BitmapImage bitmap = BitmapPresenter.LoadBitmap(tile.filePath);
+                    BitmapImage bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, false);
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>
@@ -421,12 +413,12 @@ namespace C_SlideShow
         // 非同期でロード
         private void LoadTileImageAsync()
         {
-            if (BitmapPresenter.FileInfo.Count < 1) return;
+            if (BitmapPresenter.ImgFileInfo.Count < 1) return;
 
-            foreach (Tile tile in this.tiles)
+            foreach (Tile tile in this.Tiles)
             {
                 ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
-                tile.filePath = iFileInfo.FilePath;
+                tile.FilePath = iFileInfo.FilePath;
                 BitmapPresenter.SlideIndex(tile.ByPlayback);
             }
 
@@ -438,9 +430,9 @@ namespace C_SlideShow
                 System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
                 sw.Start();
 #endif
-                foreach(Tile tile in tiles)
+                foreach(Tile tile in Tiles)
                 {
-                    BitmapImage bitmap = BitmapPresenter.LoadBitmap(tile.filePath); // エラー時はnullが返る
+                    BitmapImage bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, false); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>
@@ -458,7 +450,7 @@ namespace C_SlideShow
 
 #if DEBUG
                 sw.Stop();
-                Debug.WriteLine( tiles.Count + " files loaded:  " + sw.Elapsed);
+                Debug.WriteLine( Tiles.Count + " files loaded:  " + sw.Elapsed);
 #endif
 
                 return;
@@ -506,30 +498,6 @@ namespace C_SlideShow
                 if (!IsContinuousSliding) return;
                 LoadImageToGrid(false, true);
                 this.MainWindow.UpdatePageInfo();
-
-                // 前方のコンテナから、リスタート座標を取得し、ループ
-                //Point restartPoint = new Point();
-                //restartPoint.X = 0;
-                //restartPoint.Y = 0;
-
-                //switch (slideDirection)
-                //{
-                //    case SlideDirection.Left:
-                //        restartPoint.X = ForwardContainer.Margin.Left + ForwardContainer.Width;
-                //        break;
-                //    case SlideDirection.Top:
-                //        restartPoint.Y = ForwardContainer.Margin.Top + ForwardContainer.Height;
-                //        break;
-                //    case SlideDirection.Right:
-                //        restartPoint.X = ForwardContainer.Margin.Left - ForwardContainer.Width;
-                //        break;
-                //    case SlideDirection.Bottom:
-                //        restartPoint.Y = ForwardContainer.Margin.Top - ForwardContainer.Height;
-                //        break;
-                //}
-
-                //Debug.WriteLine("restart point: " + restartPoint);
-                //BeginContinuousSlideAnimation(restartPoint, moveTime);
 
                 // 予め決めておいたリスタート座標からループ
                 BeginContinuousSlideAnimation(startPoint, moveTime);
@@ -652,7 +620,7 @@ namespace C_SlideShow
             {
                 ReleaseBitmapLoadThread(); // 末尾コンテナが読み込み中だったら、開放してから
                 this.Margin = new Thickness(wrapPoint.X, wrapPoint.Y, 0, 0);
-                foreach (Tile tile in this.tiles)
+                foreach (Tile tile in this.Tiles)
                 {
                     tile.Image.Source = null;
                 }
@@ -766,7 +734,7 @@ namespace C_SlideShow
         /// </summary>
         public void UpdateTileImageOpacity(double opacity)
         {
-            foreach(Tile tile in tiles)
+            foreach(Tile tile in Tiles)
             {
                 tile.Image.Opacity = opacity;
             }

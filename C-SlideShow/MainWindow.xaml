@@ -57,6 +57,7 @@
 
 
 
+        <!-- ツールバー -->
         <Border Margin="10,10,10,0" 
                 x:Name="ToolbarWrapper"
                 Opacity="0.9"
@@ -64,6 +65,7 @@
                 VerticalAlignment="Top" HorizontalAlignment="Center"
                 Background="Transparent">
             <WrapPanel Orientation="Horizontal"
+                       Background="Transparent"
                        ItemHeight="30">
                 <WrapPanel.Resources>
                     <Style x:Key="ToolbarMenuStyle" TargetType="Menu">
@@ -234,6 +236,64 @@
             </WrapPanel>
         </Border>
 
+        <!-- シークバー -->
+        <Border x:Name="SeekbarWrapper"
+            Background="White"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Bottom"
+            Margin="10,10"
+            Padding="2,1"
+            Opacity="0.6"
+            Visibility="Hidden"
+            CornerRadius="5"
+            MaxWidth="400"
+            MaxHeight="400"
+            >
+            <Slider x:Name="Seekbar"
+                Foreground="Black"
+                Background="White"
+                HorizontalAlignment="Stretch"
+                Orientation="Horizontal"
+                Thumb.DragCompleted="Seekbar_DragCompleted"
+                Thumb.DragStarted="Seekbar_DragStarted"
+                Style="{StaticResource CustomSliderStyle}"
+                >
+            </Slider>
+        </Border>
+
+
+        <!-- ページ情報 -->
+        <Border x:Name="PageInfo"
+                Background="White"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="34"
+                Padding="2"
+                CornerRadius="3"
+                Opacity="0.8"
+                Visibility="Hidden"
+                >
+            <TextBlock x:Name="PageInfoText"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Height="16"
+                       Foreground="Black"
+                       Background="White"
+                       Text=""
+                       FontWeight="Bold"
+                       >
+            </TextBlock>
+        </Border>
+
+
+        <!-- タイル拡大パネル -->
+        <local:TileExpantionPanel 
+            x:Name="TileExpantionPanel"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Visibility="Hidden"
+            >
+        </local:TileExpantionPanel>
 
         <!-- システムボタン -->
         <StackPanel x:Name="SystemButtonWrapper" Orientation="Horizontal" 
@@ -267,10 +327,10 @@
                        RenderOptions.BitmapScalingMode="NearestNeighbor"
                        Width="16" Height="16"></Image>
             </Button>
-            
         </StackPanel>
 
 
+        <!-- リサイズ枠 -->
         <Border x:Name="ResizeGrip"
                 Visibility="Visible"
                 BorderThickness="5"
@@ -278,50 +338,6 @@
                 >
         </Border>
 
-        <Border x:Name="PageInfo"
-                Background="White"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Margin="34"
-                Padding="2"
-                CornerRadius="3"
-                Opacity="0.8"
-                Visibility="Hidden"
-                >
-            <TextBlock x:Name="PageInfoText"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Bottom"
-                       Height="16"
-                       Foreground="Black"
-                       Background="White"
-                       Text=""
-                       FontWeight="Bold"
-                       >
-            </TextBlock>
-        </Border>
 
-        <Border x:Name="SeekbarWrapper"
-            Background="White"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom"
-            Margin="10,10"
-            Padding="2,1"
-            Opacity="0.6"
-            Visibility="Hidden"
-            CornerRadius="5"
-            MaxWidth="400"
-            MaxHeight="400"
-            >
-            <Slider x:Name="Seekbar"
-                Foreground="Black"
-                Background="White"
-                HorizontalAlignment="Stretch"
-                Orientation="Horizontal"
-                Thumb.DragCompleted="Seekbar_DragCompleted"
-                Thumb.DragStarted="Seekbar_DragStarted"
-                Style="{StaticResource CustomSliderStyle}"
-                >
-            </Slider>
-        </Border>
     </Grid>
 </Window>

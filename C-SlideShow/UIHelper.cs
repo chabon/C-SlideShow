@@ -44,6 +44,9 @@ namespace C_SlideShow
 
         private void UIVisibleTimer_Ticked(object sender, EventArgs e)
         {
+            // 設定プロファイル
+            Profile pf = mainWindow.Setting.TempProfile;
+
             // ウインドウ幅が狭い時は、ツールバー位置を調整
             int param = 490;
             if(mainWindow.Width < param)
@@ -65,7 +68,7 @@ namespace C_SlideShow
                 return;
             }
 
-            // 現在座標
+            // 現在座標(スクリーン上の)
             Win32.POINT pt = new Win32.POINT();
             Win32.GetCursorPos(ref pt);
             
@@ -88,39 +91,6 @@ namespace C_SlideShow
             IntPtr hwndThis = new WindowInteropHelper(mainWindow).Handle;
             if (hwnd != hwndThis) return;
 
-            // カーソル位置によってUIの表示を変える
-            Point ptWnd = Win32.GetWindowPos(hwndThis);
-
-            var h = mainWindow.Height / 3;
-            var w = mainWindow.Width / 3;
-
-            // ツールバー、システムボタン
-            double borderHeight = mainWindow.ToolbarWrapper.ActualHeight + mainWindow.ToolbarWrapper.Margin.Top;
-            if (pt.Y < ptWnd.Y + h || pt.Y < ptWnd.Y + borderHeight)
-            {
-                mainWindow.ToolbarWrapper.Visibility = Visibility.Visible;
-                mainWindow.SystemButtonWrapper.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
-                mainWindow.SystemButtonWrapper.Visibility = Visibility.Hidden;
-            }
-
-
-            // シークバー
-            if (mainWindow.IsHorizontalSlide)
-            {
-                // 水平
-                if (pt.Y > ptWnd.Y + h * 2) ShowSeekbar();
-                else HideSeekbar();
-            }
-            else
-            {
-                // 垂直
-                if (pt.X > ptWnd.X + w * 2) ShowSeekbar();
-                else HideSeekbar();
-            }
 
             // カーソル停止をチェックして、カーソルを隠す
             Point d = new Point(Math.Abs(pt.X - ptCursorPause.X), Math.Abs(pt.Y - ptCursorPause.Y));
@@ -148,6 +118,68 @@ namespace C_SlideShow
                 ptCursorPause.Y = pt.Y;
                 cursorPauseTime = 0;
                 isCursorPaused = false;
+            }
+
+
+            // カーソル位置によってUIの表示を変える
+            Point ptWnd = Win32.GetWindowPos(hwndThis);
+
+            var h3 = mainWindow.Height / 3;
+            var w3 = mainWindow.Width / 3;
+
+            // 拡大パネル内ファイル情報表示時
+            TileExpantionPanel panel = mainWindow.TileExpantionPanel;
+            if( panel.IsShowing )
+            {
+                // ツールバー、シークバーは常に隠す
+                mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
+                HideSeekbar();
+
+                if(pt.Y < ptWnd.Y + h3 )
+                {
+                    panel.ShowFileInfoOrButton();
+                    mainWindow.SystemButtonWrapper.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    mainWindow.SystemButtonWrapper.Visibility = Visibility.Hidden;
+                    if( pf.NumofCol == 1 && pf.NumofRow == 1 ) // 行列数が共に1の時は表示(切り替えの視認性のため)
+                        panel.ShowFileInfoOrButton();
+                    else
+                    {
+                        panel.FileInfoGrid.Visibility = Visibility.Hidden;
+                        panel.FileInfoDisplayButton.Visibility = Visibility.Hidden;
+                    }
+                }
+                return;
+            }
+
+
+            // ツールバー、システムボタン
+            double borderHeight = mainWindow.ToolbarWrapper.ActualHeight + mainWindow.ToolbarWrapper.Margin.Top;
+            if (pt.Y < ptWnd.Y + h3 || pt.Y < ptWnd.Y + borderHeight)
+            {
+                mainWindow.ToolbarWrapper.Visibility = Visibility.Visible;
+                mainWindow.SystemButtonWrapper.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
+                mainWindow.SystemButtonWrapper.Visibility = Visibility.Hidden;
+            }
+
+            // シークバー
+            if (mainWindow.IsHorizontalSlide)
+            {
+                // 水平
+                if (pt.Y > ptWnd.Y + h3 * 2) ShowSeekbar();
+                else HideSeekbar();
+            }
+            else
+            {
+                // 垂直
+                if (pt.X > ptWnd.X + w3 * 2) ShowSeekbar();
+                else HideSeekbar();
             }
 
         }

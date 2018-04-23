@@ -22,7 +22,7 @@ namespace C_SlideShow
 
     public class BitmapPresenter
     {
-        public List<ImageFileInfo> FileInfo { get; set; }
+        public List<ImageFileInfo> ImgFileInfo { get; set; }
         public static string DummyFilePath = ":dummy";
         public int BitmapDecodePixelWidth { get; set; } = 640;
         public int NextIndex { get; set; }
@@ -38,7 +38,7 @@ namespace C_SlideShow
         {
             get
             {
-                return FileInfo.Count - numofDummyFileInfo;
+                return ImgFileInfo.Count - numofDummyFileInfo;
             }
         }
 
@@ -48,7 +48,7 @@ namespace C_SlideShow
             {
                 // ダミーであろうと関係なく返す
                 int idx = PrevIndex + 1;
-                if (idx > this.FileInfo.Count - 1) idx = 0;
+                if (idx > this.ImgFileInfo.Count - 1) idx = 0;
                 return idx;
             }
         }
@@ -58,7 +58,7 @@ namespace C_SlideShow
             {
                 // ダミーだったら対象外(0を返す)
                 int idx = PrevIndex + 1;
-                if (idx > this.FileInfo.Count - 1 - numofDummyFileInfo) idx = 0;
+                if (idx > this.ImgFileInfo.Count - 1 - numofDummyFileInfo) idx = 0;
                 return idx;
             }
         }
@@ -68,8 +68,8 @@ namespace C_SlideShow
             get
             {
                 int idx = PrevIndex + 1;
-                if (idx < this.FileInfo.Count - 1 - numofDummyFileInfo) return false;
-                else if (idx == this.FileInfo.Count) return false;
+                if (idx < this.ImgFileInfo.Count - 1 - numofDummyFileInfo) return false;
+                else if (idx == this.ImgFileInfo.Count) return false;
                 else return true;
             }
         }
@@ -80,7 +80,7 @@ namespace C_SlideShow
 
         public BitmapPresenter()
         {
-            FileInfo = new List<ImageFileInfo>();
+            ImgFileInfo = new List<ImageFileInfo>();
             NextIndex = 0;
             PrevIndex = 0;
             ReadType = BitmapReadType.File;
@@ -92,17 +92,17 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         public void InitPrevIndex(int firstIndex)
         {
-            if (FileInfo.Count < 1) return;
+            if (ImgFileInfo.Count < 1) return;
             PrevIndex = firstIndex - 1;
-            if (PrevIndex < 0) PrevIndex = FileInfo.Count - 1;
+            if (PrevIndex < 0) PrevIndex = ImgFileInfo.Count - 1;
         }
 
         public ImageFileInfo PickImageFileInfo(bool isPlayback)
         {
-            if (FileInfo.Count > 0)
+            if (ImgFileInfo.Count > 0)
             {
-                if (isPlayback) return FileInfo[PrevIndex];
-                else return FileInfo[NextIndex];
+                if (isPlayback) return ImgFileInfo[PrevIndex];
+                else return ImgFileInfo[NextIndex];
             }
             else return null;
         }
@@ -110,7 +110,7 @@ namespace C_SlideShow
 
         public int GetLastNoDeviationIndex(int grids)
         {
-            int idx = FileInfo.Count - grids;
+            int idx = ImgFileInfo.Count - grids;
             if (idx < 0) idx = 0;
             return idx;
         }
@@ -119,7 +119,7 @@ namespace C_SlideShow
         {
             int idx = CurrentIndex;
             int num = idx + 1;
-            int numMax = FileInfo.Count - numofDummyFileInfo;
+            int numMax = ImgFileInfo.Count - numofDummyFileInfo;
             if (numMax < 1) { num = 0; numMax = 0; }
             return String.Format("{0} / {1}", num, numMax);
         }
@@ -134,20 +134,20 @@ namespace C_SlideShow
             var filteredFiles = filePathes.Where(file => allowedExt.Any(ext => 
                 file.ToLower().EndsWith(ext)));
 
-            FileInfo.Clear();
+            ImgFileInfo.Clear();
             foreach (string imgPath in filteredFiles)
             {
                 //if (System.IO.File.Exists(imgPath))
                 ImageFileInfo imageFileInfo = new ImageFileInfo();
                 imageFileInfo.FilePath = imgPath;
                 //imageFileInfo.LastWriteTime = File.GetLastWriteTime(imgPath);
-                FileInfo.Add(imageFileInfo);
+                ImgFileInfo.Add(imageFileInfo);
             }
             this.ReadType = BitmapReadType.File;
 
 #if DEBUG
             sw.Stop();
-            Debug.WriteLine( FileInfo.Count + " / " + filePathes.Length
+            Debug.WriteLine( ImgFileInfo.Count + " / " + filePathes.Length
                 + " files info loaded"  + " time: " + sw.Elapsed);
 #endif
         }
@@ -158,7 +158,7 @@ namespace C_SlideShow
             {
                 this.zipArchive = ZipFile.OpenRead(filePath);
 
-                this.FileInfo.Clear();
+                this.ImgFileInfo.Clear();
                 
                 foreach(ZipArchiveEntry entory in this.zipArchive.Entries)
                 {
@@ -167,7 +167,7 @@ namespace C_SlideShow
                     {
                         ImageFileInfo fi = new ImageFileInfo(entory.FullName);
                         fi.LastWriteTime = entory.LastWriteTime;
-                        FileInfo.Add(fi);
+                        ImgFileInfo.Add(fi);
                     }
                 }
             }
@@ -193,12 +193,12 @@ namespace C_SlideShow
 
         public void GetLastWriteTimeFileInfo()
         {
-            if (FileInfo.Count < 1) return;
+            if (ImgFileInfo.Count < 1) return;
 
             DateTimeOffset dateDefault = new DateTimeOffset();
-            if(FileInfo[0].LastWriteTime.CompareTo(dateDefault) == 0)
+            if(ImgFileInfo[0].LastWriteTime.CompareTo(dateDefault) == 0)
             {
-                foreach(ImageFileInfo fi in FileInfo)
+                foreach(ImageFileInfo fi in ImgFileInfo)
                 {
                     if(fi.FilePath != DummyFilePath)
                     {
@@ -216,26 +216,26 @@ namespace C_SlideShow
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 #endif
-            if (FileInfo.Count < 1) return;
+            if (ImgFileInfo.Count < 1) return;
 
             switch (order)
             {
                 case FileReadingOrder.FileName:
-                    FileInfo = FileInfo.OrderBy(f => f.FilePath).ToList();
+                    ImgFileInfo = ImgFileInfo.OrderBy(f => f.FilePath).ToList();
                     break;
                 case FileReadingOrder.FileNameRev:
-                    FileInfo = FileInfo.OrderByDescending(f => f.FilePath).ToList();
+                    ImgFileInfo = ImgFileInfo.OrderByDescending(f => f.FilePath).ToList();
                     break;
                 case FileReadingOrder.LastWriteTime:
                     GetLastWriteTimeFileInfo();
-                    FileInfo = FileInfo.OrderByDescending(f => f.LastWriteTime).ToList();
+                    ImgFileInfo = ImgFileInfo.OrderByDescending(f => f.LastWriteTime).ToList();
                     break;
                 case FileReadingOrder.LastWriteTimeRev:
                     GetLastWriteTimeFileInfo();
-                    FileInfo = FileInfo.OrderBy(f => f.LastWriteTime).ToList();
+                    ImgFileInfo = ImgFileInfo.OrderBy(f => f.LastWriteTime).ToList();
                     break;
                 case FileReadingOrder.Random:
-                    FileInfo.Shuffle();
+                    ImgFileInfo.Shuffle();
                     break;
             }
 
@@ -249,7 +249,7 @@ namespace C_SlideShow
         }
 
 
-        public BitmapImage LoadBitmap(string filePath)
+        public BitmapImage LoadBitmap(string filePath, bool bLoadOrginalPxcelSize)
         {
             if (filePath == DummyFilePath || filePath == "") return null;
 
@@ -273,7 +273,8 @@ namespace C_SlideShow
                         source.BeginInit();
                         source.CacheOption = BitmapCacheOption.OnLoad;
                         source.CreateOptions = BitmapCreateOptions.None;
-                        source.DecodePixelWidth = BitmapDecodePixelWidth;
+                        if( !bLoadOrginalPxcelSize)
+                            source.DecodePixelWidth = BitmapDecodePixelWidth;
                         source.StreamSource = memoryStream;
                         source.EndInit();
                         source.Freeze();
@@ -293,7 +294,8 @@ namespace C_SlideShow
                     source.BeginInit();
                     source.CacheOption = BitmapCacheOption.OnLoad;
                     source.CreateOptions = BitmapCreateOptions.None;
-                    source.DecodePixelWidth = BitmapDecodePixelWidth;
+                    if( !bLoadOrginalPxcelSize)
+                        source.DecodePixelWidth = BitmapDecodePixelWidth;
                     source.UriSource = new Uri(filePath);
                     source.EndInit();
                     source.Freeze();
@@ -318,22 +320,22 @@ namespace C_SlideShow
         /// <param name="grids"></param>
         public void FillFileInfoVacancyWithDummy(int grids)
         {
-            if (FileInfo.Count < 1) return;
+            if (ImgFileInfo.Count < 1) return;
 
             // 初期化
             numofDummyFileInfo = 0;
-            FileInfo.RemoveAll(fi => fi.FilePath == DummyFilePath);
+            ImgFileInfo.RemoveAll(fi => fi.FilePath == DummyFilePath);
 
-            while(FileInfo.Count % grids != 0)
+            while(ImgFileInfo.Count % grids != 0)
             {
-                FileInfo.Add(new ImageFileInfo(DummyFilePath));
+                ImgFileInfo.Add(new ImageFileInfo(DummyFilePath));
                 numofDummyFileInfo++;
             }
         }
 
         public void SlideIndex(bool isPlayback)
         {
-            if (FileInfo.Count > 0)
+            if (ImgFileInfo.Count > 0)
             {
                 if (isPlayback)
                 {
@@ -351,25 +353,25 @@ namespace C_SlideShow
         public void IncrementNextIndex()
         {
             NextIndex++;
-            if (NextIndex > FileInfo.Count - 1) NextIndex = 0;
+            if (NextIndex > ImgFileInfo.Count - 1) NextIndex = 0;
         }
 
         public void DecrementNextIndex()
         {
             NextIndex--;
-            if (NextIndex < 0) NextIndex = FileInfo.Count - 1;
+            if (NextIndex < 0) NextIndex = ImgFileInfo.Count - 1;
         }
 
         public void IncrementPrevIndex()
         {
             PrevIndex++;
-            if (PrevIndex > FileInfo.Count - 1) PrevIndex = 0;
+            if (PrevIndex > ImgFileInfo.Count - 1) PrevIndex = 0;
         }
 
         public void DecrementPrevIndex()
         {
             PrevIndex--;
-            if (PrevIndex < 0) PrevIndex = FileInfo.Count - 1;
+            if (PrevIndex < 0) PrevIndex = ImgFileInfo.Count - 1;
         }
 
 

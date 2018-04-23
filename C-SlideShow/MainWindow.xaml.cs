@@ -26,6 +26,17 @@ using Forms = System.Windows.Forms;
 namespace C_SlideShow
 {
     /// <summary>
+    /// PreviewMouseRightButtonDownイベントからUpまでの付随情報
+    /// 右クリック押しながらのマウス操作(ホイール等)と右クリック操作の切り分けに利用
+    /// </summary>
+    public class PrevMouseRButtonDownEventContext
+    {
+        public bool IsPressed { get; set; } = false;
+        public bool Handled { get; set; } = false;
+        //public Point Position { get; set; } = new Point(0, 0);
+    }
+
+    /// <summary>
     /// MainWindow.xaml の相互作用ロジック
     /// </summary>
     public partial class MainWindow : Window
@@ -38,6 +49,7 @@ namespace C_SlideShow
         bool ignoreSliderValueChangeEvent = false; // SliderのValue変更時にイベントを飛ばさないフラグ
         bool ignoreResizeEvent = false;
         bool isSeekbarDragStarted = false;
+        PrevMouseRButtonDownEventContext prevMouseRButtonDownEventContext = new PrevMouseRButtonDownEventContext();
 
         UIHelper uiHelper;
         Rect windowRectBeforeFullScreen = new Rect(50, 50, 400, 300);
@@ -75,6 +87,20 @@ namespace C_SlideShow
                     / ( tileContainers[0].Height );
             }
         }
+        public bool IsPlaying
+        {
+            get
+            {
+                if (intervalSlideTimer.IsEnabled || tileContainers[0].IsContinuousSliding)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
 
 
 
@@ -101,7 +127,11 @@ namespace C_SlideShow
             InitializeComponent();
 
             // debug
-            //Setting.TempProfile.TilePadding = 10;
+            //Setting.TempProfile.TilePadding = 3;
+            //this.TileContainer1.PreviewMouseDoubleClick += (s, e) =>
+            //{
+            //    MessageBox.Show("hoge");
+            //};
 
             // init
             InitControls();
@@ -126,6 +156,9 @@ namespace C_SlideShow
 
             MenuItem_MatrixSelecter.ApplyTemplate();
             matrixSelecter = MenuItem_MatrixSelecter.Template.FindName("MatrixSelecter", MenuItem_MatrixSelecter) as MatrixSelecter;
+
+            // タイル拡大パネル
+            TileExpantionPanel.MainWindow = this;
 
             // スライドの設定ダイアログ
             MenuItem_SlideSettingDialog.ApplyTemplate();
@@ -158,6 +191,7 @@ namespace C_SlideShow
             {
                 tc.BitmapPresenter = bitmapPresenter;
             }
+            this.TileExpantionPanel.BitmapPresenter = bitmapPresenter;
         }
 
         private void LoadProfile(Profile profile)
@@ -221,7 +255,7 @@ namespace C_SlideShow
 
             // load image
             TileContainer.ReleaseBitmapLoadThread();
-            if(bitmapPresenter.FileInfo.Count > 0)
+            if(bitmapPresenter.ImgFileInfo.Count > 0)
             {
                 foreach(TileContainer tc in tileContainers)
                 {
@@ -323,13 +357,13 @@ namespace C_SlideShow
             ignoreSliderValueChangeEvent = false;
         }
 
-        private void StartSlideShow()
+        public void StartSlideShow()
         {
             // ファイル無し
-            if (bitmapPresenter.FileInfo.Count < 1) return;
+            if (bitmapPresenter.ImgFileInfo.Count < 1) return;
 
             // 今再生中
-            if (intervalSlideTimer.IsEnabled || tileContainers[0].IsContinuousSliding) return;
+            if (IsPlaying) return;
 
             if(Setting.TempProfile.SlidePlayMethod == SlidePlayMethod.Continuous)
             {
@@ -358,7 +392,7 @@ namespace C_SlideShow
         public void StartOperationSlide(bool isPlayback, bool slideByOneImage, int moveTime)
         {
             // ファイル無し
-            if (bitmapPresenter.FileInfo.Count < 1) return;
+            if (bitmapPresenter.ImgFileInfo.Count < 1) return;
 
             // インターバルスライド中なら、停止してスライド処理続行
             if (intervalSlideTimer.IsEnabled) StopSlideShow();
@@ -409,7 +443,7 @@ namespace C_SlideShow
         private void StartIntervalSlide(bool slideByOneImage, int moveTime)
         {
             // ファイル無し
-            if (bitmapPresenter.FileInfo.Count < 1) return;
+            if (bitmapPresenter.ImgFileInfo.Count < 1) return;
 
             // コンテナがずれているかどうか
             bool isNoDeviation = tileContainers.All(c =>
@@ -612,14 +646,10 @@ namespace C_SlideShow
 
 
             // 再生 / 停止
-            if (intervalSlideTimer.IsEnabled)
+            if (IsPlaying)
             {
                 Toolbar_Play_Image.Source = new BitmapImage(new Uri("Resources/stop.png", UriKind.Relative));
 
-            }
-            else if (tileContainers[0].IsContinuousSliding)
-            {
-                Toolbar_Play_Image.Source = new BitmapImage(new Uri("Resources/stop.png", UriKind.Relative));
             }
             else
             {
@@ -706,6 +736,8 @@ namespace C_SlideShow
                 SystemButton_Maximize_Image.Source = 
                     new BitmapImage(new Uri("Resources/normalize.png", UriKind.Relative));
 
+                // 拡大パネル
+                if( TileExpantionPanel.IsShowing ) TileExpantionPanel.FitToFullScreenWindow();
             }
 
         }
@@ -817,5 +849,27 @@ namespace C_SlideShow
             ChangeCurrentImageIndex(0);
         }
 
+        public List<TileContainer> GetTileContainersInCurrentOrder()
+        {
+            List<TileContainer> containersInCurrentOrder;
+            switch (Setting.TempProfile.SlideDirection)
+            {
+                case SlideDirection.Left:
+                default:
+                    containersInCurrentOrder = tileContainers.OrderBy(c => c.Margin.Left).ToList();
+                    break;
+                case SlideDirection.Top:
+                    containersInCurrentOrder = tileContainers.OrderBy(c => c.Margin.Top).ToList();
+                    break;
+                case SlideDirection.Right:
+                    containersInCurrentOrder = tileContainers.OrderByDescending(c => c.Margin.Left).ToList();
+                    break;
+                case SlideDirection.Bottom:
+                    containersInCurrentOrder = tileContainers.OrderByDescending(c => c.Margin.Top).ToList();
+                    break;
+            }
+
+            return containersInCurrentOrder;
+        }
     }
 }

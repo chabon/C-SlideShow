@@ -15,12 +15,18 @@ namespace C_SlideShow
     [DataContract(Name = "AppSetting")]
     public class AppSetting
     {
+        // 一時的プロファイル
         [DataMember]
         public Profile TempProfile { get; set; }
+
+        // ダイアログには無い設定
+        [DataMember]
+        public bool ShowFileInfoInTileExpantionPanel { get; set; }
 
         public AppSetting()
         {
             TempProfile = new Profile();
+            ShowFileInfoInTileExpantionPanel = false;
         }
 
         // 既定値(xmlファイルデシリアライズ時に呼ばれる)

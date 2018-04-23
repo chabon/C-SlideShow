@@ -67,6 +67,9 @@ namespace C_SlideShow
             {
                 if (ignoreResizeEvent) return;
 
+                // 画像拡大パネルのサイズ更新
+                if( TileExpantionPanel.IsShowing ) TileExpantionPanel.FitToMainWindow();
+
                 // アス比非固定時
                 if( Setting.TempProfile.NonFixAspectRatio )
                 {
@@ -74,23 +77,7 @@ namespace C_SlideShow
                     Profile pf = Setting.TempProfile;
 
                     // 現在の順番でコンテナを取得
-                    List<TileContainer> currentContainers;
-                    switch (pf.SlideDirection)
-                    {
-                        case SlideDirection.Left:
-                        default:
-                            currentContainers = tileContainers.OrderBy(c => c.Margin.Left).ToList();
-                            break;
-                        case SlideDirection.Top:
-                            currentContainers = tileContainers.OrderBy(c => c.Margin.Top).ToList();
-                            break;
-                        case SlideDirection.Right:
-                            currentContainers = tileContainers.OrderByDescending(c => c.Margin.Left).ToList();
-                            break;
-                        case SlideDirection.Bottom:
-                            currentContainers = tileContainers.OrderByDescending(c => c.Margin.Top).ToList();
-                            break;
-                    }
+                    List<TileContainer> containersInCurrentOrder = GetTileContainersInCurrentOrder();
                     //Debug.WriteLine("Current top container: " + currentContainers[0].Order);
 
                     // タイルサイズ(アス比)、コンテナサイズの決定
@@ -110,27 +97,27 @@ namespace C_SlideShow
                     }
 
                     // 位置を正規化
-                    currentContainers[0].Margin = new Thickness(0);
+                    containersInCurrentOrder[0].Margin = new Thickness(0);
                     double containerWidth = tileContainers[0].Width;
                     double containerHeight = tileContainers[0].Height;
                     switch( pf.SlideDirection )
                     {
                         case SlideDirection.Left:
                         default:
-                            currentContainers[1].Margin = new Thickness(containerWidth, 0, 0, 0);
-                            currentContainers[2].Margin = new Thickness(2 * containerWidth, 0, 0, 0);
+                            containersInCurrentOrder[1].Margin = new Thickness(containerWidth, 0, 0, 0);
+                            containersInCurrentOrder[2].Margin = new Thickness(2 * containerWidth, 0, 0, 0);
                             break;
                         case SlideDirection.Top:
-                            currentContainers[1].Margin = new Thickness(0, containerHeight, 0, 0);
-                            currentContainers[2].Margin = new Thickness(0, 2 * containerHeight, 0, 0);
+                            containersInCurrentOrder[1].Margin = new Thickness(0, containerHeight, 0, 0);
+                            containersInCurrentOrder[2].Margin = new Thickness(0, 2 * containerHeight, 0, 0);
                             break;
                         case SlideDirection.Right:
-                            currentContainers[1].Margin = new Thickness(-containerWidth, 0, 0, 0);
-                            currentContainers[2].Margin = new Thickness(-2 * containerWidth, 0, 0, 0);
+                            containersInCurrentOrder[1].Margin = new Thickness(-containerWidth, 0, 0, 0);
+                            containersInCurrentOrder[2].Margin = new Thickness(-2 * containerWidth, 0, 0, 0);
                             break;
                         case SlideDirection.Bottom:
-                            currentContainers[1].Margin = new Thickness(0, -containerHeight, 0, 0);
-                            currentContainers[2].Margin = new Thickness(0, -2 * containerHeight, 0, 0);
+                            containersInCurrentOrder[1].Margin = new Thickness(0, -containerHeight, 0, 0);
+                            containersInCurrentOrder[2].Margin = new Thickness(0, -2 * containerHeight, 0, 0);
                             break;
                     }
 
@@ -166,6 +153,7 @@ namespace C_SlideShow
             this.MouseWheel += (s, e) =>
             {
                 // 右クリック押しながらで、拡大縮小
+                // --------------------------------
                 if (!Setting.TempProfile.IsFullScreenMode)
                 {
                     short stateR = Win32.GetAsyncKeyState(Win32.VK_RBUTTON);
@@ -183,9 +171,14 @@ namespace C_SlideShow
                             this.Height = Height * 0.9;
                             UpdateWindowSize();
                         }
+                        prevMouseRButtonDownEventContext.Handled = true;
                         return;
                     }
                 }
+
+                // スライド操作
+                // --------------------------------
+                if( TileExpantionPanel.IsShowing ) return;
 
                 bool isPlayback; // 巻き戻しかどうか
                 if (e.Delta > 0) isPlayback = true;  // wheel up
@@ -196,6 +189,56 @@ namespace C_SlideShow
 
                 StartOperationSlide(isPlayback, slideByOneImage, 300);
             };
+
+            // 右クリックの制御
+            this.PreviewMouseRightButtonDown += (s, e) =>
+            {
+                prevMouseRButtonDownEventContext.IsPressed = true;
+                prevMouseRButtonDownEventContext.Handled = false;
+            };
+
+            this.PreviewMouseRightButtonUp += (s, e) =>
+            {
+                prevMouseRButtonDownEventContext.IsPressed = false;
+
+                if( prevMouseRButtonDownEventContext.Handled )
+                {
+                    e.Handled = true;
+                    return;
+                }
+                else
+                {
+                    // 画像拡大パネルの表示
+                    if( TileExpantionPanel.IsShowing ) return;
+                    try
+                    {
+                        DependencyObject source = e.OriginalSource as DependencyObject;
+                        if( source == null ) return;
+
+                        // クリックされたTileContainer
+                        TileContainer tc = VisualTreeUtil.FindAncestor<TileContainer>(source);
+                        if( tc == null ) return;
+
+                        // クリックされたBorder
+                        Border border;
+                        if( e.OriginalSource is Border ) border = e.OriginalSource as Border;
+                        else
+                        {
+                            border = VisualTreeUtil.FindAncestor<Border>(source);
+                        }
+                        if( border == null ) return;
+
+                        // 紐づけられているTileオブジェクトを特定
+                        Tile targetTile = tc.Tiles.First(t => t.Border == border);
+                        if( targetTile == null ) return;
+
+                        // 表示
+                        TileExpantionPanel.Show(targetTile);
+                    }
+                    catch { }
+                }
+            };
+
 
             this.Seekbar.ValueChanged += (s, e) =>
             {
@@ -345,16 +388,10 @@ namespace C_SlideShow
         private void Toolbar_Play_Click(object sender, RoutedEventArgs e)
         {
             // 再生中だったら停止
-            if(tileContainers[0].IsContinuousSliding || intervalSlideTimer.IsEnabled)
-            {
-                StopSlideShow();
-                return;
-            }
-            else
-            {
-                // 再生
-                StartSlideShow();
-            }
+            if(IsPlaying) StopSlideShow();
+
+            // 再生
+            else StartSlideShow();
         }
 
 
