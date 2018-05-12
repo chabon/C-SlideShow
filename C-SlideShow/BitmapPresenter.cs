@@ -167,6 +167,7 @@ namespace C_SlideShow
                     {
                         ImageFileInfo fi = new ImageFileInfo(entory.FullName);
                         fi.LastWriteTime = entory.LastWriteTime;
+                        fi.Length = entory.Length;
                         ImgFileInfo.Add(fi);
                     }
                 }
