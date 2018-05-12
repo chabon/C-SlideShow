@@ -293,8 +293,15 @@ namespace C_SlideShow
 
             // ソート
             Profile profile = Setting.TempProfile;
-            if (profile.FileReadingOrder != FileReadingOrder.FileName)
+            if(bitmapPresenter.ReadType == BitmapReadType.File )
+            {
+                if (profile.FileReadingOrder != FileReadingOrder.FileName)
+                    bitmapPresenter.Sort(profile.FileReadingOrder);
+            }
+            else
+            {
                 bitmapPresenter.Sort(profile.FileReadingOrder);
+            }
         }
 
         private void InitSeekbar()
