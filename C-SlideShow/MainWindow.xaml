@@ -13,7 +13,7 @@
         AllowDrop="True"
         Height="480" 
         Width="640"
-        MinWidth="190"
+        MinWidth="200"
         MinHeight="150"
         
         >

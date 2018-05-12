@@ -48,16 +48,27 @@ namespace C_SlideShow
             Profile pf = mainWindow.Setting.TempProfile;
 
             // ウインドウ幅が狭い時は、ツールバー位置を調整
-            int param = 490;
-            if(mainWindow.Width < param)
+            int p1 = 490;
+            if(mainWindow.Width < p1)
             {
                 mainWindow.ToolbarWrapper.HorizontalAlignment = HorizontalAlignment.Left;
                 mainWindow.ToolbarWrapper.Margin = new Thickness(10, 10, 80, 0);
+
+                // ツールバー縮小
+                int p2 = 350;
+                if(mainWindow.Width < p2 )
+                {
+                    double scale = mainWindow.Width / p2;
+                    this.mainWindow.ToolbarWrapper.LayoutTransform = new ScaleTransform(scale, scale);
+                }
             }
             else
             {
                 mainWindow.ToolbarWrapper.HorizontalAlignment = HorizontalAlignment.Center;
                 mainWindow.ToolbarWrapper.Margin = new Thickness(10, 10, 10, 0);
+
+                // ツールバー等倍
+                this.mainWindow.ToolbarWrapper.LayoutTransform = new ScaleTransform(1.0, 1.0);
             }
 
             // マウスボタンが押されているか(リサイズ中かどうか)チェック
