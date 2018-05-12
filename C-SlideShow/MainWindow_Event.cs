@@ -37,7 +37,11 @@ namespace C_SlideShow
             /* ---------------------------------------------------- */
 
             // ウインドウ全体でドラッグ可能に
-            this.MouseLeftButtonDown += (sender, e) => this.DragMove();
+            this.MouseLeftButtonDown += (sender, e) =>
+            {
+                if( Setting.TempProfile.IsFullScreenMode ) return;
+                this.DragMove();
+            };
             
 
             MenuItem_Matrix.SubmenuOpened += (s, e) =>
