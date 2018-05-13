@@ -826,7 +826,7 @@ namespace C_SlideShow
                 if( Setting.TempProfile.UsePlaidBackground )
                 {
                     this.Bg_ForTransparencySetting.Background = Util.CreatePlaidBrush(
-                        pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground, 0.05);
+                        pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
                 }
                 else
                     this.Bg_ForTransparencySetting.Background = new SolidColorBrush(bkColor);
@@ -841,7 +841,7 @@ namespace C_SlideShow
                 if( Setting.TempProfile.UsePlaidBackground )
                 {
                     this.BaseGrid.Background = Util.CreatePlaidBrush(
-                        pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground, 0.05);
+                        pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
                 }
                 else
                     this.BaseGrid.Background = new SolidColorBrush(bkColor);

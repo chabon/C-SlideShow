@@ -83,8 +83,7 @@ namespace C_SlideShow
             // 表示
             ExpandedBorder.BorderBrush = new SolidColorBrush(pf.GridLineColor);
             ExpandedBorder.Background = Util.CreatePlaidBrush(
-                pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground, 
-                0.05 * MainWindow.Setting.TempProfile.NumofCol);
+                pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
             this.Visibility = Visibility.Visible;
 
             // ファイル情報のテキストを更新
