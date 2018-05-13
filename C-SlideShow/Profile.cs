@@ -104,10 +104,10 @@ namespace C_SlideShow
         public bool AllowTransparency { get; set; }
 
         [DataMember]
-        public double BaseGridOpacity { get; set; }
+        public double OverallOpacity { get; set; }
 
         [DataMember]
-        public bool ApplyOpacityToAlphaChannelOnly { get; set; }
+        public double BackgroundOpacity { get; set; }
 
         [DataMember]
         public Color BaseGridBackgroundColor { get; set; }
@@ -181,8 +181,8 @@ namespace C_SlideShow
 
             // その他の設定_全般
             AllowTransparency = false;
-            BaseGridOpacity = 0.5;
-            ApplyOpacityToAlphaChannelOnly = false;
+            OverallOpacity = 0.5;
+            BackgroundOpacity = 1.0;
             BaseGridBackgroundColor = Colors.White;
             UsePlaidBackground = false;
             PairColorOfPlaidBackground = Colors.Gray;
@@ -206,9 +206,9 @@ namespace C_SlideShow
         public void DefaultDeserializing(StreamingContext sc)
         {
             //WindowRect = new Rect(50, 50, 400, 300);
+            //PairColorOfPlaidBackground = Colors.Gray;
             AspectRatioH = 4;
             AspectRatioV = 3;
-            PairColorOfPlaidBackground = Colors.Gray;
         }
 
     }

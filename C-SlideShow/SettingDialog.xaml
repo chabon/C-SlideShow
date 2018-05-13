@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:C_SlideShow"
-             mc:Ignorable="d" d:DesignWidth="247" Height="240">
+             mc:Ignorable="d" d:DesignWidth="257" Height="240">
     <Grid>
-        <TabControl TabStripPlacement="Bottom" Width="250" Height="230" VerticalAlignment="Top" >
+        <TabControl TabStripPlacement="Bottom" Width="260" Height="230" VerticalAlignment="Top" >
             <TabItem Header="全般" Width="50">
                 <StackPanel Margin="10,4,10,5">
                     <GroupBox Header="透過" Padding="3">
@@ -16,17 +16,23 @@
                                       Margin="2,2,8,2"
                                       ToolTip="有効にすると拡大時の負荷が大きくなります"
                                       >透過を有効にする</CheckBox>
-                            <StackPanel Margin="20,2,0,8" Orientation="Horizontal">
-                                <TextBlock>不透明度</TextBlock>
-                                <Slider x:Name="BaseGridOpacity"
-                                        ValueChanged="BaseGridOpacity_ValueChanged"
-                                        Maximum="99" Minimum="0"
+                            <StackPanel Margin="6,2,0,8" Orientation="Horizontal">
+                                <TextBlock>不透明度(全体)</TextBlock>
+                                <Slider x:Name="OverallOpacity"
+                                        ValueChanged="OverallOpacity_ValueChanged"
+                                        Maximum="100" Minimum="0"
                                         Margin="6,0" Width="100"></Slider>
-                                <TextBlock x:Name="Text_BaseGridOpacity">100</TextBlock>
+                                <TextBlock x:Name="Text_OverallOpacity">100</TextBlock>
                             </StackPanel>
-                            <CheckBox x:Name="ApplyOpacityToAlphaChannelOnly"
-                                      Click="ApplyOpacityToAlphaChannelOnly_Click"
-                                      Margin="20,0,0,5">アルファチャンネルのみに適用</CheckBox>
+                            <StackPanel Margin="6,2,0,8" Orientation="Horizontal">
+                                <TextBlock>不透明度(背景)</TextBlock>
+                                <Slider x:Name="BackgroundOpacity"
+                                        ValueChanged="BackgroundOpacity_ValueChanged"
+                                        Maximum="100" Minimum="0"
+                                        Margin="6,0" Width="100"></Slider>
+                                <TextBlock x:Name="Text_BackgroundOpacity">100</TextBlock>
+                            </StackPanel>
+
                         </StackPanel>
                     </GroupBox>
 

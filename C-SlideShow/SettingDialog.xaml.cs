@@ -46,15 +46,13 @@ namespace C_SlideShow
             else
                 AllowTransparency.IsChecked = false;
 
-            // 背景の不透明度
-            BaseGridOpacity.Value = (int)( pf.BaseGridOpacity * 100 );
-            Text_BaseGridOpacity.Text = ( (int)BaseGridOpacity.Value ).ToString();
+            // 全体の不透明度
+            OverallOpacity.Value = (int)( pf.OverallOpacity * 100 );
+            Text_OverallOpacity.Text = ( (int)OverallOpacity.Value ).ToString();
 
-            // アルファチャンネルのみに適用
-            if (pf.ApplyOpacityToAlphaChannelOnly)
-                ApplyOpacityToAlphaChannelOnly.IsChecked = true;
-            else
-                ApplyOpacityToAlphaChannelOnly.IsChecked = false;
+            // 背景の不透明度
+            BackgroundOpacity.Value = (int)( pf.BackgroundOpacity * 100 );
+            Text_BackgroundOpacity.Text = ( (int)BackgroundOpacity.Value ).ToString();
 
             // 背景色
             Border_BaseGridBackgroundColor.Background =
@@ -96,18 +94,18 @@ namespace C_SlideShow
         {
             if (Setting.TempProfile.AllowTransparency)
             {
-                BaseGridOpacity.IsEnabled = true;
-                ApplyOpacityToAlphaChannelOnly.IsEnabled = true;
+                OverallOpacity.IsEnabled = true;
+                BackgroundOpacity.IsEnabled = true;
             }
             else
             {
-                BaseGridOpacity.IsEnabled = false;
-                ApplyOpacityToAlphaChannelOnly.IsEnabled = false;
+                OverallOpacity.IsEnabled = false;
+                BackgroundOpacity.IsEnabled = false;
             }
         }
 
 
-        // 背景の透過を有効
+        // 透過を有効
         private void AllowTransparency_Click(object sender, RoutedEventArgs e)
         {
             if (isInitializing) return;
@@ -120,28 +118,29 @@ namespace C_SlideShow
             mainWindow.ApplyAllowTransparency();
         }
 
-        // 背景の不透明度
-        private void BaseGridOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        // 画像の不透明度
+        private void OverallOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (isInitializing) return;
 
-            Text_BaseGridOpacity.Text = ( (int)BaseGridOpacity.Value ).ToString();
-            double param = BaseGridOpacity.Value / 100;
+            Text_OverallOpacity.Text = ( (int)OverallOpacity.Value ).ToString();
+            double param = OverallOpacity.Value / 100;
             if (param < 0.005) param = 0.005;
-            Setting.TempProfile.BaseGridOpacity = param;
+            Setting.TempProfile.OverallOpacity = param;
 
             mainWindow.ApplyColorAndOpacitySetting();
         }
 
-        // アルファチャンネルのみに適用
-        private void ApplyOpacityToAlphaChannelOnly_Click(object sender, RoutedEventArgs e)
+
+        // 背景の不透明度
+        private void BackgroundOpacity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (isInitializing) return;
 
-            if ((bool)ApplyOpacityToAlphaChannelOnly.IsChecked)
-                Setting.TempProfile.ApplyOpacityToAlphaChannelOnly = true;
-            else
-                Setting.TempProfile.ApplyOpacityToAlphaChannelOnly = false;
+            Text_BackgroundOpacity.Text = ( (int)BackgroundOpacity.Value ).ToString();
+            double param = BackgroundOpacity.Value / 100;
+            if (param < 0.005) param = 0.005;
+            Setting.TempProfile.BackgroundOpacity = param;
 
             mainWindow.ApplyColorAndOpacitySetting();
         }
@@ -240,8 +239,6 @@ namespace C_SlideShow
                 mainWindow.UpdateUI();
             }
         }
-
-
 
     }
 }

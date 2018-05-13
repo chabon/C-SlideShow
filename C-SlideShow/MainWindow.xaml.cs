@@ -815,32 +815,23 @@ namespace C_SlideShow
             Color bkColor = Setting.TempProfile.BaseGridBackgroundColor;
             if (this.AllowsTransparency)
             {
-                if (Setting.TempProfile.ApplyOpacityToAlphaChannelOnly)
-                {
-                    // アルファチャンネルのみ適用
-                    this.BaseGrid_ForAlphaChannel.Visibility = Visibility.Visible;
-                    if( Setting.TempProfile.UsePlaidBackground )
-                        this.BaseGrid_ForAlphaChannel.Background = CreatePlaidBrush();
-                    else
-                        this.BaseGrid_ForAlphaChannel.Background = new SolidColorBrush(bkColor);
-                    this.BaseGrid_ForAlphaChannel.Opacity = Setting.TempProfile.BaseGridOpacity;
-                    this.BaseGrid.Opacity = 1.0;
-                    this.BaseGrid.Background = new SolidColorBrush(Colors.Transparent);
-                }
+                // 透過有効時、透過設定時用背景Gridを有効に
+                this.Bg_ForTransparencySetting.Visibility = Visibility.Visible;
+                this.BaseGrid.Background = new SolidColorBrush(Colors.Transparent);
+
+                // 背景ブラシ
+                if( Setting.TempProfile.UsePlaidBackground )
+                    this.Bg_ForTransparencySetting.Background = CreatePlaidBrush();
                 else
-                {
-                    // 画像全域に適用
-                    this.BaseGrid_ForAlphaChannel.Visibility = Visibility.Hidden;
-                    if( Setting.TempProfile.UsePlaidBackground )
-                        this.BaseGrid.Background = CreatePlaidBrush();
-                    else
-                        this.BaseGrid.Background = new SolidColorBrush(bkColor);
-                    this.BaseGrid.Opacity = Setting.TempProfile.BaseGridOpacity;
-                }
+                    this.Bg_ForTransparencySetting.Background = new SolidColorBrush(bkColor);
+
+                // 不透明度
+                this.BaseGrid.Opacity = Setting.TempProfile.OverallOpacity;
+                this.Bg_ForTransparencySetting.Opacity = Setting.TempProfile.BackgroundOpacity;
             }
             else
             {
-                this.BaseGrid_ForAlphaChannel.Visibility = Visibility.Hidden;
+                this.Bg_ForTransparencySetting.Visibility = Visibility.Hidden;
                 if( Setting.TempProfile.UsePlaidBackground )
                     this.BaseGrid.Background = CreatePlaidBrush();
                 else
