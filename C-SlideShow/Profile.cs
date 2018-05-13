@@ -113,6 +113,12 @@ namespace C_SlideShow
         public Color BaseGridBackgroundColor { get; set; }
 
         [DataMember]
+        public bool UsePlaidBackground { get; set; }
+
+        [DataMember]
+        public Color PairColorOfPlaidBackground { get; set; }
+
+        [DataMember]
         public FileReadingOrder FileReadingOrder { get; set; }
 
         [DataMember]
@@ -178,6 +184,8 @@ namespace C_SlideShow
             BaseGridOpacity = 0.5;
             ApplyOpacityToAlphaChannelOnly = false;
             BaseGridBackgroundColor = Colors.White;
+            UsePlaidBackground = false;
+            PairColorOfPlaidBackground = Colors.Gray;
             TopMost = false;
             StartUp_OpenPrevFolder = true;
 
@@ -200,6 +208,7 @@ namespace C_SlideShow
             //WindowRect = new Rect(50, 50, 400, 300);
             AspectRatioH = 4;
             AspectRatioV = 3;
+            PairColorOfPlaidBackground = Colors.Gray;
         }
 
     }

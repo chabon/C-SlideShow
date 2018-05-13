@@ -269,6 +269,15 @@ namespace C_SlideShow
             // キーイベント（暫定的に）
             this.PreviewKeyDown += (s, e) =>
             {
+#if DEBUG
+                // debug用
+                if(e.Key == Key.T )
+                {
+                    Setting.TempProfile.UsePlaidBackground = !Setting.TempProfile.UsePlaidBackground;
+                    ApplyColorAndOpacitySetting();
+                }
+#endif
+
                 // alt + enter でフルスクリーン切り替え
                 //if (e.SystemKey == Key.LeftAlt && e.Key == Key.Enter)
                 //{

@@ -819,7 +819,10 @@ namespace C_SlideShow
                 {
                     // アルファチャンネルのみ適用
                     this.BaseGrid_ForAlphaChannel.Visibility = Visibility.Visible;
-                    this.BaseGrid_ForAlphaChannel.Background = new SolidColorBrush(bkColor);
+                    if( Setting.TempProfile.UsePlaidBackground )
+                        this.BaseGrid_ForAlphaChannel.Background = CreatePlaidBrush();
+                    else
+                        this.BaseGrid_ForAlphaChannel.Background = new SolidColorBrush(bkColor);
                     this.BaseGrid_ForAlphaChannel.Opacity = Setting.TempProfile.BaseGridOpacity;
                     this.BaseGrid.Opacity = 1.0;
                     this.BaseGrid.Background = new SolidColorBrush(Colors.Transparent);
@@ -828,16 +831,53 @@ namespace C_SlideShow
                 {
                     // 画像全域に適用
                     this.BaseGrid_ForAlphaChannel.Visibility = Visibility.Hidden;
-                    this.BaseGrid.Background = new SolidColorBrush(bkColor);
+                    if( Setting.TempProfile.UsePlaidBackground )
+                        this.BaseGrid.Background = CreatePlaidBrush();
+                    else
+                        this.BaseGrid.Background = new SolidColorBrush(bkColor);
                     this.BaseGrid.Opacity = Setting.TempProfile.BaseGridOpacity;
                 }
             }
             else
             {
                 this.BaseGrid_ForAlphaChannel.Visibility = Visibility.Hidden;
-                this.BaseGrid.Background = new SolidColorBrush(bkColor);
+                if( Setting.TempProfile.UsePlaidBackground )
+                    this.BaseGrid.Background = CreatePlaidBrush();
+                else
+                    this.BaseGrid.Background = new SolidColorBrush(bkColor);
                 this.BaseGrid.Opacity = 1.0;
             }
+        }
+
+        private DrawingBrush CreatePlaidBrush()
+        {
+            // Create a DrawingBrush and use it to
+            // paint the rectangle.
+            DrawingBrush drBrush = new DrawingBrush();
+
+            double sqSize = 1.0;
+            GeometryDrawing backgroundSquare =
+                new GeometryDrawing(
+                    new SolidColorBrush( Setting.TempProfile.BaseGridBackgroundColor ),
+                    null,
+                    new RectangleGeometry(new Rect(0, 0, sqSize * 2, sqSize * 2)));
+
+            GeometryGroup aGeometryGroup = new GeometryGroup();
+            aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, sqSize, sqSize)));
+            aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(sqSize, sqSize, sqSize, sqSize)));
+
+            SolidColorBrush checkerBrush = new SolidColorBrush(Setting.TempProfile.PairColorOfPlaidBackground);
+            GeometryDrawing checkers = new GeometryDrawing(checkerBrush, null, aGeometryGroup);
+
+            DrawingGroup checkersDrawingGroup = new DrawingGroup();
+            checkersDrawingGroup.Children.Add(backgroundSquare);
+            checkersDrawingGroup.Children.Add(checkers);
+
+            drBrush.Drawing = checkersDrawingGroup;
+            drBrush.Viewport = new Rect(0, 0, 0.05, 0.05);
+            drBrush.TileMode = TileMode.Tile;
+
+            return drBrush;
         }
 
         private void SaveWindowRect()
