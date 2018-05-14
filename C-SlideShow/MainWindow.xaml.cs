@@ -813,15 +813,21 @@ namespace C_SlideShow
         public void ApplyColorAndOpacitySetting()
         {
             Color bkColor = Setting.TempProfile.BaseGridBackgroundColor;
+            Profile pf = Setting.TempProfile;
+
             if (this.AllowsTransparency)
             {
+
                 // 透過有効時、透過設定時用背景Gridを有効に
                 this.Bg_ForTransparencySetting.Visibility = Visibility.Visible;
                 this.BaseGrid.Background = new SolidColorBrush(Colors.Transparent);
 
                 // 背景ブラシ
                 if( Setting.TempProfile.UsePlaidBackground )
-                    this.Bg_ForTransparencySetting.Background = CreatePlaidBrush();
+                {
+                    this.Bg_ForTransparencySetting.Background = Util.CreatePlaidBrush(
+                        pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground, 0.05);
+                }
                 else
                     this.Bg_ForTransparencySetting.Background = new SolidColorBrush(bkColor);
 
@@ -833,42 +839,14 @@ namespace C_SlideShow
             {
                 this.Bg_ForTransparencySetting.Visibility = Visibility.Hidden;
                 if( Setting.TempProfile.UsePlaidBackground )
-                    this.BaseGrid.Background = CreatePlaidBrush();
+                {
+                    this.BaseGrid.Background = Util.CreatePlaidBrush(
+                        pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground, 0.05);
+                }
                 else
                     this.BaseGrid.Background = new SolidColorBrush(bkColor);
                 this.BaseGrid.Opacity = 1.0;
             }
-        }
-
-        private DrawingBrush CreatePlaidBrush()
-        {
-            // Create a DrawingBrush and use it to
-            // paint the rectangle.
-            DrawingBrush drBrush = new DrawingBrush();
-
-            double sqSize = 1.0;
-            GeometryDrawing backgroundSquare =
-                new GeometryDrawing(
-                    new SolidColorBrush( Setting.TempProfile.BaseGridBackgroundColor ),
-                    null,
-                    new RectangleGeometry(new Rect(0, 0, sqSize * 2, sqSize * 2)));
-
-            GeometryGroup aGeometryGroup = new GeometryGroup();
-            aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(0, 0, sqSize, sqSize)));
-            aGeometryGroup.Children.Add(new RectangleGeometry(new Rect(sqSize, sqSize, sqSize, sqSize)));
-
-            SolidColorBrush checkerBrush = new SolidColorBrush(Setting.TempProfile.PairColorOfPlaidBackground);
-            GeometryDrawing checkers = new GeometryDrawing(checkerBrush, null, aGeometryGroup);
-
-            DrawingGroup checkersDrawingGroup = new DrawingGroup();
-            checkersDrawingGroup.Children.Add(backgroundSquare);
-            checkersDrawingGroup.Children.Add(checkers);
-
-            drBrush.Drawing = checkersDrawingGroup;
-            drBrush.Viewport = new Rect(0, 0, 0.05, 0.05);
-            drBrush.TileMode = TileMode.Tile;
-
-            return drBrush;
         }
 
         private void SaveWindowRect()

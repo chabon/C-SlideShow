@@ -85,6 +85,7 @@
       <DependentUpon>TileExpantionPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIHelper.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="VisualTreeUtil.cs" />
     <Compile Include="Win32.cs" />
     <Page Include="MainWindow.xaml">

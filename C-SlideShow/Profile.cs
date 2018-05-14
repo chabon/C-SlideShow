@@ -185,7 +185,7 @@ namespace C_SlideShow
             BackgroundOpacity = 1.0;
             BaseGridBackgroundColor = Colors.White;
             UsePlaidBackground = false;
-            PairColorOfPlaidBackground = Colors.Gray;
+            PairColorOfPlaidBackground = Colors.LightGray;
             TopMost = false;
             StartUp_OpenPrevFolder = true;
 

@@ -274,7 +274,29 @@ namespace C_SlideShow
                 if(e.Key == Key.T )
                 {
                     Setting.TempProfile.UsePlaidBackground = !Setting.TempProfile.UsePlaidBackground;
+                    Setting.TempProfile.PairColorOfPlaidBackground = Colors.LightGray;
                     ApplyColorAndOpacitySetting();
+                }
+                if(e.Key == Key.D1 )
+                {
+                    Profile pf = Setting.TempProfile;
+                    pf.TilePadding = Setting.TempProfile.TilePadding - 1;
+                    if( pf.TilePadding < 0 ) pf.TilePadding = 0;
+                    foreach(TileContainer tc in tileContainers )
+                    {
+                        tc.InitSize(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+                    }
+                    UpdateWindowSize();
+                }
+                if(e.Key == Key.D2 )
+                {
+                    Profile pf = Setting.TempProfile;
+                    pf.TilePadding = Setting.TempProfile.TilePadding + 1;
+                    foreach(TileContainer tc in tileContainers )
+                    {
+                        tc.InitSize(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+                    }
+                    UpdateWindowSize();
                 }
 #endif
 
