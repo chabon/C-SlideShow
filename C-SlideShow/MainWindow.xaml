@@ -28,9 +28,9 @@
 
     <Grid x:Name="MainGrid" Background="Transparent">
         <Grid x:Name="BaseGrid" Background="White">
+            <Grid x:Name="Bg_ForTransparencySetting" Background="White" Visibility="Hidden">
+            </Grid>
             <Grid x:Name="MainContent" Margin="5">
-                <Grid x:Name="Bg_ForTransparencySetting" Background="White" Visibility="Hidden">
-                </Grid>
                 <local:TileContainer
                     Order="0"
                     x:Name="TileContainer1"
