@@ -389,7 +389,7 @@ namespace C_SlideShow
                     tile.FilePath = iFileInfo.FilePath;
 
                     BitmapPresenter.SlideIndex(tile.ByPlayback);
-                    BitmapImage bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, false);
+                    var bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, false);
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>
@@ -432,7 +432,7 @@ namespace C_SlideShow
 #endif
                 foreach(Tile tile in Tiles)
                 {
-                    BitmapImage bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, false); // エラー時はnullが返る
+                    var bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, false); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>

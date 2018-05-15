@@ -246,7 +246,7 @@ namespace C_SlideShow
 
         private void LoadImage()
         {
-            BitmapImage bitmap = BitmapPresenter.LoadBitmap(targetTile.FilePath, true);
+            var bitmap = BitmapPresenter.LoadBitmap(targetTile.FilePath, true);
             if(bitmap != null)
                 this.ExpandedImage.Source = bitmap;
             else
@@ -280,7 +280,7 @@ namespace C_SlideShow
                 else
                     lastWriteTime = ifi.LastWriteTime;
 
-                BitmapImage bmp = (BitmapImage)this.ExpandedImage.Source;
+                BitmapSource bmp = (BitmapSource)this.ExpandedImage.Source;
 
                 newText += "ファイル名: " + Path.GetFileName(targetTile.FilePath) + "\n";
                 newText += "画像サイズ: " + length / 1024 + "KB\n";

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
@@ -22,16 +23,34 @@ namespace C_SlideShow
 
     public class BitmapPresenter
     {
+        public class ExifInfo
+        {
+            public Rotation Rotation;
+            public ScaleTransform ScaleTransform;
+
+            public ExifInfo()
+            {
+                Rotation = Rotation.Rotate0;
+                ScaleTransform = null;
+            }
+
+            public ExifInfo(Rotation _rotation, ScaleTransform st)
+            {
+                Rotation = _rotation;
+                ScaleTransform = st;
+            }
+        }
+
         public List<ImageFileInfo> ImgFileInfo { get; set; }
         public static string DummyFilePath = ":dummy";
         public int BitmapDecodePixelWidth { get; set; } = 640;
+        public bool ApplyRotateInfoFromExif { get; set; } = false;
         public int NextIndex { get; set; }
         public int PrevIndex { get; set; }
 
         string[] allowedExt = { ".jpg", ".png", ".jpeg", ".bmp", ".gif" };
         ZipArchive zipArchive;
 
-        #region property
         public BitmapReadType ReadType { get; set; }
 
         public int NumofImageFile
@@ -75,8 +94,6 @@ namespace C_SlideShow
         }
 
         int numofDummyFileInfo; // コンテナ内の隙間グリッド埋め用のダミー情報の数
-
-        #endregion
 
         public BitmapPresenter()
         {
@@ -250,7 +267,7 @@ namespace C_SlideShow
         }
 
 
-        public BitmapImage LoadBitmap(string filePath, bool bLoadOrginalPxcelSize)
+        public BitmapSource LoadBitmap(string filePath, bool bLoadOrginalPxcelSize)
         {
             if (filePath == DummyFilePath || filePath == "") return null;
 
@@ -263,24 +280,44 @@ namespace C_SlideShow
 
                 try
                 {
-                    //var zipStream = entory.Open();
-                    //var memoryStream = new MemoryStream();
                     using (var zipStream = entory.Open())
-                    using (var memoryStream = new MemoryStream())
+                    using (var ms_bitmap = new MemoryStream())
                     {
-                        zipStream.CopyTo(memoryStream);
-                        memoryStream.Position = 0;
+                        zipStream.CopyTo(ms_bitmap);
+                        ms_bitmap.Position = 0;
+
+                        // Exif情報取得
+                        ExifInfo ei;
+                        if( ApplyRotateInfoFromExif )
+                        {
+                            using (var ms_exif = new MemoryStream() )
+                            using (var zs_exif = entory.Open())
+                            {
+                                zs_exif.CopyTo(ms_exif);
+                                ms_exif.Position = 0;
+                                ei = GetExifInfo(ms_exif);
+                            }
+                        }
+                        else ei = new ExifInfo();
 
                         source.BeginInit();
                         source.CacheOption = BitmapCacheOption.OnLoad;
                         source.CreateOptions = BitmapCreateOptions.None;
                         if( !bLoadOrginalPxcelSize)
                             source.DecodePixelWidth = BitmapDecodePixelWidth;
-                        source.StreamSource = memoryStream;
+                        source.StreamSource = ms_bitmap;
+                        source.Rotation = ei.Rotation;
                         source.EndInit();
                         source.Freeze();
 
                         Debug.WriteLine("bitmap from zip: " + filePath);
+
+                        // Exifに反転もあった場合は、BitmapImage.Rotationで対応出来ないのでTransform
+                        if( ei.ScaleTransform != null )
+                        {
+                            return TransformBitmap(source, ei.ScaleTransform);
+                        }
+
                         return source;
                     }
                 }
@@ -292,16 +329,33 @@ namespace C_SlideShow
             {
                 try
                 {
+                    // Exif情報取得
+                    ExifInfo ei;
+                    if( ApplyRotateInfoFromExif )
+                    {
+                        FileStream fs = File.OpenRead(filePath);
+                        ei = GetExifInfo(fs);
+                    }
+                    else ei = new ExifInfo();
+
                     source.BeginInit();
                     source.CacheOption = BitmapCacheOption.OnLoad;
                     source.CreateOptions = BitmapCreateOptions.None;
                     if( !bLoadOrginalPxcelSize)
                         source.DecodePixelWidth = BitmapDecodePixelWidth;
                     source.UriSource = new Uri(filePath);
+                    source.Rotation = ei.Rotation;
                     source.EndInit();
                     source.Freeze();
 
                     Debug.WriteLine("bitmap from file: " + filePath);
+
+                    // Exifに反転もあった場合は、BitmapImage.Rotationで対応出来ないのでTransform
+                    if( ei.ScaleTransform != null )
+                    {
+                        return TransformBitmap(source, ei.ScaleTransform);
+                    }
+
                     return source;
                 }
                 catch
@@ -311,6 +365,61 @@ namespace C_SlideShow
             }
 
             return null;
+        }
+
+        public ExifInfo GetExifInfo(Stream st)
+        {
+            // Exif(メタデータ)取得
+            BitmapFrame bmf = BitmapFrame.Create(st);
+            var metaData = (bmf.Metadata) as BitmapMetadata;
+            //bmf.Freeze();
+            st.Position = 0;
+            st.Close();
+
+            //Debug.WriteLine("Metadata: " + source.Metadata);
+
+            string query = "/app1/ifd/exif:{uint=274}";
+            if (!metaData.ContainsQuery(query)) {
+                return new ExifInfo();
+            }
+
+            switch (Convert.ToUInt32(metaData.GetQuery(query))) {
+                case 1:
+                    // 回転・反転なし
+                    return new ExifInfo();
+                case 3:
+                    // 180度回転
+                    return new ExifInfo(Rotation.Rotate180, null);
+                case 6:
+                    // 時計回りに90度回転
+                    return new ExifInfo(Rotation.Rotate90, null);
+                case 8:
+                    // 時計回りに270度回転
+                    return new ExifInfo(Rotation.Rotate270, null);
+                case 2:
+                    // 水平方向に反転
+                    return new ExifInfo(Rotation.Rotate0, new ScaleTransform(-1, 1, 0, 0));
+                case 4:
+                    // 垂直方向に反転
+                    return new ExifInfo(Rotation.Rotate0, new ScaleTransform(1, -1, 0, 0));
+                case 5:
+                    // 時計回りに90度回転 + 水平方向に反転
+                    return new ExifInfo(Rotation.Rotate90, new ScaleTransform(-1, 1, 0, 0));
+                case 7:
+                    // 時計回りに270度回転 + 水平方向に反転
+                    return new ExifInfo(Rotation.Rotate270, new ScaleTransform(-1, 1, 0, 0));
+            }
+            return new ExifInfo();
+        }
+
+        BitmapSource TransformBitmap(BitmapSource source, Transform transform) {
+            var result = new TransformedBitmap();
+            result.BeginInit();
+            result.Source = source;
+            result.Transform = transform;
+            result.EndInit();
+            result.Freeze();
+            return result;
         }
 
 

@@ -52,6 +52,9 @@ namespace C_SlideShow
         [DataMember]
         public int BitmapDecodeTotalPixelWidth { get; set; }
 
+        [DataMember]
+        public bool ApplyRotateInfoFromExif { get; set; }
+
         // 行列設定
         [DataMember]
         public int NumofRow { get; set; }
@@ -158,6 +161,7 @@ namespace C_SlideShow
             TilePadding = 3;
             GridLineColor = Colors.LightGray;
             BitmapDecodeTotalPixelWidth = 1920;
+            ApplyRotateInfoFromExif = false;
 
             // アスペクト比設定
             AspectRatioH = 4;

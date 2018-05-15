@@ -241,6 +241,7 @@ namespace C_SlideShow
             if (firstIndex > bitmapPresenter.NumofImageFile - 1) firstIndex = 0;
             bitmapPresenter.NextIndex = firstIndex;
             bitmapPresenter.BitmapDecodePixelWidth = pf.BitmapDecodeTotalPixelWidth / pf.NumofCol;
+            bitmapPresenter.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif;
 
             // init container
             foreach(TileContainer tc in tileContainers)
