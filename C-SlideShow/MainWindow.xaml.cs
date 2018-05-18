@@ -813,7 +813,6 @@ namespace C_SlideShow
 
         public void ApplyColorAndOpacitySetting()
         {
-            Color bkColor = Setting.TempProfile.BaseGridBackgroundColor;
             Profile pf = Setting.TempProfile;
 
             if (this.AllowsTransparency)
@@ -830,7 +829,7 @@ namespace C_SlideShow
                         pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
                 }
                 else
-                    this.Bg_ForTransparencySetting.Background = new SolidColorBrush(bkColor);
+                    this.Bg_ForTransparencySetting.Background = new SolidColorBrush(pf.BaseGridBackgroundColor);
 
                 // 不透明度
                 this.BaseGrid.Opacity = Setting.TempProfile.OverallOpacity;
@@ -839,13 +838,13 @@ namespace C_SlideShow
             else
             {
                 this.Bg_ForTransparencySetting.Visibility = Visibility.Hidden;
-                if( Setting.TempProfile.UsePlaidBackground )
+                if( pf.UsePlaidBackground )
                 {
                     this.BaseGrid.Background = Util.CreatePlaidBrush(
                         pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
                 }
                 else
-                    this.BaseGrid.Background = new SolidColorBrush(bkColor);
+                    this.BaseGrid.Background = new SolidColorBrush(pf.BaseGridBackgroundColor);
                 this.BaseGrid.Opacity = 1.0;
             }
         }

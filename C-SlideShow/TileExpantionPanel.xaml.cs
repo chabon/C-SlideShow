@@ -80,10 +80,17 @@ namespace C_SlideShow
             LoadImage();
             if( ExpandedImage.Source == null ) return;
 
-            // 表示
+            // ボーダー色、背景色
             ExpandedBorder.BorderBrush = new SolidColorBrush(pf.GridLineColor);
-            ExpandedBorder.Background = Util.CreatePlaidBrush(
-                pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
+            if( pf.UsePlaidBackground )
+            {
+                ExpandedBorder.Background = Util.CreatePlaidBrush(
+                    pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
+            }
+            else
+                ExpandedBorder.Background = new SolidColorBrush(pf.BaseGridBackgroundColor);
+
+            // 表示
             this.Visibility = Visibility.Visible;
 
             // ファイル情報のテキストを更新
