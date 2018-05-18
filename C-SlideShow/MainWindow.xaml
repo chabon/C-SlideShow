@@ -97,17 +97,27 @@
                     </Style>
                 </WrapPanel.Resources>
 
-                <!-- フォルダ読み込み -->
-                <Button Style="{StaticResource ToolbarButtonStyle}"
-                        ToolTip="フォルダを指定して読み込み"
-                        x:Name="Toolbar_OpenFolder"
-                        Click="Toolbar_OpenFolder_Click"
-                        >
-                    <Image Source="Resources\folder_open.png" 
-                            RenderOptions.BitmapScalingMode="NearestNeighbor"
-                           Width="16" Height="16"
-                           ></Image>
-                </Button>
+                <!-- 読み込み -->
+                <Border Style="{StaticResource ToolbarMenuBorderStyle}">
+                    <Menu Style="{StaticResource ToolbarMenuStyle}">
+                        <MenuItem Style="{StaticResource ToolbarMenuItemStyle}"
+                            ToolTip="読み込み"
+                            x:Name="MenuItem_Load"
+                                  >
+                            <MenuItem.Header>
+                                <Border Width="25" Height="15">
+                                    <Image Source="Resources\folder_open.png" Width="16" Height="16"
+                                        RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                           ></Image>
+                                </Border>
+                            </MenuItem.Header>
+                                <MenuItem Header="フォルダを読み込み" Click="Toolbar_Load_Folder_Click" x:Name="Toolbar_Load_Folder"/>
+                                <MenuItem Header="ファイルを読み込み" Click="Toolbar_Load_File_Click" x:Name="Toolbar_Load_File"/>
+                                <Separator/>
+                                <MenuItem Header="再読込み" Click="Toolbar_Load_Reload_Click" x:Name="Toolbar_Load_Reload"/>
+                        </MenuItem>
+                    </Menu>
+                </Border>
 
                 <!-- 行列 -->
                 <Border Style="{StaticResource ToolbarMenuBorderStyle}">

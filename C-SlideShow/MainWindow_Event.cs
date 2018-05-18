@@ -381,7 +381,7 @@ namespace C_SlideShow
 
 
         // フォルダ読み込み
-        private void Toolbar_OpenFolder_Click(object sender, RoutedEventArgs e)
+        private void Toolbar_Load_Folder_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new Forms.FolderBrowserDialog();
             dlg.Description = "画像フォルダーを選択してください。";
@@ -396,6 +396,27 @@ namespace C_SlideShow
             }
         }
 
+        // ファイル読み込み
+        private void Toolbar_Load_File_Click(object sender, RoutedEventArgs e)
+        {
+            Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
+            ofd.Title = "ファイルを選択してください";
+            ofd.Multiselect = true;
+
+            if (ofd.ShowDialog() == Forms.DialogResult.OK)
+            {
+                this.ReadFiles(ofd.FileNames);
+                InitMainContent(0);
+            }
+        }
+
+        // 再読込み
+        private void Toolbar_Load_Reload_Click(object sender, RoutedEventArgs e)
+        {
+            SaveWindowRect();
+            this.Setting.TempProfile.LastPageIndex = 0;
+            LoadProfile(this.Setting.TempProfile);
+        }
 
         // グリッドのアスペクト比
         private void Toolbar_AspectRate_Click(object sender, RoutedEventArgs e)
