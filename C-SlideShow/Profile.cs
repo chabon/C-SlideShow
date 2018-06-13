@@ -142,7 +142,7 @@ namespace C_SlideShow
 
         // ダイアログにはない設定
         [DataMember]
-        public string FolderPath { get; set; }
+        public List<string> Path { get; set; }
 
         [DataMember]
         public int LastPageIndex { get; set; }
@@ -199,7 +199,7 @@ namespace C_SlideShow
             UI_SeekbarColor = Colors.Black;
 
             // ダイアログにはない設定
-            FolderPath = "";
+            Path = new List<string>();
             LastPageIndex = 0;
             WindowRect = new Rect(50, 50, 640, 480);
             IsFullScreenMode = false;
@@ -213,6 +213,7 @@ namespace C_SlideShow
             //PairColorOfPlaidBackground = Colors.Gray;
             AspectRatioH = 4;
             AspectRatioV = 3;
+            Path = new List<string>();
         }
 
     }

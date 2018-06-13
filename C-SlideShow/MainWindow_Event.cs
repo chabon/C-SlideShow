@@ -388,7 +388,7 @@ namespace C_SlideShow
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 bitmapPresenter.LoadFileInfoFromDir(dlg.SelectedPath);
-                Setting.TempProfile.FolderPath = dlg.SelectedPath;
+                Setting.TempProfile.Path.Add( dlg.SelectedPath );
 
                 string[] path = { dlg.SelectedPath };
                 ReadFiles(path);

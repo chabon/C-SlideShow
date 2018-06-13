@@ -204,7 +204,7 @@ namespace C_SlideShow
             profile.IsFullScreenMode = false; // todo (設定保存無視で、初期値固定)
 
             // 画像情報の読み込みとソート
-            String[] files = { profile.FolderPath };
+            String[] files = profile.Path.ToArray();
             ReadFiles(files);
 
             // メインコンテンツ作成
@@ -275,33 +275,36 @@ namespace C_SlideShow
 
         private void ReadFiles(string[] files)
         {
-            if (files != null) {
-                if(System.IO.Directory.Exists(files[0]))
+            Profile pf = Setting.TempProfile;
+            pf.Path.Clear();
+
+            if (files.Length > 0) {
+                if(System.IO.Directory.Exists(files[0])) // フォルダ
                 {
                     bitmapPresenter.LoadFileInfoFromDir(files[0]);
-                    Setting.TempProfile.FolderPath = files[0];
+                    pf.Path.Add(files[0]);
                 }
-                else if (System.IO.Path.GetExtension(files[0]) == ".zip")
+                else if (System.IO.Path.GetExtension(files[0]) == ".zip")  // ZIP
                 {
                     bitmapPresenter.LoadFileInfoFromZip(files[0]);
-                    Setting.TempProfile.FolderPath = files[0];
+                    pf.Path.Add(files[0]);
                 }
-                else
+                else // ファイル(複数可)
                 {
                     bitmapPresenter.LoadFileInfoFromFile(files);
+                    pf.Path = files.ToList();
                 }
             }
 
             // ソート
-            Profile profile = Setting.TempProfile;
             if(bitmapPresenter.ReadType == BitmapReadType.File )
             {
-                if (profile.FileReadingOrder != FileReadingOrder.FileName)
-                    bitmapPresenter.Sort(profile.FileReadingOrder);
+                if (pf.FileReadingOrder != FileReadingOrder.FileName)
+                    bitmapPresenter.Sort(pf.FileReadingOrder);
             }
             else
             {
-                bitmapPresenter.Sort(profile.FileReadingOrder);
+                bitmapPresenter.Sort(pf.FileReadingOrder);
             }
         }
 
