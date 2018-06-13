@@ -273,39 +273,66 @@ namespace C_SlideShow
             InitSeekbar();
         }
 
-        private void ReadFiles(string[] files)
+        private void ReadFiles(string[] pathes)
         {
             Profile pf = Setting.TempProfile;
             pf.Path.Clear();
+            bitmapPresenter.ImgFileInfo.Clear();
+            Mouse.OverrideCursor = Cursors.Wait;
 
-            if (files.Length > 0) {
-                if(System.IO.Directory.Exists(files[0])) // フォルダ
+            if (pathes.Length > 0) {
+                if (System.IO.Path.GetExtension(pathes[0]) == ".zip")  // ZIP
                 {
-                    bitmapPresenter.LoadFileInfoFromDir(files[0]);
-                    pf.Path.Add(files[0]);
+                    bitmapPresenter.LoadFileInfoFromZip(pathes[0]);
+                    pf.Path.Add(pathes[0]);
                 }
-                else if (System.IO.Path.GetExtension(files[0]) == ".zip")  // ZIP
+                else // ファイル or フォルダ (複数パスの読み込み可)
                 {
-                    bitmapPresenter.LoadFileInfoFromZip(files[0]);
-                    pf.Path.Add(files[0]);
-                }
-                else // ファイル(複数可)
-                {
-                    bitmapPresenter.LoadFileInfoFromFile(files);
-                    pf.Path = files.ToList();
+#if DEBUG
+                    System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                    sw.Start();
+#endif
+                    foreach(string path in pathes )
+                    {
+                        if( Directory.Exists(path) ) // フォルダ
+                        {
+                            bitmapPresenter.LoadFileInfoFromDir(path);
+                            pf.Path.Add(path);
+                        }
+                        else // ファイル
+                        {
+                            bitmapPresenter.LoadFileInfoFromFile(path);
+                            pf.Path.Add(path);
+                        }
+                    }
+#if DEBUG
+                    sw.Stop();
+                    Debug.WriteLine( pathes.Length
+                        + " filePathes loaded"  + " time: " + sw.Elapsed);
+#endif
+
+                    bitmapPresenter.ReadType = BitmapReadType.File;
                 }
             }
 
             // ソート
-            if(bitmapPresenter.ReadType == BitmapReadType.File )
+            if(pathes.Length == 1 && Directory.Exists(pathes[0])
+                && bitmapPresenter.ReadType == BitmapReadType.File)
             {
-                if (pf.FileReadingOrder != FileReadingOrder.FileName)
-                    bitmapPresenter.Sort(pf.FileReadingOrder);
+                // フォルダ１つだけを読み込んだ場合ファイル名順になっているので、
+                // 並び順設定が「ファイル名(昇順)」ならばソートの必要なし
             }
-            else
+            else if(bitmapPresenter.ReadType == BitmapReadType.File ) // ファイル or フォルダ
             {
                 bitmapPresenter.Sort(pf.FileReadingOrder);
             }
+            else // zip
+            {
+                bitmapPresenter.Sort(pf.FileReadingOrder);
+            }
+
+            // カーソル戻す
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
 
         private void InitSeekbar()

@@ -143,15 +143,10 @@ namespace C_SlideShow
 
         public void LoadFileInfoFromFile(string[] filePathes)
         {
-#if DEBUG
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-#endif
             // 拡張子でフィルタ
             var filteredFiles = filePathes.Where(file => allowedExt.Any(ext => 
                 file.ToLower().EndsWith(ext)));
 
-            ImgFileInfo.Clear();
             foreach (string imgPath in filteredFiles)
             {
                 //if (System.IO.File.Exists(imgPath))
@@ -160,13 +155,30 @@ namespace C_SlideShow
                 //imageFileInfo.LastWriteTime = File.GetLastWriteTime(imgPath);
                 ImgFileInfo.Add(imageFileInfo);
             }
-            this.ReadType = BitmapReadType.File;
+        }
 
-#if DEBUG
-            sw.Stop();
-            Debug.WriteLine( ImgFileInfo.Count + " / " + filePathes.Length
-                + " files info loaded"  + " time: " + sw.Elapsed);
-#endif
+        public void LoadFileInfoFromFile(string filePath)
+        {
+            // 拡張子でフィルタ
+            if( !allowedExt.Any(ext => filePath.ToLower().EndsWith(ext)) ) return;
+
+            ImageFileInfo imageFileInfo = new ImageFileInfo();
+            imageFileInfo.FilePath = filePath;
+            this.ImgFileInfo.Add(imageFileInfo);
+        }
+
+
+        public void LoadFileInfoFromDir(string dirPath)
+        {
+            if (!System.IO.Directory.Exists(dirPath))
+            {
+                return;
+            }
+
+            var imgPathes = System.IO.Directory.GetFiles(
+                dirPath, "*.*", System.IO.SearchOption.AllDirectories);
+
+            this.LoadFileInfoFromFile(imgPathes);
         }
 
         public void LoadFileInfoFromZip(string filePath)
@@ -174,8 +186,6 @@ namespace C_SlideShow
             try
             {
                 this.zipArchive = ZipFile.OpenRead(filePath);
-
-                this.ImgFileInfo.Clear();
                 
                 foreach(ZipArchiveEntry entory in this.zipArchive.Entries)
                 {
@@ -194,19 +204,6 @@ namespace C_SlideShow
                 if(this.zipArchive != null) this.zipArchive.Dispose();
             }
             this.ReadType = BitmapReadType.Zip;
-        }
-
-        public void LoadFileInfoFromDir(string dirPath)
-        {
-            if (!System.IO.Directory.Exists(dirPath))
-            {
-                return;
-            }
-
-            var imgPathes = System.IO.Directory.GetFiles(
-                dirPath, "*.*", System.IO.SearchOption.AllDirectories);
-
-            this.LoadFileInfoFromFile(imgPathes);
         }
 
         public void GetLastWriteTimeFileInfo()
