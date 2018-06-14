@@ -35,7 +35,7 @@ namespace C_SlideShow
 
     public enum FileReadingOrder
     {
-        FileName, FileNameRev, LastWriteTime, LastWriteTimeRev, Random
+        FileName, FileNameRev, LastWriteTime, LastWriteTimeRev, Random, None
     }
 
 

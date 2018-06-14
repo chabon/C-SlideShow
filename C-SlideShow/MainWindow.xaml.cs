@@ -912,6 +912,8 @@ namespace C_SlideShow
 
         public void SortAllImage(FileReadingOrder order)
         {
+            if( order == FileReadingOrder.None )
+                ReadFiles(Setting.TempProfile.Path.ToArray(), false);
             int grids = Setting.TempProfile.NumofCol * Setting.TempProfile.NumofRow;
             bitmapPresenter.Sort(order);
             bitmapPresenter.FillFileInfoVacancyWithDummy(grids);

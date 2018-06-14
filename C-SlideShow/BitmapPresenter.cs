@@ -252,6 +252,8 @@ namespace C_SlideShow
                 case FileReadingOrder.Random:
                     ImgFileInfo.Shuffle();
                     break;
+                case FileReadingOrder.None:
+                    break;
             }
 
 

@@ -58,6 +58,7 @@
                             <ComboBoxItem>更新日時(新しい順)</ComboBoxItem>
                             <ComboBoxItem>更新日時(古い順)</ComboBoxItem>
                             <ComboBoxItem>ランダム</ComboBoxItem>
+                            <ComboBoxItem>指定しない</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
                     <CheckBox x:Name="TopMost" Click="TopMost_Click" Margin="0,4">最前面表示</CheckBox>
