@@ -150,8 +150,16 @@ namespace C_SlideShow
             this.Drop += (s, e) =>
             {
                 string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
-                this.ReadFiles(files);
-                InitMainContent(0);
+                if( IsCtrlOrShiftKeyPressed )
+                {
+                    // 追加読み込み
+                    this.ReadFiles(files, true);
+                }
+                else
+                {
+                    // 通常読み込み
+                    this.ReadFiles(files, false);
+                }
             };
 
             this.MouseWheel += (s, e) =>
@@ -387,12 +395,8 @@ namespace C_SlideShow
             dlg.Description = "画像フォルダーを選択してください。";
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                bitmapPresenter.LoadFileInfoFromDir(dlg.SelectedPath);
-                Setting.TempProfile.Path.Add( dlg.SelectedPath );
-
                 string[] path = { dlg.SelectedPath };
-                ReadFiles(path);
-                InitMainContent(0);
+                ReadFiles(path, false);
             }
         }
 
@@ -405,10 +409,35 @@ namespace C_SlideShow
 
             if (ofd.ShowDialog() == Forms.DialogResult.OK)
             {
-                this.ReadFiles(ofd.FileNames);
-                InitMainContent(0);
+                this.ReadFiles(ofd.FileNames, false);
             }
         }
+
+        // フォルダ追加読み込み
+        private void Toolbar_Add_Folder_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new Forms.FolderBrowserDialog();
+            dlg.Description = "追加する画像フォルダーを選択してください。";
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string[] path = { dlg.SelectedPath };
+                ReadFiles(path, true);
+            }
+        }
+
+        // ファイル追加読み込み
+        private void Toolbar_Add_File_Click(object sender, RoutedEventArgs e)
+        {
+            Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
+            ofd.Title = "追加するファイルを選択してください";
+            ofd.Multiselect = true;
+
+            if (ofd.ShowDialog() == Forms.DialogResult.OK)
+            {
+                this.ReadFiles(ofd.FileNames, true);
+            }
+        }
+
 
         // 再読込み
         private void Toolbar_Load_Reload_Click(object sender, RoutedEventArgs e)

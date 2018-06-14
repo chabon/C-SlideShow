@@ -205,7 +205,7 @@ namespace C_SlideShow
 
             // 画像情報の読み込みとソート
             String[] files = profile.Path.ToArray();
-            ReadFiles(files);
+            ReadFiles(files, false);
 
             // メインコンテンツ作成
             InitMainContent(profile.LastPageIndex);
@@ -273,15 +273,34 @@ namespace C_SlideShow
             InitSeekbar();
         }
 
-        private void ReadFiles(string[] pathes)
+        private void ReadFiles(string[] pathes, bool isAddition)
         {
+            // 追加可能か判定
+            if( isAddition )
+            {
+                if( bitmapPresenter.ReadType == BitmapReadType.Zip ) isAddition = false;
+                else if( System.IO.Path.GetExtension(pathes[0]) == ".zip" ) isAddition = false;
+            }
+
             Profile pf = Setting.TempProfile;
-            pf.Path.Clear();
-            bitmapPresenter.ImgFileInfo.Clear();
+            if( isAddition )
+            {
+                // 追加の場合、ダミーファイル情報を消す
+                bitmapPresenter.ImgFileInfo.RemoveAll(
+                    fi => fi.FilePath == BitmapPresenter.DummyFilePath);
+            }
+            else
+            {
+                pf.Path.Clear();
+                bitmapPresenter.ImgFileInfo.Clear();
+            }
+
+            // マウスカーソル 待機
             Mouse.OverrideCursor = Cursors.Wait;
 
+            // 読み込み
             if (pathes.Length > 0) {
-                if (System.IO.Path.GetExtension(pathes[0]) == ".zip")  // ZIP
+                if (System.IO.Path.GetExtension(pathes[0]) == ".zip")  // ZIP(複数不可、追加不可)
                 {
                     bitmapPresenter.LoadFileInfoFromZip(pathes[0]);
                     pf.Path.Add(pathes[0]);
@@ -317,6 +336,7 @@ namespace C_SlideShow
 
             // ソート
             if(pathes.Length == 1 && Directory.Exists(pathes[0])
+                && !isAddition
                 && bitmapPresenter.ReadType == BitmapReadType.File)
             {
                 // フォルダ１つだけを読み込んだ場合ファイル名順になっているので、
@@ -333,6 +353,9 @@ namespace C_SlideShow
 
             // カーソル戻す
             Mouse.OverrideCursor = Cursors.Arrow;
+
+            // コンテンツ初期化
+            InitMainContent(0);
         }
 
         private void InitSeekbar()
