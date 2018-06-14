@@ -93,6 +93,9 @@ namespace C_SlideShow
             // 表示
             this.Visibility = Visibility.Visible;
 
+            // 表示済みフラグ
+            IsShowing = true;
+
             // ファイル情報のテキストを更新
             UpdateFileInfoText();
 
@@ -158,8 +161,6 @@ namespace C_SlideShow
 
             storyboard.Completed += (s, e) =>
             {
-                IsShowing = true;
-
                 // コンテナを隠す
                 MainWindow.TileContainer1.Visibility = Visibility.Hidden;
                 MainWindow.TileContainer2.Visibility = Visibility.Hidden;
