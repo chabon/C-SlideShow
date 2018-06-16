@@ -659,13 +659,42 @@ namespace C_SlideShow
             }
         }
             
+        public void UpdateGridLine()
+        {
+            Profile pf = Setting.TempProfile;
+
+            foreach(TileContainer tc in tileContainers)
+            {
+                tc.InitGridLineColor(pf.GridLineColor);
+                //tc.InitSize(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+                //tc.InitSizeAndPos(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+            }
+
+            ChangeCurrentImageIndex(bitmapPresenter.CurrentIndex);
+
+            foreach(TileContainer tc in tileContainers)
+            {
+                tc.InitWrapPoint();
+            }
+
+            if (Setting.TempProfile.IsFullScreenMode)
+            {
+                UpdateFullScreenView();
+            }
+            else
+            {
+                UpdateWindowSize();
+                FitMainContentToWindow();
+            }
+        }
+
         public void UpdateUI()
         {
             Profile pf = Setting.TempProfile;
-            this.MainContent.Margin = new Thickness(pf.UI_ResizeGripThickness);
-            this.ResizeGrip.BorderThickness = new Thickness(pf.UI_ResizeGripThickness);
-            this.ResizeGrip.BorderBrush = new SolidColorBrush(pf.UI_ResizeGripColor);
-            this.Seekbar.Foreground = new SolidColorBrush(pf.UI_SeekbarColor);
+            this.MainContent.Margin = new Thickness(pf.ResizeGripThickness);
+            this.ResizeGrip.BorderThickness = new Thickness(pf.ResizeGripThickness);
+            this.ResizeGrip.BorderBrush = new SolidColorBrush(pf.ResizeGripColor);
+            this.Seekbar.Foreground = new SolidColorBrush(pf.SeekbarColor);
 
             UpdateWindowSize();
             FitMainContentToWindow();
@@ -752,7 +781,7 @@ namespace C_SlideShow
             if (Setting.TempProfile.IsFullScreenMode)
             {
                 // 解除
-                this.MainContent.Margin = new Thickness(Setting.TempProfile.UI_ResizeGripThickness);
+                this.MainContent.Margin = new Thickness(Setting.TempProfile.ResizeGripThickness);
                 this.ResizeGrip.Visibility = Visibility.Visible;
                 this.Topmost = isTopmostBeforeFullScreen;
                 this.Left = windowRectBeforeFullScreen.Left;
@@ -943,5 +972,13 @@ namespace C_SlideShow
             return containersInCurrentOrder;
         }
 
+        public void Reload(bool keepCurrentIdx)
+        {
+            if(keepCurrentIdx) Setting.TempProfile.LastPageIndex = bitmapPresenter.CurrentIndex;
+            else Setting.TempProfile.LastPageIndex = 0;
+
+            SaveWindowRect();
+            LoadProfile(this.Setting.TempProfile);
+        }
     }
 }

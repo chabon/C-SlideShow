@@ -7,7 +7,8 @@
              mc:Ignorable="d" d:DesignWidth="257" Height="240">
     <Grid>
         <TabControl TabStripPlacement="Bottom" Width="260" Height="230" VerticalAlignment="Top" >
-            <TabItem Header="全般" Width="50">
+
+            <TabItem Header="外観1" Width="50">
                 <StackPanel Margin="10,4,10,5">
                     <GroupBox Header="透過" Padding="3">
                         <StackPanel>
@@ -47,7 +48,106 @@
                                     Background="White"></Border>
                         </Button>
                     </StackPanel>
+                    <CheckBox x:Name="UsePlaidBackground" Click="UsePlaidBackground_Click" Margin="0,4">チェック柄の背景にする</CheckBox>
+                    <StackPanel Orientation="Horizontal">
+                        <Label>└ ペアとなる色</Label>
+                        <Button Margin="8,2" x:Name="PairColorOfPlaidBackground" Click="PairColorOfPlaidBackground_Click">
+                            <Border Width="24" Height="15" Margin="2"
+                                    x:Name="Border_PairColorOfPlaidBackground"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    CornerRadius="2"
+                                    Background="White"></Border>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
 
+            <TabItem Header="外観2" Width="50">
+                <StackPanel Margin="10">
+
+                    <StackPanel Margin="0,2,0,4" Orientation="Horizontal">
+                        <TextBlock Width="90">ウインドウ枠の太さ</TextBlock>
+                        <ComboBox x:Name="ResizeGripThickness"
+                                  IsEditable="True"
+                                  Loaded="ResizeGripThickness_Loaded"
+                                  Margin="8,0" Width="52" >
+                            <ComboBoxItem>0</ComboBoxItem>
+                            <ComboBoxItem>1</ComboBoxItem>
+                            <ComboBoxItem>2</ComboBoxItem>
+                            <ComboBoxItem>3</ComboBoxItem>
+                            <ComboBoxItem>4</ComboBoxItem>
+                            <ComboBoxItem>5</ComboBoxItem>
+                            <ComboBoxItem>6</ComboBoxItem>
+                            <ComboBoxItem>7</ComboBoxItem>
+                            <ComboBoxItem>8</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Margin="0,4" Orientation="Horizontal">
+                        <TextBlock Width="90">ウインドウ枠の色</TextBlock>
+                        <Button Margin="8,0" x:Name="ResizeGripColor"
+                                Click="ResizeGripColor_Click"
+                                >
+                            <Border Width="24" Height="15" Margin="2"
+                                    x:Name="Border_ResizeGripColor"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    CornerRadius="2"
+                                    Background="Blue"></Border>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,2,0,4" Orientation="Horizontal">
+                        <TextBlock Width="90">グリッド線の幅</TextBlock>
+                        <ComboBox x:Name="TilePadding"
+                                  IsEditable="True"
+                                  Loaded="TilePadding_Loaded"
+                                  Margin="8,0" Width="52" >
+                            <ComboBoxItem>0</ComboBoxItem>
+                            <ComboBoxItem>1</ComboBoxItem>
+                            <ComboBoxItem>2</ComboBoxItem>
+                            <ComboBoxItem>3</ComboBoxItem>
+                            <ComboBoxItem>4</ComboBoxItem>
+                            <ComboBoxItem>5</ComboBoxItem>
+                            <ComboBoxItem>10</ComboBoxItem>
+                            <ComboBoxItem>20</ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,4" Orientation="Horizontal">
+                        <TextBlock Width="90">グリッド線の色</TextBlock>
+                        <Button Margin="8,0" x:Name="GridLineColor"
+                                Click="GridLineColor_Click">
+                            <Border Width="24" Height="15" Margin="2"
+                                    x:Name="Border_GridLineColor"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    CornerRadius="2"
+                                    Background="Blue"></Border>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,4" Orientation="Horizontal">
+                        <TextBlock Width="90">シークバーの色</TextBlock>
+                        <Button Margin="8,0" x:Name="SeekbarColor"
+                                Click="SeekbarColor_Click">
+                            <Border Width="24" Height="15" Margin="2"
+                                    x:Name="Border_SeekbarColor"
+                                    BorderBrush="Black"
+                                    BorderThickness="1"
+                                    CornerRadius="2"
+                                    Background="Blue"></Border>
+                        </Button>
+                    </StackPanel>
+
+
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="全般" Width="50">
+                <StackPanel Margin="10,4,10,5">
+
+                    <CheckBox x:Name="TopMost" Click="TopMost_Click" Margin="0,4">最前面表示</CheckBox>
                     <StackPanel Margin="0,8" Orientation="Horizontal">
                         <TextBlock>読み込み順序</TextBlock>
                         <ComboBox x:Name="FileReadingOrder" SelectedIndex="0"
@@ -61,56 +161,35 @@
                             <ComboBoxItem>指定しない</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
-                    <CheckBox x:Name="TopMost" Click="TopMost_Click" Margin="0,4">最前面表示</CheckBox>
-                    <CheckBox Visibility="Hidden" x:Name="StartUp_OpenPrevFolder" Click="StartUp_OpenPrevFolder_Click" Margin="0,4">起動時、前回のフォルダを開く</CheckBox>
-                </StackPanel>
-            </TabItem>
-
-            <TabItem Header="UI" Width="50">
-                <StackPanel Margin="10">
-                    <StackPanel Margin="0,2,0,4" Orientation="Horizontal">
-                        <TextBlock Width="90">ウインドウ枠の太さ</TextBlock>
-                        <ComboBox x:Name="UI_ResizeGripThickness"
-                                  SelectedIndex="5" Margin="8,0" Width="40"
-                                  SelectionChanged="UI_ResizeGripThickness_SelectionChanged">
-                            <ComboBoxItem>0</ComboBoxItem>
-                            <ComboBoxItem>1</ComboBoxItem>
-                            <ComboBoxItem>2</ComboBoxItem>
-                            <ComboBoxItem>3</ComboBoxItem>
-                            <ComboBoxItem>4</ComboBoxItem>
-                            <ComboBoxItem>5</ComboBoxItem>
-                            <ComboBoxItem>6</ComboBoxItem>
-                            <ComboBoxItem>7</ComboBoxItem>
-                            <ComboBoxItem>8</ComboBoxItem>
-                            <ComboBoxItem>9</ComboBoxItem>
-                            <ComboBoxItem>10</ComboBoxItem>
+                    <CheckBox x:Name="ApplyRotateInfoFromExif" Click="ApplyRotateInfoFromExif_Click">Exifの回転・反転情報を反映させる</CheckBox>
+                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                        <Label>バックバッファの幅(ピクセル値)</Label>
+                        <ComboBox x:Name="BitmapDecodeTotalPixelWidth"
+                                  SelectionChanged="BitmapDecodeTotalPixelWidth_SelectionChanged"
+                                  SelectedValuePath="Content"
+                                  ToolTipService.ShowDuration="50000"
+                                  Margin="8,0" Width="55" >
+                            <ComboBoxItem>320</ComboBoxItem>
+                            <ComboBoxItem>640</ComboBoxItem>
+                            <ComboBoxItem>1024</ComboBoxItem>
+                            <ComboBoxItem>1280</ComboBoxItem>
+                            <ComboBoxItem>1366</ComboBoxItem>
+                            <ComboBoxItem>1920</ComboBoxItem>
+                            <ComboBoxItem>2048</ComboBoxItem>
+                            <ComboBoxItem>2560</ComboBoxItem>
+                            <ComboBoxItem>3840</ComboBoxItem>
+                            <ComboBox.ToolTip>
+                                <TextBlock>
+                                    この値によって画質の鮮明さ、メモリ消費量が変わります。<LineBreak/>
+                                    処理が重い場合はこの値を小さくしてみてください。<LineBreak/>
+                                    ディスプレイ解像度の幅以下の値を推奨します。
+                                </TextBlock>
+                            </ComboBox.ToolTip>
                         </ComboBox>
+                        
                     </StackPanel>
-                    <StackPanel Margin="0,4" Orientation="Horizontal">
-                        <TextBlock Width="90">ウインドウ枠の色</TextBlock>
-                        <Button Margin="8,0" x:Name="UI_ResizeGripColor"
-                                Click="UI_ResizeGripColor_Click"
-                                >
-                            <Border Width="24" Height="15" Margin="2"
-                                    x:Name="Border_UI_ResizeGripColor"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="2"
-                                    Background="Blue"></Border>
-                        </Button>
-                    </StackPanel>
-                    <StackPanel Margin="0,4" Orientation="Horizontal">
-                        <TextBlock Width="90">シークバーの色</TextBlock>
-                        <Button Margin="8,0" x:Name="UI_SeekbarColor"
-                                Click="UI_SeekbarColor_Click">
-                            <Border Width="24" Height="15" Margin="2"
-                                    x:Name="Border_UI_SeekbarColor"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="2"
-                                    Background="Blue"></Border>
-                        </Button>
-                    </StackPanel>
+
+                    <CheckBox Visibility="Hidden" x:Name="StartUp_OpenPrevFolder" Click="StartUp_OpenPrevFolder_Click" Margin="0,4">起動時、前回のフォルダを開く</CheckBox>
                 </StackPanel>
             </TabItem>
         </TabControl>

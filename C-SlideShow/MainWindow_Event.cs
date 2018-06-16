@@ -442,9 +442,7 @@ namespace C_SlideShow
         // 再読込み
         private void Toolbar_Load_Reload_Click(object sender, RoutedEventArgs e)
         {
-            SaveWindowRect();
-            this.Setting.TempProfile.LastPageIndex = 0;
-            LoadProfile(this.Setting.TempProfile);
+            Reload(false);
         }
 
         // グリッドのアスペクト比

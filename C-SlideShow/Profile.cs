@@ -43,17 +43,7 @@ namespace C_SlideShow
     public class Profile
     {
         // ダイアログ未実装
-        [DataMember]
-        public int TilePadding { get; set; }
 
-        [DataMember]
-        public Color GridLineColor { get; set; }
-
-        [DataMember]
-        public int BitmapDecodeTotalPixelWidth { get; set; }
-
-        [DataMember]
-        public bool ApplyRotateInfoFromExif { get; set; }
 
         // 行列設定
         [DataMember]
@@ -82,6 +72,7 @@ namespace C_SlideShow
         [DataMember]
         public bool NonFixAspectRatio { get; set; }
 
+
         // スライドの設定
         [DataMember]
         public SlidePlayMethod SlidePlayMethod { get; set; }
@@ -102,7 +93,7 @@ namespace C_SlideShow
         public bool SlideByOneImage { get; set; }
 
 
-        // その他の設定_全般
+        // その他の設定_外観1
         [DataMember]
         public bool AllowTransparency { get; set; }
 
@@ -121,6 +112,24 @@ namespace C_SlideShow
         [DataMember]
         public Color PairColorOfPlaidBackground { get; set; }
 
+
+        // その他の設定_外観2
+        [DataMember]
+        public int TilePadding { get; set; }
+
+        [DataMember]
+        public Color GridLineColor { get; set; }
+        [DataMember]
+        public double ResizeGripThickness { get; set; }
+
+        [DataMember]
+        public Color ResizeGripColor { get; set; }
+
+        [DataMember]
+        public Color SeekbarColor { get; set; }
+
+
+        // その他の設定_全般
         [DataMember]
         public FileReadingOrder FileReadingOrder { get; set; }
 
@@ -130,15 +139,11 @@ namespace C_SlideShow
         [DataMember]
         public bool StartUp_OpenPrevFolder { get; set; }
 
-        // その他の設定_UI
         [DataMember]
-        public double UI_ResizeGripThickness { get; set; }
+        public bool ApplyRotateInfoFromExif { get; set; }
 
         [DataMember]
-        public Color UI_ResizeGripColor { get; set; }
-
-        [DataMember]
-        public Color UI_SeekbarColor { get; set; }
+        public int BitmapDecodeTotalPixelWidth { get; set; }
 
         // ダイアログにはない設定
         [DataMember]
@@ -158,10 +163,7 @@ namespace C_SlideShow
         public Profile()
         {
             // ダイアログ未実装
-            TilePadding = 3;
-            GridLineColor = Colors.LightGray;
-            BitmapDecodeTotalPixelWidth = 1920;
-            ApplyRotateInfoFromExif = false;
+
 
             // アスペクト比設定
             AspectRatioH = 4;
@@ -183,20 +185,27 @@ namespace C_SlideShow
             SlideByOneImage = false;
             SlideDirection = SlideDirection.Left;
 
-            // その他の設定_全般
+            // その他の設定_外観1
             AllowTransparency = false;
             OverallOpacity = 0.5;
             BackgroundOpacity = 1.0;
             BaseGridBackgroundColor = Colors.White;
             UsePlaidBackground = false;
             PairColorOfPlaidBackground = Colors.LightGray;
+
+            // その他の設定_外観2
+            ResizeGripThickness = 5;
+            ResizeGripColor = Colors.Gray;
+            SeekbarColor = Colors.Black;
+            TilePadding = 3;
+            GridLineColor = Colors.LightGray;
+
+            // その他の設定_全般
+            FileReadingOrder = FileReadingOrder.FileName;
             TopMost = false;
             StartUp_OpenPrevFolder = true;
-
-            // その他の設定_UI
-            UI_ResizeGripThickness = 5;
-            UI_ResizeGripColor = Colors.Gray;
-            UI_SeekbarColor = Colors.Black;
+            ApplyRotateInfoFromExif = false;
+            BitmapDecodeTotalPixelWidth = 1920;
 
             // ダイアログにはない設定
             Path = new List<string>();
