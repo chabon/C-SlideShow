@@ -279,9 +279,6 @@ namespace C_SlideShow
 
         private void ReadFiles(string[] pathes, bool isAddition)
         {
-            // マウスカーソル 待機
-            Mouse.OverrideCursor = Cursors.Wait;
-
             // 「読み込み中」メッセージの表示
             this.WaitingMessageBase.Visibility = Visibility.Visible;
 
@@ -360,9 +357,6 @@ namespace C_SlideShow
             {
                 bitmapPresenter.Sort(pf.FileReadingOrder);
             }
-
-            // カーソル戻す
-            Mouse.OverrideCursor = Cursors.Arrow;
 
             // コンテンツ初期化
             InitMainContent(0);
