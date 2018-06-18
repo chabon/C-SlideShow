@@ -254,7 +254,8 @@ namespace C_SlideShow
 
         private void LoadImage()
         {
-            var bitmap = BitmapPresenter.LoadBitmap(targetTile.FilePath, true);
+            int pxcelWidth = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixelWidth;
+            var bitmap = BitmapPresenter.LoadBitmap(targetTile.FilePath, pxcelWidth);
             if(bitmap != null)
                 this.ExpandedImage.Source = bitmap;
             else

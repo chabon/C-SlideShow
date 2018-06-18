@@ -240,12 +240,12 @@ namespace C_SlideShow
             bitmapPresenter.FillFileInfoVacancyWithDummy(grids);
             if (firstIndex > bitmapPresenter.NumofImageFile - 1) firstIndex = 0;
             bitmapPresenter.NextIndex = firstIndex;
-            bitmapPresenter.BitmapDecodePixelWidth = pf.BitmapDecodeTotalPixelWidth / pf.NumofCol;
             bitmapPresenter.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif;
 
             // init container
             foreach(TileContainer tc in tileContainers)
             {
+                tc.BitmapDecodePixelWidthOfTile = pf.BitmapDecodeTotalPixelWidth / pf.NumofCol; 
                 tc.InitSlideDerection(pf.SlideDirection);
                 tc.InitGrid(pf.NumofRow, pf.NumofCol);
                 tc.InitGridLineColor(pf.GridLineColor);

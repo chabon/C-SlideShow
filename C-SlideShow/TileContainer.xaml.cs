@@ -50,6 +50,8 @@ namespace C_SlideShow
         public TileContainer ForwardContainer { get; set; }
         public int InnerTileWidth { get; private set; } // マージンを含まない(アス比に対応)
         public int InnerTileHeight { get; private set; }
+        public int BitmapDecodePixelWidthOfTile { get; set; } = 640; // 1タイル毎のBitmapの幅
+
         public int TileWidth
         {
             get
@@ -389,7 +391,7 @@ namespace C_SlideShow
                     tile.FilePath = iFileInfo.FilePath;
 
                     BitmapPresenter.SlideIndex(tile.ByPlayback);
-                    var bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, false);
+                    var bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, BitmapDecodePixelWidthOfTile);
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>
@@ -432,7 +434,7 @@ namespace C_SlideShow
 #endif
                 foreach(Tile tile in Tiles)
                 {
-                    var bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, false); // エラー時はnullが返る
+                    var bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, BitmapDecodePixelWidthOfTile); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>

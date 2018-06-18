@@ -43,7 +43,6 @@ namespace C_SlideShow
 
         public List<ImageFileInfo> ImgFileInfo { get; set; }
         public static string DummyFilePath = ":dummy";
-        public int BitmapDecodePixelWidth { get; set; } = 640;
         public bool ApplyRotateInfoFromExif { get; set; } = false;
         public int NextIndex { get; set; }
         public int PrevIndex { get; set; }
@@ -266,7 +265,7 @@ namespace C_SlideShow
         }
 
 
-        public BitmapSource LoadBitmap(string filePath, bool bLoadOrginalPxcelSize)
+        public BitmapSource LoadBitmap(string filePath, int bitmapDecodePixelWidth)
         {
             if (filePath == DummyFilePath || filePath == "") return null;
 
@@ -302,8 +301,8 @@ namespace C_SlideShow
                         source.BeginInit();
                         source.CacheOption = BitmapCacheOption.OnLoad;
                         source.CreateOptions = BitmapCreateOptions.None;
-                        if( !bLoadOrginalPxcelSize)
-                            source.DecodePixelWidth = BitmapDecodePixelWidth;
+                        if( bitmapDecodePixelWidth != 0)
+                            source.DecodePixelWidth = bitmapDecodePixelWidth;
                         source.StreamSource = ms_bitmap;
                         source.Rotation = ei.Rotation;
                         source.EndInit();
@@ -340,8 +339,8 @@ namespace C_SlideShow
                     source.BeginInit();
                     source.CacheOption = BitmapCacheOption.OnLoad;
                     source.CreateOptions = BitmapCreateOptions.None;
-                    if( !bLoadOrginalPxcelSize)
-                        source.DecodePixelWidth = BitmapDecodePixelWidth;
+                    if( bitmapDecodePixelWidth != 0)
+                        source.DecodePixelWidth = bitmapDecodePixelWidth;
                     source.UriSource = new Uri(filePath);
                     source.Rotation = ei.Rotation;
                     source.EndInit();
