@@ -962,6 +962,9 @@ namespace C_SlideShow
             bitmapPresenter.Sort(order);
             bitmapPresenter.FillFileInfoVacancyWithDummy(grids);
             ChangeCurrentImageIndex(0);
+
+            // 読み込み中のメッセージ終了
+            this.WaitingMessageBase.Visibility = Visibility.Hidden;
         }
 
         public List<TileContainer> GetTileContainersInCurrentOrder()
