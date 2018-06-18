@@ -358,8 +358,6 @@ namespace C_SlideShow
                 bitmapPresenter.Sort(pf.FileReadingOrder);
             }
 
-            // コンテンツ初期化
-            InitMainContent(0);
         }
 
         private void InitSeekbar()

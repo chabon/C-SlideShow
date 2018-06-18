@@ -158,11 +158,13 @@ namespace C_SlideShow
                 {
                     // 追加読み込み
                     this.ReadFiles(files, true);
+                    InitMainContent(0);
                 }
                 else
                 {
                     // 通常読み込み
                     this.ReadFiles(files, false);
+                    InitMainContent(0);
                 }
             };
 
@@ -401,6 +403,7 @@ namespace C_SlideShow
             {
                 string[] path = { dlg.SelectedPath };
                 ReadFiles(path, false);
+                InitMainContent(0);
             }
         }
 
@@ -414,6 +417,7 @@ namespace C_SlideShow
             if (ofd.ShowDialog() == Forms.DialogResult.OK)
             {
                 this.ReadFiles(ofd.FileNames, false);
+                InitMainContent(0);
             }
         }
 
@@ -426,6 +430,7 @@ namespace C_SlideShow
             {
                 string[] path = { dlg.SelectedPath };
                 ReadFiles(path, true);
+                InitMainContent(0);
             }
         }
 
@@ -439,6 +444,7 @@ namespace C_SlideShow
             if (ofd.ShowDialog() == Forms.DialogResult.OK)
             {
                 this.ReadFiles(ofd.FileNames, true);
+                InitMainContent(0);
             }
         }
 
