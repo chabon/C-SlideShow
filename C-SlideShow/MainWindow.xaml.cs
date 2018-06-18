@@ -260,9 +260,10 @@ namespace C_SlideShow
             {
                 foreach(TileContainer tc in tileContainers)
                 {
-                    tc.LoadImageToGrid(false, true);
+                    tc.LoadImageToGrid(false, false);
                 }
             }
+
 
             // 巻き戻し用のインデックス初期値は必ずファイルを全てのコンテナに割り当てた後決める
             // (割り当て中にスライドしてしまうので)
@@ -271,10 +272,22 @@ namespace C_SlideShow
             // init ui
             UpdatePageInfo();
             InitSeekbar();
+
+            // 「読み込み中」メッセージ解除
+            this.WaitingMessageBase.Visibility = Visibility.Hidden;
         }
 
         private void ReadFiles(string[] pathes, bool isAddition)
         {
+            // マウスカーソル 待機
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            // 「読み込み中」メッセージの表示
+            this.WaitingMessageBase.Visibility = Visibility.Visible;
+
+            // レンダリング更新
+            this.WaitingMessageBase.Refresh();
+
             // 追加可能か判定
             if( isAddition )
             {
@@ -294,9 +307,6 @@ namespace C_SlideShow
                 pf.Path.Clear();
                 bitmapPresenter.ImgFileInfo.Clear();
             }
-
-            // マウスカーソル 待機
-            Mouse.OverrideCursor = Cursors.Wait;
 
             // 読み込み
             if (pathes.Length > 0) {
@@ -980,5 +990,21 @@ namespace C_SlideShow
             SaveWindowRect();
             LoadProfile(this.Setting.TempProfile);
         }
+
+        /// <summary>
+        /// 現在メッセージ待ち行列の中にある全てのUIメッセージを処理します。
+        /// </summary>
+        private void DoEvents()
+        {
+            DispatcherFrame frame = new DispatcherFrame();
+            var callback = new DispatcherOperationCallback(obj =>
+            {
+                ((DispatcherFrame)obj).Continue = false;
+                return null;
+            });
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, callback, frame);
+            Dispatcher.PushFrame(frame);
+        }
+
     }
 }

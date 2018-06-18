@@ -149,6 +149,10 @@ namespace C_SlideShow
 
             this.Drop += (s, e) =>
             {
+                // 「読み込み中」メッセージの表示
+                this.WaitingMessageBase.Visibility = Visibility.Visible;
+                this.WaitingMessageBase.Refresh();
+
                 string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
                 if( IsCtrlOrShiftKeyPressed )
                 {

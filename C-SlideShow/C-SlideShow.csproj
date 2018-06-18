@@ -62,6 +62,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppSetting.cs" />
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ImageFileInfo.cs" />
     <Compile Include="MainWindow_Event.cs" />
     <Compile Include="MatrixSelecter.xaml.cs">

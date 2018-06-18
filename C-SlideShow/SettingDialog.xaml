@@ -98,7 +98,7 @@
                     </StackPanel>
 
                     <StackPanel Margin="0,2,0,4" Orientation="Horizontal">
-                        <TextBlock Width="90">グリッド線の幅</TextBlock>
+                        <TextBlock Width="90">グリッド線の太さ</TextBlock>
                         <ComboBox x:Name="TilePadding"
                                   IsEditable="True"
                                   Loaded="TilePadding_Loaded"
