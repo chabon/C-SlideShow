@@ -201,7 +201,6 @@ namespace C_SlideShow
             this.Top = profile.WindowRect.Top;
             this.Width = profile.WindowRect.Width;
             this.Height = profile.WindowRect.Height;
-            profile.IsFullScreenMode = false; // todo (設定保存無視で、初期値固定)
 
             // 画像情報の読み込みとソート
             String[] files = profile.Path.ToArray();
@@ -221,6 +220,13 @@ namespace C_SlideShow
 
             // 最前面
             this.Topmost = Setting.TempProfile.TopMost;
+
+            // フルスクリーン復元
+            if(profile.IsFullScreenMode)
+            {
+                profile.IsFullScreenMode = false;
+                ToggleFullScreen();
+            }
         }
 
 
