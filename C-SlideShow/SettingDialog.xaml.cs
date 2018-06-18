@@ -356,7 +356,6 @@ namespace C_SlideShow
                 Setting.TempProfile.ApplyRotateInfoFromExif = false;
 
             mainWindow.Reload(true);
-
         }
 
         // バックバッファの幅(ピクセル値)

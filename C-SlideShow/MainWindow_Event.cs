@@ -491,9 +491,7 @@ namespace C_SlideShow
         // 再読込
         private void Toolbar_Reload_Click(object sender, RoutedEventArgs e)
         {
-            SaveWindowRect();
-            this.Setting.TempProfile.LastPageIndex = 0;
-            LoadProfile(this.Setting.TempProfile);
+            Reload(false);
         }
 
 

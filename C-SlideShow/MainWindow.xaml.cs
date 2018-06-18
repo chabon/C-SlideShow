@@ -985,26 +985,30 @@ namespace C_SlideShow
 
         public void Reload(bool keepCurrentIdx)
         {
-            if(keepCurrentIdx) Setting.TempProfile.LastPageIndex = bitmapPresenter.CurrentIndex;
-            else Setting.TempProfile.LastPageIndex = 0;
+            // 画像情報の読み込みとソート
+            String[] files = Setting.TempProfile.Path.ToArray();
+            ReadFiles(files, false);
 
-            SaveWindowRect();
-            LoadProfile(this.Setting.TempProfile);
-        }
-
-        /// <summary>
-        /// 現在メッセージ待ち行列の中にある全てのUIメッセージを処理します。
-        /// </summary>
-        private void DoEvents()
-        {
-            DispatcherFrame frame = new DispatcherFrame();
-            var callback = new DispatcherOperationCallback(obj =>
+            // コンテンツ初期化
+            if( keepCurrentIdx )
             {
-                ((DispatcherFrame)obj).Continue = false;
-                return null;
-            });
-            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, callback, frame);
-            Dispatcher.PushFrame(frame);
+                InitMainContent(bitmapPresenter.CurrentIndex);
+            }
+            else
+            {
+                InitMainContent(0);
+            }
+
+            // 画面更新
+            if (Setting.TempProfile.IsFullScreenMode)
+            {
+                UpdateFullScreenView();
+            }
+            else
+            {
+                UpdateWindowSize();
+                FitMainContentToWindow();
+            }
         }
 
     }
