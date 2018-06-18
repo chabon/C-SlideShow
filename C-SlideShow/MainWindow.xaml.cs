@@ -700,8 +700,15 @@ namespace C_SlideShow
             this.ResizeGrip.BorderBrush = new SolidColorBrush(pf.ResizeGripColor);
             this.Seekbar.Foreground = new SolidColorBrush(pf.SeekbarColor);
 
-            UpdateWindowSize();
-            FitMainContentToWindow();
+            if (Setting.TempProfile.IsFullScreenMode)
+            {
+                UpdateFullScreenView();
+            }
+            else
+            {
+                UpdateWindowSize();
+                FitMainContentToWindow();
+            }
         }
 
         public void UpdateToolbarViewing()
