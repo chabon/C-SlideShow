@@ -25,11 +25,12 @@ namespace C_SlideShow
     {
         // field
         MainWindow mainWindow;
-        DispatcherTimer uIVisibleTimer = new DispatcherTimer(DispatcherPriority.Normal) ;
+        DispatcherTimer uIVisibleTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle) ;
         int processId = 0;
         bool isCursorPaused = false;
         Point ptCursorPause = new Point(0, 0);
         int cursorPauseTime = 0;
+        int cnt = 0;
 
 
         public UIHelper(MainWindow mw)
@@ -39,11 +40,15 @@ namespace C_SlideShow
 
             uIVisibleTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             uIVisibleTimer.Tick += UIVisibleTimer_Ticked;
-        }
 
+        }
 
         private void UIVisibleTimer_Ticked(object sender, EventArgs e)
         {
+#if DEBUG
+            cnt += 1;
+            Debug.WriteLine("UIVisible Timer Ticked " + cnt.ToString() );
+#endif
             // 設定プロファイル
             Profile pf = mainWindow.Setting.TempProfile;
 
@@ -109,21 +114,15 @@ namespace C_SlideShow
 
             // カーソル停止をチェックして、カーソルを隠す
             Point d = new Point(Math.Abs(pt.X - ptCursorPause.X), Math.Abs(pt.Y - ptCursorPause.Y));
-            if (isCursorPaused) 
-            {
-                if (d.X > 5 || d.Y > 5) // 停止から復帰
-                {
-                    mainWindow.Cursor = null;
-                    isCursorPaused = false;
-                }
-            }
-            else if (d.X == 0 && d.Y == 0)
+            if ( !isCursorPaused && d.X == 0 && d.Y == 0)
             {
                 cursorPauseTime += 1;
                 if (cursorPauseTime > 15) // 1.5 sec
                 {
                     mainWindow.Cursor = Cursors.None;
                     isCursorPaused = true;
+                    this.uIVisibleTimer.Stop();
+                    return;
                 }
             }
             else
@@ -270,6 +269,7 @@ namespace C_SlideShow
         const int WM_EXITSIZEMOVE = 0x0232;
         const int WM_NCCALCSIZE = 0x0083;
         const int WM_NCACTIVATE = 0x0086;
+        const int WM_MOUSEMOVE = 0x0200;
 
         const int SC_MOVE = 0xF010;
         const int SC_SIZE = 0xF000;
@@ -313,6 +313,25 @@ namespace C_SlideShow
 
         public IntPtr HwndSourceHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
+            if(msg == WM_MOUSEMOVE )
+            {
+                Debug.WriteLine("WM_MOUSEMOVE");
+
+                // カーソル停止からの復帰
+                if( isCursorPaused )
+                {
+                    Win32.POINT pt = new Win32.POINT();
+                    Win32.GetCursorPos(ref pt);
+                    if(pt.X != ptCursorPause.X && pt.Y != ptCursorPause.Y )
+                    {
+                        mainWindow.Cursor = null;
+                        isCursorPaused = false;
+                        cursorPauseTime = 0;
+                        this.uIVisibleTimer.Start();
+                    }
+                }
+            }
+
             if(msg == WM_NCACTIVATE)
             {
                 // wParam:アクティブになった時1 非アクティブになった時0
@@ -354,6 +373,13 @@ namespace C_SlideShow
 
             if (msg == WM_NCHITTEST)
             {
+                // カーソル停止中は処理しない
+                if (isCursorPaused)
+                {
+                    handled = false;
+                    return new IntPtr(HTCLIENT);
+                }
+
                 // handled により、MouseEnterが呼ばれない為、ここでUI表示
                 if (!uIVisibleTimer.IsEnabled)
                 {
@@ -365,7 +391,7 @@ namespace C_SlideShow
                 // これ以上処理させない（完全に処理を横取りする）
                 handled = true;
 
-                // フルスクリーンモード中
+                // フルスクリーンモード中はリサイズの必要がないので、リターン
                 if (mainWindow.Setting.TempProfile.IsFullScreenMode)
                 {
                     handled = false;
