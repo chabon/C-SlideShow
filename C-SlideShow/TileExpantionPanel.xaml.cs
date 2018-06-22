@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Media.Animation;
 
 using System.IO;
+using System.Diagnostics;
 
 
 namespace C_SlideShow
@@ -268,9 +269,14 @@ namespace C_SlideShow
 
             try
             {
+#if DEBUG
+                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                sw.Start();
+#endif
                 ImageFileInfo ifi =
                     BitmapPresenter.ImgFileInfo.First(i => i.FilePath == targetTile.FilePath);
 
+                // ファイルサイズ
                 long length = 0;
                 if( ifi.Length != 0 )
                 {
@@ -281,6 +287,8 @@ namespace C_SlideShow
                     FileInfo fi = new FileInfo(targetTile.FilePath);
                     length = fi.Length;
                 }
+
+                // 更新日時
                 DateTimeOffset lastWriteTime;
                 DateTimeOffset dateDefault = new DateTimeOffset();
                 if(ifi.LastWriteTime.CompareTo(dateDefault) == 0 // 更新日時情報がない場合
@@ -289,12 +297,31 @@ namespace C_SlideShow
                 else
                     lastWriteTime = ifi.LastWriteTime;
 
-                BitmapSource bmp = (BitmapSource)this.ExpandedImage.Source;
+                // ピクセル数
+                //FileStream fs = new FileStream(targetTile.FilePath, FileMode.Open, FileAccess.Read);
+                //int imagew = System.Drawing.Image.FromStream(fs).Width;
+                //int imageh = System.Drawing.Image.FromStream(fs).Height;
+                //fs.Close();
+                //BitmapSource bmp = (BitmapSource)this.ExpandedImage.Source;
+
+                // test
+                Size pxSize = ifi.PixelSize;
+
+                // (todo)撮影日時
+
 
                 newText += "ファイル名: " + Path.GetFileName(targetTile.FilePath) + "\n";
                 newText += "画像サイズ: " + length / 1024 + "KB\n";
                 newText += "更新日時: " + lastWriteTime.DateTime + "\n";
-                newText += "ピクセル数: " + bmp.PixelWidth + "x" + bmp.PixelHeight;
+                //newText += "撮影日時: " + lastWriteTime.DateTime + "\n";
+                //newText += "ピクセル数: " + imagew + "x" + imageh;
+                newText += "ピクセル数: " + pxSize.Width + "x" + pxSize.Height;
+#if DEBUG
+                sw.Stop();
+                Debug.WriteLine("-----------------------------------------------------");
+                Debug.WriteLine(" expanded image info loaded  time: " + sw.Elapsed);
+                Debug.WriteLine("-----------------------------------------------------");
+#endif
             }
             catch
             {
@@ -316,6 +343,7 @@ namespace C_SlideShow
             }
 
         }
+
 
         public void ShowFileInfoOrButton()
         {

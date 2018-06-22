@@ -46,8 +46,8 @@ namespace C_SlideShow
         private void UIVisibleTimer_Ticked(object sender, EventArgs e)
         {
 #if DEBUG
-            cnt += 1;
-            Debug.WriteLine("UIVisible Timer Ticked " + cnt.ToString() );
+            //cnt += 1;
+            //Debug.WriteLine("UIVisible Timer Ticked " + cnt.ToString() );
 #endif
             // 設定プロファイル
             Profile pf = mainWindow.Setting.TempProfile;
@@ -315,7 +315,7 @@ namespace C_SlideShow
         {
             if(msg == WM_MOUSEMOVE )
             {
-                Debug.WriteLine("WM_MOUSEMOVE");
+                //Debug.WriteLine("WM_MOUSEMOVE");
 
                 // カーソル停止からの復帰
                 if( isCursorPaused )

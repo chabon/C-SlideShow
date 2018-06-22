@@ -148,10 +148,8 @@ namespace C_SlideShow
 
             foreach (string imgPath in filteredFiles)
             {
-                //if (System.IO.File.Exists(imgPath))
                 ImageFileInfo imageFileInfo = new ImageFileInfo();
                 imageFileInfo.FilePath = imgPath;
-                //imageFileInfo.LastWriteTime = File.GetLastWriteTime(imgPath);
                 ImgFileInfo.Add(imageFileInfo);
             }
         }
@@ -327,14 +325,22 @@ namespace C_SlideShow
             {
                 try
                 {
+                    // ストリーム
+                    FileStream fs = File.OpenRead(filePath);
+
                     // Exif情報取得
                     ExifInfo ei;
                     if( ApplyRotateInfoFromExif )
                     {
-                        FileStream fs = File.OpenRead(filePath);
                         ei = GetExifInfo(fs);
                     }
                     else ei = new ExifInfo();
+
+                    // 画像解像度を取得
+
+
+                    // ストリーム開放
+                    fs.Close();
 
                     source.BeginInit();
                     source.CacheOption = BitmapCacheOption.OnLoad;
@@ -372,7 +378,6 @@ namespace C_SlideShow
             var metaData = (bmf.Metadata) as BitmapMetadata;
             //bmf.Freeze();
             st.Position = 0;
-            st.Close();
 
             //Debug.WriteLine("Metadata: " + source.Metadata);
 

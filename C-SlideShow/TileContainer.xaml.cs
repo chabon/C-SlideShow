@@ -388,6 +388,7 @@ namespace C_SlideShow
                     if (BitmapPresenter.ImgFileInfo.Count < 1) throw new Exception();
 
                     ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
+                    iFileInfo.ReadDetailInfo();
                     tile.FilePath = iFileInfo.FilePath;
 
                     BitmapPresenter.SlideIndex(tile.ByPlayback);
@@ -420,6 +421,7 @@ namespace C_SlideShow
             foreach (Tile tile in this.Tiles)
             {
                 ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
+                iFileInfo.ReadDetailInfo();
                 tile.FilePath = iFileInfo.FilePath;
                 BitmapPresenter.SlideIndex(tile.ByPlayback);
             }
