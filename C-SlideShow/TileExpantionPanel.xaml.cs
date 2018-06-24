@@ -28,7 +28,7 @@ namespace C_SlideShow
         private Storyboard storyboard;
 
         public MainWindow MainWindow { private get; set; }
-        public BitmapPresenter BitmapPresenter { private get; set; }
+        public ImageFileManager ImageFileManager { private get; set; }
         public bool ExpandedDuringPlay { get; set; } = false;
         public bool IsShowing { get; private set; } = false;
 
@@ -61,7 +61,7 @@ namespace C_SlideShow
             Profile pf = MainWindow.Setting.TempProfile;
 
             // ダミーをクリックした時
-            if( tile.FilePath == BitmapPresenter.DummyFilePath ) return;
+            if( tile.ImageFileInfo.FilePath == ImageFileManager.DummyFilePath ) return;
 
             // 再生中だったら、レジュームの準備
             if( MainWindow.IsPlaying )
@@ -256,7 +256,10 @@ namespace C_SlideShow
         private void LoadImage()
         {
             int pxcelWidth = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixelWidth;
-            var bitmap = BitmapPresenter.LoadBitmap(targetTile.FilePath, pxcelWidth);
+            var bitmap = targetTile.ImageFileInfo.Archiver.LoadBitmap(
+                targetTile.ImageFileInfo,
+                pxcelWidth,
+                ImageFileManager.ApplyRotateInfoFromExif); // エラー時はnullが返る
             if(bitmap != null)
                 this.ExpandedImage.Source = bitmap;
             else
@@ -274,7 +277,7 @@ namespace C_SlideShow
                 sw.Start();
 #endif
                 ImageFileInfo ifi =
-                    BitmapPresenter.ImgFileInfo.First(i => i.FilePath == targetTile.FilePath);
+                    ImageFileManager.ImgFileInfo.First(i => i.FilePath == targetTile.ImageFileInfo.FilePath);
 
                 // ファイルサイズ
                 long length = 0;
@@ -282,18 +285,17 @@ namespace C_SlideShow
                 {
                     length = ifi.Length;
                 }
-                else if(BitmapPresenter.ReadType == BitmapReadType.File )
+                else
                 {
-                    FileInfo fi = new FileInfo(targetTile.FilePath);
+                    FileInfo fi = new FileInfo(targetTile.ImageFileInfo.FilePath);
                     length = fi.Length;
                 }
 
                 // 更新日時
                 DateTimeOffset lastWriteTime;
                 DateTimeOffset dateDefault = new DateTimeOffset();
-                if(ifi.LastWriteTime.CompareTo(dateDefault) == 0 // 更新日時情報がない場合
-                    && BitmapPresenter.ReadType == BitmapReadType.File )
-                    lastWriteTime = File.GetLastWriteTime(targetTile.FilePath);
+                if(ifi.LastWriteTime.CompareTo(dateDefault) == 0) // 更新日時情報がない場合
+                    lastWriteTime = File.GetLastWriteTime(targetTile.ImageFileInfo.FilePath);
                 else
                     lastWriteTime = ifi.LastWriteTime;
 
@@ -304,18 +306,15 @@ namespace C_SlideShow
                 //fs.Close();
                 //BitmapSource bmp = (BitmapSource)this.ExpandedImage.Source;
 
-                // test
-                Size pxSize = ifi.PixelSize;
-
                 // (todo)撮影日時
 
 
-                newText += "ファイル名: " + Path.GetFileName(targetTile.FilePath) + "\n";
+                newText += "ファイル名: " + Path.GetFileName(targetTile.ImageFileInfo.FilePath) + "\n";
                 newText += "画像サイズ: " + length / 1024 + "KB\n";
                 newText += "更新日時: " + lastWriteTime.DateTime + "\n";
                 //newText += "撮影日時: " + lastWriteTime.DateTime + "\n";
                 //newText += "ピクセル数: " + imagew + "x" + imageh;
-                newText += "ピクセル数: " + pxSize.Width + "x" + pxSize.Height;
+                newText += "ピクセル数: " + ifi.PixelSize.Width + "x" + ifi.PixelSize.Height;
 #if DEBUG
                 sw.Stop();
                 Debug.WriteLine("-----------------------------------------------------");

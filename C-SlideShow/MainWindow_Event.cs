@@ -133,7 +133,7 @@ namespace C_SlideShow
 
             this.Closing += (s, e) =>
             {
-                Setting.TempProfile.LastPageIndex = bitmapPresenter.CurrentIndex;
+                Setting.TempProfile.LastPageIndex = imageFileManager.CurrentIndex;
                 SaveWindowRect();
                 Setting.saveToXmlFile();
             };
@@ -267,7 +267,7 @@ namespace C_SlideShow
                 if (isSeekbarDragStarted)
                 {
                     PageInfoText.Text = String.Format("{0} / {1}",
-                        value, bitmapPresenter.NumofImageFile);
+                        value, imageFileManager.NumofImageFile);
                     return;
                 }
                 Debug.WriteLine("seek bar value: " + Seekbar.Value);
@@ -296,7 +296,7 @@ namespace C_SlideShow
                 if(e.Key == Key.A )
                 {
                     pf.ApplyRotateInfoFromExif = !pf.ApplyRotateInfoFromExif;
-                    InitMainContent(bitmapPresenter.CurrentIndex);
+                    InitMainContent(imageFileManager.CurrentIndex);
                 }
 
                 if(e.Key == Key.D1 )

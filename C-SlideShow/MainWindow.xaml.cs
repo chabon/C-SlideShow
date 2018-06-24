@@ -20,6 +20,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using System.IO;
 
+using C_SlideShow.Archiver;
+
 using Forms = System.Windows.Forms;
 
 
@@ -42,7 +44,7 @@ namespace C_SlideShow
     public partial class MainWindow : Window
     {
         // field
-        BitmapPresenter bitmapPresenter;
+        ImageFileManager imageFileManager;
         DispatcherTimer intervalSlideTimer = new DispatcherTimer(DispatcherPriority.Normal) ;
         int intervalSlideTimerCount = 0;
         List<TileContainer> tileContainers = new List<TileContainer>();
@@ -186,12 +188,12 @@ namespace C_SlideShow
         {
             // helper
             uiHelper = new UIHelper(this);
-            bitmapPresenter = new BitmapPresenter();
+            imageFileManager = new ImageFileManager();
             foreach(TileContainer tc in tileContainers)
             {
-                tc.BitmapPresenter = bitmapPresenter;
+                tc.ImageFileManager = imageFileManager;
             }
-            this.TileExpantionPanel.BitmapPresenter = bitmapPresenter;
+            this.TileExpantionPanel.ImageFileManager = imageFileManager;
         }
 
         private void LoadProfile(Profile profile)
@@ -243,10 +245,10 @@ namespace C_SlideShow
 
             // set up bitmap presenter
             int grids = pf.NumofRow * pf.NumofCol;
-            bitmapPresenter.FillFileInfoVacancyWithDummy(grids);
-            if (firstIndex > bitmapPresenter.NumofImageFile - 1) firstIndex = 0;
-            bitmapPresenter.NextIndex = firstIndex;
-            bitmapPresenter.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif;
+            imageFileManager.FillFileInfoVacancyWithDummy(grids);
+            if (firstIndex > imageFileManager.NumofImageFile - 1) firstIndex = 0;
+            imageFileManager.NextIndex = firstIndex;
+            imageFileManager.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif;
 
             // init container
             foreach(TileContainer tc in tileContainers)
@@ -262,7 +264,7 @@ namespace C_SlideShow
 
             // load image
             TileContainer.ReleaseBitmapLoadThread();
-            if(bitmapPresenter.ImgFileInfo.Count > 0)
+            if(imageFileManager.ImgFileInfo.Count > 0)
             {
                 foreach(TileContainer tc in tileContainers)
                 {
@@ -273,7 +275,7 @@ namespace C_SlideShow
 
             // 巻き戻し用のインデックス初期値は必ずファイルを全てのコンテナに割り当てた後決める
             // (割り当て中にスライドしてしまうので)
-            bitmapPresenter.InitPrevIndex(firstIndex);
+            imageFileManager.InitPrevIndex(firstIndex);
 
             // init ui
             UpdatePageInfo();
@@ -294,7 +296,7 @@ namespace C_SlideShow
             // 追加可能か判定
             if( isAddition )
             {
-                if( bitmapPresenter.ReadType == BitmapReadType.Zip ) isAddition = false;
+                if( imageFileManager.Archivers[0] is ZipArchiver ) isAddition = false;
                 else if( System.IO.Path.GetExtension(pathes[0]) == ".zip" ) isAddition = false;
             }
 
@@ -302,38 +304,44 @@ namespace C_SlideShow
             if( isAddition )
             {
                 // 追加の場合、ダミーファイル情報を消す
-                bitmapPresenter.ImgFileInfo.RemoveAll(
-                    fi => fi.FilePath == BitmapPresenter.DummyFilePath);
+                imageFileManager.ImgFileInfo.RemoveAll(
+                    fi => fi.FilePath == ImageFileManager.DummyFilePath);
             }
             else
             {
+                // 追加じゃない場合、色々クリア
                 pf.Path.Clear();
-                bitmapPresenter.ImgFileInfo.Clear();
+                imageFileManager.ImgFileInfo.Clear();
+                foreach( ArchiverBase archicer in imageFileManager.Archivers )
+                {
+                    archicer.DisposeArchive();
+                }
+                imageFileManager.Archivers.Clear();
             }
 
             // 読み込み
             if (pathes.Length > 0) {
                 if (System.IO.Path.GetExtension(pathes[0]) == ".zip")  // ZIP(複数不可、追加不可)
                 {
-                    bitmapPresenter.LoadFileInfoFromZip(pathes[0]);
+                    imageFileManager.LoadFileInfoFromZip(pathes[0]);
                     pf.Path.Add(pathes[0]);
                 }
                 else // ファイル or フォルダ (複数パスの読み込み可)
                 {
 #if DEBUG
-                    System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                    Stopwatch sw = new Stopwatch();
                     sw.Start();
 #endif
                     foreach(string path in pathes )
                     {
                         if( Directory.Exists(path) ) // フォルダ
                         {
-                            bitmapPresenter.LoadFileInfoFromDir(path);
+                            imageFileManager.LoadFileInfoFromDir(path);
                             pf.Path.Add(path);
                         }
                         else // ファイル
                         {
-                            bitmapPresenter.LoadFileInfoFromFile(path);
+                            imageFileManager.LoadFileInfoFromFile(path);
                             pf.Path.Add(path);
                         }
                     }
@@ -342,26 +350,18 @@ namespace C_SlideShow
                     Debug.WriteLine( pathes.Length
                         + " filePathes loaded"  + " time: " + sw.Elapsed);
 #endif
-
-                    bitmapPresenter.ReadType = BitmapReadType.File;
                 }
             }
 
             // ソート
-            if(pathes.Length == 1 && Directory.Exists(pathes[0])
-                && !isAddition
-                && bitmapPresenter.ReadType == BitmapReadType.File)
+            if(pathes.Length == 1 && Directory.Exists(pathes[0]) && !isAddition )
             {
                 // フォルダ１つだけを読み込んだ場合ファイル名順になっているので、
                 // 並び順設定が「ファイル名(昇順)」ならばソートの必要なし
             }
-            else if(bitmapPresenter.ReadType == BitmapReadType.File ) // ファイル or フォルダ
+            else
             {
-                bitmapPresenter.Sort(pf.FileReadingOrder);
-            }
-            else // zip
-            {
-                bitmapPresenter.Sort(pf.FileReadingOrder);
+                imageFileManager.Sort(pf.FileReadingOrder);
             }
 
         }
@@ -369,7 +369,7 @@ namespace C_SlideShow
         private void InitSeekbar()
         {
             int grids = Setting.TempProfile.NumofRow * Setting.TempProfile.NumofCol;
-            Seekbar.Maximum = bitmapPresenter.GetLastNoDeviationIndex(grids) + 1; // 末尾がずれないように
+            Seekbar.Maximum = imageFileManager.GetLastNoDeviationIndex(grids) + 1; // 末尾がずれないように
             Seekbar.Minimum = 1;
 
             // クリック時(Large)、方向キー(Small)押下時の移動量
@@ -429,7 +429,7 @@ namespace C_SlideShow
         public void StartSlideShow()
         {
             // ファイル無し
-            if (bitmapPresenter.ImgFileInfo.Count < 1) return;
+            if (imageFileManager.ImgFileInfo.Count < 1) return;
 
             // 今再生中
             if (IsPlaying) return;
@@ -461,7 +461,7 @@ namespace C_SlideShow
         public void StartOperationSlide(bool isPlayback, bool slideByOneImage, int moveTime)
         {
             // ファイル無し
-            if (bitmapPresenter.ImgFileInfo.Count < 1) return;
+            if (imageFileManager.ImgFileInfo.Count < 1) return;
 
             // インターバルスライド中なら、停止してスライド処理続行
             if (intervalSlideTimer.IsEnabled) StopSlideShow();
@@ -474,7 +474,7 @@ namespace C_SlideShow
 
             // 最初と最後の切り替えは、index 0 を通すように(画像１枚毎のスライドの時はしない)
             int grids = Setting.TempProfile.NumofCol * Setting.TempProfile.NumofRow;
-            int idx = bitmapPresenter.ActualCurrentIndex;
+            int idx = imageFileManager.ActualCurrentIndex;
             if (isPlayback)
             {
                 if (!slideByOneImage && 0 < idx && idx < grids)
@@ -485,7 +485,7 @@ namespace C_SlideShow
             }
             else
             {
-                if(!slideByOneImage && bitmapPresenter.GetLastNoDeviationIndex(grids) < idx)
+                if(!slideByOneImage && imageFileManager.GetLastNoDeviationIndex(grids) < idx)
                 {
                     ChangeCurrentImageIndex(0);
                     return;
@@ -512,7 +512,7 @@ namespace C_SlideShow
         private void StartIntervalSlide(bool slideByOneImage, int moveTime)
         {
             // ファイル無し
-            if (bitmapPresenter.ImgFileInfo.Count < 1) return;
+            if (imageFileManager.ImgFileInfo.Count < 1) return;
 
             // コンテナがずれているかどうか
             bool isNoDeviation = tileContainers.All(c =>
@@ -559,7 +559,7 @@ namespace C_SlideShow
             if (direction == Setting.TempProfile.SlideDirection) return;
 
             Setting.TempProfile.SlideDirection = direction;
-            InitMainContent(bitmapPresenter.CurrentIndex);
+            InitMainContent(imageFileManager.CurrentIndex);
 
             UpdateToolbarViewing();
         }
@@ -571,7 +571,7 @@ namespace C_SlideShow
             Setting.TempProfile.NumofRow = numofRow;
             Setting.TempProfile.NumofCol = numofCol;
 
-            InitMainContent(bitmapPresenter.CurrentIndex);
+            InitMainContent(imageFileManager.CurrentIndex);
 
             if (Setting.TempProfile.IsFullScreenMode)
             {
@@ -588,7 +588,7 @@ namespace C_SlideShow
         {
             Setting.TempProfile.AspectRatioH = h;
             Setting.TempProfile.AspectRatioV = v;
-            InitMainContent(bitmapPresenter.CurrentIndex);
+            InitMainContent(imageFileManager.CurrentIndex);
             UpdateToolbarViewing();
 
             if (Setting.TempProfile.IsFullScreenMode)
@@ -604,7 +604,7 @@ namespace C_SlideShow
 
         public void ChangeCurrentImageIndex(int index)
         {
-            bitmapPresenter.NextIndex = index;
+            imageFileManager.NextIndex = index;
             StopSlideShow();
 
             TileContainer.ReleaseBitmapLoadThread();
@@ -615,8 +615,8 @@ namespace C_SlideShow
                 tc.LoadImageToGrid(false, true);
             }
 
-            bitmapPresenter.PrevIndex = index;
-            bitmapPresenter.DecrementPrevIndex();
+            imageFileManager.PrevIndex = index;
+            imageFileManager.DecrementPrevIndex();
             UpdatePageInfo();
 
         }
@@ -651,8 +651,8 @@ namespace C_SlideShow
 
         public void UpdatePageInfo()
         {
-            this.PageInfoText.Text = bitmapPresenter.CreateCurrentIndexInfoString();
-            int c = bitmapPresenter.CurrentIndex + 1;
+            this.PageInfoText.Text = imageFileManager.CreateCurrentIndexInfoString();
+            int c = imageFileManager.CurrentIndex + 1;
 
             this.ignoreSliderValueChangeEvent = true;
             this.Seekbar.Value = c;
@@ -678,7 +678,7 @@ namespace C_SlideShow
                 //tc.InitSizeAndPos(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
             }
 
-            ChangeCurrentImageIndex(bitmapPresenter.CurrentIndex);
+            ChangeCurrentImageIndex(imageFileManager.CurrentIndex);
 
             foreach(TileContainer tc in tileContainers)
             {
@@ -901,7 +901,7 @@ namespace C_SlideShow
             if (this.AllowsTransparency == Setting.TempProfile.AllowTransparency) return;
 
             SaveWindowRect();
-            Setting.TempProfile.LastPageIndex = bitmapPresenter.CurrentIndex;
+            Setting.TempProfile.LastPageIndex = imageFileManager.CurrentIndex;
             MainWindow mw = new MainWindow(this.Setting);
 
             mw.Show();
@@ -959,8 +959,8 @@ namespace C_SlideShow
             if( order == FileReadingOrder.None )
                 ReadFiles(Setting.TempProfile.Path.ToArray(), false);
             int grids = Setting.TempProfile.NumofCol * Setting.TempProfile.NumofRow;
-            bitmapPresenter.Sort(order);
-            bitmapPresenter.FillFileInfoVacancyWithDummy(grids);
+            imageFileManager.Sort(order);
+            imageFileManager.FillFileInfoVacancyWithDummy(grids);
             ChangeCurrentImageIndex(0);
 
             // 読み込み中のメッセージ終了
@@ -999,7 +999,7 @@ namespace C_SlideShow
             // コンテンツ初期化
             if( keepCurrentIdx )
             {
-                InitMainContent(bitmapPresenter.CurrentIndex);
+                InitMainContent(imageFileManager.CurrentIndex);
             }
             else
             {

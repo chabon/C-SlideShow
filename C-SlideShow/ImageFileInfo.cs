@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 using System.Windows;
 using System.IO;
+using C_SlideShow.Archiver;
 
 namespace C_SlideShow
 {
     public class ImageFileInfo
     {
         public string FilePath;                 // ファイルパス
+        public ArchiverBase Archiver;           // 対応するアーカイバ
         public DateTimeOffset LastWriteTime;    // 更新日時
         public DateTimeOffset CreationTime;     // 作成日時
         public DateTimeOffset ShootingTime;     // 撮影日時
@@ -30,21 +32,24 @@ namespace C_SlideShow
 
 
         /// <summary>
-        /// スライド表示時に必要な、画像情報を取得(画像サイズと回転情報(予定))
+        /// スライド表示時に必要な、画像情報を取得(画像サイズと回転・反転情報(予定))
         /// </summary>
         public void ReadDetailInfo()
         {
             if(File.Exists(FilePath))
             {
+                // すでに取得済み
+                if( PixelSize != Size.Empty ) return;
+
                 using( var fs = new FileStream(FilePath, FileMode.Open) )
                 {
                     // ピクセルサイズ取得
 #if DEBUG
-                    if(PixelSize == Size.Empty) PixelSize = ReadImagePixelSize(fs);
+                    PixelSize = ReadImagePixelSize(fs);
 #else
                     try
                     {
-                        if(PixelSize == Size.Empty) PixelSize = ReadImagePixelSize(fs);
+                        PixelSize = ReadImagePixelSize(fs);
                     }
                     catch 
                     {
@@ -92,6 +97,7 @@ namespace C_SlideShow
             return new Size();
         }
 
+        // 参考: https://dixq.net/forum/viewtopic.php?t=17600
         public Size ReadPngPixelSize(FileStream fs)
         {
             fs.Seek(16, SeekOrigin.Begin);

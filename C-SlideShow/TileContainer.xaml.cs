@@ -46,7 +46,7 @@ namespace C_SlideShow
         public int Order { get; set; } // 自身の並び順
         public List<Tile> Tiles { get; private set; }
         public MainWindow MainWindow { get; set; }
-        public BitmapPresenter BitmapPresenter { get; set; }
+        public ImageFileManager ImageFileManager { get; set; }
         public TileContainer ForwardContainer { get; set; }
         public int InnerTileWidth { get; private set; } // マージンを含まない(アス比に対応)
         public int InnerTileHeight { get; private set; }
@@ -385,14 +385,17 @@ namespace C_SlideShow
             Tiles.ForEach(tile => {
                 try
                 {
-                    if (BitmapPresenter.ImgFileInfo.Count < 1) throw new Exception();
+                    if (ImageFileManager.ImgFileInfo.Count < 1) throw new Exception();
 
-                    ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
+                    ImageFileInfo iFileInfo = ImageFileManager.PickImageFileInfo(tile.ByPlayback);
                     iFileInfo.ReadDetailInfo();
-                    tile.FilePath = iFileInfo.FilePath;
+                    tile.ImageFileInfo = iFileInfo;
 
-                    BitmapPresenter.SlideIndex(tile.ByPlayback);
-                    var bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, BitmapDecodePixelWidthOfTile);
+                    ImageFileManager.SlideIndex(tile.ByPlayback);
+                    var bitmap = tile.ImageFileInfo.Archiver.LoadBitmap(
+                        tile.ImageFileInfo,
+                        BitmapDecodePixelWidthOfTile,
+                        ImageFileManager.ApplyRotateInfoFromExif); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>
@@ -403,7 +406,7 @@ namespace C_SlideShow
                 }
                 catch 
                 {
-                    BitmapPresenter.SlideIndex(tile.ByPlayback);
+                    ImageFileManager.SlideIndex(tile.ByPlayback);
                 }
                 finally
                 {
@@ -416,14 +419,14 @@ namespace C_SlideShow
         // 非同期でロード
         private void LoadTileImageAsync()
         {
-            if (BitmapPresenter.ImgFileInfo.Count < 1) return;
+            if (ImageFileManager.ImgFileInfo.Count < 1) return;
 
             foreach (Tile tile in this.Tiles)
             {
-                ImageFileInfo iFileInfo = BitmapPresenter.PickImageFileInfo(tile.ByPlayback);
+                ImageFileInfo iFileInfo = ImageFileManager.PickImageFileInfo(tile.ByPlayback);
                 iFileInfo.ReadDetailInfo();
-                tile.FilePath = iFileInfo.FilePath;
-                BitmapPresenter.SlideIndex(tile.ByPlayback);
+                tile.ImageFileInfo = iFileInfo;
+                ImageFileManager.SlideIndex(tile.ByPlayback);
             }
 
             if (bitmapLoadThread != null) bitmapLoadThread.Join();
@@ -436,7 +439,10 @@ namespace C_SlideShow
 #endif
                 foreach(Tile tile in Tiles)
                 {
-                    var bitmap = BitmapPresenter.LoadBitmap(tile.FilePath, BitmapDecodePixelWidthOfTile); // エラー時はnullが返る
+                    var bitmap = tile.ImageFileInfo.Archiver.LoadBitmap(
+                        tile.ImageFileInfo,
+                        BitmapDecodePixelWidthOfTile,
+                        ImageFileManager.ApplyRotateInfoFromExif); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>

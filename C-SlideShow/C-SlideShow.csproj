@@ -62,6 +62,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppSetting.cs" />
+    <Compile Include="Archiver\ArchiverBase.cs" />
+    <Compile Include="Archiver\FolderArchiver.cs" />
+    <Compile Include="Archiver\NullArchver.cs" />
+    <Compile Include="Archiver\ZipArchiver.cs" />
+    <Compile Include="ExifInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ImageFileInfo.cs" />
     <Compile Include="MainWindow_Event.cs" />
@@ -81,7 +86,7 @@
     <Compile Include="TileContainer.xaml.cs">
       <DependentUpon>TileContainer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BitmapPresenter.cs" />
+    <Compile Include="ImageFileManager.cs" />
     <Compile Include="TileExpantionPanel.xaml.cs">
       <DependentUpon>TileExpantionPanel.xaml</DependentUpon>
     </Compile>
