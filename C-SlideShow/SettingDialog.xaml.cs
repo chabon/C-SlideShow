@@ -103,7 +103,7 @@ namespace C_SlideShow
                 ApplyRotateInfoFromExif.IsChecked = false;
 
             // バックバッファの幅(ピクセル値)
-            BitmapDecodeTotalPixelWidth.Text = pf.BitmapDecodeTotalPixelWidth.ToString();
+            BitmapDecodeTotalPixel.Text = pf.BitmapDecodeTotalPixel.ToString();
 
 
             UpdateDlgShowing();
@@ -359,14 +359,14 @@ namespace C_SlideShow
         }
 
         // バックバッファの幅(ピクセル値)
-        private void BitmapDecodeTotalPixelWidth_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void BitmapDecodeTotalPixel_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (isInitializing) return;
 
-                int val = Int32.Parse(BitmapDecodeTotalPixelWidth.SelectedValue.ToString());
+                int val = Int32.Parse(BitmapDecodeTotalPixel.SelectedValue.ToString());
                 if( val > 10000 ) val = 1920;
                 if( val < 320 ) val = 320;
-                Setting.TempProfile.BitmapDecodeTotalPixelWidth = val;
+                Setting.TempProfile.BitmapDecodeTotalPixel = val;
                 mainWindow.Reload(true);
 
         }

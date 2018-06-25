@@ -30,27 +30,28 @@ namespace C_SlideShow
     {
         static public int StandardTileWidth = 1000; // タイルの幅の基準
 
-        SlideDirection slideDirection;
-        Point startPoint;
-        Point wrapPoint; // この座標までスライドすると最初(startPoint)に戻る
-        TileOrigin tileOrigin;
+        SlideDirection  slideDirection;
+        Point           startPoint;
+        Point           wrapPoint; // この座標までスライドすると最初(startPoint)に戻る
+        TileOrigin      tileOrigin;
         TileOrientation tileOrientation;
-        Storyboard storyboard;
-        EventHandler onStoryboardCompleted;
-        Point activeSlideEndPoint;
+        Storyboard      storyboard;
+        EventHandler    onStoryboardCompleted;
+        Point           activeSlideEndPoint;
 
-        public static Thread bitmapLoadThread;
-        public static bool reqireThreadRelease = false;
+        public static Thread    bitmapLoadThread;
+        public static bool      reqireThreadRelease = false;
 
         // プロパティ
-        public int Order { get; set; } // 自身の並び順
-        public List<Tile> Tiles { get; private set; }
-        public MainWindow MainWindow { get; set; }
+        public int              Order { get; set; } // 自身の並び順
+        public List<Tile>       Tiles { get; private set; }
+        public MainWindow       MainWindow { get; set; }
         public ImageFileManager ImageFileManager { get; set; }
-        public TileContainer ForwardContainer { get; set; }
-        public int InnerTileWidth { get; private set; } // マージンを含まない(アス比に対応)
-        public int InnerTileHeight { get; private set; }
-        public int BitmapDecodePixelWidthOfTile { get; set; } = 640; // 1タイル毎のBitmapの幅
+        public TileContainer    ForwardContainer { get; set; }
+        public int              InnerTileWidth { get; private set; } // マージンを含まない(アス比に対応)
+        public int              InnerTileHeight { get; private set; }
+        public static Size      BitmapDecodePixelOfTile { get; set; } = new Size(640, 480); // 1タイル毎のBitmapの上限
+        public static double    TileAspectRatio { get; set; } = 0.75; // 縦 / 横
 
         public int TileWidth
         {
@@ -112,13 +113,29 @@ namespace C_SlideShow
         {
             InitializeComponent();
             Tiles = new List<Tile>();
-            
         }
 
         public void InitSlideDerection(SlideDirection dir)
         {
             this.slideDirection = dir;
         }
+
+        public static void SetBitmapDecodePixelOfTile(int pixelSize, int numofRow, int numofCol)
+        {
+            int w, h;
+            if(numofRow > numofCol )
+            {
+                h = pixelSize / numofRow;
+                w = (int)( h / TileAspectRatio );
+            }
+            else
+            {
+                w = pixelSize / numofCol;
+                h = (int)( w * TileAspectRatio );
+            }
+            BitmapDecodePixelOfTile = new Size(w, h);
+        }
+
 
         /// <summary>
         /// グリッド(タイル)の初期化
@@ -393,8 +410,7 @@ namespace C_SlideShow
                     ImageFileManager.SlideIndex(tile.ByPlayback);
                     iFileInfo.ReadSlideViewInfo();
                     var bitmap = ImageFileManager.LoadBitmap(
-                        tile.ImageFileInfo,
-                        BitmapDecodePixelWidthOfTile ); // エラー時はnullが返る
+                        tile.ImageFileInfo, BitmapDecodePixelOfTile ); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>
@@ -439,8 +455,7 @@ namespace C_SlideShow
                 {
                     tile.ImageFileInfo.ReadSlideViewInfo();
                     var bitmap = ImageFileManager.LoadBitmap(
-                        tile.ImageFileInfo,
-                        BitmapDecodePixelWidthOfTile ); // エラー時はnullが返る
+                        tile.ImageFileInfo, BitmapDecodePixelOfTile ); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>

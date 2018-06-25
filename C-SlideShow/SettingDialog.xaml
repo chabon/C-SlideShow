@@ -163,9 +163,9 @@
                     </StackPanel>
                     <CheckBox x:Name="ApplyRotateInfoFromExif" Click="ApplyRotateInfoFromExif_Click">Exifの回転・反転情報を反映させる</CheckBox>
                     <StackPanel Orientation="Horizontal" Margin="0,4">
-                        <Label>バックバッファの幅(ピクセル値)</Label>
-                        <ComboBox x:Name="BitmapDecodeTotalPixelWidth"
-                                  SelectionChanged="BitmapDecodeTotalPixelWidth_SelectionChanged"
+                        <Label>バックバッファのサイズ(ピクセル値)</Label>
+                        <ComboBox x:Name="BitmapDecodeTotalPixel"
+                                  SelectionChanged="BitmapDecodeTotalPixel_SelectionChanged"
                                   SelectedValuePath="Content"
                                   ToolTipService.ShowDuration="50000"
                                   Margin="8,0" Width="55" >

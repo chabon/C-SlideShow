@@ -255,8 +255,9 @@ namespace C_SlideShow
 
         private void LoadImage()
         {
-            int pxcelWidth = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixelWidth;
-            var bitmap = ImageFileManager.LoadBitmap( targetTile.ImageFileInfo, pxcelWidth );
+            int pixel = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixel;
+            Size pixelSize = new Size(pixel, pixel);
+            var bitmap = ImageFileManager.LoadBitmap( targetTile.ImageFileInfo, pixelSize );
 
             if(bitmap != null)
                 this.ExpandedImage.Source = bitmap;
@@ -271,7 +272,7 @@ namespace C_SlideShow
             try
             {
 #if DEBUG
-                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                Stopwatch sw = new Stopwatch();
                 sw.Start();
 #endif
                 ImageFileInfo ifi =
@@ -296,13 +297,6 @@ namespace C_SlideShow
                     lastWriteTime = File.GetLastWriteTime(targetTile.ImageFileInfo.FilePath);
                 else
                     lastWriteTime = ifi.LastWriteTime;
-
-                // ピクセル数
-                //FileStream fs = new FileStream(targetTile.FilePath, FileMode.Open, FileAccess.Read);
-                //int imagew = System.Drawing.Image.FromStream(fs).Width;
-                //int imageh = System.Drawing.Image.FromStream(fs).Height;
-                //fs.Close();
-                //BitmapSource bmp = (BitmapSource)this.ExpandedImage.Source;
 
                 // (todo)撮影日時
 

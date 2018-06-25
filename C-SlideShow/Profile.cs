@@ -143,7 +143,7 @@ namespace C_SlideShow
         public bool ApplyRotateInfoFromExif { get; set; }
 
         [DataMember]
-        public int BitmapDecodeTotalPixelWidth { get; set; }
+        public int BitmapDecodeTotalPixel { get; set; }
 
         // ダイアログにはない設定
         [DataMember]
@@ -205,7 +205,7 @@ namespace C_SlideShow
             TopMost = false;
             StartUp_OpenPrevFolder = true;
             ApplyRotateInfoFromExif = false;
-            BitmapDecodeTotalPixelWidth = 1920;
+            BitmapDecodeTotalPixel = 1920;
 
             // ダイアログにはない設定
             Path = new List<string>();

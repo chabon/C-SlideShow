@@ -249,12 +249,12 @@ namespace C_SlideShow
             if (firstIndex > imageFileManager.NumofImageFile - 1) firstIndex = 0;
             imageFileManager.NextIndex = firstIndex;
             imageFileManager.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif;
-            imageFileManager.TileAspectRatio = pf.AspectRatioV / (double)pf.AspectRatioH;
 
             // init container
+            TileContainer.TileAspectRatio = pf.AspectRatioV / (double)pf.AspectRatioH;
+            TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel, pf.NumofRow, pf.NumofCol);
             foreach(TileContainer tc in tileContainers)
             {
-                tc.BitmapDecodePixelWidthOfTile = pf.BitmapDecodeTotalPixelWidth / pf.NumofCol; 
                 tc.InitSlideDerection(pf.SlideDirection);
                 tc.InitGrid(pf.NumofRow, pf.NumofCol);
                 tc.InitGridLineColor(pf.GridLineColor);

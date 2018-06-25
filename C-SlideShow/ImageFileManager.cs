@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
+using System.Windows;
 using System.IO;
 using System.IO.Compression;
 using System.Diagnostics;
@@ -33,7 +34,6 @@ namespace C_SlideShow
         public NullArchiver        NullArchiver { get; set; }
         public static string       DummyFilePath = ":dummy";
         public bool                ApplyRotateInfoFromExif { get; set; } = false;
-        public double              TileAspectRatio { get; set; } = 0.75;
         public int                 NextIndex { get; set; }
         public int                 PrevIndex { get; set; }
 
@@ -172,7 +172,7 @@ namespace C_SlideShow
         /// <param name="imageFileInfo"></param>
         /// <param name="bitmapDecodePixelWidth"></param>
         /// <returns>BitmapSource(失敗時はnullを返す)</returns>
-        public BitmapSource LoadBitmap(ImageFileInfo imageFileInfo, int bitmapDecodePixelWidth)
+        public BitmapSource LoadBitmap(ImageFileInfo imageFileInfo, Size bitmapDecodePixel)
         {
             string path = imageFileInfo.FilePath;
             if( path == DummyFilePath || path == "" ) return null;
@@ -187,17 +187,14 @@ namespace C_SlideShow
                     source.CacheOption = BitmapCacheOption.OnLoad;
                     source.CreateOptions = BitmapCreateOptions.None;
 
-                    // 画像とタイルのアス比から、縦横どちらをDecodePixelの基準とするのかを決める
-                    bool bSwap = false;
-                    double imgRatio = imageFileInfo.PixelSize.Height / imageFileInfo.PixelSize.Width;
-                    if( imgRatio > TileAspectRatio ) bSwap = true;
-
-                    if( bitmapDecodePixelWidth != 0 )
+                    // 画像のアス比から、縦横どちらのDecodePixelを適用するのかを決める
+                    if( bitmapDecodePixel != Size.Empty )
                     {
-                        if( bSwap )
-                            source.DecodePixelHeight = (int)(bitmapDecodePixelWidth * TileAspectRatio);
-                        else
-                            source.DecodePixelWidth = bitmapDecodePixelWidth;
+                        double imgRatio = imageFileInfo.PixelSize.Height / (double)imageFileInfo.PixelSize.Width;
+                        if( imgRatio > 1.0 ) // 画像が縦長
+                            source.DecodePixelHeight = (int)bitmapDecodePixel.Height;
+                        else                 // 画像が横長
+                            source.DecodePixelWidth = (int)bitmapDecodePixel.Width;
                     }
 
                     // 読み込み
