@@ -35,75 +35,82 @@ namespace C_SlideShow
             this.FilePath = _filePath;
         }
 
+        private Stream OpenStream()
+        {
+            return Archiver.OpenStream(FilePath);
+        }
 
         /// <summary>
         /// スライド表示時に必要な、画像情報を取得(画像サイズとExif情報)
         /// </summary>
         public void ReadSlideViewInfo()
         {
-            if(File.Exists(FilePath))
+            // すでに取得済み
+            if( PixelSize != Size.Empty || ExifInfo != ExifInfo.Empty ) return;
+
+            // ダミーの場合取得しない
+            if( FilePath == ImageFileManager.DummyFilePath ) return;
+
+            using( var st = OpenStream() )
             {
-                // すでに取得済み
-                if( PixelSize != Size.Empty || ExifInfo != ExifInfo.Empty) return;
+                // ストリーム取得エラー
+                if( st == Stream.Null ) return;
 
-                using( var fs = new FileStream(FilePath, FileMode.Open) )
+                // ピクセルサイズ取得
+                try
                 {
-                    // ピクセルサイズ取得
-                    try
-                    {
-                        PixelSize = ReadImagePixelSize(fs);
-                    }
-                    catch
-                    {
-                        PixelSize = new Size();
-                        Debug.WriteLine("ReadImagePixelSize() is failed");
-                    }
+                    PixelSize = ReadImagePixelSize(st);
+                }
+                catch
+                {
+                    PixelSize = new Size();
+                    Debug.WriteLine("ReadImagePixelSize() is failed");
+                }
 
-                    // Exif情報取得
-                    fs.Position = 0;
-                    try
-                    {
-                        ExifInfo = GetExifInfo(fs);
-                    }
-                    catch
-                    {
-                        ExifInfo = new ExifInfo();
-                        Debug.WriteLine("GetExifInfo() is failed");
-                    }
+                // Exif情報取得
+                st.Position = 0;
+                try
+                {
+                    ExifInfo = GetExifInfo(st);
+                }
+                catch
+                {
+                    ExifInfo = new ExifInfo();
+                    Debug.WriteLine("GetExifInfo() is failed");
                 }
             }
         }
 
-        private Size ReadImagePixelSize(FileStream fs)
+        private Size ReadImagePixelSize(Stream st)
         {
-            string ext = Path.GetExtension(fs.Name).ToLower();
+            string ext = Path.GetExtension(this.FilePath).ToLower();
             switch( ext )
             {
                 case ".jpg":
                 case ".jpeg":
-                    return ReadJpegPixelSize(fs);
+                    return ReadJpegPixelSize(st);
                 case ".png":
-                    return ReadPngPixelSize(fs);
+                    return ReadPngPixelSize(st);
                 case ".bmp":
-                    return ReadBmpPixelSize(fs);
+                    return ReadBmpPixelSize(st);
                 case ".gif":
-                    return ReadGifPixelSize(fs);
+                    return ReadGifPixelSize(st);
                 default:
                     return new Size();
             }
         }
 
-        private Size ReadJpegPixelSize(FileStream fs)
+        private Size ReadJpegPixelSize(Stream st)
         {
             var buf = new byte[8];
-            while (fs.Read(buf, 0, 2) == 2 && buf[0] == 0xff)
+            while (st.Read(buf, 0, 2) == 2 && buf[0] == 0xff)
             {
-                if (buf[1] == 0xc0 && fs.Read(buf, 0, 7) == 7)
+                if (buf[1] == 0xc0 && st.Read(buf, 0, 7) == 7)
                     return new Size(buf[5] * 256 + buf[6], buf[3] * 256 + buf[4]);
                 else if (buf[1] != 0xd8)
                 {
-                    if (fs.Read(buf, 0, 2) == 2)
-                        fs.Position += buf[0] * 256 + buf[1] - 2;
+                    if (st.Read(buf, 0, 2) == 2)
+                        st.Position += buf[0] * 256 + buf[1] - 2;
                     else
                         break;
                 }
@@ -112,11 +119,11 @@ namespace C_SlideShow
         }
 
         // 参考: https://dixq.net/forum/viewtopic.php?t=17600
-        private Size ReadPngPixelSize(FileStream fs)
+        private Size ReadPngPixelSize(Stream st)
         {
-            fs.Seek(16, SeekOrigin.Begin);
+            st.Seek(16, SeekOrigin.Begin);
             byte[] buf = new byte[8];
-            fs.Read(buf, 0, 8);
+            st.Read(buf, 0, 8);
 
             int width, height;
             if (BitConverter.IsLittleEndian)   // pngのヘッダのバイトオーダーはビッグエンディアン
@@ -136,11 +143,11 @@ namespace C_SlideShow
 
 
         // http://www.umekkii.jp/data/computer/file_format/bitmap.cgi
-        private Size ReadBmpPixelSize(FileStream fs)
+        private Size ReadBmpPixelSize(Stream st)
         {
-            fs.Seek(18, SeekOrigin.Begin);
+            st.Seek(18, SeekOrigin.Begin);
             byte[] buf = new byte[8];
-            fs.Read(buf, 0, 8);
+            st.Read(buf, 0, 8);
 
             int width, height;
             if (BitConverter.IsLittleEndian) // bmpのヘッダのバイトオーダーはリトルエンディアン
@@ -160,11 +167,11 @@ namespace C_SlideShow
 
 
         // https://www.setsuki.com/hsp/ext/gif.htm
-        private Size ReadGifPixelSize(FileStream fs)
+        private Size ReadGifPixelSize(Stream st)
         {
-            fs.Seek(6, SeekOrigin.Begin);
+            st.Seek(6, SeekOrigin.Begin);
             byte[] buf = new byte[4];
-            fs.Read(buf, 0, 4);
+            st.Read(buf, 0, 4);
 
             int width, height;
             if (BitConverter.IsLittleEndian) // gifのヘッダのバイトオーダーはリトルエンディアン

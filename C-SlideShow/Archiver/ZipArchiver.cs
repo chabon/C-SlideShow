@@ -34,11 +34,18 @@ namespace C_SlideShow.Archiver
 
             using (var zipStream = entory.Open())
             {
-                var ms = new MemoryStream();
-                zipStream.CopyTo(ms);
-                ms.Position = 0;
+                try
+                {
+                    var ms = new MemoryStream();
+                    zipStream.CopyTo(ms);
+                    ms.Position = 0;
 
-                return ms;
+                    return ms;
+                }
+                catch
+                {
+                    return Stream.Null;
+                }
             }
         }
 
