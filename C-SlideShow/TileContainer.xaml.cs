@@ -388,10 +388,10 @@ namespace C_SlideShow
                     if (ImageFileManager.ImgFileInfo.Count < 1) throw new Exception();
 
                     ImageFileInfo iFileInfo = ImageFileManager.PickImageFileInfo(tile.ByPlayback);
-                    iFileInfo.ReadDetailInfo();
                     tile.ImageFileInfo = iFileInfo;
 
                     ImageFileManager.SlideIndex(tile.ByPlayback);
+                    iFileInfo.ReadSlideViewInfo();
                     var bitmap = tile.ImageFileInfo.Archiver.LoadBitmap(
                         tile.ImageFileInfo,
                         BitmapDecodePixelWidthOfTile,
@@ -424,7 +424,6 @@ namespace C_SlideShow
             foreach (Tile tile in this.Tiles)
             {
                 ImageFileInfo iFileInfo = ImageFileManager.PickImageFileInfo(tile.ByPlayback);
-                iFileInfo.ReadDetailInfo();
                 tile.ImageFileInfo = iFileInfo;
                 ImageFileManager.SlideIndex(tile.ByPlayback);
             }
@@ -434,11 +433,12 @@ namespace C_SlideShow
             bitmapLoadThread = new Thread(() =>
             {
 #if DEBUG
-                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                Stopwatch sw = new Stopwatch();
                 sw.Start();
 #endif
                 foreach(Tile tile in Tiles)
                 {
+                    tile.ImageFileInfo.ReadSlideViewInfo();
                     var bitmap = tile.ImageFileInfo.Archiver.LoadBitmap(
                         tile.ImageFileInfo,
                         BitmapDecodePixelWidthOfTile,

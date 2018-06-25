@@ -45,36 +45,23 @@ namespace C_SlideShow.Archiver
                     zipStream.CopyTo(ms_bitmap);
                     ms_bitmap.Position = 0;
 
-                    // Exif情報取得
-                    ExifInfo ei;
-                    if( applyRotateInfoFromExif )
-                    {
-                        using (var ms_exif = new MemoryStream() )
-                        using (var zs_exif = entory.Open())
-                        {
-                            zs_exif.CopyTo(ms_exif);
-                            ms_exif.Position = 0;
-                            ei = GetExifInfo(ms_exif);
-                        }
-                    }
-                    else ei = new ExifInfo();
-
                     source.BeginInit();
                     source.CacheOption = BitmapCacheOption.OnLoad;
                     source.CreateOptions = BitmapCreateOptions.None;
                     if( bitmapDecodePixelWidth != 0)
                         source.DecodePixelWidth = bitmapDecodePixelWidth;
                     source.StreamSource = ms_bitmap;
-                    source.Rotation = ei.Rotation;
+                    if(applyRotateInfoFromExif)
+                        source.Rotation = imageFileInfo.ExifInfo.Rotation;
                     source.EndInit();
                     source.Freeze();
 
                     Debug.WriteLine("bitmap from zip: " + filePath);
 
                     // Exifに反転もあった場合は、BitmapImage.Rotationで対応出来ないのでTransform
-                    if( ei.ScaleTransform != null )
+                    if( applyRotateInfoFromExif && imageFileInfo.ExifInfo.ScaleTransform != null )
                     {
-                        return TransformBitmap(source, ei.ScaleTransform);
+                        return TransformBitmap(source, imageFileInfo.ExifInfo.ScaleTransform);
                     }
 
                     return source;

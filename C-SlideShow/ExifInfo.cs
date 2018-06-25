@@ -11,8 +11,11 @@ namespace C_SlideShow
 {
     public class ExifInfo
     {
-        public Rotation Rotation;
-        public ScaleTransform ScaleTransform;
+        // 静的で空の C_SlideShow.ExifInfo を表す値を取得します。
+        public static ExifInfo Empty { get; }
+
+        public Rotation Rotation;               // 回転情報
+        public ScaleTransform ScaleTransform;   // 反転情報
 
         public ExifInfo()
         {
