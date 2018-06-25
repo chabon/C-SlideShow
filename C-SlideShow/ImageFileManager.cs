@@ -25,7 +25,6 @@ namespace C_SlideShow
     {
         // field
         int numofDummyFileInfo; // コンテナ内の隙間グリッド埋め用のダミー情報の数
-        string[] allowedExt = { ".jpg", ".png", ".jpeg", ".bmp", ".gif" };
 
         #region Properties
         public List<ImageFileInfo> ImgFileInfo { get; set; }
@@ -127,70 +126,95 @@ namespace C_SlideShow
             return String.Format("{0} / {1}", num, numMax);
         }
 
-        public void LoadFileInfoFromFile(string filePath)
+        public void LoadImageFileInfo(string path)
         {
-            // 拡張子でフィルタ
-            if( !allowedExt.Any(ext => filePath.ToLower().EndsWith(ext)) ) return;
+            // 新規アーカイバ
+            ArchiverBase archiver;
 
-            ImageFileInfo imageFileInfo = new ImageFileInfo();
-            imageFileInfo.FilePath = filePath;
-            imageFileInfo.Archiver = NullArchiver;
-            this.ImgFileInfo.Add(imageFileInfo);
-        }
-
-
-        public void LoadFileInfoFromDir(string dirPath)
-        {
-            if( !Directory.Exists(dirPath) ) return;
-
-            // アーカイバ
-            ArchiverBase archiver = new FolderArchiver(dirPath);
-            Archivers.Add(archiver);
-
-            // フォルダ内のファイルパスを取得し、拡張子でフィルタ
-            var imgPathes = Directory.GetFiles( dirPath, "*.*", SearchOption.AllDirectories );
-            var filteredFiles = imgPathes.Where(file => allowedExt.Any(ext => 
-                file.ToLower().EndsWith(ext)));
-
-            // ロード
-            foreach (string imgPath in filteredFiles)
+            // ファイル
+            if( File.Exists(path) )
             {
-                ImageFileInfo imageFileInfo = new ImageFileInfo();
-                imageFileInfo.FilePath = imgPath;
-                imageFileInfo.Archiver = archiver;
-                ImgFileInfo.Add(imageFileInfo);
-            }
-        }
+                // 画像ファイル単体
+                ImageFileInfo ifi = NullArchiver.LoadImageFileInfo(path);
+                if( ifi != null ) ImgFileInfo.Add(ifi);
 
-        public void LoadFileInfoFromZip(string filePath)
-        {
-            if( !File.Exists(filePath) ) return;
-
-            // アーカイバ
-            ZipArchiver archiver = new ZipArchiver(filePath);
-            Archivers.Add(archiver);
-
-            try
-            {
-                var entries = archiver.GetEntries();
-                foreach(ZipArchiveEntry entory in entries)
+                // 圧縮ファイル / その他のファイル
+                else
                 {
-                    // ファイル情報を拡張子でフィルタ
-                    if(  allowedExt.Any( ext => entory.FullName.ToLower().EndsWith(ext) ))
+                    string ext = Path.GetExtension(path);
+
+                    switch( ext )
                     {
-                        ImageFileInfo fi = new ImageFileInfo(entory.FullName);
-                        fi.LastWriteTime = entory.LastWriteTime;
-                        fi.Length = entory.Length;
-                        fi.Archiver = archiver;
-                        ImgFileInfo.Add(fi);
+                        case ".zip":
+                            Archivers.Add( archiver = new ZipArchiver(path) );
+                            ImgFileInfo.AddRange( archiver.LoadImageFileInfoList() );
+                            break;
+                        default:
+                            return;
                     }
                 }
             }
-            catch
+
+            // フォルダ
+            else if( Directory.Exists(path) )
             {
-                archiver.DisposeArchive();
-                Archivers.Remove(archiver);
+                Archivers.Add( archiver = new FolderArchiver(path) );
+                ImgFileInfo.AddRange( archiver.LoadImageFileInfoList() );
             }
+        }
+
+
+        public BitmapSource LoadBitmap(ImageFileInfo imageFileInfo, int bitmapDecodePixelWidth)
+        {
+            string path = imageFileInfo.FilePath;
+            if( path == DummyFilePath || path == "" ) return null;
+
+            var source = new BitmapImage();
+
+            using(Stream st = imageFileInfo.Archiver.OpenStream(path) )
+            {
+                try
+                {
+                    source.BeginInit();
+                    source.CacheOption = BitmapCacheOption.OnLoad;
+                    source.CreateOptions = BitmapCreateOptions.None;
+                    if( bitmapDecodePixelWidth != 0 )
+                        source.DecodePixelWidth = bitmapDecodePixelWidth;
+                    //source.UriSource = new Uri(filePath);
+                    source.StreamSource = st;
+                    if( ApplyRotateInfoFromExif )
+                        source.Rotation = imageFileInfo.ExifInfo.Rotation;
+                    source.EndInit();
+                    source.Freeze();
+
+                    Debug.WriteLine("bitmap load from stream: " + path);
+
+                    // Exifに反転もあった場合は、BitmapImage.Rotationで対応出来ないのでTransform
+                    if( ApplyRotateInfoFromExif && imageFileInfo.ExifInfo.ScaleTransform != null )
+                    {
+                        return TransformBitmap(source, imageFileInfo.ExifInfo.ScaleTransform);
+                    }
+
+                    return source;
+                }
+                catch
+                {
+                    return null;
+                }
+
+            }
+
+        }
+
+        private BitmapSource TransformBitmap(BitmapSource source, Transform transform)
+        {
+            var result = new TransformedBitmap();
+            result.BeginInit();
+            result.Source = source;
+            result.Transform = transform;
+            result.EndInit();
+            result.Freeze();
+            return result;
         }
 
         public void GetLastWriteTimeFileInfo()

@@ -256,10 +256,8 @@ namespace C_SlideShow
         private void LoadImage()
         {
             int pxcelWidth = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixelWidth;
-            var bitmap = targetTile.ImageFileInfo.Archiver.LoadBitmap(
-                targetTile.ImageFileInfo,
-                pxcelWidth,
-                ImageFileManager.ApplyRotateInfoFromExif); // エラー時はnullが返る
+            var bitmap = ImageFileManager.LoadBitmap( targetTile.ImageFileInfo, pxcelWidth );
+
             if(bitmap != null)
                 this.ExpandedImage.Source = bitmap;
             else

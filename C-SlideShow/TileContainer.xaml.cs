@@ -392,10 +392,9 @@ namespace C_SlideShow
 
                     ImageFileManager.SlideIndex(tile.ByPlayback);
                     iFileInfo.ReadSlideViewInfo();
-                    var bitmap = tile.ImageFileInfo.Archiver.LoadBitmap(
+                    var bitmap = ImageFileManager.LoadBitmap(
                         tile.ImageFileInfo,
-                        BitmapDecodePixelWidthOfTile,
-                        ImageFileManager.ApplyRotateInfoFromExif); // エラー時はnullが返る
+                        BitmapDecodePixelWidthOfTile ); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>
@@ -439,10 +438,9 @@ namespace C_SlideShow
                 foreach(Tile tile in Tiles)
                 {
                     tile.ImageFileInfo.ReadSlideViewInfo();
-                    var bitmap = tile.ImageFileInfo.Archiver.LoadBitmap(
+                    var bitmap = ImageFileManager.LoadBitmap(
                         tile.ImageFileInfo,
-                        BitmapDecodePixelWidthOfTile,
-                        ImageFileManager.ApplyRotateInfoFromExif); // エラー時はnullが返る
+                        BitmapDecodePixelWidthOfTile ); // エラー時はnullが返る
 
                     tile.Image.Dispatcher.BeginInvoke(
                         new Action(() =>

@@ -28,46 +28,49 @@ namespace C_SlideShow.Archiver
             }
         }
 
-        public override BitmapSource LoadBitmap(ImageFileInfo imageFileInfo, int bitmapDecodePixelWidth, bool applyRotateInfoFromExif)
+        public override Stream OpenStream(string path)
         {
-            string filePath = imageFileInfo.FilePath;
-            if (filePath == ImageFileManager.DummyFilePath || filePath == "") return null;
+            ZipArchiveEntry entory = GetEntry(path);
 
-            var source = new BitmapImage();
-            
-            ZipArchiveEntry entory = GetEntry(filePath);
+            using (var zipStream = entory.Open())
+            {
+                var ms = new MemoryStream();
+                zipStream.CopyTo(ms);
+                ms.Position = 0;
 
+                return ms;
+            }
+        }
+
+        public override List<ImageFileInfo> LoadImageFileInfoList()
+        {
+            List<ImageFileInfo> newList = new List<ImageFileInfo>();
             try
             {
-                using (var zipStream = entory.Open())
-                using (var ms_bitmap = new MemoryStream())
+                // エントリ
+                var entries = GetEntries();
+
+                // ロード
+                foreach(ZipArchiveEntry entory in entries)
                 {
-                    zipStream.CopyTo(ms_bitmap);
-                    ms_bitmap.Position = 0;
-
-                    source.BeginInit();
-                    source.CacheOption = BitmapCacheOption.OnLoad;
-                    source.CreateOptions = BitmapCreateOptions.None;
-                    if( bitmapDecodePixelWidth != 0)
-                        source.DecodePixelWidth = bitmapDecodePixelWidth;
-                    source.StreamSource = ms_bitmap;
-                    if(applyRotateInfoFromExif)
-                        source.Rotation = imageFileInfo.ExifInfo.Rotation;
-                    source.EndInit();
-                    source.Freeze();
-
-                    Debug.WriteLine("bitmap from zip: " + filePath);
-
-                    // Exifに反転もあった場合は、BitmapImage.Rotationで対応出来ないのでTransform
-                    if( applyRotateInfoFromExif && imageFileInfo.ExifInfo.ScaleTransform != null )
+                    // ファイル拡張子でフィルタ
+                    if(  AllowedFileExt.Any( ext => entory.FullName.ToLower().EndsWith(ext) ))
                     {
-                        return TransformBitmap(source, imageFileInfo.ExifInfo.ScaleTransform);
+                        ImageFileInfo fi = new ImageFileInfo(entory.FullName);
+                        fi.LastWriteTime = entory.LastWriteTime;
+                        fi.Length = entory.Length;
+                        fi.Archiver = this;
+                        newList.Add(fi);
                     }
-
-                    return source;
                 }
             }
-            catch { return null; }
+            catch
+            {
+                DisposeArchive();
+                Debug.WriteLine("LoadImageFileInfoList() failed  path = " + ArchiverPath);
+            }
+
+            return newList;
         }
 
         public ZipArchiveEntry GetEntry(string filePath)

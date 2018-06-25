@@ -293,13 +293,6 @@ namespace C_SlideShow
             // レンダリング更新
             this.WaitingMessageBase.Refresh();
 
-            // 追加可能か判定
-            if( isAddition )
-            {
-                if( imageFileManager.Archivers[0] is ZipArchiver ) isAddition = false;
-                else if( System.IO.Path.GetExtension(pathes[0]) == ".zip" ) isAddition = false;
-            }
-
             Profile pf = Setting.TempProfile;
             if( isAddition )
             {
@@ -320,37 +313,21 @@ namespace C_SlideShow
             }
 
             // 読み込み
-            if (pathes.Length > 0) {
-                if (System.IO.Path.GetExtension(pathes[0]) == ".zip")  // ZIP(複数不可、追加不可)
-                {
-                    imageFileManager.LoadFileInfoFromZip(pathes[0]);
-                    pf.Path.Add(pathes[0]);
-                }
-                else // ファイル or フォルダ (複数パスの読み込み可)
-                {
+            if (pathes.Length > 0)
+            {
 #if DEBUG
-                    Stopwatch sw = new Stopwatch();
-                    sw.Start();
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
 #endif
-                    foreach(string path in pathes )
-                    {
-                        if( Directory.Exists(path) ) // フォルダ
-                        {
-                            imageFileManager.LoadFileInfoFromDir(path);
-                            pf.Path.Add(path);
-                        }
-                        else // ファイル
-                        {
-                            imageFileManager.LoadFileInfoFromFile(path);
-                            pf.Path.Add(path);
-                        }
-                    }
-#if DEBUG
-                    sw.Stop();
-                    Debug.WriteLine( pathes.Length
-                        + " filePathes loaded"  + " time: " + sw.Elapsed);
-#endif
+                foreach(string path in pathes )
+                {
+                    imageFileManager.LoadImageFileInfo(path);
+                    pf.Path.Add(path);
                 }
+#if DEBUG
+                sw.Stop();
+                Debug.WriteLine( pathes.Length + " filePathes loaded"  + " time: " + sw.Elapsed);
+#endif
             }
 
             // ソート
