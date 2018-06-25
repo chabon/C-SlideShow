@@ -26,12 +26,14 @@ namespace C_SlideShow
         // field
         int numofDummyFileInfo; // コンテナ内の隙間グリッド埋め用のダミー情報の数
 
+        // property
         #region Properties
         public List<ImageFileInfo> ImgFileInfo { get; set; }
         public List<ArchiverBase>  Archivers { get; set; }
         public NullArchiver        NullArchiver { get; set; }
         public static string       DummyFilePath = ":dummy";
         public bool                ApplyRotateInfoFromExif { get; set; } = false;
+        public double              TileAspectRatio { get; set; } = 0.75;
         public int                 NextIndex { get; set; }
         public int                 PrevIndex { get; set; }
 
@@ -164,6 +166,12 @@ namespace C_SlideShow
         }
 
 
+        /// <summary>
+        /// WPFで利用可能なBitmapをロード
+        /// </summary>
+        /// <param name="imageFileInfo"></param>
+        /// <param name="bitmapDecodePixelWidth"></param>
+        /// <returns>BitmapSource(失敗時はnullを返す)</returns>
         public BitmapSource LoadBitmap(ImageFileInfo imageFileInfo, int bitmapDecodePixelWidth)
         {
             string path = imageFileInfo.FilePath;
@@ -178,16 +186,33 @@ namespace C_SlideShow
                     source.BeginInit();
                     source.CacheOption = BitmapCacheOption.OnLoad;
                     source.CreateOptions = BitmapCreateOptions.None;
+
+                    // 画像とタイルのアス比から、縦横どちらをDecodePixelの基準とするのかを決める
+                    bool bSwap = false;
+                    double imgRatio = imageFileInfo.PixelSize.Height / imageFileInfo.PixelSize.Width;
+                    if( imgRatio > TileAspectRatio ) bSwap = true;
+
                     if( bitmapDecodePixelWidth != 0 )
-                        source.DecodePixelWidth = bitmapDecodePixelWidth;
+                    {
+                        if( bSwap )
+                            source.DecodePixelHeight = (int)(bitmapDecodePixelWidth * TileAspectRatio);
+                        else
+                            source.DecodePixelWidth = bitmapDecodePixelWidth;
+                    }
+
+                    // 読み込み
                     //source.UriSource = new Uri(filePath);
                     source.StreamSource = st;
+
+                    // 回転
                     if( ApplyRotateInfoFromExif )
                         source.Rotation = imageFileInfo.ExifInfo.Rotation;
+
                     source.EndInit();
                     source.Freeze();
 
-                    Debug.WriteLine("bitmap load from stream: " + path);
+                    Debug.WriteLine("bitmap load from stream: "
+                        + source.PixelWidth + "x" + source.PixelHeight + "  path: " + path);
 
                     // Exifに反転もあった場合は、BitmapImage.Rotationで対応出来ないのでTransform
                     if( ApplyRotateInfoFromExif && imageFileInfo.ExifInfo.ScaleTransform != null )

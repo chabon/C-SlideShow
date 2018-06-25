@@ -249,6 +249,7 @@ namespace C_SlideShow
             if (firstIndex > imageFileManager.NumofImageFile - 1) firstIndex = 0;
             imageFileManager.NextIndex = firstIndex;
             imageFileManager.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif;
+            imageFileManager.TileAspectRatio = pf.AspectRatioV / (double)pf.AspectRatioH;
 
             // init container
             foreach(TileContainer tc in tileContainers)
