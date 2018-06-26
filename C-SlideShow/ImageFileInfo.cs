@@ -71,7 +71,7 @@ namespace C_SlideShow
                 st.Position = 0;
                 try
                 {
-                    ExifInfo = GetExifInfo(st);
+                    ExifInfo = ReadExifInfo(st);
                 }
                 catch
                 {
@@ -100,18 +100,37 @@ namespace C_SlideShow
             }
         }
 
+        // 参考：
+        // http://d.hatena.ne.jp/n7shi/20110204/1296891184
+        // http://blog.mirakui.com/entry/2012/09/17/121109
+        // https://hp.vector.co.jp/authors/VA032610/JPEGFormat/markers.htm
         private Size ReadJpegPixelSize(Stream st)
         {
+            const int SOI  = 0xd8;  // スタートマーカー
+            const int SOF0 = 0xc0;  // ベースラインフレームヘッダー (ハフマン符号化基本DCT方式)
+            const int SOF1 = 0xc1;  // フレームヘッダー (ハフマン符号化拡張シーケンシャルDCT方式)
+            const int SOF2 = 0xc2;  // プログレッシブフレームヘッダー (ハフマン符号化プログレッシブDCT方式)
+            const int SOF3 = 0xc3;  // フレームヘッダー (ハフマン符号化ロスレス方式)
+
             var buf = new byte[8];
-            while (st.Read(buf, 0, 2) == 2 && buf[0] == 0xff)
+            while( st.Read(buf, 0, 2) == 2 && buf[0] == 0xff ) // 2byte = 16進数で4桁
             {
-                if (buf[1] == 0xc0 && st.Read(buf, 0, 7) == 7)
-                    return new Size(buf[5] * 256 + buf[6], buf[3] * 256 + buf[4]);
-                else if (buf[1] != 0xd8)
+                switch( buf[1] )
                 {
-                    if (st.Read(buf, 0, 2) == 2)
-                        st.Position += buf[0] * 256 + buf[1] - 2;
-                    else
+                    case SOF0:
+                    case SOF1:
+                    case SOF2:
+                    case SOF3:
+                        if( st.Read(buf, 0, 7) == 7 ) // 7byte = 16進数で14桁
+                            return new Size(buf[5] * 256 + buf[6], buf[3] * 256 + buf[4]);
+                        break;
+                    default:
+                        if( buf[1] != SOI ){
+                            if(st.Read(buf, 0, 2) == 2)
+                                st.Position += buf[0] * 256 + buf[1] - 2; // 1セグメント進めて、フレームヘッダセグメントを目指す
+                            else
+                                return new Size();
+                        }
                         break;
                 }
             }
@@ -190,7 +209,7 @@ namespace C_SlideShow
         }
 
 
-        private ExifInfo GetExifInfo(Stream st)
+        private ExifInfo ReadExifInfo(Stream st)
         {
             // Exif(メタデータ)取得
             BitmapFrame bmf = BitmapFrame.Create(st);
