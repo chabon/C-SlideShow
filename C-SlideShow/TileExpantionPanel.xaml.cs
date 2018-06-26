@@ -61,7 +61,7 @@ namespace C_SlideShow
             Profile pf = MainWindow.Setting.TempProfile;
 
             // ダミーをクリックした時
-            if( tile.ImageFileInfo.FilePath == ImageFileManager.DummyFilePath ) return;
+            if( tile.ImageFileInfo.IsDummy ) return;
 
             // 再生中だったら、レジュームの準備
             if( MainWindow.IsPlaying )

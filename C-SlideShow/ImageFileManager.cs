@@ -32,7 +32,6 @@ namespace C_SlideShow
         public List<ImageFileInfo> ImgFileInfo { get; set; }
         public List<ArchiverBase>  Archivers { get; set; }
         public NullArchiver        NullArchiver { get; set; }
-        public static string       DummyFilePath = ":dummy";
         public bool                ApplyRotateInfoFromExif { get; set; } = false;
         public int                 NextIndex { get; set; }
         public int                 PrevIndex { get; set; }
@@ -175,7 +174,7 @@ namespace C_SlideShow
         public BitmapSource LoadBitmap(ImageFileInfo imageFileInfo, Size bitmapDecodePixel)
         {
             string path = imageFileInfo.FilePath;
-            if( path == DummyFilePath || path == "" ) return null;
+            if( imageFileInfo.IsDummy || path == "" ) return null;
 
             var source = new BitmapImage();
 
@@ -248,7 +247,7 @@ namespace C_SlideShow
             {
                 foreach(ImageFileInfo fi in ImgFileInfo)
                 {
-                    if(fi.FilePath != DummyFilePath)
+                    if(!fi.IsDummy)
                     {
                         fi.LastWriteTime = File.GetLastWriteTime(fi.FilePath);
                     }
@@ -310,11 +309,12 @@ namespace C_SlideShow
 
             // 初期化
             numofDummyFileInfo = 0;
-            ImgFileInfo.RemoveAll(fi => fi.FilePath == DummyFilePath);
+            ImgFileInfo.RemoveAll(fi => fi.IsDummy);
 
             while(ImgFileInfo.Count % grids != 0)
             {
-                ImageFileInfo imgFileInfo = new ImageFileInfo(DummyFilePath);
+                ImageFileInfo imgFileInfo = new ImageFileInfo("");
+                imgFileInfo.IsDummy = true;
                 imgFileInfo.Archiver = this.NullArchiver;
                 ImgFileInfo.Add(imgFileInfo);
                 numofDummyFileInfo++;

@@ -16,14 +16,15 @@ namespace C_SlideShow
 {
     public class ImageFileInfo
     {
-        public string FilePath;                      // ファイルパス
-        public ArchiverBase Archiver;                // 対応するアーカイバ
-        public DateTimeOffset LastWriteTime;         // 更新日時
-        public DateTimeOffset CreationTime;          // 作成日時
-        public DateTimeOffset ShootingTime;          // 撮影日時
-        public long Length = 0;                      // ファイルサイズ(byte)
-        public Size PixelSize = Size.Empty;          // ピクセルサイズ
-        public ExifInfo ExifInfo = ExifInfo.Empty;   // Exif情報
+        public string           FilePath;                  // ファイルパス
+        public ArchiverBase     Archiver;                  // 対応するアーカイバ
+        public DateTimeOffset   LastWriteTime;             // 更新日時
+        public DateTimeOffset   CreationTime;              // 作成日時
+        public DateTimeOffset   ShootingTime;              // 撮影日時
+        public long             Length = 0;                // ファイルサイズ(byte)
+        public Size             PixelSize = Size.Empty;    // ピクセルサイズ
+        public ExifInfo         ExifInfo = ExifInfo.Empty; // Exif情報
+        public bool             IsDummy = false;           // 穴埋め用のダミー
 
         public ImageFileInfo()
         {
@@ -49,7 +50,7 @@ namespace C_SlideShow
             if( PixelSize != Size.Empty || ExifInfo != ExifInfo.Empty ) return;
 
             // ダミーの場合取得しない
-            if( FilePath == ImageFileManager.DummyFilePath ) return;
+            if( IsDummy ) return;
 
             using( var st = OpenStream() )
             {

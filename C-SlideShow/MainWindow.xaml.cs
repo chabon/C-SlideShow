@@ -298,8 +298,7 @@ namespace C_SlideShow
             if( isAddition )
             {
                 // 追加の場合、ダミーファイル情報を消す
-                imageFileManager.ImgFileInfo.RemoveAll(
-                    fi => fi.FilePath == ImageFileManager.DummyFilePath);
+                imageFileManager.ImgFileInfo.RemoveAll( fi => fi.IsDummy );
             }
             else
             {
