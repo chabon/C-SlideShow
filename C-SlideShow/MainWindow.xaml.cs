@@ -333,7 +333,7 @@ namespace C_SlideShow
             // ソート
             if(pathes.Length == 1 && Directory.Exists(pathes[0]) && !isAddition )
             {
-                // フォルダ１つだけを読み込んだ場合ファイル名順になっているので、
+                // 追加ではなく、フォルダ１つだけを読み込んだ場合ファイル名順になっているので、
                 // 並び順設定が「ファイル名(昇順)」ならばソートの必要なし
             }
             else

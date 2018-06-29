@@ -18,9 +18,9 @@ namespace C_SlideShow
     {
         public string           FilePath;                  // ファイルパス
         public ArchiverBase     Archiver;                  // 対応するアーカイバ
-        public DateTimeOffset   LastWriteTime;             // 更新日時
-        public DateTimeOffset   CreationTime;              // 作成日時
-        public DateTimeOffset   ShootingTime;              // 撮影日時
+        public DateTimeOffset?  LastWriteTime = null;      // 更新日時
+        public DateTimeOffset?  CreationTime = null;       // 作成日時
+        public DateTimeOffset?  ShootingTime = null;       // 撮影日時
         public long             Length = 0;                // ファイルサイズ(byte)
         public Size             PixelSize = Size.Empty;    // ピクセルサイズ
         public ExifInfo         ExifInfo = ExifInfo.Empty; // Exif情報
@@ -254,6 +254,20 @@ namespace C_SlideShow
             return new ExifInfo();
         }
 
+        public void ReadLastWriteTime()
+        {
+            // ダミー
+            if( IsDummy ) return;
+
+            // 取得済み
+            if( LastWriteTime != null ) return;
+
+            // zipの場合、エントリー取得時に更新日時も取得出来ているので必要なし
+            if( Archiver is ZipArchiver ) return;
+
+            // FolderArchiver, NullArchiver
+            this.LastWriteTime = File.GetLastWriteTime(FilePath);
+        }
 
     }
 }

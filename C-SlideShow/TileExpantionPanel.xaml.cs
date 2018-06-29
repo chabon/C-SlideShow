@@ -291,21 +291,16 @@ namespace C_SlideShow
                 }
 
                 // 更新日時
-                DateTimeOffset lastWriteTime;
-                DateTimeOffset dateDefault = new DateTimeOffset();
-                if(ifi.LastWriteTime.CompareTo(dateDefault) == 0) // 更新日時情報がない場合
-                    lastWriteTime = File.GetLastWriteTime(targetTile.ImageFileInfo.FilePath);
-                else
-                    lastWriteTime = ifi.LastWriteTime;
+                if( ifi.LastWriteTime == null ) // 更新日時情報がない場合取得
+                    ifi.ReadLastWriteTime();
 
                 // (todo)撮影日時
 
 
                 newText += "ファイル名: " + Path.GetFileName(targetTile.ImageFileInfo.FilePath) + "\n";
                 newText += "画像サイズ: " + length / 1024 + "KB\n";
-                newText += "更新日時: " + lastWriteTime.DateTime + "\n";
-                //newText += "撮影日時: " + lastWriteTime.DateTime + "\n";
-                //newText += "ピクセル数: " + imagew + "x" + imageh;
+                if(ifi.LastWriteTime != null)
+                    newText += "更新日時: " + ifi.LastWriteTime.Value.DateTime + "\n";
                 newText += "ピクセル数: " + ifi.PixelSize.Width + "x" + ifi.PixelSize.Height;
 #if DEBUG
                 sw.Stop();

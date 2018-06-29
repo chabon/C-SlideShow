@@ -238,24 +238,6 @@ namespace C_SlideShow
             return result;
         }
 
-        public void GetLastWriteTimeFileInfo()
-        {
-            if (ImgFileInfo.Count < 1) return;
-
-            DateTimeOffset dateDefault = new DateTimeOffset();
-            if(ImgFileInfo[0].LastWriteTime.CompareTo(dateDefault) == 0)
-            {
-                foreach(ImageFileInfo fi in ImgFileInfo)
-                {
-                    if(!fi.IsDummy)
-                    {
-                        fi.LastWriteTime = File.GetLastWriteTime(fi.FilePath);
-                    }
-                }
-            }
-
-        }
-
 
         public void Sort(FileReadingOrder order)
         {
@@ -274,11 +256,11 @@ namespace C_SlideShow
                     ImgFileInfo = ImgFileInfo.OrderByDescending(f => f.FilePath).ToList();
                     break;
                 case FileReadingOrder.LastWriteTime:
-                    GetLastWriteTimeFileInfo();
+                    foreach( ImageFileInfo ifi in ImgFileInfo ) ifi.ReadLastWriteTime();
                     ImgFileInfo = ImgFileInfo.OrderByDescending(f => f.LastWriteTime).ToList();
                     break;
                 case FileReadingOrder.LastWriteTimeRev:
-                    GetLastWriteTimeFileInfo();
+                    foreach( ImageFileInfo ifi in ImgFileInfo ) ifi.ReadLastWriteTime();
                     ImgFileInfo = ImgFileInfo.OrderBy(f => f.LastWriteTime).ToList();
                     break;
                 case FileReadingOrder.Random:
