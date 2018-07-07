@@ -123,16 +123,20 @@ namespace C_SlideShow
         public static void SetBitmapDecodePixelOfTile(int pixelSize, int numofRow, int numofCol)
         {
             int w, h;
-            if(numofRow > numofCol )
+            //w = pixelSize / numofCol;
+            //h = pixelSize / numofRow;
+
+            if( numofRow > numofCol )
             {
                 h = pixelSize / numofRow;
-                w = (int)( h / TileAspectRatio );
+                w = (int)(h / TileAspectRatio);
             }
             else
             {
                 w = pixelSize / numofCol;
-                h = (int)( w * TileAspectRatio );
+                h = (int)(w * TileAspectRatio);
             }
+
             BitmapDecodePixelOfTile = new Size(w, h);
         }
 

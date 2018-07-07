@@ -187,13 +187,24 @@ namespace C_SlideShow
                     source.CreateOptions = BitmapCreateOptions.None;
 
                     // 画像のアス比から、縦横どちらのDecodePixelを適用するのかを決める
+                    // DecodePixelの値が、画像のサイズをオーバーする場合は、画像サイズをDecodePixelの値として指定する
                     if( bitmapDecodePixel != Size.Empty )
                     {
                         double imgRatio = imageFileInfo.PixelSize.Height / (double)imageFileInfo.PixelSize.Width;
                         if( imgRatio > 1.0 ) // 画像が縦長
-                            source.DecodePixelHeight = (int)bitmapDecodePixel.Height;
-                        else                 // 画像が横長
-                            source.DecodePixelWidth = (int)bitmapDecodePixel.Width;
+                        {
+                            if(bitmapDecodePixel.Height > imageFileInfo.PixelSize.Height)
+                                source.DecodePixelHeight = (int)imageFileInfo.PixelSize.Height;
+                            else
+                                source.DecodePixelHeight = (int)bitmapDecodePixel.Height;
+                        }
+                        else // 画像が横長
+                        {
+                            if(bitmapDecodePixel.Width > imageFileInfo.PixelSize.Width)
+                                source.DecodePixelWidth = (int)imageFileInfo.PixelSize.Width;
+                            else
+                                source.DecodePixelWidth = (int)bitmapDecodePixel.Width;
+                        }
                     }
 
                     // 読み込み
