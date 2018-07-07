@@ -100,6 +100,10 @@ namespace C_SlideShow
                         tc.InitWrapPoint();
                     }
 
+                    // 1タイルのバックバッファサイズを更新
+                    TileContainer.TileAspectRatio = pf.AspectRatioV / (double)pf.AspectRatioH;
+                    TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel, pf.NumofRow, pf.NumofCol);
+
                     // 位置を正規化
                     containersInCurrentOrder[0].Margin = new Thickness(0);
                     double containerWidth = tileContainers[0].Width;
