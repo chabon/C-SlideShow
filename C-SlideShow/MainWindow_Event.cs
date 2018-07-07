@@ -428,8 +428,10 @@ namespace C_SlideShow
             ContextMenu contextMenu = new ContextMenu();
             MenuItem cmi1 = new MenuItem();
             MenuItem cmi2 = new MenuItem();
+            MenuItem cmi3 = new MenuItem();
             cmi1.Header = "追加読み込み";
-            cmi2.Header = "エクスプローラで開く";
+            cmi2.Header = "開く";
+            cmi3.Header = "親フォルダを開く";
             cmi1.Click += (se, ev) =>
             {
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
@@ -444,11 +446,21 @@ namespace C_SlideShow
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
                 if( mi == null ) return;
 
+                string path = mi.ToolTip.ToString();
+                Process.Start(path);
+            };
+            cmi3.Click += (se, ev) =>
+            {
+                MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
+                if( mi == null ) return;
+
                 string parentDir = Directory.GetParent(mi.ToolTip.ToString()).FullName;
-                Process.Start( "EXPLORER.EXE", parentDir);
+                //Process.Start( "EXPLORER.EXE", parentDir);
+                Process.Start(parentDir);
             };
             contextMenu.Items.Add(cmi1);
             contextMenu.Items.Add(cmi2);
+            contextMenu.Items.Add(cmi3);
 
             // メインヒストリー追加
             const int numofMainHistory = 8;
@@ -478,6 +490,7 @@ namespace C_SlideShow
                     mi.Header = System.IO.Path.GetFileName(Setting.History[i]);
                     mi.ToolTip = Setting.History[i];
                     mi.Click += OnHistoryItemSelected;
+                    mi.ContextMenu = contextMenu;
                     continuation.Items.Add(mi);
                 }
             }
