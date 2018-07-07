@@ -463,7 +463,7 @@ namespace C_SlideShow
             contextMenu.Items.Add(cmi3);
 
             // メインヒストリー追加
-            const int numofMainHistory = 8;
+            const int numofMainHistory = 10;
             for(int i=0; i<numofMainHistory; i++ )
             {
                 if(i < Setting.History.Count )
@@ -632,8 +632,7 @@ namespace C_SlideShow
         }
 
 
-
-
+        // ウインドウプロシージャのフック
         protected override void OnSourceInitialized(EventArgs e)
         {
             HwndSource hwndSource = (HwndSource)PresentationSource.FromVisual(this);

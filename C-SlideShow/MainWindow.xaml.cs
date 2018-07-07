@@ -103,7 +103,20 @@ namespace C_SlideShow
                 }
             }
         }
-
+        public bool IsToolbarMenuOpened
+        {
+            get
+            {
+                if( MenuItem_Load.IsSubmenuOpen
+                    || MenuItem_Matrix.IsSubmenuOpen
+                    || MenuItem_AspectRatio.IsSubmenuOpen
+                    || MenuItem_SlideSetting.IsSubmenuOpen
+                    || MenuItem_Setting.IsSubmenuOpen )
+                    return true;
+                else
+                    return false;
+            }
+        }
 
 
         public MainWindow()

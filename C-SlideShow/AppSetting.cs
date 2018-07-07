@@ -36,7 +36,7 @@ namespace C_SlideShow
             TempProfile = new Profile();
             ShowFileInfoInTileExpantionPanel = false;
             History = new List<string>();
-            NumofHistory = 25;
+            NumofHistory = 30;
         }
 
         // 既定値(xmlファイルデシリアライズ時に呼ばれる)
@@ -46,7 +46,7 @@ namespace C_SlideShow
             //this.editModeBackgroundColor = Colors.Gray;
             TempProfile = new Profile();
             History = new List<string>();
-            NumofHistory = 25;
+            NumofHistory = 30;
         }
 
 

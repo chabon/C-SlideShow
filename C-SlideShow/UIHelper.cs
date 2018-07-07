@@ -30,7 +30,7 @@ namespace C_SlideShow
         bool isCursorPaused = false;
         Point ptCursorPause = new Point(0, 0);
         int cursorPauseTime = 0;
-        int cnt = 0;
+        //int cnt = 0;
 
 
         public UIHelper(MainWindow mw)
@@ -102,7 +102,7 @@ namespace C_SlideShow
 
             if (pid != this.processId)
             {
-                HideUI();
+                HideAllUI();
                 uIVisibleTimer.Stop();
                 return;
             }
@@ -178,7 +178,8 @@ namespace C_SlideShow
             }
             else
             {
-                mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
+                if(!mainWindow.IsToolbarMenuOpened)
+                    mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
                 mainWindow.SystemButtonWrapper.Visibility = Visibility.Hidden;
             }
 
@@ -199,9 +200,10 @@ namespace C_SlideShow
         }
         
 
-        public void HideUI()
+        public void HideAllUI()
         {
-            mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
+            if(!mainWindow.IsToolbarMenuOpened)
+                mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
             mainWindow.SystemButtonWrapper.Visibility = Visibility.Hidden;
             //mainWindow.ResizeGrip.Visibility = Visibility.Hidden;
             //mainWindow.BaseGrid.Opacity = mainWindow.Setting.TempProfile.BaseGridOpacity;
