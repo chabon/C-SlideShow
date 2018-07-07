@@ -103,6 +103,7 @@
                         <MenuItem Style="{StaticResource ToolbarMenuItemStyle}"
                             ToolTip="読み込み"
                             x:Name="MenuItem_Load"
+                            SubmenuOpened="MenuItem_Load_SubmenuOpened"
                                   >
                             <MenuItem.Header>
                                 <Border Width="25" Height="15">

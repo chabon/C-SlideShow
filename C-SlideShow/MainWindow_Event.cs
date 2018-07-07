@@ -295,8 +295,15 @@ namespace C_SlideShow
                 }
                 if(e.Key == Key.A )
                 {
-                    pf.ApplyRotateInfoFromExif = !pf.ApplyRotateInfoFromExif;
-                    InitMainContent(imageFileManager.CurrentIndex);
+                    MenuItem continuation = (MenuItem)MenuItem_Load.Items[MenuItem_Load.Items.Count - 1];
+                    MenuItem mi = new MenuItem();
+                    mi.Header = "hoge";
+                    mi.ToolTip = "aaaa";
+                    continuation.Items.Add(mi);
+
+
+                    //pf.ApplyRotateInfoFromExif = !pf.ApplyRotateInfoFromExif;
+                    //InitMainContent(imageFileManager.CurrentIndex);
                 }
 
                 if(e.Key == Key.D1 )
@@ -393,6 +400,96 @@ namespace C_SlideShow
 
         }
 
+        // ツールバーボタン(読み込み)
+        private void MenuItem_Load_SubmenuOpened(object sender, RoutedEventArgs e)
+        {
+            // イベントの発生元
+            MenuItem miSrc = e.OriginalSource as MenuItem;
+            if( miSrc == null || miSrc.Name != MenuItem_Load.Name) return;
+
+            // ヒストリー追加前に削除
+            const int hIndex = 7;
+            while(MenuItem_Load.Items.Count - 1 >= hIndex )
+            {
+                MenuItem_Load.Items.RemoveAt(MenuItem_Load.Items.Count - 1);
+            }
+
+            // ヒストリーなし
+            if( Setting.History.Count < 1 ) return;
+
+            // セパレータ
+            MenuItem_Load.Items.Add( new Separator() );
+
+            // ヒストリーの右クリックメニュー
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem cmi1 = new MenuItem();
+            MenuItem cmi2 = new MenuItem();
+            cmi1.Header = "追加読み込み";
+            cmi2.Header = "エクスプローラで開く";
+            cmi1.Click += (se, ev) =>
+            {
+                MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
+                if( mi == null ) return;
+
+                string[] path = { mi.ToolTip.ToString() };
+                ReadFiles(path, true);
+                InitMainContent(0);
+            };
+            cmi2.Click += (se, ev) =>
+            {
+                MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
+                if( mi == null ) return;
+
+                string parentDir = Directory.GetParent(mi.ToolTip.ToString()).FullName;
+                Process.Start( "EXPLORER.EXE", parentDir);
+            };
+            contextMenu.Items.Add(cmi1);
+            contextMenu.Items.Add(cmi2);
+
+            // メインヒストリー追加
+            const int numofMainHistory = 8;
+            for(int i=0; i<numofMainHistory; i++ )
+            {
+                if(i < Setting.History.Count )
+                {
+                    MenuItem mi = new MenuItem();
+                    mi.Header = System.IO.Path.GetFileName( Setting.History[i] );
+                    mi.ToolTip = Setting.History[i];
+                    mi.Click += OnHistoryItemSelected;
+                    mi.ContextMenu = contextMenu;
+                    MenuItem_Load.Items.Add(mi);
+                }
+            }
+
+            // サブヒストリー追加
+            if(Setting.History.Count > numofMainHistory )
+            {
+                MenuItem continuation = new MenuItem();
+                continuation.Header = "フォルダ履歴の続き...";
+                MenuItem_Load.Items.Add(continuation);
+
+                for( int i = numofMainHistory; i < Setting.History.Count; i++ )
+                {
+                    MenuItem mi = new MenuItem();
+                    mi.Header = System.IO.Path.GetFileName(Setting.History[i]);
+                    mi.ToolTip = Setting.History[i];
+                    mi.Click += OnHistoryItemSelected;
+                    continuation.Items.Add(mi);
+                }
+            }
+        }
+
+        // ヒストリー選択時
+        private void OnHistoryItemSelected(object sender, RoutedEventArgs e)
+        {
+            MenuItem miSrc = e.OriginalSource as MenuItem;
+            if( miSrc == null ) return;
+
+            string[] path = { miSrc.ToolTip.ToString() };
+            ReadFiles(path, false);
+            InitMainContent(0);
+        }
+        
 
         // フォルダ読み込み
         private void Toolbar_Load_Folder_Click(object sender, RoutedEventArgs e)

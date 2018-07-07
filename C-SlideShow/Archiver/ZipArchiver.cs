@@ -18,6 +18,8 @@ namespace C_SlideShow.Archiver
 
         public ZipArchiver(string archiverPath) : base(archiverPath)
         {
+            LeaveHistory = true;
+
             try
             {
                 archive = ZipFile.OpenRead(archiverPath);
@@ -61,7 +63,7 @@ namespace C_SlideShow.Archiver
                 foreach(ZipArchiveEntry entory in entries)
                 {
                     // ファイル拡張子でフィルタ
-                    if(  AllowedFileExt.Any( ext => entory.FullName.ToLower().EndsWith(ext) ))
+                    if(  AllowedFileExt.Any( ext => entory.FullName.ToLower().EndsWith(ext) ) )
                     {
                         ImageFileInfo fi = new ImageFileInfo(entory.FullName);
                         fi.LastWriteTime = entory.LastWriteTime;

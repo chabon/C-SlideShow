@@ -23,10 +23,20 @@ namespace C_SlideShow
         [DataMember]
         public bool ShowFileInfoInTileExpantionPanel { get; set; }
 
+        [DataMember]
+        public List<string> History { get; set; }
+
+        [DataMember]
+        public int NumofHistory { get; set; }
+
+
         public AppSetting()
         {
+            // 初期化
             TempProfile = new Profile();
             ShowFileInfoInTileExpantionPanel = false;
+            History = new List<string>();
+            NumofHistory = 25;
         }
 
         // 既定値(xmlファイルデシリアライズ時に呼ばれる)
@@ -35,6 +45,8 @@ namespace C_SlideShow
         {
             //this.editModeBackgroundColor = Colors.Gray;
             TempProfile = new Profile();
+            History = new List<string>();
+            NumofHistory = 25;
         }
 
 

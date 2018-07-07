@@ -16,6 +16,7 @@ namespace C_SlideShow.Archiver
     {
         public string ArchiverPath { get; set; }
         public string[] AllowedFileExt = { ".jpg", ".png", ".jpeg", ".bmp", ".gif" };
+        public bool LeaveHistory { get; protected set; } = false;  // 履歴に残すかどうか
 
         public ArchiverBase()
         {

@@ -341,6 +341,18 @@ namespace C_SlideShow
                 imageFileManager.Sort(pf.FileReadingOrder);
             }
 
+            // ヒストリーに追加
+            imageFileManager.Archivers.Where(a1 => a1.LeaveHistory).ToList().ForEach( a2 => 
+            {
+                Setting.History.RemoveAll(h => h == a2.ArchiverPath);
+                Setting.History.Insert(0, a2.ArchiverPath);
+            });
+
+            // ヒストリー上限超えを削除
+            if(Setting.History.Count > Setting.NumofHistory )
+            {
+                Setting.History.RemoveRange( Setting.NumofHistory, Setting.History.Count - 1 );
+            }
         }
 
         private void InitSeekbar()

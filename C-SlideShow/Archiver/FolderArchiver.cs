@@ -12,7 +12,7 @@ namespace C_SlideShow.Archiver
     {
         public FolderArchiver(string archiverPath) : base(archiverPath)
         {
-
+            LeaveHistory = true;
         }
 
         public override List<ImageFileInfo> LoadImageFileInfoList()
