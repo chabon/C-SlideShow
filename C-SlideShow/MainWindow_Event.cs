@@ -431,8 +431,8 @@ namespace C_SlideShow
             MenuItem cmi2 = new MenuItem();
             MenuItem cmi3 = new MenuItem();
             cmi1.Header = "追加読み込み";
-            cmi2.Header = "開く";
-            cmi3.Header = "親フォルダを開く";
+            cmi2.Header = "外部プログラムで開く";
+            cmi3.Header = "外部プログラムで親フォルダを開く";
             cmi1.Click += (se, ev) =>
             {
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
