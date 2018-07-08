@@ -148,15 +148,21 @@ namespace C_SlideShow
                     {
                         case ".zip":
                             Archivers.Add( archiver = new ZipArchiver(path) );
-                            ImgFileInfo.AddRange( archiver.LoadImageFileInfoList() );
                             break;
                         case ".rar":
                             Archivers.Add( archiver = new RarArchiver(path) );
-                            ImgFileInfo.AddRange( archiver.LoadImageFileInfoList() );
+                            break;
+                        case ".7z":
+                            Archivers.Add( archiver = new SevenZipArchiver(path) );
+                            break;
+                        case ".tar":
+                            Archivers.Add( archiver = new TarArchiver(path) );
                             break;
                         default:
                             return;
                     }
+
+                    ImgFileInfo.AddRange( archiver.LoadImageFileInfoList() );
                 }
             }
 

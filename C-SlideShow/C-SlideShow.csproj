@@ -69,6 +69,8 @@
     <Compile Include="Archiver\ArchiverBase.cs" />
     <Compile Include="Archiver\FolderArchiver.cs" />
     <Compile Include="Archiver\NullArchver.cs" />
+    <Compile Include="Archiver\TarArchiver.cs" />
+    <Compile Include="Archiver\SevenZipArchiver.cs" />
     <Compile Include="Archiver\RarArchiver.cs" />
     <Compile Include="Archiver\SharpCompressArchiver.cs" />
     <Compile Include="Archiver\ZipArchiver.cs" />
