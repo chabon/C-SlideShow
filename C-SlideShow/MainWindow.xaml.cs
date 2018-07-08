@@ -324,6 +324,7 @@ namespace C_SlideShow
                     archicer.DisposeArchive();
                 }
                 imageFileManager.Archivers.Clear();
+                tileContainers.ForEach( tc => tc.ClearAllTileImage() );
             }
 
             // 読み込み

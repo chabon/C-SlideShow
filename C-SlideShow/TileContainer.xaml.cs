@@ -767,5 +767,17 @@ namespace C_SlideShow
             }
         }
 
+
+        /// <summary>
+        /// すべてのタイルのイメージをクリア
+        /// </summary>
+        public void ClearAllTileImage()
+        {
+            foreach(Tile tile in Tiles )
+            {
+                tile.Image.Source = null;
+            }
+        }
+
     }
 }
