@@ -29,10 +29,7 @@ namespace C_SlideShow.Archiver
 
         public virtual Stream OpenStream(string path)
         {
-            if( File.Exists(path) )
-                return File.OpenRead(path);
-            else
-                return Stream.Null;
+            return Stream.Null;
         }
 
         public virtual List<ImageFileInfo> LoadImageFileInfoList()

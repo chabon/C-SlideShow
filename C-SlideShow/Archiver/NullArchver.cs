@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.IO;
+
+
 namespace C_SlideShow.Archiver
 {
     /// <summary>
@@ -11,6 +14,14 @@ namespace C_SlideShow.Archiver
     /// </summary>
     public class NullArchiver : ArchiverBase
     {
+        public override Stream OpenStream(string path)
+        {
+            if( File.Exists(path) )
+                return File.OpenRead(path);
+            else
+                return Stream.Null;
+        }
+
         public ImageFileInfo LoadImageFileInfo(string filePath)
         {
             // 拡張子でフィルタ

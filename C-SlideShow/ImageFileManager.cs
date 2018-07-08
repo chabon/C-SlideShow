@@ -150,6 +150,10 @@ namespace C_SlideShow
                             Archivers.Add( archiver = new ZipArchiver(path) );
                             ImgFileInfo.AddRange( archiver.LoadImageFileInfoList() );
                             break;
+                        case ".rar":
+                            Archivers.Add( archiver = new RarArchiver(path) );
+                            ImgFileInfo.AddRange( archiver.LoadImageFileInfoList() );
+                            break;
                         default:
                             return;
                     }

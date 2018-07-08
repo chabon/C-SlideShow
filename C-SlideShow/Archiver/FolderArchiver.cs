@@ -15,6 +15,14 @@ namespace C_SlideShow.Archiver
             LeaveHistory = true;
         }
 
+        public override Stream OpenStream(string path)
+        {
+            if( File.Exists(path) )
+                return File.OpenRead(path);
+            else
+                return Stream.Null;
+        }
+
         public override List<ImageFileInfo> LoadImageFileInfoList()
         {
             // フォルダ内のファイルパスを取得し、拡張子でフィルタ

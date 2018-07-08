@@ -10,19 +10,22 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 
+using SharpCompress.Archives;
+
+
 namespace C_SlideShow.Archiver
 {
-    public class ZipArchiver : ArchiverBase
+    public class SharpCompressArchiver : ArchiverBase
     {
-        private ZipArchive archive;
+        private IArchive archive;
 
-        public ZipArchiver(string archiverPath) : base(archiverPath)
+        public SharpCompressArchiver(string archiverPath) : base(archiverPath)
         {
             LeaveHistory = true;
 
             try
             {
-                archive = ZipFile.OpenRead(archiverPath);
+                archive = ArchiveFactory.Open(archiverPath);
             }
             catch
             {
@@ -32,14 +35,14 @@ namespace C_SlideShow.Archiver
 
         public override Stream OpenStream(string path)
         {
-            ZipArchiveEntry entory = GetEntry(path);
+            IArchiveEntry entory = archive.Entries.First(e => e.Key == path);
 
-            using (var zipStream = entory.Open())
+            using (var rarStream = entory.OpenEntryStream())
             {
                 try
                 {
                     var ms = new MemoryStream();
-                    zipStream.CopyTo(ms);
+                    rarStream.CopyTo(ms);
                     ms.Position = 0;
 
                     return ms;
@@ -56,18 +59,15 @@ namespace C_SlideShow.Archiver
             List<ImageFileInfo> newList = new List<ImageFileInfo>();
             try
             {
-                // エントリ
-                var entries = GetEntries();
-
-                foreach(ZipArchiveEntry entory in entries)
+                foreach(IArchiveEntry entory in archive.Entries)
                 {
                     // ファイル拡張子でフィルタ
-                    if(  AllowedFileExt.Any( ext => entory.FullName.ToLower().EndsWith(ext) ) )
+                    if(  AllowedFileExt.Any( ext => entory.Key.ToLower().EndsWith(ext) ) )
                     {
                         // ロード
-                        ImageFileInfo fi = new ImageFileInfo(entory.FullName);
-                        fi.LastWriteTime = entory.LastWriteTime;
-                        fi.Length = entory.Length;
+                        ImageFileInfo fi = new ImageFileInfo(entory.Key);
+                        fi.LastWriteTime = entory.LastModifiedTime;
+                        fi.Length = entory.Size;
                         fi.Archiver = this;
                         newList.Add(fi);
                     }
@@ -80,16 +80,6 @@ namespace C_SlideShow.Archiver
             }
 
             return newList;
-        }
-
-        public ZipArchiveEntry GetEntry(string filePath)
-        {
-            return archive.GetEntry(filePath);
-        }
-
-        public ReadOnlyCollection<ZipArchiveEntry> GetEntries()
-        {
-            return archive.Entries;
         }
 
         public override void DisposeArchive()
