@@ -137,6 +137,7 @@ namespace C_SlideShow
 
             this.Closing += (s, e) =>
             {
+                Setting.SettingDialogTabIndex = settingDialog.MainTabControl.SelectedIndex;
                 Setting.TempProfile.LastPageIndex = imageFileManager.CurrentIndex;
                 SaveWindowRect();
                 Setting.saveToXmlFile();

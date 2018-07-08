@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:C_SlideShow"
              mc:Ignorable="d" d:DesignWidth="257" Height="240">
     <Grid>
-        <TabControl TabStripPlacement="Bottom" Width="260" Height="230" VerticalAlignment="Top" >
+        <TabControl x:Name="MainTabControl" TabStripPlacement="Bottom" Width="260" Height="230" VerticalAlignment="Top" >
 
             <TabItem Header="外観1" Width="50">
                 <StackPanel Margin="10,4,10,5">

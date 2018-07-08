@@ -186,6 +186,7 @@ namespace C_SlideShow
             settingDialog = MenuItem_SettingDialog.Template.FindName("SettingDialog", MenuItem_SettingDialog) as SettingDialog;
             settingDialog.mainWindow = this;
             settingDialog.Setting = this.Setting;
+            settingDialog.MainTabControl.SelectedIndex = Setting.SettingDialogTabIndex;
 
             // タイマー
             intervalSlideTimer.Tick += intervalSlideTimer_Tick;

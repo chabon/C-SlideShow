@@ -29,6 +29,8 @@ namespace C_SlideShow
         [DataMember]
         public int NumofHistory { get; set; }
 
+        [DataMember]
+        public int SettingDialogTabIndex { get; set; }
 
         public AppSetting()
         {
@@ -37,6 +39,7 @@ namespace C_SlideShow
             ShowFileInfoInTileExpantionPanel = false;
             History = new List<string>();
             NumofHistory = 30;
+            SettingDialogTabIndex = 0;
         }
 
         // 既定値(xmlファイルデシリアライズ時に呼ばれる)
