@@ -366,7 +366,7 @@ namespace C_SlideShow
             // ヒストリー上限超えを削除
             if(Setting.History.Count > Setting.NumofHistory )
             {
-                Setting.History.RemoveRange( Setting.NumofHistory, Setting.History.Count - 1 );
+                Setting.History.RemoveRange( Setting.NumofHistory, Setting.History.Count - Setting.NumofHistory);
             }
         }
 
