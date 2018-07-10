@@ -958,9 +958,9 @@ namespace C_SlideShow
                 Setting.TempProfile.WindowRect = new Rect(Left, Top, Width, Height);
         }
 
-        public void SortAllImage(FileReadingOrder order)
+        public void SortAllImage(FileSortMethod order)
         {
-            if( order == FileReadingOrder.None )
+            if( order == FileSortMethod.None )
                 ReadFiles(Setting.TempProfile.Path.ToArray(), false);
             int grids = Setting.TempProfile.NumofCol * Setting.TempProfile.NumofRow;
             imageFileManager.Sort(order);

@@ -260,34 +260,40 @@ namespace C_SlideShow
         }
 
 
-        public void Sort(FileReadingOrder order)
+        public void Sort(FileSortMethod order)
         {
 #if DEBUG
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            Stopwatch sw = new Stopwatch();
             sw.Start();
 #endif
             if (ImgFileInfo.Count < 1) return;
 
             switch (order)
             {
-                case FileReadingOrder.FileName:
+                case FileSortMethod.FileName:
                     ImgFileInfo = ImgFileInfo.OrderBy(f => f.FilePath).ToList();
                     break;
-                case FileReadingOrder.FileNameRev:
+                case FileSortMethod.FileNameRev:
                     ImgFileInfo = ImgFileInfo.OrderByDescending(f => f.FilePath).ToList();
                     break;
-                case FileReadingOrder.LastWriteTime:
+                case FileSortMethod.FileNameNatural:
+                    ImgFileInfo = ImgFileInfo.OrderBy(f => f.FilePath, new NaturalStringComparer()).ToList();
+                    break;
+                case FileSortMethod.FileNameNaturalRev:
+                    ImgFileInfo = ImgFileInfo.OrderByDescending(f => f.FilePath, new NaturalStringComparer()).ToList();
+                    break;
+                case FileSortMethod.LastWriteTime:
                     foreach( ImageFileInfo ifi in ImgFileInfo ) ifi.ReadLastWriteTime();
                     ImgFileInfo = ImgFileInfo.OrderByDescending(f => f.LastWriteTime).ToList();
                     break;
-                case FileReadingOrder.LastWriteTimeRev:
+                case FileSortMethod.LastWriteTimeRev:
                     foreach( ImageFileInfo ifi in ImgFileInfo ) ifi.ReadLastWriteTime();
                     ImgFileInfo = ImgFileInfo.OrderBy(f => f.LastWriteTime).ToList();
                     break;
-                case FileReadingOrder.Random:
+                case FileSortMethod.Random:
                     ImgFileInfo.Shuffle();
                     break;
-                case FileReadingOrder.None:
+                case FileSortMethod.None:
                     break;
             }
 

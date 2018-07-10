@@ -330,7 +330,7 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             int idx = FileReadingOrder.SelectedIndex;
-            Setting.TempProfile.FileReadingOrder = (FileReadingOrder)idx;
+            Setting.TempProfile.FileReadingOrder = (FileSortMethod)idx;
             mainWindow.SortAllImage(Setting.TempProfile.FileReadingOrder);
         }
 

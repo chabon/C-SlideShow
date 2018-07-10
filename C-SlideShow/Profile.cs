@@ -33,9 +33,10 @@ namespace C_SlideShow
         Continuous, Interval
     }
 
-    public enum FileReadingOrder
+    public enum FileSortMethod
     {
-        FileName, FileNameRev, LastWriteTime, LastWriteTimeRev, Random, None
+        FileName, FileNameRev, FileNameNatural, FileNameNaturalRev,
+        LastWriteTime, LastWriteTimeRev, Random, None
     }
 
 
@@ -131,7 +132,7 @@ namespace C_SlideShow
 
         // その他の設定_全般
         [DataMember]
-        public FileReadingOrder FileReadingOrder { get; set; }
+        public FileSortMethod FileReadingOrder { get; set; }
 
         [DataMember]
         public bool TopMost { get; set; }
@@ -201,7 +202,7 @@ namespace C_SlideShow
             GridLineColor = Colors.LightGray;
 
             // その他の設定_全般
-            FileReadingOrder = FileReadingOrder.FileName;
+            FileReadingOrder = FileSortMethod.FileName;
             TopMost = false;
             StartUp_OpenPrevFolder = true;
             ApplyRotateInfoFromExif = false;

@@ -36,11 +36,6 @@ namespace C_SlideShow
             this.FilePath = _filePath;
         }
 
-        private Stream OpenStream()
-        {
-            return Archiver.OpenStream(FilePath);
-        }
-
         /// <summary>
         /// スライド表示時に必要な、画像情報を取得(画像サイズとExif情報)
         /// </summary>
@@ -52,7 +47,7 @@ namespace C_SlideShow
             // ダミーの場合取得しない
             if( IsDummy ) return;
 
-            using( var st = OpenStream() )
+            using( var st = Archiver.OpenStream(FilePath) )
             {
                 // ストリーム取得エラー
                 if( st == Stream.Null ) return;

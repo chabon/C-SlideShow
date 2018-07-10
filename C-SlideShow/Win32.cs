@@ -92,6 +92,9 @@ namespace C_SlideShow
         [DllImport("user32.dll")]
         public static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
 
+        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
+        public static extern int StrCmpLogicalW(string psz1, string psz2);
+
         /* ---------------------------------------------------- */
         //     Wrapper
         /* ---------------------------------------------------- */

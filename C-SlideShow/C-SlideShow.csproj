@@ -74,6 +74,7 @@
     <Compile Include="Archiver\RarArchiver.cs" />
     <Compile Include="Archiver\SharpCompressArchiver.cs" />
     <Compile Include="Archiver\ZipArchiver.cs" />
+    <Compile Include="Comparer.cs" />
     <Compile Include="ExifInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="ImageFileInfo.cs" />

@@ -8,6 +8,59 @@
     <Grid>
         <TabControl x:Name="MainTabControl" TabStripPlacement="Bottom" Width="260" Height="230" VerticalAlignment="Top" >
 
+            <TabItem Header="全般" Width="50">
+                <StackPanel Margin="10,4,10,5">
+
+                    <CheckBox x:Name="TopMost" Click="TopMost_Click" Margin="0,4">最前面表示</CheckBox>
+                    <StackPanel Margin="0,8" Orientation="Horizontal">
+                        <TextBlock>画像の並び順</TextBlock>
+                        <ComboBox x:Name="FileReadingOrder" SelectedIndex="0"
+                                  SelectionChanged="FileReadingOrder_SelectionChanged"
+                                  Margin="10,0" Width="145">
+                            <ComboBoxItem>ファイル名(昇順)</ComboBoxItem>
+                            <ComboBoxItem>ファイル名(降順)</ComboBoxItem>
+                            <ComboBoxItem>ファイル名 自然順(昇順)</ComboBoxItem>
+                            <ComboBoxItem>ファイル名 自然順(降順)</ComboBoxItem>
+                            <ComboBoxItem>更新日時(新しい順)</ComboBoxItem>
+                            <ComboBoxItem>更新日時(古い順)</ComboBoxItem>
+                            <ComboBoxItem>ランダム</ComboBoxItem>
+                            <ComboBoxItem> 指定しない
+                                <ComboBoxItem.ToolTip>ファイルを読み込んだ順で並べます</ComboBoxItem.ToolTip>
+                            </ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                    <CheckBox x:Name="ApplyRotateInfoFromExif" Click="ApplyRotateInfoFromExif_Click">Exifの回転・反転情報を反映させる</CheckBox>
+                    <StackPanel Orientation="Horizontal" Margin="0,4">
+                        <Label>バックバッファのサイズ(ピクセル値)</Label>
+                        <ComboBox x:Name="BitmapDecodeTotalPixel"
+                                  SelectionChanged="BitmapDecodeTotalPixel_SelectionChanged"
+                                  SelectedValuePath="Content"
+                                  ToolTipService.ShowDuration="50000"
+                                  Margin="8,0" Width="55" >
+                            <ComboBoxItem>320</ComboBoxItem>
+                            <ComboBoxItem>640</ComboBoxItem>
+                            <ComboBoxItem>1024</ComboBoxItem>
+                            <ComboBoxItem>1280</ComboBoxItem>
+                            <ComboBoxItem>1366</ComboBoxItem>
+                            <ComboBoxItem>1920</ComboBoxItem>
+                            <ComboBoxItem>2048</ComboBoxItem>
+                            <ComboBoxItem>2560</ComboBoxItem>
+                            <ComboBoxItem>3840</ComboBoxItem>
+                            <ComboBox.ToolTip>
+                                <TextBlock>
+                                    この値によって画質の鮮明さ、メモリ消費量が変わります。<LineBreak/>
+                                    処理が重い場合はこの値を小さくしてみてください。<LineBreak/>
+                                    ディスプレイ解像度の幅以下の値を推奨します。
+                                </TextBlock>
+                            </ComboBox.ToolTip>
+                        </ComboBox>
+                        
+                    </StackPanel>
+
+                    <CheckBox Visibility="Hidden" x:Name="StartUp_OpenPrevFolder" Click="StartUp_OpenPrevFolder_Click" Margin="0,4">起動時、前回のフォルダを開く</CheckBox>
+                </StackPanel>
+            </TabItem>
+
             <TabItem Header="外観1" Width="50">
                 <StackPanel Margin="10,4,10,5">
                     <GroupBox Header="透過" Padding="3">
@@ -139,59 +192,9 @@
                                     Background="Blue"></Border>
                         </Button>
                     </StackPanel>
-
-
                 </StackPanel>
             </TabItem>
 
-            <TabItem Header="全般" Width="50">
-                <StackPanel Margin="10,4,10,5">
-
-                    <CheckBox x:Name="TopMost" Click="TopMost_Click" Margin="0,4">最前面表示</CheckBox>
-                    <StackPanel Margin="0,8" Orientation="Horizontal">
-                        <TextBlock>読み込み順序</TextBlock>
-                        <ComboBox x:Name="FileReadingOrder" SelectedIndex="0"
-                                  SelectionChanged="FileReadingOrder_SelectionChanged"
-                                  Margin="10,0" Width="130">
-                            <ComboBoxItem>ファイル名(昇順)</ComboBoxItem>
-                            <ComboBoxItem>ファイル名(降順)</ComboBoxItem>
-                            <ComboBoxItem>更新日時(新しい順)</ComboBoxItem>
-                            <ComboBoxItem>更新日時(古い順)</ComboBoxItem>
-                            <ComboBoxItem>ランダム</ComboBoxItem>
-                            <ComboBoxItem>指定しない</ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
-                    <CheckBox x:Name="ApplyRotateInfoFromExif" Click="ApplyRotateInfoFromExif_Click">Exifの回転・反転情報を反映させる</CheckBox>
-                    <StackPanel Orientation="Horizontal" Margin="0,4">
-                        <Label>バックバッファのサイズ(ピクセル値)</Label>
-                        <ComboBox x:Name="BitmapDecodeTotalPixel"
-                                  SelectionChanged="BitmapDecodeTotalPixel_SelectionChanged"
-                                  SelectedValuePath="Content"
-                                  ToolTipService.ShowDuration="50000"
-                                  Margin="8,0" Width="55" >
-                            <ComboBoxItem>320</ComboBoxItem>
-                            <ComboBoxItem>640</ComboBoxItem>
-                            <ComboBoxItem>1024</ComboBoxItem>
-                            <ComboBoxItem>1280</ComboBoxItem>
-                            <ComboBoxItem>1366</ComboBoxItem>
-                            <ComboBoxItem>1920</ComboBoxItem>
-                            <ComboBoxItem>2048</ComboBoxItem>
-                            <ComboBoxItem>2560</ComboBoxItem>
-                            <ComboBoxItem>3840</ComboBoxItem>
-                            <ComboBox.ToolTip>
-                                <TextBlock>
-                                    この値によって画質の鮮明さ、メモリ消費量が変わります。<LineBreak/>
-                                    処理が重い場合はこの値を小さくしてみてください。<LineBreak/>
-                                    ディスプレイ解像度の幅以下の値を推奨します。
-                                </TextBlock>
-                            </ComboBox.ToolTip>
-                        </ComboBox>
-                        
-                    </StackPanel>
-
-                    <CheckBox Visibility="Hidden" x:Name="StartUp_OpenPrevFolder" Click="StartUp_OpenPrevFolder_Click" Margin="0,4">起動時、前回のフォルダを開く</CheckBox>
-                </StackPanel>
-            </TabItem>
         </TabControl>
     </Grid>
 </UserControl>
