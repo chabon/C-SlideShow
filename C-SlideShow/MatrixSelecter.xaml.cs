@@ -80,7 +80,6 @@ namespace C_SlideShow
 
             int numofRow = Grid.GetRow(rect) + 1;
             int numofCol = Grid.GetColumn(rect) + 1;
-            this.MatrixInfoLabel.Content = String.Format("{0} × {1}", numofRow, numofCol);
             SetMatrix(numofRow, numofCol);
         }
 
@@ -135,7 +134,7 @@ namespace C_SlideShow
                 }
             }
 
-            this.MatrixInfoLabel.Content = String.Format("{0} × {1}", numofRow, numofCol);
+            this.MatrixInfoLabel.Content = String.Format("{0} × {1}", numofCol, numofRow);
         }
     }
 }

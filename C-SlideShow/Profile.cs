@@ -132,7 +132,7 @@ namespace C_SlideShow
 
         // その他の設定_全般
         [DataMember]
-        public FileSortMethod FileReadingOrder { get; set; }
+        public FileSortMethod FileSortMethod { get; set; }
 
         [DataMember]
         public bool TopMost { get; set; }
@@ -202,7 +202,7 @@ namespace C_SlideShow
             GridLineColor = Colors.LightGray;
 
             // その他の設定_全般
-            FileReadingOrder = FileSortMethod.FileName;
+            FileSortMethod = FileSortMethod.FileName;
             TopMost = false;
             StartUp_OpenPrevFolder = true;
             ApplyRotateInfoFromExif = false;

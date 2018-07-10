@@ -12,6 +12,23 @@ using System.Windows.Media;
 
 namespace C_SlideShow
 {
+    // 履歴情報
+    [DataContract(Name = "HistoryItem")]
+    public class HistoryItem
+    {
+        public HistoryItem(string path, int index)
+        {
+            Path = path;
+            Index = index;
+        }
+
+        [DataMember]
+        public string Path { get; set; }
+
+        [DataMember]
+        public int Index { get; set; }
+    }
+
     [DataContract(Name = "AppSetting")]
     public class AppSetting
     {
@@ -24,10 +41,13 @@ namespace C_SlideShow
         public bool ShowFileInfoInTileExpantionPanel { get; set; }
 
         [DataMember]
-        public List<string> History { get; set; }
+        public List<HistoryItem> History { get; set; }
 
         [DataMember]
         public int NumofHistory { get; set; }
+
+        [DataMember]
+        public bool SaveLastPageIndexToHistory { get; set; }
 
         [DataMember]
         public int SettingDialogTabIndex { get; set; }
@@ -37,8 +57,9 @@ namespace C_SlideShow
             // 初期化
             TempProfile = new Profile();
             ShowFileInfoInTileExpantionPanel = false;
-            History = new List<string>();
+            History = new List<HistoryItem>();
             NumofHistory = 30;
+            SaveLastPageIndexToHistory = true;
             SettingDialogTabIndex = 0;
         }
 
@@ -48,7 +69,7 @@ namespace C_SlideShow
         {
             //this.editModeBackgroundColor = Colors.Gray;
             TempProfile = new Profile();
-            History = new List<string>();
+            History = new List<HistoryItem>();
             NumofHistory = 30;
         }
 

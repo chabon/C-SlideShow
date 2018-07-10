@@ -88,7 +88,7 @@ namespace C_SlideShow
             else TopMost.IsChecked = false;
 
             // ファイル読み込み順
-            FileReadingOrder.SelectedIndex = (int)pf.FileReadingOrder;
+            FileReadingOrder.SelectedIndex = (int)pf.FileSortMethod;
 
             // 起動時、前回のフォルダを開く(未実装)
             if(pf.StartUp_OpenPrevFolder)
@@ -330,8 +330,8 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             int idx = FileReadingOrder.SelectedIndex;
-            Setting.TempProfile.FileReadingOrder = (FileSortMethod)idx;
-            mainWindow.SortAllImage(Setting.TempProfile.FileReadingOrder);
+            Setting.TempProfile.FileSortMethod = (FileSortMethod)idx;
+            mainWindow.SortAllImage(Setting.TempProfile.FileSortMethod);
         }
 
         // 起動時、前回のフォルダを開く(未実装)

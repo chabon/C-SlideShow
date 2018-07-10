@@ -32,10 +32,19 @@ namespace C_SlideShow
         public List<ImageFileInfo> ImgFileInfo { get; set; }
         public List<ArchiverBase>  Archivers { get; set; }
         public NullArchiver        NullArchiver { get; set; }
+        public bool                IsSingleImageFileLoaded { get; private set; } = false; // 一度でも画像ファイル単体でロードされたか
         public bool                ApplyRotateInfoFromExif { get; set; } = false;
         public int                 NextIndex { get; set; }
         public int                 PrevIndex { get; set; }
 
+        public bool IsSingleArchiver
+        {
+            get
+            {
+                if( Archivers.Count == 1 && !IsSingleImageFileLoaded ) return true;
+                else return false;
+            }
+        }
         public int NumofImageFile
         {
             get
@@ -137,7 +146,11 @@ namespace C_SlideShow
             {
                 // 画像ファイル単体
                 ImageFileInfo ifi = NullArchiver.LoadImageFileInfo(path);
-                if( ifi != null ) ImgFileInfo.Add(ifi);
+                if( ifi != null )
+                {
+                    IsSingleImageFileLoaded = true;
+                    ImgFileInfo.Add(ifi);
+                }
 
                 // 圧縮ファイル / その他のファイル
                 else
@@ -147,22 +160,22 @@ namespace C_SlideShow
                     switch( ext )
                     {
                         case ".zip":
-                            Archivers.Add( archiver = new ZipArchiver(path) );
+                            Archivers.Add(archiver = new ZipArchiver(path));
                             break;
                         case ".rar":
-                            Archivers.Add( archiver = new RarArchiver(path) );
+                            Archivers.Add(archiver = new RarArchiver(path));
                             break;
                         case ".7z":
-                            Archivers.Add( archiver = new SevenZipArchiver(path) );
+                            Archivers.Add(archiver = new SevenZipArchiver(path));
                             break;
                         case ".tar":
-                            Archivers.Add( archiver = new TarArchiver(path) );
+                            Archivers.Add(archiver = new TarArchiver(path));
                             break;
                         default:
                             return;
                     }
 
-                    ImgFileInfo.AddRange( archiver.LoadImageFileInfoList() );
+                    ImgFileInfo.AddRange(archiver.LoadImageFileInfoList());
                 }
             }
 
@@ -259,6 +272,16 @@ namespace C_SlideShow
             return result;
         }
 
+        public void ClearFileInfo()
+        {
+            foreach( ArchiverBase archicer in Archivers )
+            {
+                archicer.DisposeArchive();
+            }
+            Archivers.Clear();
+            ImgFileInfo.Clear();
+            IsSingleImageFileLoaded = false;
+        }
 
         public void Sort(FileSortMethod order)
         {

@@ -257,7 +257,7 @@ namespace C_SlideShow
             // profile
             Profile pf = Setting.TempProfile;
 
-            // set up bitmap presenter
+            // set up imageFileManager
             int grids = pf.NumofRow * pf.NumofCol;
             imageFileManager.FillFileInfoVacancyWithDummy(grids);
             if (firstIndex > imageFileManager.NumofImageFile - 1) firstIndex = 0;
@@ -317,13 +317,9 @@ namespace C_SlideShow
             else
             {
                 // 追加じゃない場合、色々クリア
+                SavePageIndexToHistory(); // クリア前にページ番号保存
                 pf.Path.Clear();
-                imageFileManager.ImgFileInfo.Clear();
-                foreach( ArchiverBase archicer in imageFileManager.Archivers )
-                {
-                    archicer.DisposeArchive();
-                }
-                imageFileManager.Archivers.Clear();
+                imageFileManager.ClearFileInfo();
                 tileContainers.ForEach( tc => tc.ClearAllTileImage() );
             }
 
@@ -353,14 +349,18 @@ namespace C_SlideShow
             }
             else
             {
-                imageFileManager.Sort(pf.FileReadingOrder);
+                imageFileManager.Sort(pf.FileSortMethod);
             }
 
             // ヒストリーに追加
             imageFileManager.Archivers.Where(a1 => a1.LeaveHistory).ToList().ForEach( a2 => 
             {
-                Setting.History.RemoveAll(h => h == a2.ArchiverPath);
-                Setting.History.Insert(0, a2.ArchiverPath);
+                HistoryItem hiOld = Setting.History.FirstOrDefault( h => h.Path == a2.ArchiverPath );
+                Setting.History.RemoveAll(h => h.Path == a2.ArchiverPath);
+                if(hiOld != null)
+                    Setting.History.Insert( 0, hiOld );
+                else
+                    Setting.History.Insert( 0, new HistoryItem(a2.ArchiverPath, 0) );
             });
 
             // ヒストリー上限超えを削除
@@ -1022,5 +1022,35 @@ namespace C_SlideShow
             }
         }
 
+        public void SavePageIndexToHistory()
+        {
+            if( !Setting.SaveLastPageIndexToHistory ) return;
+
+            if( imageFileManager.IsSingleArchiver && imageFileManager.Archivers[0].LeaveHistory )
+            {
+                HistoryItem hi = Setting.History.FirstOrDefault( h => h.Path == imageFileManager.Archivers[0].ArchiverPath );
+                if(hi != null )
+                {
+                    hi.Index = imageFileManager.CurrentIndex;
+                }
+            }
+        }
+
+        public int LoadPageIndexFromHistory()
+        {
+            if( !Setting.SaveLastPageIndexToHistory ) return 0;
+            if( !imageFileManager.IsSingleArchiver ) return 0;
+
+            ArchiverBase archiver = imageFileManager.Archivers[0];
+            if( archiver == null ) return 0;
+
+            string path = archiver.ArchiverPath;
+            int index = 0;
+
+            HistoryItem hi = Setting.History.FirstOrDefault( h => h.Path == path );
+            if( hi != null ) index = hi.Index;
+
+            return index;
+        }
     }
 }

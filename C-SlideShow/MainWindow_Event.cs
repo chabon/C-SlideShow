@@ -137,6 +137,7 @@ namespace C_SlideShow
 
             this.Closing += (s, e) =>
             {
+                SavePageIndexToHistory();
                 Setting.SettingDialogTabIndex = settingDialog.MainTabControl.SelectedIndex;
                 Setting.TempProfile.LastPageIndex = imageFileManager.CurrentIndex;
                 SaveWindowRect();
@@ -169,7 +170,7 @@ namespace C_SlideShow
                 {
                     // 通常読み込み
                     this.ReadFiles(files, false);
-                    InitMainContent(0);
+                    InitMainContent( LoadPageIndexFromHistory() );
                 }
             };
 
@@ -470,8 +471,8 @@ namespace C_SlideShow
                 if(i < Setting.History.Count )
                 {
                     MenuItem mi = new MenuItem();
-                    mi.Header = System.IO.Path.GetFileName( Setting.History[i] );
-                    mi.ToolTip = Setting.History[i];
+                    mi.Header = System.IO.Path.GetFileName( Setting.History[i].Path );
+                    mi.ToolTip = Setting.History[i].Path;
                     mi.Click += OnHistoryItemSelected;
                     mi.ContextMenu = contextMenu;
                     MenuItem_Load.Items.Add(mi);
@@ -488,8 +489,8 @@ namespace C_SlideShow
                 for( int i = numofMainHistory; i < Setting.History.Count; i++ )
                 {
                     MenuItem mi = new MenuItem();
-                    mi.Header = System.IO.Path.GetFileName(Setting.History[i]);
-                    mi.ToolTip = Setting.History[i];
+                    mi.Header = System.IO.Path.GetFileName(Setting.History[i].Path);
+                    mi.ToolTip = Setting.History[i].Path;
                     mi.Click += OnHistoryItemSelected;
                     mi.ContextMenu = contextMenu;
                     continuation.Items.Add(mi);
@@ -505,7 +506,7 @@ namespace C_SlideShow
 
             string[] path = { miSrc.ToolTip.ToString() };
             ReadFiles(path, false);
-            InitMainContent(0);
+            InitMainContent( LoadPageIndexFromHistory() );
         }
         
 
@@ -518,7 +519,7 @@ namespace C_SlideShow
             {
                 string[] path = { dlg.SelectedPath };
                 ReadFiles(path, false);
-                InitMainContent(0);
+                InitMainContent( LoadPageIndexFromHistory() );
             }
         }
 
@@ -532,7 +533,7 @@ namespace C_SlideShow
             if (ofd.ShowDialog() == Forms.DialogResult.OK)
             {
                 this.ReadFiles(ofd.FileNames, false);
-                InitMainContent(0);
+                InitMainContent( LoadPageIndexFromHistory() );
             }
         }
 
