@@ -213,8 +213,9 @@ namespace C_SlideShow
             try
             {
                 int val = Int32.Parse(ResizeGripThickness.Text);
-                if( val > 100 ) val = 100;
-                if( val < 0 ) val = 0;
+                ProfileMemberProp prop = Profile.GetProfileMemberProp( nameof(Profile.ResizeGripThickness) );
+                if( val > prop.Max ) val = (int)prop.Max;
+                if( val < prop.Min ) val = (int)prop.Min;
                 Setting.TempProfile.ResizeGripThickness = val;
                 mainWindow.UpdateUI();
             }
@@ -247,8 +248,9 @@ namespace C_SlideShow
             try
             {
                 int val = Int32.Parse(TilePadding.Text);
-                if( val > 10000 ) val = 10000;
-                if( val < 0 ) val = 0;
+                ProfileMemberProp prop = Profile.GetProfileMemberProp( nameof(Profile.TilePadding) );
+                if( val > prop.Max ) val = (int)prop.Max;
+                if( val < prop.Min ) val = (int)prop.Min;
                 Setting.TempProfile.TilePadding = val;
                 mainWindow.UpdateGridLine();
             }
@@ -326,11 +328,13 @@ namespace C_SlideShow
             if (isInitializing) return;
 
                 int val = Int32.Parse(BitmapDecodeTotalPixel.SelectedValue.ToString());
-                if( val > 10000 ) val = 1920;
-                if( val < 320 ) val = 320;
+
+                ProfileMemberProp prop = Profile.GetProfileMemberProp( nameof(Profile.BitmapDecodeTotalPixel) );
+                if( val > prop.Max ) val = (int)prop.Max;
+                if( val < prop.Min ) val = (int)prop.Min;
+
                 Setting.TempProfile.BitmapDecodeTotalPixel = val;
                 mainWindow.Reload(true);
-
         }
     }
 }

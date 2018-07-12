@@ -34,6 +34,20 @@ namespace C_SlideShow.CommonControl
             NUDTextBox.Text = startvalue.ToString();
         }
 
+        public int Value
+        {
+            get
+            {
+                int number = 0;
+                if( NUDTextBox.Text != "" ) int.TryParse(NUDTextBox.Text, out number);
+                return number;
+            }
+            set
+            {
+                NUDTextBox.Text = value.ToString();
+            }
+        }
+
         public int MinValue
         {
             get

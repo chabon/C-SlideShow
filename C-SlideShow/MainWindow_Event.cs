@@ -618,6 +618,9 @@ namespace C_SlideShow
                 profileEditDialog.Owner = this;
             }
 
+            // 表示前にメインウインドウのウインドウ情報保存
+            SaveWindowRect();
+
             // 初期位置は、メインウインドウの中心に
             Rect rcMw = new Rect(Left, Top, Width, Height);
             Point ptCenter = new Point( rcMw.Left + rcMw.Width / 2 , rcMw.Top + rcMw.Height / 2 );
@@ -633,6 +636,8 @@ namespace C_SlideShow
             profileEditDialog.Left = rcDlg.Left;
             profileEditDialog.Top = rcDlg.Top;
 
+            // プロファイルを読み込んで、表示
+            profileEditDialog.LoadProfile(Setting.TempProfile);
             profileEditDialog.ShowDialog();
         }
 

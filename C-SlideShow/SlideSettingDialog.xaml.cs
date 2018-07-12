@@ -140,7 +140,8 @@ namespace C_SlideShow
 
             int val;
             int.TryParse( SlideInterval.Text, out val);
-            if (val < 1 || val > 100000) val = 5;
+            ProfileMemberProp prop = Profile.GetProfileMemberProp(nameof(Profile.SlideInterval));
+            if (val < prop.Min || val > prop.Max) val = 5;
             Setting.TempProfile.SlideInterval = val;
             mainWindow.UpdateIntervalSlideTimer();
         }
@@ -152,8 +153,9 @@ namespace C_SlideShow
 
             int val;
             int.TryParse( SlideTimeInIntevalMethod.Text, out val);
-            if (val < 100) val = 100;
-            else if (val > 100000) val = 1000;
+            ProfileMemberProp prop = Profile.GetProfileMemberProp(nameof(Profile.SlideTimeInIntevalMethod));
+            if (val < prop.Min) val = (int)prop.Min;
+            else if (val > prop.Max) val = (int)prop.Max;
             Setting.TempProfile.SlideTimeInIntevalMethod = val;
         }
 

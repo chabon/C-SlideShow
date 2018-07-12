@@ -45,26 +45,58 @@
                        &#10;プロファイルに含める項目にチェックを入れて下さい。">
                 </Label>
 
+                <!-- ウインドウの状態 -->
+                <GroupBox Header="ウインドウの状態" Style="{StaticResource GroupBoxStyle}">
+                    <StackPanel Orientation="Vertical">
+                        <!-- ウインドウの位置 -->
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="PfCheckBox_WinPos" Style="{StaticResource ProfileCheckboxStyle}">ウインドウの位置</CheckBox>
+                            <Label Width="40">X座標</Label>
+                            <cc:NumericUpDown x:Name="WinPos_X" Width="55"></cc:NumericUpDown>
+                            <Label Width="40" Margin="10,0,0,0">Y座標</Label>
+                            <cc:NumericUpDown x:Name="WinPos_Y" Width="55"></cc:NumericUpDown>
+                        </StackPanel>
+                        <Line Style="{StaticResource SeparateLine}"></Line>
+                        <!-- ウインドウサイズ -->
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="PfCheckBox_WinSize" Style="{StaticResource ProfileCheckboxStyle}">ウインドウサイズ</CheckBox>
+                            <Label Width="40">幅</Label>
+                            <cc:NumericUpDown x:Name="WinSize_Width" Width="55"></cc:NumericUpDown>
+                            <Label Width="40" Margin="10,0,0,0">高さ</Label>
+                            <cc:NumericUpDown x:Name="WinSize_Height" Width="55"></cc:NumericUpDown>
+                        </StackPanel>
+                        <Line Style="{StaticResource SeparateLine}"></Line>
+                        <!-- フルスクリーン -->
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="PfCheckBox_IsFullScreenMode" Style="{StaticResource ProfileCheckboxStyle}">フルスクリーンに</CheckBox>
+                            <ComboBox x:Name="IsFullScreenMode" Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
+                                <ComboBoxItem>する</ComboBoxItem>
+                                <ComboBoxItem>しない</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+
                 <!-- 読み込み -->
                 <GroupBox Header="読み込み" Style="{StaticResource GroupBoxStyle}">
                     <StackPanel Orientation="Vertical">
                         <!-- フォルダ・ファイル -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">フォルダ・ファイル</CheckBox>
+                            <CheckBox x:Name="PfCheckBoxd_Path" Style="{StaticResource ProfileCheckboxStyle}">フォルダ・ファイル</CheckBox>
                             <StackPanel Orientation="Vertical">
-                                <TextBox MinWidth="250"></TextBox>
+                                <TextBox x:Name="Path" MinWidth="250" Width="300"></TextBox>
                                 <Label>↑にドロップすることで、項目を追加出来ます</Label>
                                 <StackPanel Orientation="Horizontal">
-                                    <Label>1件の項目</Label>
-                                    <Button Margin="4">クリア</Button>
+                                    <Label x:Name="Path_Label">1件の項目</Label>
+                                    <Button Margin="4" x:Name="Path_ClearButton">クリア</Button>
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- ページ番号 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">ページ番号</CheckBox>
-                            <cc:NumericUpDown Width="65"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBoxd_LastPageIndex" Style="{StaticResource ProfileCheckboxStyle}">ページ番号</CheckBox>
+                            <cc:NumericUpDown x:Name="LastPageIndex" Width="65"></cc:NumericUpDown>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>
@@ -74,10 +106,10 @@
                     <StackPanel Orientation="Vertical">
                         <!-- 列数・行数 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">列数・行数</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_NumofMatrix" Style="{StaticResource ProfileCheckboxStyle}">列数・行数</CheckBox>
+                            <cc:NumericUpDown x:Name="NumofCol" Width="55"></cc:NumericUpDown>
                             <Label>列</Label>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <cc:NumericUpDown x:Name="NumofRow" Width="55"></cc:NumericUpDown>
                             <Label>行</Label>
                         </StackPanel>
                     </StackPanel>
@@ -86,10 +118,10 @@
                 <!-- グリッドのアスペクト比 -->
                 <GroupBox Header="グリッドのアスペクト比" Style="{StaticResource GroupBoxStyle}">
                     <StackPanel Orientation="Vertical">
-                        <!-- アスペクト比を固定 -->
+                        <!-- アスペクト比を非固定 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">アスペクト比を固定</CheckBox>
-                            <ComboBox Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
+                            <CheckBox x:Name="PfCheckBox_NonFixAspectRatio" Style="{StaticResource ProfileCheckboxStyle}">アスペクト比を非固定に</CheckBox>
+                            <ComboBox x:Name="NonFixAspectRatio" Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
                                 <ComboBoxItem>する</ComboBoxItem>
                                 <ComboBoxItem>しない</ComboBoxItem>
                             </ComboBox>
@@ -97,10 +129,10 @@
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- アスペクト比 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">アスペクト比(横:縦)</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_AspectRatio" Style="{StaticResource ProfileCheckboxStyle}">アスペクト比(横:縦)</CheckBox>
+                            <cc:NumericUpDown x:Name="AspectRatioH" Width="55"></cc:NumericUpDown>
                             <Label>:</Label>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <cc:NumericUpDown x:Name="AspectRatioV" Width="55"></cc:NumericUpDown>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>
@@ -110,8 +142,8 @@
                     <StackPanel Orientation="Vertical">
                         <!-- スライドショー設定 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">スライドショー設定</CheckBox>
-                            <ComboBox Style="{StaticResource ComboBoxStyle}" Width="160" SelectedIndex="0">
+                            <CheckBox x:Name="PfCheckBox_SlidePlayMethod" Style="{StaticResource ProfileCheckboxStyle}">スライドショー設定</CheckBox>
+                            <ComboBox x:Name="SlidePlayMethod" Style="{StaticResource ComboBoxStyle}" Width="160" SelectedIndex="0">
                                 <ComboBoxItem>常にスライド</ComboBoxItem>
                                 <ComboBoxItem>一定時間待機してスライド</ComboBoxItem>
                             </ComboBox>
@@ -119,8 +151,8 @@
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- スライド方向 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">スライド方向</CheckBox>
-                            <ComboBox Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
+                            <CheckBox x:Name="PfCheckBox_SlideDirection" Style="{StaticResource ProfileCheckboxStyle}">スライド方向</CheckBox>
+                            <ComboBox x:Name="SlideDirection" Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
                                 <ComboBoxItem>左</ComboBoxItem>
                                 <ComboBoxItem>上</ComboBoxItem>
                                 <ComboBoxItem>右</ComboBoxItem>
@@ -135,24 +167,24 @@
                     <StackPanel Orientation="Vertical">
                         <!-- 速度 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">速度</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_SlideSpeed" Style="{StaticResource ProfileCheckboxStyle}">速度</CheckBox>
+                            <cc:NumericUpDown x:Name="SlideSpeed" Width="55"></cc:NumericUpDown>
                         </StackPanel>
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- 待機時間(sec) -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">待機時間(sec)</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_SlideInterval" Style="{StaticResource ProfileCheckboxStyle}">待機時間(sec)</CheckBox>
+                            <cc:NumericUpDown x:Name="SlideInterval" Width="55"></cc:NumericUpDown>
                         </StackPanel>
                         <!-- スライド時間(ms) -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">スライド時間(ms)</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_SlideTimeInIntevalMethod" Style="{StaticResource ProfileCheckboxStyle}">スライド時間(ms)</CheckBox>
+                            <cc:NumericUpDown x:Name="SlideTimeInIntevalMethod" Width="55"></cc:NumericUpDown>
                         </StackPanel>
                         <!-- 画像一枚ずつスライド -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">画像一枚ずつスライド</CheckBox>
-                            <ComboBox Style="{StaticResource ComboBoxStyle}" Width="70" SelectedIndex="0">
+                            <CheckBox x:Name="PfCheckBox_SlideByOneImage" Style="{StaticResource ProfileCheckboxStyle}">画像一枚ずつスライド</CheckBox>
+                            <ComboBox x:Name="SlideByOneImage" Style="{StaticResource ComboBoxStyle}" Width="70" SelectedIndex="0">
                                 <ComboBoxItem>させる</ComboBoxItem>
                                 <ComboBoxItem>させない</ComboBoxItem>
                             </ComboBox>
@@ -174,8 +206,8 @@
                     <StackPanel Orientation="Vertical">
                         <!-- 最前面表示 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">最前面表示</CheckBox>
-                            <ComboBox Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
+                            <CheckBox x:Name="PfCheckBox_TopMost" Style="{StaticResource ProfileCheckboxStyle}">最前面表示</CheckBox>
+                            <ComboBox x:Name="TopMost" Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
                                 <ComboBoxItem>する</ComboBoxItem>
                                 <ComboBoxItem>しない</ComboBoxItem>
                             </ComboBox>
@@ -183,8 +215,8 @@
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- 画像の並び順 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">画像の並び順</CheckBox>
-                            <ComboBox Style="{StaticResource ComboBoxStyle}" Width="145" SelectedIndex="0">
+                            <CheckBox x:Name="PfCheckBox_FileSortMethod" Style="{StaticResource ProfileCheckboxStyle}">画像の並び順</CheckBox>
+                            <ComboBox x:Name="FileSortMethod" Style="{StaticResource ComboBoxStyle}" Width="145" SelectedIndex="0">
                                 <ComboBoxItem>ファイル名(昇順)</ComboBoxItem>
                                 <ComboBoxItem>ファイル名(降順)</ComboBoxItem>
                                 <ComboBoxItem>ファイル名 自然順(昇順)</ComboBoxItem>
@@ -200,9 +232,9 @@
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- Exifの回転・反転情報 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">Exifの回転・反転情報</CheckBox>
+                            <CheckBox x:Name="PfCheckBox_ApplyRotateInfoFromExif" Style="{StaticResource ProfileCheckboxStyle}">Exifの回転・反転情報</CheckBox>
                             <Label>反映</Label>
-                            <ComboBox Style="{StaticResource ComboBoxStyle}" Width="70" SelectedIndex="0">
+                            <ComboBox x:Name="ApplyRotateInfoFromExif" Style="{StaticResource ComboBoxStyle}" Width="70" SelectedIndex="0">
                                 <ComboBoxItem>させる</ComboBoxItem>
                                 <ComboBoxItem>させない</ComboBoxItem>
                             </ComboBox>
@@ -210,8 +242,8 @@
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- バックバッファのサイズ(ピクセル値) -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">バックバッファのサイズ(ピクセル値)</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_BitmapDecodeTotalPixel" Style="{StaticResource ProfileCheckboxStyle}">バックバッファのサイズ(ピクセル値)</CheckBox>
+                            <cc:NumericUpDown x:Name="BitmapDecodeTotalPixel" Width="55"></cc:NumericUpDown>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>
@@ -221,41 +253,41 @@
                     <StackPanel Orientation="Vertical">
                         <!-- 透過 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">透過</CheckBox>
-                            <ComboBox Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
+                            <CheckBox x:Name="PfCheckBox_AllowTransparency" Style="{StaticResource ProfileCheckboxStyle}">透過</CheckBox>
+                            <ComboBox x:Name="AllowTransparency" Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
                                 <ComboBoxItem>有効</ComboBoxItem>
                                 <ComboBoxItem>無効</ComboBoxItem>
                             </ComboBox>
                         </StackPanel>
                         <!-- 不透明度(全体) -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">不透明度(全体)</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_OverallOpacity" Style="{StaticResource ProfileCheckboxStyle}">不透明度(全体)</CheckBox>
+                            <cc:NumericUpDown x:Name="OverallOpacity" Width="55"></cc:NumericUpDown>
                         </StackPanel>
                         <!-- 不透明度(背景) -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">不透明度(背景)</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_BackgroundOpacity" Style="{StaticResource ProfileCheckboxStyle}">不透明度(背景)</CheckBox>
+                            <cc:NumericUpDown x:Name="BackgroundOpacity" Width="55"></cc:NumericUpDown>
                         </StackPanel>
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- 背景色 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">背景色</CheckBox>
-                            <cc:ColorPickerButton Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
+                            <CheckBox x:Name="PfCheckBox_BaseGridBackgroundColor" Style="{StaticResource ProfileCheckboxStyle}">背景色</CheckBox>
+                            <cc:ColorPickerButton x:Name="BaseGridBackgroundColor" Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
                         </StackPanel>
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- チェック柄の背景 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">チェック柄の背景に</CheckBox>
-                            <ComboBox Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
+                            <CheckBox x:Name="PfCheckBox_UsePlaidBackground" Style="{StaticResource ProfileCheckboxStyle}">チェック柄の背景に</CheckBox>
+                            <ComboBox x:Name="UsePlaidBackground" Style="{StaticResource ComboBoxStyle}" Width="60" SelectedIndex="0">
                                 <ComboBoxItem>する</ComboBoxItem>
                                 <ComboBoxItem>しない</ComboBoxItem>
                             </ComboBox>
                         </StackPanel>
                         <!-- ペアとなる背景色 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">ペアとなる色</CheckBox>
-                            <cc:ColorPickerButton Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
+                            <CheckBox x:Name="PfCheckBox_PairColorOfPlaidBackground" Style="{StaticResource ProfileCheckboxStyle}">ペアとなる色</CheckBox>
+                            <cc:ColorPickerButton x:Name="PairColorOfPlaidBackground" Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>
@@ -265,30 +297,30 @@
                     <StackPanel Orientation="Vertical">
                         <!-- ウインドウ枠の太さ -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">ウインドウ枠の太さ</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_ResizeGripThickness" Style="{StaticResource ProfileCheckboxStyle}">ウインドウ枠の太さ</CheckBox>
+                            <cc:NumericUpDown x:Name="ResizeGripThickness" Width="55"></cc:NumericUpDown>
                         </StackPanel>
                         <!-- ウインドウ枠の色 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">ウインドウ枠の色</CheckBox>
-                            <cc:ColorPickerButton Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
+                            <CheckBox x:Name="PfCheckBox_ResizeGripColor" Style="{StaticResource ProfileCheckboxStyle}">ウインドウ枠の色</CheckBox>
+                            <cc:ColorPickerButton x:Name="ResizeGripColor" Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
                         </StackPanel>
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- グリッド線の太さ -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">グリッド線の太さ</CheckBox>
-                            <cc:NumericUpDown Width="55"></cc:NumericUpDown>
+                            <CheckBox x:Name="PfCheckBox_TilePadding" Style="{StaticResource ProfileCheckboxStyle}">グリッド線の太さ</CheckBox>
+                            <cc:NumericUpDown x:Name="TilePadding" Width="55"></cc:NumericUpDown>
                         </StackPanel>
                         <!-- グリッド線の色 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">グリッド線の色</CheckBox>
-                            <cc:ColorPickerButton Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
+                            <CheckBox x:Name="PfCheckBox_GridLineColor" Style="{StaticResource ProfileCheckboxStyle}">グリッド線の色</CheckBox>
+                            <cc:ColorPickerButton x:Name="GridLineColor" Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
                         </StackPanel>
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- シークバーの色 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">シークバーの色</CheckBox>
-                            <cc:ColorPickerButton Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
+                            <CheckBox x:Name="PfCheckBox_SeekbarColor" Style="{StaticResource ProfileCheckboxStyle}">シークバーの色</CheckBox>
+                            <cc:ColorPickerButton x:Name="SeekbarColor" Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>

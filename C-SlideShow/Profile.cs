@@ -40,6 +40,12 @@ namespace C_SlideShow
     }
 
 
+    public class ProfileMemberProp
+    {
+        public double Min = int.MinValue;
+        public double Max = int.MaxValue;
+    }
+
     [DataContract(Name = "Profile")]
     public class Profile
     {
@@ -116,15 +122,16 @@ namespace C_SlideShow
 
         // その他の設定_外観2
         [DataMember]
-        public int TilePadding { get; set; }
-
-        [DataMember]
-        public Color GridLineColor { get; set; }
-        [DataMember]
         public double ResizeGripThickness { get; set; }
 
         [DataMember]
         public Color ResizeGripColor { get; set; }
+
+        [DataMember]
+        public int TilePadding { get; set; }
+
+        [DataMember]
+        public Color GridLineColor { get; set; }
 
         [DataMember]
         public Color SeekbarColor { get; set; }
@@ -224,6 +231,65 @@ namespace C_SlideShow
             AspectRatioH = 4;
             AspectRatioV = 3;
             Path = new List<string>();
+        }
+
+        // 最大値・最小値を取得
+        public static ProfileMemberProp GetProfileMemberProp(string memberName)
+        {
+            ProfileMemberProp prop = new ProfileMemberProp();
+            switch( memberName )
+            {
+                // 行列設定
+                case nameof(NumofRow):
+                case nameof(NumofCol):
+                    prop.Min = 1;
+                    prop.Max = 32;
+                    break;
+                // アスペクト比設定
+                case nameof(AspectRatioH):
+                    prop.Min = 1;
+                    prop.Max = 100000;
+                    break;
+                // スライド設定
+                case nameof(SlideSpeed):
+                    prop.Min = 1;
+                    prop.Max = 100;
+                    break;
+                case nameof(SlideInterval):
+                    prop.Min = 1;
+                    prop.Max = 100000;
+                    break;
+                case nameof(SlideTimeInIntevalMethod):
+                    prop.Min = 100;
+                    prop.Max = 100000;
+                    break;
+                // その他の設定 全般
+                case nameof(BitmapDecodeTotalPixel):
+                    prop.Min = 320;
+                    prop.Max = 10000;
+                    break;
+                // その他の設定 外観1
+                case nameof(OverallOpacity):
+                case nameof(BackgroundOpacity):
+                    prop.Min = 0.005;
+                    prop.Max = 1.0;
+                    break;
+                // その他の設定 外観2
+                case nameof(ResizeGripThickness):
+                    prop.Min = 0;
+                    prop.Max = 100;
+                    break;
+                case nameof(TilePadding):
+                    prop.Min = 0;
+                    prop.Max = 10000;
+                    break;
+                // ダイアログには無い設定
+                case nameof(LastPageIndex):
+                    prop.Min = 0;
+                    break;
+            }
+
+            return prop;
         }
 
     }
