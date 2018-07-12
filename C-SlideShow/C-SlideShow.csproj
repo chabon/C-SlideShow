@@ -59,6 +59,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -74,6 +75,9 @@
     <Compile Include="Archiver\RarArchiver.cs" />
     <Compile Include="Archiver\SharpCompressArchiver.cs" />
     <Compile Include="Archiver\ZipArchiver.cs" />
+    <Compile Include="CommonControl\ColorPickerButton.xaml.cs">
+      <DependentUpon>ColorPickerButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Comparer.cs" />
     <Compile Include="ExifInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -83,6 +87,9 @@
       <DependentUpon>MatrixSelecter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Profile.cs" />
+    <Compile Include="ProfileEditDialog.xaml.cs">
+      <DependentUpon>ProfileEditDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingDialog.xaml.cs">
       <DependentUpon>SettingDialog.xaml</DependentUpon>
     </Compile>
@@ -100,9 +107,16 @@
       <DependentUpon>TileExpantionPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIHelper.cs" />
+    <Compile Include="CommonControl\NumericUpDown.xaml.cs">
+      <DependentUpon>NumericUpDown.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util.cs" />
     <Compile Include="VisualTreeUtil.cs" />
     <Compile Include="Win32.cs" />
+    <Page Include="CommonControl\ColorPickerButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -116,6 +130,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="MatrixSelecter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProfileEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -140,6 +158,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TileExpantionPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CommonControl\NumericUpDown.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -241,6 +263,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\profile.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

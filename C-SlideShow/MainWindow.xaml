@@ -127,7 +127,7 @@
                 <Border Style="{StaticResource ToolbarMenuBorderStyle}">
                     <Menu Style="{StaticResource ToolbarMenuStyle}">
                         <MenuItem x:Name="MenuItem_Matrix"
-                            ToolTip="行数・列数の設定"
+                            ToolTip="列数・行数の設定"
                                     Style="{StaticResource ToolbarMenuItemStyle}"
                                       >
                             <MenuItem.Header>
@@ -214,16 +214,31 @@
                     </Menu>
                 </Border>
 
-                <!-- 更新ボタン -->
-                <Button Style="{StaticResource ToolbarButtonStyle}"
-                        x:Name="Toolbar_Reload"
-                        Click="Toolbar_Reload_Click"
-                        ToolTip="フォルダ再読込">
-                    <Image Source="Resources\reload.png" 
-                           x:Name="Toolbar_Reload_Image"
-                           RenderOptions.BitmapScalingMode="NearestNeighbor"
-                           Width="16" Height="16"></Image>
-                </Button>
+                <!-- プロファイル -->
+                <Border Style="{StaticResource ToolbarMenuBorderStyle}">
+                    <Menu Style="{StaticResource ToolbarMenuStyle}">
+                        <MenuItem Style="{StaticResource ToolbarMenuItemStyle}"
+                            ToolTip="プロファイル"
+                            x:Name="MenuItem_Profile"
+                                  >
+                            <MenuItem.Header>
+                                <Border Margin="-5,0,0,0"
+                                        Width="35" 
+                                        >
+                                    <Image Source="Resources\profile.png" Width="16" Height="16"
+                                        RenderOptions.BitmapScalingMode="NearestNeighbor" ></Image>
+                                </Border>
+                            </MenuItem.Header>
+                                <MenuItem Header="書籍用(右綴じ)"  IsCheckable="True"/>
+                                <MenuItem Header="書籍用(左綴じ)"  IsCheckable="True"/>
+                                <Separator/>
+                                <MenuItem Header="新規作成" Click="Toolbar_Profile_New_Click"/>
+                                <MenuItem Header="リストの編集"/>
+                                <MenuItem Header="デフォルト"/>
+                        </MenuItem>
+                    </Menu>
+                </Border>
+
 
                 <!-- 設定 -->
                 <Border Style="{StaticResource ToolbarMenuBorderStyle}">

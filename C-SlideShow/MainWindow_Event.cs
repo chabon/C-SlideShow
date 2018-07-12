@@ -609,13 +609,32 @@ namespace C_SlideShow
             else StartSlideShow();
         }
 
-
-        // 再読込
-        private void Toolbar_Reload_Click(object sender, RoutedEventArgs e)
+        // プロファイル 新規作成
+        private void Toolbar_Profile_New_Click(object sender, RoutedEventArgs e)
         {
-            Reload(false);
-        }
+            if( profileEditDialog == null )
+            {
+                profileEditDialog = new ProfileEditDialog();
+                profileEditDialog.Owner = this;
+            }
 
+            // 初期位置は、メインウインドウの中心に
+            Rect rcMw = new Rect(Left, Top, Width, Height);
+            Point ptCenter = new Point( rcMw.Left + rcMw.Width / 2 , rcMw.Top + rcMw.Height / 2 );
+            Rect rcDlg = new Rect(
+                ptCenter.X - profileEditDialog.Width / 2,
+                ptCenter.Y - profileEditDialog.Height / 2,
+                profileEditDialog.Width,
+                profileEditDialog.Height
+            );
+
+            // ワーキングエリアはみ出しの補正
+            rcDlg = Util.GetCorrectedWindowRect(rcDlg);
+            profileEditDialog.Left = rcDlg.Left;
+            profileEditDialog.Top = rcDlg.Top;
+
+            profileEditDialog.ShowDialog();
+        }
 
         // システムボタン
         private void SystemButton_Close_Click(object sender, RoutedEventArgs e)

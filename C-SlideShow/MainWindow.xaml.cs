@@ -60,6 +60,7 @@ namespace C_SlideShow
         MatrixSelecter matrixSelecter;
         SlideSettingDialog slideSettingDialog;
         SettingDialog settingDialog;
+        ProfileEditDialog profileEditDialog;
 
 
         // property
@@ -111,6 +112,7 @@ namespace C_SlideShow
                     || MenuItem_Matrix.IsSubmenuOpen
                     || MenuItem_AspectRatio.IsSubmenuOpen
                     || MenuItem_SlideSetting.IsSubmenuOpen
+                    || MenuItem_Profile.IsSubmenuOpen
                     || MenuItem_Setting.IsSubmenuOpen )
                     return true;
                 else
@@ -1052,5 +1054,6 @@ namespace C_SlideShow
 
             return index;
         }
+
     }
 }

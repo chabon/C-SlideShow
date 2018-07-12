@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:C_SlideShow"
+             xmlns:cc="clr-namespace:C_SlideShow.CommonControl"
              mc:Ignorable="d" d:DesignWidth="257" Height="240">
     <Grid>
         <TabControl x:Name="MainTabControl" TabStripPlacement="Bottom" Width="260" Height="230" VerticalAlignment="Top" >
@@ -46,6 +47,7 @@
                             <ComboBoxItem>2048</ComboBoxItem>
                             <ComboBoxItem>2560</ComboBoxItem>
                             <ComboBoxItem>3840</ComboBoxItem>
+                            <ComboBoxItem>7680</ComboBoxItem>
                             <ComboBox.ToolTip>
                                 <TextBlock>
                                     この値によって画質の鮮明さ、メモリ消費量が変わります。<LineBreak/>
@@ -92,26 +94,12 @@
 
                     <StackPanel Margin="0,6,0,4" Orientation="Horizontal">
                         <TextBlock Width="40">背景色</TextBlock>
-                        <Button Margin="8,0" x:Name="BaseGridBackgroundColor" Click="BaseGridBackgroundColor_Click">
-                            <Border Width="24" Height="15" Margin="2"
-                                    x:Name="Border_BaseGridBackgroundColor"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="2"
-                                    Background="White"></Border>
-                        </Button>
+                        <cc:ColorPickerButton Margin="8,0" x:Name="BaseGridBackgroundColor" ColorPicked="BaseGridBackgroundColor_ColorPicked"></cc:ColorPickerButton>
                     </StackPanel>
                     <CheckBox x:Name="UsePlaidBackground" Click="UsePlaidBackground_Click" Margin="0,4">チェック柄の背景にする</CheckBox>
                     <StackPanel Orientation="Horizontal">
                         <Label>└ ペアとなる色</Label>
-                        <Button Margin="8,2" x:Name="PairColorOfPlaidBackground" Click="PairColorOfPlaidBackground_Click">
-                            <Border Width="24" Height="15" Margin="2"
-                                    x:Name="Border_PairColorOfPlaidBackground"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="2"
-                                    Background="White"></Border>
-                        </Button>
+                        <cc:ColorPickerButton Margin="8,2" x:Name="PairColorOfPlaidBackground" ColorPicked="PairColorOfPlaidBackground_ColorPicked"></cc:ColorPickerButton>
                     </StackPanel>
                 </StackPanel>
             </TabItem>
@@ -138,16 +126,7 @@
                     </StackPanel>
                     <StackPanel Margin="0,4" Orientation="Horizontal">
                         <TextBlock Width="90">ウインドウ枠の色</TextBlock>
-                        <Button Margin="8,0" x:Name="ResizeGripColor"
-                                Click="ResizeGripColor_Click"
-                                >
-                            <Border Width="24" Height="15" Margin="2"
-                                    x:Name="Border_ResizeGripColor"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="2"
-                                    Background="Blue"></Border>
-                        </Button>
+                        <cc:ColorPickerButton Margin="8,0" x:Name="ResizeGripColor" ColorPicked="ResizeGripColor_ColorPicked"></cc:ColorPickerButton>
                     </StackPanel>
 
                     <StackPanel Margin="0,2,0,4" Orientation="Horizontal">
@@ -169,28 +148,12 @@
 
                     <StackPanel Margin="0,4" Orientation="Horizontal">
                         <TextBlock Width="90">グリッド線の色</TextBlock>
-                        <Button Margin="8,0" x:Name="GridLineColor"
-                                Click="GridLineColor_Click">
-                            <Border Width="24" Height="15" Margin="2"
-                                    x:Name="Border_GridLineColor"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="2"
-                                    Background="Blue"></Border>
-                        </Button>
+                        <cc:ColorPickerButton Margin="8,0" x:Name="GridLineColor" ColorPicked="GridLineColor_ColorPicked"></cc:ColorPickerButton>
                     </StackPanel>
 
                     <StackPanel Margin="0,4" Orientation="Horizontal">
                         <TextBlock Width="90">シークバーの色</TextBlock>
-                        <Button Margin="8,0" x:Name="SeekbarColor"
-                                Click="SeekbarColor_Click">
-                            <Border Width="24" Height="15" Margin="2"
-                                    x:Name="Border_SeekbarColor"
-                                    BorderBrush="Black"
-                                    BorderThickness="1"
-                                    CornerRadius="2"
-                                    Background="Blue"></Border>
-                        </Button>
+                        <cc:ColorPickerButton Margin="8,0" x:Name="SeekbarColor" ColorPicked="SeekbarColor_ColorPicked"></cc:ColorPickerButton>
                     </StackPanel>
                 </StackPanel>
             </TabItem>

@@ -55,32 +55,30 @@ namespace C_SlideShow
             Text_BackgroundOpacity.Text = ( (int)BackgroundOpacity.Value ).ToString();
 
             // 背景色
-            Border_BaseGridBackgroundColor.Background =
-                new SolidColorBrush(pf.BaseGridBackgroundColor);
+            BaseGridBackgroundColor.PickedColor = pf.BaseGridBackgroundColor;
 
             // チェック柄の背景にする
             if(pf.UsePlaidBackground) UsePlaidBackground.IsChecked = true;
             else UsePlaidBackground.IsChecked = false;
 
             // チェック柄の背景のペアとなる色
-            Border_PairColorOfPlaidBackground.Background =
-                new SolidColorBrush(pf.PairColorOfPlaidBackground);
+            PairColorOfPlaidBackground.PickedColor = pf.PairColorOfPlaidBackground;
 
 
             // ウインドウ枠の太さ
             ResizeGripThickness.Text = pf.ResizeGripThickness.ToString();
 
             // ウインドウ枠の色
-            Border_ResizeGripColor.Background = new SolidColorBrush(pf.ResizeGripColor);
+            ResizeGripColor.PickedColor = pf.ResizeGripColor;
             
             // シークバーの色
-            Border_SeekbarColor.Background = new SolidColorBrush(pf.SeekbarColor);
+            SeekbarColor.PickedColor = pf.SeekbarColor;
 
             // グリッド線の幅
             TilePadding.Text = pf.TilePadding.ToString();
 
             // グリッド線の色
-            Border_GridLineColor.Background = new SolidColorBrush(pf.GridLineColor);
+            GridLineColor.PickedColor = pf.GridLineColor;
 
 
             // 最前面表示
@@ -168,20 +166,12 @@ namespace C_SlideShow
         }
 
         // 背景色
-        private void BaseGridBackgroundColor_Click(object sender, RoutedEventArgs e)
+        private void BaseGridBackgroundColor_ColorPicked(object sender, RoutedEventArgs e)
         {
             if (isInitializing) return;
 
-            System.Windows.Forms.ColorDialog cd = new System.Windows.Forms.ColorDialog();
-            if (cd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Color color = Color.FromArgb(cd.Color.A, cd.Color.R, cd.Color.G, cd.Color.B);
-                Border_BaseGridBackgroundColor.Background = new SolidColorBrush(color);
-
-                Setting.TempProfile.BaseGridBackgroundColor = color;
-                mainWindow.ApplyColorAndOpacitySetting();
-            }
-
+            Setting.TempProfile.BaseGridBackgroundColor = BaseGridBackgroundColor.PickedColor;
+            mainWindow.ApplyColorAndOpacitySetting();
         }
 
         // チェック柄の背景にする
@@ -198,19 +188,12 @@ namespace C_SlideShow
         }
 
         // チェック柄の背景のペアとなる色
-        private void PairColorOfPlaidBackground_Click(object sender, RoutedEventArgs e)
+        private void PairColorOfPlaidBackground_ColorPicked(object sender, RoutedEventArgs e)
         {
             if (isInitializing) return;
 
-            System.Windows.Forms.ColorDialog cd = new System.Windows.Forms.ColorDialog();
-            if (cd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Color color = Color.FromArgb(cd.Color.A, cd.Color.R, cd.Color.G, cd.Color.B);
-                Border_PairColorOfPlaidBackground.Background = new SolidColorBrush(color);
-
-                Setting.TempProfile.PairColorOfPlaidBackground = color;
-                mainWindow.ApplyColorAndOpacitySetting();
-            }
+            Setting.TempProfile.PairColorOfPlaidBackground = PairColorOfPlaidBackground.PickedColor;
+            mainWindow.ApplyColorAndOpacitySetting();
         }
 
         // ウインドウ枠の太さ
@@ -239,35 +222,12 @@ namespace C_SlideShow
         }
 
         // ウインドウ枠の色
-        private void ResizeGripColor_Click(object sender, RoutedEventArgs e)
+        private void ResizeGripColor_ColorPicked(object sender, RoutedEventArgs e)
         {
             if (isInitializing) return;
 
-            System.Windows.Forms.ColorDialog cd = new System.Windows.Forms.ColorDialog();
-            if (cd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Color color = Color.FromArgb(cd.Color.A, cd.Color.R, cd.Color.G, cd.Color.B);
-                Border_ResizeGripColor.Background = new SolidColorBrush(color);
-
-                Setting.TempProfile.ResizeGripColor = color;
-                mainWindow.UpdateUI();
-            }
-        }
-
-        // シークバーの色
-        private void SeekbarColor_Click(object sender, RoutedEventArgs e)
-        {
-            if (isInitializing) return;
-
-            System.Windows.Forms.ColorDialog cd = new System.Windows.Forms.ColorDialog();
-            if (cd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Color color = Color.FromArgb(cd.Color.A, cd.Color.R, cd.Color.G, cd.Color.B);
-                Border_SeekbarColor.Background = new SolidColorBrush(color);
-
-                Setting.TempProfile.SeekbarColor = color;
-                mainWindow.UpdateUI();
-            }
+            Setting.TempProfile.ResizeGripColor = ResizeGripColor.PickedColor;
+            mainWindow.UpdateUI();
         }
 
         // グリッド線の幅
@@ -296,19 +256,21 @@ namespace C_SlideShow
         }
 
         // グリッド線の色
-        private void GridLineColor_Click(object sender, RoutedEventArgs e)
+        private void GridLineColor_ColorPicked(object sender, RoutedEventArgs e)
         {
             if (isInitializing) return;
 
-            System.Windows.Forms.ColorDialog cd = new System.Windows.Forms.ColorDialog();
-            if (cd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Color color = Color.FromArgb(cd.Color.A, cd.Color.R, cd.Color.G, cd.Color.B);
-                Border_GridLineColor.Background = new SolidColorBrush(color);
+            Setting.TempProfile.GridLineColor = GridLineColor.PickedColor;
+            mainWindow.UpdateGridLine();
+        }
 
-                Setting.TempProfile.GridLineColor = color;
-                mainWindow.UpdateGridLine();
-            }
+        // シークバーの色
+        private void SeekbarColor_ColorPicked(object sender, RoutedEventArgs e)
+        {
+            if (isInitializing) return;
+
+            Setting.TempProfile.SeekbarColor = SeekbarColor.PickedColor;
+            mainWindow.UpdateUI();
         }
 
         // 最前面表示
@@ -370,6 +332,5 @@ namespace C_SlideShow
                 mainWindow.Reload(true);
 
         }
-
     }
 }

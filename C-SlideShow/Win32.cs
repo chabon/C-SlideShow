@@ -73,6 +73,7 @@ namespace C_SlideShow
 
         [DllImport("User32.dll")]
         public static extern IntPtr MonitorFromRect(out RECT lprc, uint dwFlags);
+
         [DllImport("User32.dll")]
         public static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
         public const uint MONITOR_DEFAULTTONEAREST  = 0x00000002;
@@ -94,6 +95,7 @@ namespace C_SlideShow
 
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
         public static extern int StrCmpLogicalW(string psz1, string psz2);
+
 
         /* ---------------------------------------------------- */
         //     Wrapper
