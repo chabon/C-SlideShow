@@ -64,6 +64,7 @@ namespace C_SlideShow
 
 
         // property
+        public static MainWindow Current { get; private set; }
         public AppSetting Setting { get; set; }
         public bool IsHorizontalSlide
         {
@@ -123,6 +124,8 @@ namespace C_SlideShow
 
         public MainWindow()
         {
+            Current = this;
+
             // load setting from xml
             AppSetting setting = new AppSetting().loadFromXmlFile();
 
@@ -131,6 +134,7 @@ namespace C_SlideShow
 
         public MainWindow(AppSetting setting)  // AllowTransparency の切替時に利用
         {
+            Current = this;
             InitMainWindow(setting);
         }
 
@@ -222,10 +226,7 @@ namespace C_SlideShow
 
             // 画像情報の読み込みとソート
             String[] files = profile.Path.ToArray();
-            ReadFiles(files, false);
-
-            // メインコンテンツ作成
-            InitMainContent(profile.LastPageIndex);
+            ReadFilesAndInitMainContent(files, false, profile.LastPageIndex);
 
             // 背景色と不透明度
             ApplyColorAndOpacitySetting();
@@ -251,6 +252,17 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         //     
         /* ---------------------------------------------------- */
+        private void ReadFilesAndInitMainContent(string[] pathes, bool isAddition, int firstIndex)
+        {
+            // 「読み込み中」メッセージ
+            this.WaitingMessageBase.Visibility = Visibility.Visible; 
+            this.WaitingMessageBase.Refresh();
+
+            ReadFiles(pathes, isAddition);
+            InitMainContent(firstIndex);
+            this.WaitingMessageBase.Visibility = Visibility.Collapsed;
+        }
+
         private void InitMainContent(int firstIndex)
         {
             if(tileContainers.Any( tc => tc.IsActiveSliding || tc.IsContinuousSliding))
@@ -299,17 +311,11 @@ namespace C_SlideShow
             InitSeekbar();
 
             // 「読み込み中」メッセージ解除
-            this.WaitingMessageBase.Visibility = Visibility.Hidden;
+            this.WaitingMessageBase.Visibility = Visibility.Collapsed;
         }
 
         private void ReadFiles(string[] pathes, bool isAddition)
         {
-            // 「読み込み中」メッセージの表示
-            this.WaitingMessageBase.Visibility = Visibility.Visible;
-
-            // レンダリング更新
-            this.WaitingMessageBase.Refresh();
-
             Profile pf = Setting.TempProfile;
             if( isAddition )
             {
@@ -962,6 +968,10 @@ namespace C_SlideShow
 
         public void SortAllImage(FileSortMethod order)
         {
+            // 読み込み中のメッセージ
+            this.WaitingMessageBase.Visibility = Visibility.Visible;
+            this.WaitingMessageBase.Refresh();
+
             if( order == FileSortMethod.None )
                 ReadFiles(Setting.TempProfile.Path.ToArray(), false);
             int grids = Setting.TempProfile.NumofCol * Setting.TempProfile.NumofRow;
@@ -969,8 +979,7 @@ namespace C_SlideShow
             imageFileManager.FillFileInfoVacancyWithDummy(grids);
             ChangeCurrentImageIndex(0);
 
-            // 読み込み中のメッセージ終了
-            this.WaitingMessageBase.Visibility = Visibility.Hidden;
+            this.WaitingMessageBase.Visibility = Visibility.Collapsed;
         }
 
         public List<TileContainer> GetTileContainersInCurrentOrder()

@@ -36,10 +36,15 @@ namespace C_SlideShow
         [DataMember]
         public Profile TempProfile { get; set; }
 
+        // プロファイルリスト
+        [DataMember]
+        public List<Profile> ProfileList { get; set; }
+
         // ダイアログには無い設定
         [DataMember]
         public bool ShowFileInfoInTileExpantionPanel { get; set; }
 
+        // ダイアログ未実装
         [DataMember]
         public List<HistoryItem> History { get; set; }
 
@@ -56,6 +61,8 @@ namespace C_SlideShow
         {
             // 初期化
             TempProfile = new Profile();
+            TempProfile.ProfileType = ProfileType.Temp;
+            ProfileList = new List<Profile>();
             ShowFileInfoInTileExpantionPanel = false;
             History = new List<HistoryItem>();
             NumofHistory = 30;
@@ -69,6 +76,8 @@ namespace C_SlideShow
         {
             //this.editModeBackgroundColor = Colors.Gray;
             TempProfile = new Profile();
+            TempProfile.ProfileType = ProfileType.Temp;
+            ProfileList = new List<Profile>();
             History = new List<HistoryItem>();
             NumofHistory = 30;
         }

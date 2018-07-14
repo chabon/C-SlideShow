@@ -163,14 +163,12 @@ namespace C_SlideShow
                 if( IsCtrlOrShiftKeyPressed )
                 {
                     // 追加読み込み
-                    this.ReadFiles(files, true);
-                    InitMainContent(0);
+                    ReadFilesAndInitMainContent(files, true, 0);
                 }
                 else
                 {
                     // 通常読み込み
-                    this.ReadFiles(files, false);
-                    InitMainContent( LoadPageIndexFromHistory() );
+                    ReadFilesAndInitMainContent(files, false,  LoadPageIndexFromHistory() );
                 }
             };
 
@@ -409,7 +407,7 @@ namespace C_SlideShow
         // ツールバーボタン(読み込み)
         private void MenuItem_Load_SubmenuOpened(object sender, RoutedEventArgs e)
         {
-            // イベントの発生元
+            // イベントの発生元チェック(子要素からのイベントなら無視)
             MenuItem miSrc = e.OriginalSource as MenuItem;
             if( miSrc == null || miSrc.Name != MenuItem_Load.Name) return;
 
@@ -440,8 +438,7 @@ namespace C_SlideShow
                 if( mi == null ) return;
 
                 string[] path = { mi.ToolTip.ToString() };
-                ReadFiles(path, true);
-                InitMainContent(0);
+                ReadFilesAndInitMainContent(path, true, 0);
             };
             cmi2.Click += (se, ev) =>
             {
@@ -505,8 +502,7 @@ namespace C_SlideShow
             if( miSrc == null ) return;
 
             string[] path = { miSrc.ToolTip.ToString() };
-            ReadFiles(path, false);
-            InitMainContent( LoadPageIndexFromHistory() );
+            ReadFilesAndInitMainContent(path, false,  LoadPageIndexFromHistory() );
         }
         
 
@@ -518,8 +514,7 @@ namespace C_SlideShow
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string[] path = { dlg.SelectedPath };
-                ReadFiles(path, false);
-                InitMainContent( LoadPageIndexFromHistory() );
+                ReadFilesAndInitMainContent(path, false,  LoadPageIndexFromHistory() );
             }
         }
 
@@ -532,8 +527,7 @@ namespace C_SlideShow
 
             if (ofd.ShowDialog() == Forms.DialogResult.OK)
             {
-                this.ReadFiles(ofd.FileNames, false);
-                InitMainContent( LoadPageIndexFromHistory() );
+                ReadFilesAndInitMainContent(ofd.FileNames, false,  LoadPageIndexFromHistory() );
             }
         }
 
@@ -545,8 +539,7 @@ namespace C_SlideShow
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string[] path = { dlg.SelectedPath };
-                ReadFiles(path, true);
-                InitMainContent(0);
+                ReadFilesAndInitMainContent(path, true,  0);
             }
         }
 
@@ -559,8 +552,7 @@ namespace C_SlideShow
 
             if (ofd.ShowDialog() == Forms.DialogResult.OK)
             {
-                this.ReadFiles(ofd.FileNames, true);
-                InitMainContent(0);
+                ReadFilesAndInitMainContent(ofd.FileNames, true,  0);
             }
         }
 
@@ -609,14 +601,47 @@ namespace C_SlideShow
             else StartSlideShow();
         }
 
+
+        // プロファイルメニュー開いた時
+        private void MenuItem_Profile_SubmenuOpened(object sender, RoutedEventArgs e)
+        {
+            // イベントの発生元チェック(子要素からのイベントなら無視)
+            MenuItem miSrc = e.OriginalSource as MenuItem;
+            if( miSrc == null || miSrc.Name != MenuItem_Profile.Name) return;
+
+            // プロファイル追加前に削除
+            const int basicManuCnt = 2;
+            while(MenuItem_Profile.Items.Count > basicManuCnt )
+            {
+                MenuItem_Profile.Items.RemoveAt(basicManuCnt);
+            }
+
+            // プロファイル追加
+            foreach(Profile pf in Setting.ProfileList )
+            {
+                MenuItem mi = new MenuItem();
+                mi.Header = pf.Name;
+                //mi.ToolTip = pf.CreateProfileToolTip();
+                mi.Click += (se, ev) => 
+                {
+                    Setting.TempProfile.Marge(pf);
+                    LoadProfile(Setting.TempProfile);
+                };
+                //mi.ContextMenu = contextMenu;
+                MenuItem_Profile.Items.Add(mi);
+            }
+        }
+
         // プロファイル 新規作成
         private void Toolbar_Profile_New_Click(object sender, RoutedEventArgs e)
         {
-            if( profileEditDialog == null )
+            if(profileEditDialog == null )
             {
                 profileEditDialog = new ProfileEditDialog();
                 profileEditDialog.Owner = this;
             }
+            profileEditDialog.Mode = ProfileEditDialogMode.New;
+            profileEditDialog.ProfileList = Setting.ProfileList;
 
             // 表示前にメインウインドウのウインドウ情報保存
             SaveWindowRect();

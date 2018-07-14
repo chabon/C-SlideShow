@@ -90,6 +90,7 @@
     <Compile Include="ProfileEditDialog.xaml.cs">
       <DependentUpon>ProfileEditDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ProfileEnabledMember.cs" />
     <Compile Include="SettingDialog.xaml.cs">
       <DependentUpon>SettingDialog.xaml</DependentUpon>
     </Compile>

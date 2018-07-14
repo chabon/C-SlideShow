@@ -24,9 +24,11 @@ namespace C_SlideShow.CommonControl
     /// </summary>
     public partial class NumericUpDown : UserControl
     {
-        int minvalue = 0, 
+        int minvalue = 0,
             maxvalue = 10000,
-            startvalue = 10;
+            startvalue = 10,
+            variation = 1;
+            
 
         public NumericUpDown()
         {
@@ -42,46 +44,31 @@ namespace C_SlideShow.CommonControl
                 if( NUDTextBox.Text != "" ) int.TryParse(NUDTextBox.Text, out number);
                 return number;
             }
-            set
-            {
-                NUDTextBox.Text = value.ToString();
-            }
+            set { NUDTextBox.Text = value.ToString(); }
         }
 
         public int MinValue
         {
-            get
-            {
-                return minvalue;
-            }
-            set
-            {
-                minvalue = value;
-            }
+            get { return minvalue; }
+            set { minvalue = value; }
         }
 
         public int MaxValue
         {
-            get
-            {
-                return maxvalue;
-            }
-            set
-            {
-                maxvalue = value;
-            }
+            get { return maxvalue; }
+            set { maxvalue = value; }
         }
 
         public int StartValue
         {
-            get
-            {
-                return startvalue;
-            }
-            set
-            {
-                startvalue = value;
-            }
+            get { return startvalue; }
+            set { startvalue = value; }
+        }
+
+        public int Variation
+        {
+            get { return variation; }
+            set { variation = value; }
         }
 
         private void NUDButtonUP_Click(object sender, RoutedEventArgs e)
@@ -90,7 +77,7 @@ namespace C_SlideShow.CommonControl
             if (NUDTextBox.Text != "") number = Convert.ToInt32(NUDTextBox.Text);
             else number = 0;
             if (number < maxvalue)
-                NUDTextBox.Text = Convert.ToString(number + 1); 
+                NUDTextBox.Text = Convert.ToString(number + variation); 
         }
 
         private void NUDButtonDown_Click(object sender, RoutedEventArgs e)
@@ -99,7 +86,7 @@ namespace C_SlideShow.CommonControl
             if (NUDTextBox.Text != "") number = Convert.ToInt32(NUDTextBox.Text);
             else number = 0;
             if (number > minvalue)
-                NUDTextBox.Text = Convert.ToString(number - 1); 
+                NUDTextBox.Text = Convert.ToString(number - variation); 
         }
 
         private void NUDTextBox_PreviewKeyDown(object sender, KeyEventArgs e)

@@ -39,6 +39,10 @@ namespace C_SlideShow
         LastWriteTime, LastWriteTimeRev, Random, None
     }
 
+    public enum ProfileType
+    {
+        Temp, Default, Preset, User
+    }
 
     public class ProfileMemberProp
     {
@@ -100,6 +104,23 @@ namespace C_SlideShow
         public bool SlideByOneImage { get; set; }
 
 
+        // その他の設定_全般
+        [DataMember]
+        public FileSortMethod FileSortMethod { get; set; }
+
+        [DataMember]
+        public bool TopMost { get; set; }
+
+        [DataMember]
+        public bool StartUp_OpenPrevFolder { get; set; }
+
+        [DataMember]
+        public bool ApplyRotateInfoFromExif { get; set; }
+
+        [DataMember]
+        public int BitmapDecodeTotalPixel { get; set; }
+
+
         // その他の設定_外観1
         [DataMember]
         public bool AllowTransparency { get; set; }
@@ -136,23 +157,6 @@ namespace C_SlideShow
         [DataMember]
         public Color SeekbarColor { get; set; }
 
-
-        // その他の設定_全般
-        [DataMember]
-        public FileSortMethod FileSortMethod { get; set; }
-
-        [DataMember]
-        public bool TopMost { get; set; }
-
-        [DataMember]
-        public bool StartUp_OpenPrevFolder { get; set; }
-
-        [DataMember]
-        public bool ApplyRotateInfoFromExif { get; set; }
-
-        [DataMember]
-        public int BitmapDecodeTotalPixel { get; set; }
-
         // ダイアログにはない設定
         [DataMember]
         public List<string> Path { get; set; }
@@ -166,6 +170,18 @@ namespace C_SlideShow
         [DataMember]
         public bool IsFullScreenMode { get; set; }
 
+
+        // 有効なメンバ
+        [DataMember]
+        public ProfileEnabledMember ProfileEnabledMember { get; set; }
+
+        // タイプ
+        [DataMember]
+        public ProfileType ProfileType { get; set; }
+
+        // プロファイル名
+        [DataMember]
+        public string Name { get; set; }
 
 
         public Profile()
@@ -193,6 +209,13 @@ namespace C_SlideShow
             SlideByOneImage = false;
             SlideDirection = SlideDirection.Left;
 
+            // その他の設定_全般
+            FileSortMethod = FileSortMethod.FileName;
+            TopMost = false;
+            StartUp_OpenPrevFolder = true;
+            ApplyRotateInfoFromExif = false;
+            BitmapDecodeTotalPixel = 1920;
+
             // その他の設定_外観1
             AllowTransparency = false;
             OverallOpacity = 0.5;
@@ -208,18 +231,20 @@ namespace C_SlideShow
             TilePadding = 3;
             GridLineColor = Colors.LightGray;
 
-            // その他の設定_全般
-            FileSortMethod = FileSortMethod.FileName;
-            TopMost = false;
-            StartUp_OpenPrevFolder = true;
-            ApplyRotateInfoFromExif = false;
-            BitmapDecodeTotalPixel = 1920;
-
             // ダイアログにはない設定
             Path = new List<string>();
             LastPageIndex = 0;
             WindowRect = new Rect(50, 50, 640, 480);
             IsFullScreenMode = false;
+
+            // 有効なメンバ
+            ProfileEnabledMember = new ProfileEnabledMember();
+
+            // タイプ
+            ProfileType = ProfileType.Temp;
+
+            // プロファイル名
+            Name = "NoName";
         }
 
         // 既定値(xmlファイルデシリアライズ時に呼ばれる)
@@ -292,5 +317,221 @@ namespace C_SlideShow
             return prop;
         }
 
+        /// <summary>
+        /// 他のプロファイルを統合(有効なメンバが衝突したら、他のプロファイルを優先)
+        /// </summary>
+        /// <param name="pf">統合するプロファイル</param>
+        public void Marge(Profile pf)
+        {
+            /* ---------------------------------------------------- */
+            // ウインドウの状態
+            /* ---------------------------------------------------- */
+            // ウインドウの位置
+            if( pf.ProfileEnabledMember.WindowRect_Pos )
+            {
+                this.WindowRect = new Rect(pf.WindowRect.Left, pf.WindowRect.Top, this.WindowRect.Width, this.WindowRect.Height);
+            }
+
+            // ウインドウサイズ
+            if( pf.ProfileEnabledMember.WindowRect_Size )
+            {
+                this.WindowRect = new Rect(this.WindowRect.Left, this.WindowRect.Top, pf.WindowRect.Width, pf.WindowRect.Height);
+            }
+
+            // フルスクリーン
+            if( pf.ProfileEnabledMember.IsFullScreenMode )
+            {
+                this.IsFullScreenMode = pf.IsFullScreenMode;
+            }
+
+            /* ---------------------------------------------------- */
+            // 読み込み
+            /* ---------------------------------------------------- */
+            // ファイル・フォルダ
+            if( pf.ProfileEnabledMember.Path )
+            {
+                this.Path = pf.Path;
+            }
+
+            // ページ番号
+            if( pf.ProfileEnabledMember.LastPageIndex )
+            {
+                this.LastPageIndex = pf.LastPageIndex;
+            }
+
+            /* ---------------------------------------------------- */
+            // 列数・行数
+            /* ---------------------------------------------------- */
+            if( pf.ProfileEnabledMember.NumofMatrix )
+            {
+                this.NumofCol = pf.NumofCol;
+                this.NumofRow = pf.NumofRow;
+            }
+
+            /* ---------------------------------------------------- */
+            // グリッドのアスペクト比
+            /* ---------------------------------------------------- */
+            // アスペクト比を固定
+            if( pf.ProfileEnabledMember.NonFixAspectRatio )
+            {
+                this.NonFixAspectRatio = pf.NonFixAspectRatio;
+            }
+
+            // アスペクト比
+            if( pf.ProfileEnabledMember.AspectRatio )
+            {
+                this.AspectRatioH = pf.AspectRatioH;
+                this.AspectRatioV = pf.AspectRatioV;
+            }
+
+            /* ---------------------------------------------------- */
+            // スライド
+            /* ---------------------------------------------------- */
+            // スライドショー設定
+            if( pf.ProfileEnabledMember.SlidePlayMethod )
+            {
+                this.SlidePlayMethod = pf.SlidePlayMethod;
+            }
+
+            // スライド方向
+            if( pf.ProfileEnabledMember.SlideDirection )
+            {
+                this.SlideDirection = pf.SlideDirection;
+            }
+
+            /* ---------------------------------------------------- */
+            // スライドショー詳細
+            /* ---------------------------------------------------- */
+            // 速度
+            if( pf.ProfileEnabledMember.SlideSpeed )
+            {
+                this.SlideSpeed = pf.SlideSpeed;
+            }
+
+            // 待機時間(sec)
+            if( pf.ProfileEnabledMember.SlideInterval )
+            {
+                this.SlideInterval = pf.SlideInterval;
+            }
+
+            // スライド時間(ms)
+            if( pf.ProfileEnabledMember.SlideTimeInIntevalMethod )
+            {
+                this.SlideTimeInIntevalMethod = pf.SlideTimeInIntevalMethod;
+            }
+
+            // 画像一枚ずつスライド
+            if( pf.ProfileEnabledMember.SlideByOneImage )
+            {
+                this.SlideByOneImage = pf.SlideByOneImage;
+            }
+
+            // [todo] 自動再生
+
+            /* ---------------------------------------------------- */
+            // その他/全般
+            /* ---------------------------------------------------- */
+            // 最前面表示
+            if( pf.ProfileEnabledMember.TopMost )
+            {
+                this.TopMost = pf.TopMost;
+            }
+
+            // 画像の並び順
+            if( pf.ProfileEnabledMember.FileSortMethod )
+            {
+                this.FileSortMethod = pf.FileSortMethod;
+            }
+
+            // Exifの回転・反転情報
+            if( pf.ProfileEnabledMember.ApplyRotateInfoFromExif )
+            {
+                this.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif;
+            }
+
+            // バックバッファのサイズ(ピクセル値)
+            if( pf.ProfileEnabledMember.BitmapDecodeTotalPixel )
+            {
+                this.BitmapDecodeTotalPixel = pf.BitmapDecodeTotalPixel;
+            }
+
+            /* ---------------------------------------------------- */
+            // その他/外観1
+            /* ---------------------------------------------------- */
+            // 透過
+            if( pf.ProfileEnabledMember.AllowTransparency )
+            {
+                this.AllowTransparency = pf.AllowTransparency;
+            }
+
+            // 不透明度(全体)
+            if( pf.ProfileEnabledMember.OverallOpacity )
+            {
+                this.OverallOpacity = pf.OverallOpacity;
+            }
+
+            // 不透明度(背景)
+            if( pf.ProfileEnabledMember.BackgroundOpacity )
+            {
+                this.BackgroundOpacity = pf.BackgroundOpacity;
+            }
+
+            // 背景色
+            if( pf.ProfileEnabledMember.BaseGridBackgroundColor )
+            {
+                this.BaseGridBackgroundColor = pf.BaseGridBackgroundColor;
+            }
+
+            // チェック柄の背景
+            if( pf.ProfileEnabledMember.UsePlaidBackground )
+            {
+                this.UsePlaidBackground = pf.UsePlaidBackground;
+            }
+
+            // ペアとなる背景色
+            if( pf.ProfileEnabledMember.PairColorOfPlaidBackground )
+            {
+                this.PairColorOfPlaidBackground = pf.PairColorOfPlaidBackground;
+            }
+
+            /* ---------------------------------------------------- */
+            // その他/外観2
+            /* ---------------------------------------------------- */
+            // ウインドウ枠の太さ
+            if( pf.ProfileEnabledMember.ResizeGripThickness )
+            {
+                this.ResizeGripThickness = pf.ResizeGripThickness;
+            }
+
+            // ウインドウ枠の色
+            if( pf.ProfileEnabledMember.ResizeGripColor )
+            {
+                this.ResizeGripColor = pf.ResizeGripColor;
+            }
+
+            // グリッド線の太さ
+            if( pf.ProfileEnabledMember.TilePadding )
+            {
+                this.TilePadding = pf.TilePadding;
+            }
+
+            // グリッド線の色
+            if( pf.ProfileEnabledMember.GridLineColor )
+            {
+                this.GridLineColor = pf.GridLineColor;
+            }
+
+            // シークバーの色
+            if( pf.ProfileEnabledMember.SeekbarColor )
+            {
+                this.SeekbarColor = pf.SeekbarColor;
+            }
+        }
+
+
+        public string CreateProfileToolTip()
+        {
+            return "tool tip";
+        }
     }
 }
