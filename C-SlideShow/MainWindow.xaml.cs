@@ -143,7 +143,7 @@ namespace C_SlideShow
         private void InitMainWindow(AppSetting setting)
         {
             Setting = setting;
-            this.AllowsTransparency = Setting.TempProfile.AllowTransparency;
+            this.AllowsTransparency = (bool)Setting.TempProfile.AllowTransparency.Value;
 
             InitializeComponent();
 
@@ -199,7 +199,7 @@ namespace C_SlideShow
             intervalSlideTimer.Interval = new TimeSpan(0, 0, 0, 1);
 
             // setting to dialog components
-            matrixSelecter.SetMatrix(Setting.TempProfile.NumofRow, Setting.TempProfile.NumofCol);
+            matrixSelecter.SetMatrix(Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row);
             slideSettingDialog.ApplySettingToDlg();
             settingDialog.ApplySettingToDlg();
         }
@@ -219,14 +219,14 @@ namespace C_SlideShow
         private void LoadProfile(Profile profile)
         {
             // ウインドウ位置
-            this.Left = profile.WindowRect.Left;
-            this.Top = profile.WindowRect.Top;
-            this.Width = profile.WindowRect.Width;
-            this.Height = profile.WindowRect.Height;
+            this.Left   = profile.WindowPos.X;
+            this.Top    = profile.WindowPos.Y;
+            this.Width  = profile.WindowSize.Width;
+            this.Height = profile.WindowSize.Height;
 
             // 画像情報の読み込みとソート
-            String[] files = profile.Path.ToArray();
-            ReadFilesAndInitMainContent(files, false, profile.LastPageIndex);
+            String[] files = profile.Path.Value.ToArray();
+            ReadFilesAndInitMainContent(files, false, profile.LastPageIndex.Value);
 
             // 背景色と不透明度
             ApplyColorAndOpacitySetting();
@@ -238,12 +238,12 @@ namespace C_SlideShow
             UpdateToolbarViewing();
 
             // 最前面
-            this.Topmost = Setting.TempProfile.TopMost;
+            this.Topmost = Setting.TempProfile.TopMost.Value;
 
             // フルスクリーン復元
-            if(profile.IsFullScreenMode)
+            if( profile.IsFullScreenMode.Value )
             {
-                profile.IsFullScreenMode = false;
+                profile.IsFullScreenMode.Value = false;
                 ToggleFullScreen();
             }
         }
@@ -270,25 +270,27 @@ namespace C_SlideShow
 
             // profile
             Profile pf = Setting.TempProfile;
+            ProfileMember.NumofMatrix mtx = Setting.TempProfile.NumofMatrix; // 行列
+            ProfileMember.AspectRatio ar = Setting.TempProfile.AspectRatio; // アス比
 
             // set up imageFileManager
-            int grids = pf.NumofRow * pf.NumofCol;
+            int grids = mtx.Col * mtx.Row;
             imageFileManager.FillFileInfoVacancyWithDummy(grids);
             if (firstIndex > imageFileManager.NumofImageFile - 1) firstIndex = 0;
             imageFileManager.NextIndex = firstIndex;
-            imageFileManager.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif;
+            imageFileManager.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif.Value;
 
             // init container
-            TileContainer.TileAspectRatio = pf.AspectRatioV / (double)pf.AspectRatioH;
-            TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel, pf.NumofRow, pf.NumofCol);
+            TileContainer.TileAspectRatio = ar.H / ar.V;
+            TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel.Value, mtx.Col, mtx.Row);
             foreach(TileContainer tc in tileContainers)
             {
-                tc.InitSlideDerection(pf.SlideDirection);
-                tc.InitGrid(pf.NumofRow, pf.NumofCol);
-                tc.InitGridLineColor(pf.GridLineColor);
-                tc.InitSizeAndPos(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+                tc.InitSlideDerection(pf.SlideDirection.Value);
+                tc.InitGrid(mtx.Col, mtx.Row);
+                tc.InitGridLineColor(pf.GridLineColor.Value);
+                tc.InitSizeAndPos(ar.H, ar.V, pf.TilePadding.Value);
                 tc.InitWrapPoint();
-                tc.InitTileOrigin(pf.TileOrigin, pf.TileOrientation, true);
+                tc.InitTileOrigin(pf.TileOrigin.Value, pf.TileOrientation.Value, true);
             }
 
             // load image
@@ -317,6 +319,7 @@ namespace C_SlideShow
         private void ReadFiles(string[] pathes, bool isAddition)
         {
             Profile pf = Setting.TempProfile;
+
             if( isAddition )
             {
                 // 追加の場合、ダミーファイル情報を消す
@@ -326,7 +329,7 @@ namespace C_SlideShow
             {
                 // 追加じゃない場合、色々クリア
                 SavePageIndexToHistory(); // クリア前にページ番号保存
-                pf.Path.Clear();
+                pf.Path.Value.Clear();
                 imageFileManager.ClearFileInfo();
                 tileContainers.ForEach( tc => tc.ClearAllTileImage() );
             }
@@ -341,7 +344,7 @@ namespace C_SlideShow
                 foreach(string path in pathes )
                 {
                     imageFileManager.LoadImageFileInfo(path);
-                    pf.Path.Add(path);
+                    pf.Path.Value.Add(path);
                 }
 #if DEBUG
                 sw.Stop();
@@ -357,7 +360,7 @@ namespace C_SlideShow
             }
             else
             {
-                imageFileManager.Sort(pf.FileSortMethod);
+                imageFileManager.Sort( (FileSortMethod)pf.FileSortMethod.Value );
             }
 
             // ヒストリーに追加
@@ -380,7 +383,7 @@ namespace C_SlideShow
 
         private void InitSeekbar()
         {
-            int grids = Setting.TempProfile.NumofRow * Setting.TempProfile.NumofCol;
+            int grids = Setting.TempProfile.NumofMatrix.Grid;
             Seekbar.Maximum = imageFileManager.GetLastNoDeviationIndex(grids) + 1; // 末尾がずれないように
             Seekbar.Minimum = 1;
 
@@ -407,7 +410,7 @@ namespace C_SlideShow
                 Seekbar.VerticalAlignment = VerticalAlignment.Stretch;
             }
 
-            switch (Setting.TempProfile.SlideDirection)
+            switch ( (SlideDirection)Setting.TempProfile.SlideDirection.Value )
             {
                 case SlideDirection.Left:
                 default:
@@ -446,12 +449,12 @@ namespace C_SlideShow
             // 今再生中
             if (IsPlaying) return;
 
-            if(Setting.TempProfile.SlidePlayMethod == SlidePlayMethod.Continuous)
+            if( (SlidePlayMethod)Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Continuous )
             {
                 // 連続スライド
 
                 // 速度 → 移動にかける時間パラメータ 3000(ms) - 300000(ms)
-                int param = (int)( 300000 / Setting.TempProfile.SlideSpeed );
+                int param = (int)( 300000 / (double)Setting.TempProfile.SlideSpeed.Value );
 
                 foreach(TileContainer tc in tileContainers)
                 {
@@ -485,7 +488,7 @@ namespace C_SlideShow
             if (tileContainers.Any(c => c.IsContinuousSliding)) StopSlideShow();
 
             // 最初と最後の切り替えは、index 0 を通すように(画像１枚毎のスライドの時はしない)
-            int grids = Setting.TempProfile.NumofCol * Setting.TempProfile.NumofRow;
+            int grids = Setting.TempProfile.NumofMatrix.Grid;
             int idx = imageFileManager.ActualCurrentIndex;
             if (isPlayback)
             {
@@ -568,24 +571,23 @@ namespace C_SlideShow
 
         public void ChangeSlideDirection(SlideDirection direction)
         {
-            if (direction == Setting.TempProfile.SlideDirection) return;
+            if ( direction == (SlideDirection)Setting.TempProfile.SlideDirection.Value ) return;
 
-            Setting.TempProfile.SlideDirection = direction;
+            Setting.TempProfile.SlideDirection.Value = direction;
             InitMainContent(imageFileManager.CurrentIndex);
 
             UpdateToolbarViewing();
         }
 
-        private void ChangeGridDifinition(int numofRow, int numofCol)
+        private void ChangeGridDifinition(int numofCol, int numofRow)
         {
-            if (Setting.TempProfile.NumofRow == numofRow && Setting.TempProfile.NumofCol == numofCol) return;
+            if ( Setting.TempProfile.NumofMatrix.Col == numofRow && Setting.TempProfile.NumofMatrix.Row == numofCol) return;
 
-            Setting.TempProfile.NumofRow = numofRow;
-            Setting.TempProfile.NumofCol = numofCol;
+            Setting.TempProfile.NumofMatrix.Value = new int[] { numofCol, numofRow };
 
             InitMainContent(imageFileManager.CurrentIndex);
 
-            if (Setting.TempProfile.IsFullScreenMode)
+            if ( Setting.TempProfile.IsFullScreenMode.Value )
             {
                 UpdateFullScreenView();
             }
@@ -598,12 +600,11 @@ namespace C_SlideShow
 
         private void ChangeAspectRatio(int h, int v)
         {
-            Setting.TempProfile.AspectRatioH = h;
-            Setting.TempProfile.AspectRatioV = v;
+            Setting.TempProfile.AspectRatio.Value = new int[] { h, v };
             InitMainContent(imageFileManager.CurrentIndex);
             UpdateToolbarViewing();
 
-            if (Setting.TempProfile.IsFullScreenMode)
+            if ( Setting.TempProfile.IsFullScreenMode.Value )
             {
                 UpdateFullScreenView();
             }
@@ -623,7 +624,7 @@ namespace C_SlideShow
 
             foreach(TileContainer tc in tileContainers)
             {
-                tc.InitSizeAndPos(Setting.TempProfile.AspectRatioH, Setting.TempProfile.AspectRatioV, Setting.TempProfile.TilePadding);
+                tc.InitSizeAndPos(Setting.TempProfile.AspectRatio.H, Setting.TempProfile.AspectRatio.V, Setting.TempProfile.TilePadding.Value);
                 tc.LoadImageToGrid(false, true);
             }
 
@@ -685,7 +686,7 @@ namespace C_SlideShow
 
             foreach(TileContainer tc in tileContainers)
             {
-                tc.InitGridLineColor(pf.GridLineColor);
+                tc.InitGridLineColor( (Color)pf.GridLineColor.Value );
                 //tc.InitSize(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
                 //tc.InitSizeAndPos(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
             }
@@ -697,7 +698,7 @@ namespace C_SlideShow
                 tc.InitWrapPoint();
             }
 
-            if (Setting.TempProfile.IsFullScreenMode)
+            if ( (bool)Setting.TempProfile.IsFullScreenMode.Value )
             {
                 UpdateFullScreenView();
             }
@@ -711,12 +712,12 @@ namespace C_SlideShow
         public void UpdateUI()
         {
             Profile pf = Setting.TempProfile;
-            this.MainContent.Margin = new Thickness(pf.ResizeGripThickness);
-            this.ResizeGrip.BorderThickness = new Thickness(pf.ResizeGripThickness);
-            this.ResizeGrip.BorderBrush = new SolidColorBrush(pf.ResizeGripColor);
-            this.Seekbar.Foreground = new SolidColorBrush(pf.SeekbarColor);
+            this.MainContent.Margin = new Thickness(pf.ResizeGripThickness.Value);
+            this.ResizeGrip.BorderThickness = new Thickness(pf.ResizeGripThickness.Value);
+            this.ResizeGrip.BorderBrush = new SolidColorBrush(pf.ResizeGripColor.Value);
+            this.Seekbar.Foreground = new SolidColorBrush(pf.SeekbarColor.Value);
 
-            if (Setting.TempProfile.IsFullScreenMode)
+            if (Setting.TempProfile.IsFullScreenMode.Value)
             {
                 UpdateFullScreenView();
             }
@@ -732,13 +733,13 @@ namespace C_SlideShow
             Profile pf = Setting.TempProfile;
 
             // アス比 ボタン
-            if( pf.NonFixAspectRatio )
+            if( pf.NonFixAspectRatio.Value )
             {
                 Toolbar_AspectRate_Text.Text = "Free";
             }
             else
             {
-                string aRateTxt = pf.AspectRatioH.ToString() + " : " + pf.AspectRatioV.ToString();
+                string aRateTxt = pf.AspectRatio.H.ToString() + " : " + pf.AspectRatio.V.ToString();
                 Toolbar_AspectRate_Text.Text = aRateTxt;
             }
 
@@ -750,16 +751,16 @@ namespace C_SlideShow
                 {
                     i.IsChecked = false;
 
-                    if( !pf.NonFixAspectRatio && i.Tag.ToString() != "FREE")
+                    if( !pf.NonFixAspectRatio.Value && i.Tag.ToString() != "FREE")
                     {
                         string[] str = i.Tag.ToString().Split('_');
                         int w = int.Parse(str[0]);
                         int h = int.Parse(str[1]);
-                        if(w == pf.AspectRatioH && h == pf.AspectRatioV ) i.IsChecked = true;
+                        if(w == pf.AspectRatio.H && h == pf.AspectRatio.V ) i.IsChecked = true;
                     }
                 }
             }
-            if( pf.NonFixAspectRatio ) Toolbar_AspectRate_Free.IsChecked = true;
+            if( pf.NonFixAspectRatio.Value ) Toolbar_AspectRate_Free.IsChecked = true;
 
 
             // 再生 / 停止
@@ -775,7 +776,7 @@ namespace C_SlideShow
 
             // スライド
             string iconName = "";
-            switch (pf.SlideDirection)
+            switch (pf.SlideDirection.Value)
             {
                 case SlideDirection.Left:
                     iconName = "slide_left";
@@ -805,17 +806,17 @@ namespace C_SlideShow
 
         public void ToggleFullScreen()
         {
-            if (Setting.TempProfile.IsFullScreenMode)
+            if (Setting.TempProfile.IsFullScreenMode.Value)
             {
                 // 解除
-                this.MainContent.Margin = new Thickness(Setting.TempProfile.ResizeGripThickness);
+                this.MainContent.Margin = new Thickness(Setting.TempProfile.ResizeGripThickness.Value);
                 this.ResizeGrip.Visibility = Visibility.Visible;
                 this.Topmost = isTopmostBeforeFullScreen;
                 this.Left = windowRectBeforeFullScreen.Left;
                 this.Top = windowRectBeforeFullScreen.Top;
                 this.Width = windowRectBeforeFullScreen.Width;
                 this.Height = windowRectBeforeFullScreen.Height;
-                Setting.TempProfile.IsFullScreenMode = false;
+                Setting.TempProfile.IsFullScreenMode.Value = false;
                 FullScreenBase_TopLeft.Visibility = Visibility.Hidden;
                 FullScreenBase_BottomRight.Visibility = Visibility.Hidden;
                 UpdateWindowSize();
@@ -846,7 +847,7 @@ namespace C_SlideShow
                 // 適切なコンテナの位置と、拡大率を指定する
                 UpdateFullScreenView();
 
-                Setting.TempProfile.IsFullScreenMode = true;
+                Setting.TempProfile.IsFullScreenMode.Value = true;
                 this.ResizeGrip.Visibility = Visibility.Hidden;
 
                 // システムアイコン変更
@@ -910,10 +911,10 @@ namespace C_SlideShow
 
         public void ApplyAllowTransparency()
         {
-            if (this.AllowsTransparency == Setting.TempProfile.AllowTransparency) return;
+            if (this.AllowsTransparency == Setting.TempProfile.AllowTransparency.Value) return;
 
             SaveWindowRect();
-            Setting.TempProfile.LastPageIndex = imageFileManager.CurrentIndex;
+            Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
             MainWindow mw = new MainWindow(this.Setting);
 
             mw.Show();
@@ -932,38 +933,46 @@ namespace C_SlideShow
                 this.BaseGrid.Background = new SolidColorBrush(Colors.Transparent);
 
                 // 背景ブラシ
-                if( Setting.TempProfile.UsePlaidBackground )
+                if( Setting.TempProfile.UsePlaidBackground.Value )
                 {
                     this.Bg_ForTransparencySetting.Background = Util.CreatePlaidBrush(
-                        pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
+                        pf.BaseGridBackgroundColor.Value, pf.PairColorOfPlaidBackground.Value);
                 }
                 else
-                    this.Bg_ForTransparencySetting.Background = new SolidColorBrush(pf.BaseGridBackgroundColor);
+                    this.Bg_ForTransparencySetting.Background = new SolidColorBrush(pf.BaseGridBackgroundColor.Value);
 
                 // 不透明度
-                this.BaseGrid.Opacity = Setting.TempProfile.OverallOpacity;
-                this.Bg_ForTransparencySetting.Opacity = Setting.TempProfile.BackgroundOpacity;
+                this.BaseGrid.Opacity = Setting.TempProfile.OverallOpacity.Value;
+                this.Bg_ForTransparencySetting.Opacity = Setting.TempProfile.BackgroundOpacity.Value;
             }
             else
             {
                 this.Bg_ForTransparencySetting.Visibility = Visibility.Hidden;
-                if( pf.UsePlaidBackground )
+                if( pf.UsePlaidBackground.Value )
                 {
                     this.BaseGrid.Background = Util.CreatePlaidBrush(
-                        pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
+                        pf.BaseGridBackgroundColor.Value, pf.PairColorOfPlaidBackground.Value);
                 }
                 else
-                    this.BaseGrid.Background = new SolidColorBrush(pf.BaseGridBackgroundColor);
+                    this.BaseGrid.Background = new SolidColorBrush(pf.BaseGridBackgroundColor.Value);
                 this.BaseGrid.Opacity = 1.0;
             }
         }
 
         private void SaveWindowRect()
         {
-            if (Setting.TempProfile.IsFullScreenMode)
-                Setting.TempProfile.WindowRect = windowRectBeforeFullScreen;
+            Rect rc;
+            if( Setting.TempProfile.IsFullScreenMode.Value )
+            {
+                rc = windowRectBeforeFullScreen;
+            }
             else
-                Setting.TempProfile.WindowRect = new Rect(Left, Top, Width, Height);
+            {
+                rc = new Rect(Left, Top, Width, Height);
+            }
+
+            Setting.TempProfile.WindowPos.Value = new Point( rc.Left, rc.Top );
+            Setting.TempProfile.WindowSize.Value = new Size( rc.Width, rc.Height );
         }
 
         public void SortAllImage(FileSortMethod order)
@@ -973,8 +982,8 @@ namespace C_SlideShow
             this.WaitingMessageBase.Refresh();
 
             if( order == FileSortMethod.None )
-                ReadFiles(Setting.TempProfile.Path.ToArray(), false);
-            int grids = Setting.TempProfile.NumofCol * Setting.TempProfile.NumofRow;
+                ReadFiles(Setting.TempProfile.Path.Value.ToArray(), false);
+            int grids = Setting.TempProfile.NumofMatrix.Grid;
             imageFileManager.Sort(order);
             imageFileManager.FillFileInfoVacancyWithDummy(grids);
             ChangeCurrentImageIndex(0);
@@ -985,7 +994,7 @@ namespace C_SlideShow
         public List<TileContainer> GetTileContainersInCurrentOrder()
         {
             List<TileContainer> containersInCurrentOrder;
-            switch (Setting.TempProfile.SlideDirection)
+            switch (Setting.TempProfile.SlideDirection.Value)
             {
                 case SlideDirection.Left:
                 default:
@@ -1008,7 +1017,7 @@ namespace C_SlideShow
         public void Reload(bool keepCurrentIdx)
         {
             // 画像情報の読み込みとソート
-            String[] files = Setting.TempProfile.Path.ToArray();
+            String[] files = Setting.TempProfile.Path.Value.ToArray();
             ReadFiles(files, false);
 
             // コンテンツ初期化
@@ -1022,7 +1031,7 @@ namespace C_SlideShow
             }
 
             // 画面更新
-            if (Setting.TempProfile.IsFullScreenMode)
+            if (Setting.TempProfile.IsFullScreenMode.Value)
             {
                 UpdateFullScreenView();
             }

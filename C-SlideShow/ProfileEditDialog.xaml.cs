@@ -63,39 +63,35 @@ namespace C_SlideShow
         private void SetMinAndMaxToAllControl()
         {
             // ウインドウ位置
-            WinPos_X.MaxValue = int.MaxValue;
-            WinPos_X.MinValue = int.MinValue;
-            WinPos_Y.MaxValue = int.MaxValue;
-            WinPos_Y.MinValue = int.MinValue;
+            SetMinAndMaxToNumericUpDown( WinPos_X, ProfileMember.WindowPos.Min, ProfileMember.WindowPos.Max);
+            SetMinAndMaxToNumericUpDown( WinPos_X, ProfileMember.WindowPos.Min, ProfileMember.WindowPos.Max);
 
             // ウインドウサイズ
-            WinSize_Width.MinValue = 100;
-            WinSize_Width.MaxValue = int.MaxValue;
-            WinSize_Height.MinValue = 100;
-            WinSize_Height.MaxValue = int.MaxValue;
+            SetMinAndMaxToNumericUpDown( WinSize_Width, ProfileMember.WindowSize.Min, ProfileMember.WindowSize.Max);
+            SetMinAndMaxToNumericUpDown( WinSize_Height, ProfileMember.WindowSize.Min, ProfileMember.WindowSize.Max);
 
             // ページ番号
-            SetMinAndMaxToNumericUpDown( LastPageIndex, nameof(Profile.LastPageIndex) );
+            SetMinAndMaxToNumericUpDown( LastPageIndex, ProfileMember.LastPageIndex.Min, ProfileMember.LastPageIndex.Max);
 
             // 列数・行数
-            SetMinAndMaxToNumericUpDown( NumofCol, nameof(Profile.NumofCol) );
-            SetMinAndMaxToNumericUpDown( NumofRow, nameof(Profile.NumofRow) );
+            SetMinAndMaxToNumericUpDown( NumofCol, ProfileMember.NumofMatrix.Min, ProfileMember.NumofMatrix.Max);
+            SetMinAndMaxToNumericUpDown( NumofRow, ProfileMember.NumofMatrix.Min, ProfileMember.NumofMatrix.Max);
 
             // アスペクト比(横：縦)
-            SetMinAndMaxToNumericUpDown( AspectRatioH, nameof(Profile.AspectRatioH) );
-            SetMinAndMaxToNumericUpDown( AspectRatioV, nameof(Profile.AspectRatioV) );
+            SetMinAndMaxToNumericUpDown( AspectRatioH, ProfileMember.AspectRatio.Min, ProfileMember.AspectRatio.Max);
+            SetMinAndMaxToNumericUpDown( AspectRatioV, ProfileMember.AspectRatio.Min, ProfileMember.AspectRatio.Max);
 
             // 速度(スライドショー)
-            SetMinAndMaxToNumericUpDown( SlideSpeed, nameof(Profile.SlideSpeed) );
+            SetMinAndMaxToNumericUpDown( SlideSpeed, ProfileMember.SlideSpeed.Min, ProfileMember.SlideSpeed.Max);
 
             // 待機時間
-            SetMinAndMaxToNumericUpDown( SlideInterval, nameof(Profile.SlideInterval) );
+            SetMinAndMaxToNumericUpDown( SlideInterval, ProfileMember.SlideInterval.Min, ProfileMember.SlideInterval.Max);
             
             // スライド時間
-            SetMinAndMaxToNumericUpDown( SlideTimeInIntevalMethod, nameof(Profile.SlideTimeInIntevalMethod) );
+            SetMinAndMaxToNumericUpDown( SlideTimeInIntevalMethod, ProfileMember.SlideTimeInIntevalMethod.Min, ProfileMember.SlideTimeInIntevalMethod.Max);
 
             // バックバッファのサイズ
-            SetMinAndMaxToNumericUpDown( BitmapDecodeTotalPixel, nameof(Profile.BitmapDecodeTotalPixel) );
+            SetMinAndMaxToNumericUpDown( BitmapDecodeTotalPixel, ProfileMember.BitmapDecodeTotalPixel.Min, ProfileMember.BitmapDecodeTotalPixel.Max);
 
             // 不透明度(全体)
             OverallOpacity.MinValue = 0;
@@ -106,17 +102,16 @@ namespace C_SlideShow
             BackgroundOpacity.MaxValue = 100;
 
             // ウインドウ枠の太さ
-            SetMinAndMaxToNumericUpDown( ResizeGripThickness, nameof(Profile.ResizeGripThickness) );
+            SetMinAndMaxToNumericUpDown( ResizeGripThickness, ProfileMember.ResizeGripThickness.Min, ProfileMember.ResizeGripThickness.Max);
 
             // グリッド線の太さ
-            SetMinAndMaxToNumericUpDown( TilePadding, nameof(Profile.TilePadding) );
+            SetMinAndMaxToNumericUpDown( TilePadding, ProfileMember.TilePadding.Min, ProfileMember.TilePadding.Max);
         }
 
-        private void SetMinAndMaxToNumericUpDown(CommonControl.NumericUpDown numericUpDown, string memberName)
+        private void SetMinAndMaxToNumericUpDown(CommonControl.NumericUpDown numericUpDown, int min, int max)
         {
-            ProfileMemberProp prop = Profile.GetProfileMemberProp( memberName );
-            numericUpDown.MinValue = (int)prop.Min;
-            numericUpDown.MaxValue = (int)prop.Max;
+            numericUpDown.MinValue = min;
+            numericUpDown.MaxValue = max;
         }
 
         /// <summary>
@@ -129,51 +124,51 @@ namespace C_SlideShow
             // ウインドウの状態
             /* ---------------------------------------------------- */
             // ウインドウの位置
-            WinPos_X.Value = (int)pf.WindowRect.Left;
-            WinPos_Y.Value = (int)pf.WindowRect.Top;
+            WinPos_X.Value = (int)pf.WindowPos.X;
+            WinPos_Y.Value = (int)pf.WindowPos.Y;
 
             // ウインドウサイズ
-            WinSize_Width.Value = (int)pf.WindowRect.Width;
-            WinSize_Height.Value = (int)pf.WindowRect.Height;
+            WinSize_Width.Value = (int)pf.WindowSize.Width;
+            WinSize_Height.Value = (int)pf.WindowSize.Height;
 
             // フルスクリーン
-            IsFullScreenMode.SelectedIndex = pf.IsFullScreenMode ? 0 : 1;
+            IsFullScreenMode.SelectedIndex = pf.IsFullScreenMode.Value ? 0 : 1;
 
             /* ---------------------------------------------------- */
             // 読み込み
             /* ---------------------------------------------------- */
             // ファイル・フォルダ
-            editingPath = new List<string>(pf.Path);
+            editingPath = new List<string>(pf.Path.Value);
             UpdatePathListView();
 
             // ページ番号
-            LastPageIndex.Value = pf.LastPageIndex;
+            LastPageIndex.Value = pf.LastPageIndex.Value;
 
             /* ---------------------------------------------------- */
             // 列数・行数
             /* ---------------------------------------------------- */
-            NumofCol.Value = pf.NumofCol;
-            NumofRow.Value = pf.NumofRow;
+            NumofCol.Value = pf.NumofMatrix.Col;
+            NumofRow.Value = pf.NumofMatrix.Row;
 
             /* ---------------------------------------------------- */
             // グリッドのアスペクト比
             /* ---------------------------------------------------- */
             // アスペクト比を固定
-            FixAspectRatio.SelectedIndex = pf.NonFixAspectRatio ? 1 : 0;
+            FixAspectRatio.SelectedIndex = pf.NonFixAspectRatio.Value ? 1 : 0;
 
             // アスペクト比
-            AspectRatioH.Value = pf.AspectRatioH;
-            AspectRatioV.Value = pf.AspectRatioV;
+            AspectRatioH.Value = pf.AspectRatio.H;
+            AspectRatioV.Value = pf.AspectRatio.V;
 
             /* ---------------------------------------------------- */
             // スライド
             /* ---------------------------------------------------- */
             // スライドショー設定
-            if( pf.SlidePlayMethod == C_SlideShow.SlidePlayMethod.Continuous ) SlidePlayMethod.SelectedIndex = 0;
+            if( pf.SlidePlayMethod.Value == C_SlideShow.SlidePlayMethod.Continuous ) SlidePlayMethod.SelectedIndex = 0;
             else SlidePlayMethod.SelectedIndex = 1;
 
             // スライド方向
-            switch( pf.SlideDirection )
+            switch( pf.SlideDirection.Value )
             {
                 case C_SlideShow.SlideDirection.Left:
                     SlideDirection.SelectedIndex = 0;
@@ -193,16 +188,16 @@ namespace C_SlideShow
             // スライドショー詳細
             /* ---------------------------------------------------- */
             // 速度
-            SlideSpeed.Value = (int)pf.SlideSpeed;
+            SlideSpeed.Value = (int)pf.SlideSpeed.Value;
 
             // 待機時間(sec)
-            SlideInterval.Value = pf.SlideInterval;
+            SlideInterval.Value = pf.SlideInterval.Value;
 
             // スライド時間(ms)
-            SlideTimeInIntevalMethod.Value = pf.SlideTimeInIntevalMethod;
+            SlideTimeInIntevalMethod.Value = pf.SlideTimeInIntevalMethod.Value;
 
             // 画像一枚ずつスライド
-            SlideByOneImage.SelectedIndex = pf.SlideByOneImage ? 0 : 1;
+            SlideByOneImage.SelectedIndex = pf.SlideByOneImage.Value ? 0 : 1;
 
             // [todo] 自動再生
 
@@ -210,10 +205,10 @@ namespace C_SlideShow
             // その他/全般
             /* ---------------------------------------------------- */
             // 最前面表示
-            TopMost.SelectedIndex = pf.TopMost ? 0 : 1;
+            TopMost.SelectedIndex = pf.TopMost.Value ? 0 : 1;
 
             // 画像の並び順
-            switch( pf.FileSortMethod )
+            switch( pf.FileSortMethod.Value )
             {
                 case C_SlideShow.FileSortMethod.FileName:
                     FileSortMethod.SelectedIndex = 0;
@@ -242,49 +237,49 @@ namespace C_SlideShow
             }
 
             // Exifの回転・反転情報
-            ApplyRotateInfoFromExif.SelectedIndex = pf.ApplyRotateInfoFromExif ? 0 : 1;
+            ApplyRotateInfoFromExif.SelectedIndex = pf.ApplyRotateInfoFromExif.Value ? 0 : 1;
 
             // バックバッファのサイズ(ピクセル値)
-            BitmapDecodeTotalPixel.Value = pf.BitmapDecodeTotalPixel;
+            BitmapDecodeTotalPixel.Value = pf.BitmapDecodeTotalPixel.Value;
 
             /* ---------------------------------------------------- */
             // その他/外観1
             /* ---------------------------------------------------- */
             // 透過
-            AllowTransparency.SelectedIndex = pf.AllowTransparency ? 0 : 1;
+            AllowTransparency.SelectedIndex = pf.AllowTransparency.Value ? 0 : 1;
 
             // 不透明度(全体)
-            OverallOpacity.Value = (int)(pf.OverallOpacity * 100);
+            OverallOpacity.Value = (int)(pf.OverallOpacity.Value * 100);
 
             // 不透明度(背景)
-            BackgroundOpacity.Value = (int)(pf.BackgroundOpacity * 100);
+            BackgroundOpacity.Value = (int)(pf.BackgroundOpacity.Value * 100);
 
             // 背景色
-            BaseGridBackgroundColor.PickedColor = pf.BaseGridBackgroundColor;
+            BaseGridBackgroundColor.PickedColor = pf.BaseGridBackgroundColor.Value;
 
             // チェック柄の背景
-            UsePlaidBackground.SelectedIndex = pf.UsePlaidBackground ? 0 : 1;
+            UsePlaidBackground.SelectedIndex = pf.UsePlaidBackground.Value ? 0 : 1;
 
             // ペアとなる背景色
-            PairColorOfPlaidBackground.PickedColor = pf.PairColorOfPlaidBackground;
+            PairColorOfPlaidBackground.PickedColor = pf.PairColorOfPlaidBackground.Value;
 
             /* ---------------------------------------------------- */
             // その他/外観2
             /* ---------------------------------------------------- */
             // ウインドウ枠の太さ
-            ResizeGripThickness.Value = (int)pf.ResizeGripThickness;
+            ResizeGripThickness.Value = (int)pf.ResizeGripThickness.Value;
 
             // ウインドウ枠の色
-            ResizeGripColor.PickedColor = pf.ResizeGripColor;
+            ResizeGripColor.PickedColor = pf.ResizeGripColor.Value;
 
             // グリッド線の太さ
-            TilePadding.Value = pf.TilePadding;
+            TilePadding.Value = pf.TilePadding.Value;
 
             // グリッド線の色
-            GridLineColor.PickedColor = pf.GridLineColor;
+            GridLineColor.PickedColor = pf.GridLineColor.Value;
 
             // シークバーの色
-            SeekbarColor.PickedColor = pf.SeekbarColor;
+            SeekbarColor.PickedColor = pf.SeekbarColor.Value;
 
             /* ---------------------------------------------------- */
             // プロファイル名
@@ -348,22 +343,22 @@ namespace C_SlideShow
             // ウインドウの位置
             if( (bool)PfCheckBox_WinPos.IsChecked )
             {
-                pf.ProfileEnabledMember.WindowRect_Pos = true;
-                pf.WindowRect = new Rect(WinPos_X.Value, WinPos_Y.Value, pf.WindowRect.Width, pf.WindowRect.Height);
+                pf.WindowPos.IsEnabled = true;
+                pf.WindowPos.Value = new Point( WinPos_X.Value, WinPos_Y.Value );
             }
 
             // ウインドウサイズ
             if( (bool)PfCheckBox_WinSize.IsChecked )
             {
-                pf.ProfileEnabledMember.WindowRect_Size = true;
-                pf.WindowRect = new Rect(pf.WindowRect.Left, pf.WindowRect.Top, WinSize_Width.Value, WinSize_Height.Value);
+                pf.WindowSize.IsEnabled = true;
+                pf.WindowSize.Value = new Size( WinSize_Width.Value, WinSize_Height.Value );
             }
 
             // フルスクリーン
             if( (bool)PfCheckBox_IsFullScreenMode.IsChecked )
             {
-                pf.ProfileEnabledMember.IsFullScreenMode = true;
-                pf.IsFullScreenMode = IsFullScreenMode.SelectedIndex == 0 ? true: false;
+                pf.IsFullScreenMode.IsEnabled = true;
+                pf.IsFullScreenMode.Value = IsFullScreenMode.SelectedIndex == 0 ? true: false;
             }
 
             /* ---------------------------------------------------- */
@@ -372,15 +367,15 @@ namespace C_SlideShow
             // ファイル・フォルダ
             if( (bool)PfCheckBox_Path.IsChecked )
             {
-                pf.ProfileEnabledMember.Path = true;
-                pf.Path = editingPath;
+                pf.Path.IsEnabled = true;
+                pf.Path.Value = editingPath;
             }
 
             // ページ番号
             if( (bool)PfCheckBoxd_LastPageIndex.IsChecked )
             {
-                pf.ProfileEnabledMember.LastPageIndex = true;
-                pf.LastPageIndex = LastPageIndex.Value;
+                pf.LastPageIndex.IsEnabled = true;
+                pf.LastPageIndex.Value = LastPageIndex.Value;
             }
 
             /* ---------------------------------------------------- */
@@ -388,9 +383,8 @@ namespace C_SlideShow
             /* ---------------------------------------------------- */
             if( (bool)PfCheckBox_NumofMatrix.IsChecked )
             {
-                pf.ProfileEnabledMember.NumofMatrix = true;
-                pf.NumofCol = NumofCol.Value;
-                pf.NumofRow = NumofRow.Value;
+                pf.NumofMatrix.IsEnabled = true;
+                pf.NumofMatrix.Value = new int[] { NumofCol.Value, NumofRow.Value };
             }
 
             /* ---------------------------------------------------- */
@@ -399,16 +393,15 @@ namespace C_SlideShow
             // アスペクト比を固定
             if( (bool)PfCheckBox_FixAspectRatio.IsChecked )
             {
-                pf.ProfileEnabledMember.NonFixAspectRatio = true; // あえて逆(Non)にしてるので注意(ダイアログのわかりやすさ優先)
-                pf.NonFixAspectRatio = FixAspectRatio.SelectedIndex == 0 ? false : true;
+                pf.NonFixAspectRatio.IsEnabled = true;
+                pf.NonFixAspectRatio.Value = FixAspectRatio.SelectedIndex == 0 ? false : true;
             }
 
             // アスペクト比
             if( (bool)PfCheckBox_AspectRatio.IsChecked )
             {
-                pf.ProfileEnabledMember.AspectRatio = true;
-                pf.AspectRatioH = AspectRatioH.Value;
-                pf.AspectRatioV = AspectRatioV.Value;
+                pf.AspectRatio.IsEnabled = true;
+                pf.AspectRatio.Value = new int[] { AspectRatioH.Value, AspectRatioV.Value };
             }
 
             /* ---------------------------------------------------- */
@@ -417,27 +410,27 @@ namespace C_SlideShow
             // スライドショー設定
             if( (bool)PfCheckBox_SlidePlayMethod.IsChecked )
             {
-                pf.ProfileEnabledMember.SlidePlayMethod = true;
-                pf.SlidePlayMethod = SlidePlayMethod.SelectedIndex == 0? C_SlideShow.SlidePlayMethod.Continuous: C_SlideShow.SlidePlayMethod.Interval;
+                pf.SlidePlayMethod.IsEnabled = true;
+                pf.SlidePlayMethod.Value = SlidePlayMethod.SelectedIndex == 0? C_SlideShow.SlidePlayMethod.Continuous: C_SlideShow.SlidePlayMethod.Interval;
             }
 
             // スライド方向
             if( (bool)PfCheckBox_SlideDirection.IsChecked )
             {
-                pf.ProfileEnabledMember.SlideDirection = true;
+                pf.SlideDirection.IsEnabled = true;
                 switch( SlideDirection.SelectedIndex )
                 {
                     case 0:
-                        pf.SlideDirection = C_SlideShow.SlideDirection.Left;
+                        pf.SlideDirection.Value = C_SlideShow.SlideDirection.Left;
                         break;
                     case 1:
-                        pf.SlideDirection = C_SlideShow.SlideDirection.Top;
+                        pf.SlideDirection.Value = C_SlideShow.SlideDirection.Top;
                         break;
                     case 2:
-                        pf.SlideDirection = C_SlideShow.SlideDirection.Right;
+                        pf.SlideDirection.Value = C_SlideShow.SlideDirection.Right;
                         break;
                     case 3:
-                        pf.SlideDirection = C_SlideShow.SlideDirection.Bottom;
+                        pf.SlideDirection.Value = C_SlideShow.SlideDirection.Bottom;
                         break;
                 }
             }
@@ -448,29 +441,29 @@ namespace C_SlideShow
             // 速度
             if( (bool)PfCheckBox_SlideSpeed.IsChecked )
             {
-                pf.ProfileEnabledMember.SlideSpeed = true;
-                pf.SlideSpeed = SlideSpeed.Value;
+                pf.SlideSpeed.IsEnabled = true;
+                pf.SlideSpeed.Value = SlideSpeed.Value;
             }
 
             // 待機時間(sec)
             if( (bool)PfCheckBox_SlideInterval.IsChecked )
             {
-                pf.ProfileEnabledMember.SlideInterval = true;
-                pf.SlideInterval = SlideInterval.Value;
+                pf.SlideInterval.IsEnabled = true;
+                pf.SlideInterval.Value = SlideInterval.Value;
             }
 
             // スライド時間(ms)
             if( (bool)PfCheckBox_SlideTimeInIntevalMethod.IsChecked )
             {
-                pf.ProfileEnabledMember.SlideTimeInIntevalMethod = true;
-                pf.SlideTimeInIntevalMethod = SlideTimeInIntevalMethod.Value;
+                pf.SlideTimeInIntevalMethod.IsEnabled = true;
+                pf.SlideTimeInIntevalMethod.Value = SlideTimeInIntevalMethod.Value;
             }
 
             // 画像一枚ずつスライド
             if( (bool)PfCheckBox_SlideByOneImage.IsChecked )
             {
-                pf.ProfileEnabledMember.SlideByOneImage = true;
-                pf.SlideByOneImage = SlideByOneImage.SelectedIndex == 0 ? true : false;
+                pf.SlideByOneImage.IsEnabled = true;
+                pf.SlideByOneImage.Value = SlideByOneImage.SelectedIndex == 0 ? true : false;
             }
 
             // [todo] 自動再生
@@ -481,40 +474,40 @@ namespace C_SlideShow
             // 最前面表示
             if( (bool)PfCheckBox_TopMost.IsChecked )
             {
-                pf.ProfileEnabledMember.TopMost = true;
-                pf.TopMost = TopMost.SelectedIndex == 0 ? true : false;
+                pf.TopMost.IsEnabled = true;
+                pf.TopMost.Value = TopMost.SelectedIndex == 0 ? true : false;
             }
 
             // 画像の並び順
             if( (bool)PfCheckBox_FileSortMethod.IsChecked )
             {
-                pf.ProfileEnabledMember.FileSortMethod = true;
+                pf.FileSortMethod.IsEnabled = true;
 
                 switch( FileSortMethod.SelectedIndex )
                 {
                     case 0:
-                        pf.FileSortMethod = C_SlideShow.FileSortMethod.FileName;
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.FileName;
                         break;
                     case 1:
-                        pf.FileSortMethod = C_SlideShow.FileSortMethod.FileNameRev;
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.FileNameRev;
                         break;
                     case 2:
-                        pf.FileSortMethod = C_SlideShow.FileSortMethod.FileNameNatural;
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.FileNameNatural;
                         break;
                     case 3:
-                        pf.FileSortMethod = C_SlideShow.FileSortMethod.FileNameNaturalRev;
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.FileNameNaturalRev;
                         break;
                     case 4:
-                        pf.FileSortMethod = C_SlideShow.FileSortMethod.LastWriteTime;
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.LastWriteTime;
                         break;
                     case 5:
-                        pf.FileSortMethod = C_SlideShow.FileSortMethod.LastWriteTimeRev;
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.LastWriteTimeRev;
                         break;
                     case 6:
-                        pf.FileSortMethod = C_SlideShow.FileSortMethod.Random;
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.Random;
                         break;
                     case 7:
-                        pf.FileSortMethod = C_SlideShow.FileSortMethod.None;
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.None;
                         break;
                 }
             }
@@ -522,15 +515,15 @@ namespace C_SlideShow
             // Exifの回転・反転情報
             if( (bool)PfCheckBox_ApplyRotateInfoFromExif.IsChecked )
             {
-                pf.ProfileEnabledMember.ApplyRotateInfoFromExif = true;
-                pf.ApplyRotateInfoFromExif = ApplyRotateInfoFromExif.SelectedIndex == 0 ? true : false;
+                pf.ApplyRotateInfoFromExif.IsEnabled = true;
+                pf.ApplyRotateInfoFromExif.Value = ApplyRotateInfoFromExif.SelectedIndex == 0 ? true : false;
             }
 
             // バックバッファのサイズ(ピクセル値)
             if( (bool)PfCheckBox_BitmapDecodeTotalPixel.IsChecked )
             {
-                pf.ProfileEnabledMember.BitmapDecodeTotalPixel = true;
-                pf.BitmapDecodeTotalPixel = BitmapDecodeTotalPixel.Value;
+                pf.BitmapDecodeTotalPixel.IsEnabled = true;
+                pf.BitmapDecodeTotalPixel.Value = BitmapDecodeTotalPixel.Value;
             }
 
             /* ---------------------------------------------------- */
@@ -539,47 +532,47 @@ namespace C_SlideShow
             // 透過
             if( (bool)PfCheckBox_AllowTransparency.IsChecked )
             {
-                pf.ProfileEnabledMember.AllowTransparency = true;
-                pf.AllowTransparency = AllowTransparency.SelectedIndex == 0 ? true : false;
+                pf.AllowTransparency.IsEnabled = true;
+                pf.AllowTransparency.Value = AllowTransparency.SelectedIndex == 0 ? true : false;
             }
 
             // 不透明度(全体)
             if( (bool)PfCheckBox_OverallOpacity.IsChecked )
             {
-                pf.ProfileEnabledMember.OverallOpacity = true;
+                pf.OverallOpacity.IsEnabled = true;
                 double val = (double)OverallOpacity.Value / 100;
-                if( val <= 0 ) val = 0.005;
-                pf.OverallOpacity = val;
+                if( val <= 0 ) val = ProfileMember.OverallOpacity.Min;
+                pf.OverallOpacity.Value = val;
             }
 
             // 不透明度(背景)
             if( (bool)PfCheckBox_BackgroundOpacity.IsChecked )
             {
-                pf.ProfileEnabledMember.BackgroundOpacity = true;
+                pf.BackgroundOpacity.IsEnabled = true;
                 double val = (double)BackgroundOpacity.Value / 100;
-                if( val <= 0 ) val = 0.005;
-                pf.BackgroundOpacity = val;
+                if( val <= 0 ) val = ProfileMember.BackgroundOpacity.Min;
+                pf.BackgroundOpacity.Value = val;
             }
 
             // 背景色
             if( (bool)PfCheckBox_BaseGridBackgroundColor.IsChecked )
             {
-                pf.ProfileEnabledMember.BaseGridBackgroundColor = true;
-                pf.BaseGridBackgroundColor = BaseGridBackgroundColor.PickedColor;
+                pf.BaseGridBackgroundColor.IsEnabled = true;
+                pf.BaseGridBackgroundColor.Value = BaseGridBackgroundColor.PickedColor;
             }
 
             // チェック柄の背景
             if( (bool)PfCheckBox_UsePlaidBackground.IsChecked )
             {
-                pf.ProfileEnabledMember.UsePlaidBackground = true;
-                pf.UsePlaidBackground = UsePlaidBackground.SelectedIndex == 0 ? true : false;
+                pf.UsePlaidBackground.IsEnabled = true;
+                pf.UsePlaidBackground.Value = UsePlaidBackground.SelectedIndex == 0 ? true : false;
             }
 
             // ペアとなる背景色
             if( (bool)PfCheckBox_PairColorOfPlaidBackground.IsChecked )
             {
-                pf.ProfileEnabledMember.PairColorOfPlaidBackground = true;
-                pf.PairColorOfPlaidBackground = PairColorOfPlaidBackground.PickedColor;
+                pf.PairColorOfPlaidBackground.IsEnabled = true;
+                pf.PairColorOfPlaidBackground.Value = PairColorOfPlaidBackground.PickedColor;
             }
 
 
@@ -589,36 +582,36 @@ namespace C_SlideShow
             // ウインドウ枠の太さ
             if( (bool)PfCheckBox_ResizeGripThickness.IsChecked )
             {
-                pf.ProfileEnabledMember.ResizeGripThickness = true;
-                pf.ResizeGripThickness = ResizeGripThickness.Value;
+                pf.ResizeGripThickness.IsEnabled = true;
+                pf.ResizeGripThickness.Value = ResizeGripThickness.Value;
             }
 
             // ウインドウ枠の色
             if( (bool)PfCheckBox_ResizeGripColor.IsChecked )
             {
-                pf.ProfileEnabledMember.ResizeGripColor = true;
-                pf.ResizeGripColor = ResizeGripColor.PickedColor;
+                pf.ResizeGripColor.IsEnabled = true;
+                pf.ResizeGripColor.Value = ResizeGripColor.PickedColor;
             }
 
             // グリッド線の太さ
             if( (bool)PfCheckBox_TilePadding.IsChecked )
             {
-                pf.ProfileEnabledMember.TilePadding = true;
-                pf.TilePadding = TilePadding.Value;
+                pf.TilePadding.IsEnabled = true;
+                pf.TilePadding.Value = TilePadding.Value;
             }
 
             // グリッド線の色
             if( (bool)PfCheckBox_GridLineColor.IsChecked )
             {
-                pf.ProfileEnabledMember.GridLineColor = true;
-                pf.GridLineColor = GridLineColor.PickedColor;
+                pf.GridLineColor.IsEnabled = true;
+                pf.GridLineColor.Value = GridLineColor.PickedColor;
             }
 
             // シークバーの色
             if( (bool)PfCheckBox_SeekbarColor.IsChecked )
             {
-                pf.ProfileEnabledMember.SeekbarColor = true;
-                pf.SeekbarColor = SeekbarColor.PickedColor;
+                pf.SeekbarColor.IsEnabled = true;
+                pf.SeekbarColor.Value = SeekbarColor.PickedColor;
             }
 
             /* ---------------------------------------------------- */

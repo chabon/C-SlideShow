@@ -80,7 +80,7 @@ namespace C_SlideShow
 
             int numofRow = Grid.GetRow(rect) + 1;
             int numofCol = Grid.GetColumn(rect) + 1;
-            SetMatrix(numofRow, numofCol);
+            SetMatrix(numofCol, numofRow);
         }
 
         private void Rectangle_MouseLeftButtonDown(object sender, MouseEventArgs e)
@@ -116,7 +116,7 @@ namespace C_SlideShow
             MatrixSelected?.Invoke(this, EventArgs.Empty);
         }
 
-        public void SetMatrix(int numofRow, int numofCol)
+        public void SetMatrix(int numofCol, int numofRow)
         {
             for(int i=0; i<maxSize; i++)
             {

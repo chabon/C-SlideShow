@@ -90,7 +90,9 @@
     <Compile Include="ProfileEditDialog.xaml.cs">
       <DependentUpon>ProfileEditDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ProfileEnabledMember.cs" />
+    <Compile Include="ProfileMember\IProfileMember.cs" />
+    <Compile Include="ProfileMember\ProfileMemberBase.cs" />
+    <Compile Include="ProfileMember\ProfileMemberSet.cs" />
     <Compile Include="SettingDialog.xaml.cs">
       <DependentUpon>SettingDialog.xaml</DependentUpon>
     </Compile>
@@ -268,6 +270,7 @@
   <ItemGroup>
     <Resource Include="Resources\profile.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

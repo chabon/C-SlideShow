@@ -120,7 +120,7 @@ namespace C_SlideShow
             this.slideDirection = dir;
         }
 
-        public static void SetBitmapDecodePixelOfTile(int pixelSize, int numofRow, int numofCol)
+        public static void SetBitmapDecodePixelOfTile(int pixelSize, int numofCol, int numofRow)
         {
             int w, h;
             //w = pixelSize / numofCol;
@@ -146,7 +146,7 @@ namespace C_SlideShow
         /// </summary>
         /// <param name="numofRow"></param>
         /// <param name="numofCol"></param>
-        public void InitGrid(int numofRow, int numofCol)
+        public void InitGrid(int numofCol, int numofRow)
         {
             MainGrid.ColumnDefinitions.Clear();
             MainGrid.RowDefinitions.Clear();

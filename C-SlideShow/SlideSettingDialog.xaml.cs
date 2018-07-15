@@ -38,7 +38,7 @@ namespace C_SlideShow
             Profile pf = Setting.TempProfile;
 
             // スライド方法
-            if(pf.SlidePlayMethod == SlidePlayMethod.Continuous)
+            if(pf.SlidePlayMethod.Value == SlidePlayMethod.Continuous)
             {
                 SlidePlayMethod_Continuous.IsChecked = true;
                 SlidePlayMethod_Interval.IsChecked = false;
@@ -50,13 +50,13 @@ namespace C_SlideShow
             }
 
             // 常にスライド
-            SlideSpeed.Value = pf.SlideSpeed;
-            Text_SlideSpeed.Text = pf.SlideSpeed.ToString();
+            SlideSpeed.Value = pf.SlideSpeed.Value;
+            Text_SlideSpeed.Text = pf.SlideSpeed.Value.ToString();
 
             // 一定時間待機してスライド
-            SlideInterval.Text = pf.SlideInterval.ToString();
-            SlideTimeInIntevalMethod.Text = pf.SlideTimeInIntevalMethod.ToString();
-            if (pf.SlideByOneImage) SlideByOneImage.IsChecked = true;
+            SlideInterval.Text = pf.SlideInterval.Value.ToString();
+            SlideTimeInIntevalMethod.Text = pf.SlideTimeInIntevalMethod.Value.ToString();
+            if (pf.SlideByOneImage.Value) SlideByOneImage.IsChecked = true;
             else SlideByOneImage.IsChecked = false;
 
             // スライド方向
@@ -64,7 +64,7 @@ namespace C_SlideShow
             SlideDirection_Top.IsChecked = false;
             SlideDirection_Right.IsChecked = false;
             SlideDirection_Bottom.IsChecked = false;
-            switch (pf.SlideDirection)
+            switch (pf.SlideDirection.Value)
             {
                 case SlideDirection.Left:
                     SlideDirection_Left.IsChecked = true;
@@ -88,7 +88,7 @@ namespace C_SlideShow
 
         private void UpdateDlgShowing()
         {
-            if (Setting.TempProfile.SlidePlayMethod == SlidePlayMethod.Continuous)
+            if (Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Continuous)
             {
                 ContinuousSlideSettingWrapper.Visibility = Visibility.Visible;
                 ContinuousSlideSettingWrapper.Height = Double.NaN;
@@ -110,11 +110,11 @@ namespace C_SlideShow
         {
             if ((bool)SlidePlayMethod_Continuous.IsChecked)
             {
-                Setting.TempProfile.SlidePlayMethod = SlidePlayMethod.Continuous;
+                Setting.TempProfile.SlidePlayMethod.Value = SlidePlayMethod.Continuous;
             }
             else
             {
-                Setting.TempProfile.SlidePlayMethod = SlidePlayMethod.Interval;
+                Setting.TempProfile.SlidePlayMethod.Value = SlidePlayMethod.Interval;
             }
 
             mainWindow.StopSlideShow();
@@ -128,7 +128,7 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             Text_SlideSpeed.Text = ( (int)SlideSpeed.Value ).ToString();
-            Setting.TempProfile.SlideSpeed = (int)SlideSpeed.Value;
+            Setting.TempProfile.SlideSpeed.Value = (int)SlideSpeed.Value;
 
             mainWindow.UpdateSlideSpeed();
         }
@@ -140,9 +140,8 @@ namespace C_SlideShow
 
             int val;
             int.TryParse( SlideInterval.Text, out val);
-            ProfileMemberProp prop = Profile.GetProfileMemberProp(nameof(Profile.SlideInterval));
-            if (val < prop.Min || val > prop.Max) val = 5;
-            Setting.TempProfile.SlideInterval = val;
+            if (val < ProfileMember.SlideInterval.Min || val > ProfileMember.SlideInterval.Max) val = 5;
+            Setting.TempProfile.SlideInterval.Value = val;
             mainWindow.UpdateIntervalSlideTimer();
         }
 
@@ -153,10 +152,9 @@ namespace C_SlideShow
 
             int val;
             int.TryParse( SlideTimeInIntevalMethod.Text, out val);
-            ProfileMemberProp prop = Profile.GetProfileMemberProp(nameof(Profile.SlideTimeInIntevalMethod));
-            if (val < prop.Min) val = (int)prop.Min;
-            else if (val > prop.Max) val = (int)prop.Max;
-            Setting.TempProfile.SlideTimeInIntevalMethod = val;
+            if (val < ProfileMember.SlideTimeInIntevalMethod.Min) val = ProfileMember.SlideTimeInIntevalMethod.Min;
+            else if (val > ProfileMember.SlideTimeInIntevalMethod.Max) val = ProfileMember.SlideTimeInIntevalMethod.Max;
+            Setting.TempProfile.SlideTimeInIntevalMethod.Value = val;
         }
 
         // 画像一枚ずつ移動させる
@@ -165,9 +163,9 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             if ((bool)SlideByOneImage.IsChecked)
-                Setting.TempProfile.SlideByOneImage = true;
+                Setting.TempProfile.SlideByOneImage.Value = true;
             else
-                Setting.TempProfile.SlideByOneImage = false;
+                Setting.TempProfile.SlideByOneImage.Value = false;
         }
 
         // スライド方向

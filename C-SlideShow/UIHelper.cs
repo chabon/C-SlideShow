@@ -157,7 +157,7 @@ namespace C_SlideShow
                 else
                 {
                     mainWindow.SystemButtonWrapper.Visibility = Visibility.Hidden;
-                    if( pf.NumofCol == 1 && pf.NumofRow == 1 ) // 行列数が共に1の時は表示(切り替えの視認性のため)
+                    if( pf.NumofMatrix.Col == 1 && pf.NumofMatrix.Row == 1 ) // 行列数が共に1の時は表示(切り替えの視認性のため)
                         panel.ShowFileInfoOrButton();
                     else
                     {
@@ -394,7 +394,7 @@ namespace C_SlideShow
                 handled = true;
 
                 // フルスクリーンモード中はリサイズの必要がないので、リターン
-                if (mainWindow.Setting.TempProfile.IsFullScreenMode)
+                if (mainWindow.Setting.TempProfile.IsFullScreenMode.Value)
                 {
                     handled = false;
                     return new IntPtr(HTCLIENT);
@@ -445,7 +445,7 @@ namespace C_SlideShow
             /* ---------------------------------------------------- */
             //    メインウインドウ アス比固定処理 
             /* ---------------------------------------------------- */
-            if (msg == WM_SIZING && !mainWindow.Setting.TempProfile.NonFixAspectRatio)
+            if (msg == WM_SIZING && !mainWindow.Setting.TempProfile.NonFixAspectRatio.Value)
             {
                 RECT r = (RECT)Marshal.PtrToStructure(lParam, typeof(RECT));
                 int w = r.right - r.left;

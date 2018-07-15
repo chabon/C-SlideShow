@@ -41,67 +41,67 @@ namespace C_SlideShow
             Profile pf = Setting.TempProfile;
 
             // 背景の透過を有効
-            if (pf.AllowTransparency)
+            if (pf.AllowTransparency.Value)
                 AllowTransparency.IsChecked = true;
             else
                 AllowTransparency.IsChecked = false;
 
             // 全体の不透明度
-            OverallOpacity.Value = (int)( pf.OverallOpacity * 100 );
+            OverallOpacity.Value = (int)( pf.OverallOpacity.Value * 100 );
             Text_OverallOpacity.Text = ( (int)OverallOpacity.Value ).ToString();
 
             // 背景の不透明度
-            BackgroundOpacity.Value = (int)( pf.BackgroundOpacity * 100 );
+            BackgroundOpacity.Value = (int)( pf.BackgroundOpacity.Value * 100 );
             Text_BackgroundOpacity.Text = ( (int)BackgroundOpacity.Value ).ToString();
 
             // 背景色
-            BaseGridBackgroundColor.PickedColor = pf.BaseGridBackgroundColor;
+            BaseGridBackgroundColor.PickedColor = pf.BaseGridBackgroundColor.Value;
 
             // チェック柄の背景にする
-            if(pf.UsePlaidBackground) UsePlaidBackground.IsChecked = true;
+            if(pf.UsePlaidBackground.Value) UsePlaidBackground.IsChecked = true;
             else UsePlaidBackground.IsChecked = false;
 
             // チェック柄の背景のペアとなる色
-            PairColorOfPlaidBackground.PickedColor = pf.PairColorOfPlaidBackground;
+            PairColorOfPlaidBackground.PickedColor = pf.PairColorOfPlaidBackground.Value;
 
 
             // ウインドウ枠の太さ
-            ResizeGripThickness.Text = pf.ResizeGripThickness.ToString();
+            ResizeGripThickness.Text = pf.ResizeGripThickness.Value.ToString();
 
             // ウインドウ枠の色
-            ResizeGripColor.PickedColor = pf.ResizeGripColor;
+            ResizeGripColor.PickedColor = pf.ResizeGripColor.Value;
             
             // シークバーの色
-            SeekbarColor.PickedColor = pf.SeekbarColor;
+            SeekbarColor.PickedColor = pf.SeekbarColor.Value;
 
             // グリッド線の幅
-            TilePadding.Text = pf.TilePadding.ToString();
+            TilePadding.Text = pf.TilePadding.Value.ToString();
 
             // グリッド線の色
-            GridLineColor.PickedColor = pf.GridLineColor;
+            GridLineColor.PickedColor = pf.GridLineColor.Value;
 
 
             // 最前面表示
-            if(pf.TopMost) TopMost.IsChecked = true;
+            if(pf.TopMost.Value) TopMost.IsChecked = true;
             else TopMost.IsChecked = false;
 
             // ファイル読み込み順
-            FileReadingOrder.SelectedIndex = (int)pf.FileSortMethod;
+            FileReadingOrder.SelectedIndex = (int)pf.FileSortMethod.Value;
 
             // 起動時、前回のフォルダを開く(未実装)
-            if(pf.StartUp_OpenPrevFolder)
+            if(pf.OpenPrevFolderOnStartUp.Value)
                 StartUp_OpenPrevFolder.IsChecked = true;
             else
                 StartUp_OpenPrevFolder.IsChecked = false;
 
             // Exifの回転・反転情報を反映させる
-            if( pf.ApplyRotateInfoFromExif )
+            if( pf.ApplyRotateInfoFromExif.Value )
                 ApplyRotateInfoFromExif.IsChecked = true;
             else
                 ApplyRotateInfoFromExif.IsChecked = false;
 
             // バックバッファの幅(ピクセル値)
-            BitmapDecodeTotalPixel.Text = pf.BitmapDecodeTotalPixel.ToString();
+            BitmapDecodeTotalPixel.Text = pf.BitmapDecodeTotalPixel.Value.ToString();
 
 
             UpdateDlgShowing();
@@ -112,7 +112,7 @@ namespace C_SlideShow
 
         private void UpdateDlgShowing()
         {
-            if (Setting.TempProfile.AllowTransparency)
+            if (Setting.TempProfile.AllowTransparency.Value)
             {
                 OverallOpacity.IsEnabled = true;
                 BackgroundOpacity.IsEnabled = true;
@@ -131,9 +131,9 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             if ((bool)AllowTransparency.IsChecked)
-                Setting.TempProfile.AllowTransparency = true;
+                Setting.TempProfile.AllowTransparency.Value = true;
             else
-                Setting.TempProfile.AllowTransparency = false;
+                Setting.TempProfile.AllowTransparency.Value = false;
 
             mainWindow.ApplyAllowTransparency();
         }
@@ -145,8 +145,8 @@ namespace C_SlideShow
 
             Text_OverallOpacity.Text = ( (int)OverallOpacity.Value ).ToString();
             double param = OverallOpacity.Value / 100;
-            if (param < 0.005) param = 0.005;
-            Setting.TempProfile.OverallOpacity = param;
+            if (param < ProfileMember.OverallOpacity.Min) param = ProfileMember.OverallOpacity.Min;
+            Setting.TempProfile.OverallOpacity.Value = param;
 
             mainWindow.ApplyColorAndOpacitySetting();
         }
@@ -159,8 +159,8 @@ namespace C_SlideShow
 
             Text_BackgroundOpacity.Text = ( (int)BackgroundOpacity.Value ).ToString();
             double param = BackgroundOpacity.Value / 100;
-            if (param < 0.005) param = 0.005;
-            Setting.TempProfile.BackgroundOpacity = param;
+            if (param < ProfileMember.BackgroundOpacity.Min) param = ProfileMember.BackgroundOpacity.Min;
+            Setting.TempProfile.BackgroundOpacity.Value = param;
 
             mainWindow.ApplyColorAndOpacitySetting();
         }
@@ -170,7 +170,7 @@ namespace C_SlideShow
         {
             if (isInitializing) return;
 
-            Setting.TempProfile.BaseGridBackgroundColor = BaseGridBackgroundColor.PickedColor;
+            Setting.TempProfile.BaseGridBackgroundColor.Value = BaseGridBackgroundColor.PickedColor;
             mainWindow.ApplyColorAndOpacitySetting();
         }
 
@@ -180,9 +180,9 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             if ((bool)UsePlaidBackground.IsChecked)
-                Setting.TempProfile.UsePlaidBackground = true;
+                Setting.TempProfile.UsePlaidBackground.Value = true;
             else
-                Setting.TempProfile.UsePlaidBackground = false;
+                Setting.TempProfile.UsePlaidBackground.Value = false;
 
             mainWindow.ApplyColorAndOpacitySetting();
         }
@@ -192,7 +192,7 @@ namespace C_SlideShow
         {
             if (isInitializing) return;
 
-            Setting.TempProfile.PairColorOfPlaidBackground = PairColorOfPlaidBackground.PickedColor;
+            Setting.TempProfile.PairColorOfPlaidBackground.Value = PairColorOfPlaidBackground.PickedColor;
             mainWindow.ApplyColorAndOpacitySetting();
         }
 
@@ -213,10 +213,9 @@ namespace C_SlideShow
             try
             {
                 int val = Int32.Parse(ResizeGripThickness.Text);
-                ProfileMemberProp prop = Profile.GetProfileMemberProp( nameof(Profile.ResizeGripThickness) );
-                if( val > prop.Max ) val = (int)prop.Max;
-                if( val < prop.Min ) val = (int)prop.Min;
-                Setting.TempProfile.ResizeGripThickness = val;
+                if( val > ProfileMember.ResizeGripThickness.Max ) val = (int)ProfileMember.ResizeGripThickness.Max;
+                if( val < ProfileMember.ResizeGripThickness.Min ) val = (int)ProfileMember.ResizeGripThickness.Min;
+                Setting.TempProfile.ResizeGripThickness.Value = val;
                 mainWindow.UpdateUI();
             }
             catch { }
@@ -227,7 +226,7 @@ namespace C_SlideShow
         {
             if (isInitializing) return;
 
-            Setting.TempProfile.ResizeGripColor = ResizeGripColor.PickedColor;
+            Setting.TempProfile.ResizeGripColor.Value = ResizeGripColor.PickedColor;
             mainWindow.UpdateUI();
         }
 
@@ -248,10 +247,9 @@ namespace C_SlideShow
             try
             {
                 int val = Int32.Parse(TilePadding.Text);
-                ProfileMemberProp prop = Profile.GetProfileMemberProp( nameof(Profile.TilePadding) );
-                if( val > prop.Max ) val = (int)prop.Max;
-                if( val < prop.Min ) val = (int)prop.Min;
-                Setting.TempProfile.TilePadding = val;
+                if( val > ProfileMember.TilePadding.Max ) val = (int)ProfileMember.TilePadding.Max;
+                if( val < ProfileMember.TilePadding.Min ) val = (int)ProfileMember.TilePadding.Min;
+                Setting.TempProfile.TilePadding.Value = val;
                 mainWindow.UpdateGridLine();
             }
             catch { }
@@ -262,7 +260,7 @@ namespace C_SlideShow
         {
             if (isInitializing) return;
 
-            Setting.TempProfile.GridLineColor = GridLineColor.PickedColor;
+            Setting.TempProfile.GridLineColor.Value = GridLineColor.PickedColor;
             mainWindow.UpdateGridLine();
         }
 
@@ -271,7 +269,7 @@ namespace C_SlideShow
         {
             if (isInitializing) return;
 
-            Setting.TempProfile.SeekbarColor = SeekbarColor.PickedColor;
+            Setting.TempProfile.SeekbarColor.Value = SeekbarColor.PickedColor;
             mainWindow.UpdateUI();
         }
 
@@ -281,11 +279,11 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             if ((bool)TopMost.IsChecked)
-                Setting.TempProfile.TopMost = true;
+                Setting.TempProfile.TopMost.Value = true;
             else
-                Setting.TempProfile.TopMost = false;
+                Setting.TempProfile.TopMost.Value = false;
 
-            mainWindow.Topmost = Setting.TempProfile.TopMost;
+            mainWindow.Topmost = Setting.TempProfile.TopMost.Value;
         }
 
         // ファイル読み込み順序
@@ -294,8 +292,8 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             int idx = FileReadingOrder.SelectedIndex;
-            Setting.TempProfile.FileSortMethod = (FileSortMethod)idx;
-            mainWindow.SortAllImage(Setting.TempProfile.FileSortMethod);
+            Setting.TempProfile.FileSortMethod.Value = (FileSortMethod)idx;
+            mainWindow.SortAllImage(Setting.TempProfile.FileSortMethod.Value);
         }
 
         // 起動時、前回のフォルダを開く(未実装)
@@ -304,9 +302,9 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             if ((bool)StartUp_OpenPrevFolder.IsChecked)
-                Setting.TempProfile.StartUp_OpenPrevFolder = true;
+                Setting.TempProfile.OpenPrevFolderOnStartUp.Value = true;
             else
-                Setting.TempProfile.StartUp_OpenPrevFolder = false;
+                Setting.TempProfile.OpenPrevFolderOnStartUp.Value = false;
         }
 
         // Exifの回転・反転情報を反映させる
@@ -315,9 +313,9 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             if ((bool)ApplyRotateInfoFromExif.IsChecked)
-                Setting.TempProfile.ApplyRotateInfoFromExif = true;
+                Setting.TempProfile.ApplyRotateInfoFromExif.Value = true;
             else
-                Setting.TempProfile.ApplyRotateInfoFromExif = false;
+                Setting.TempProfile.ApplyRotateInfoFromExif.Value = false;
 
             mainWindow.Reload(true);
         }
@@ -329,11 +327,10 @@ namespace C_SlideShow
 
                 int val = Int32.Parse(BitmapDecodeTotalPixel.SelectedValue.ToString());
 
-                ProfileMemberProp prop = Profile.GetProfileMemberProp( nameof(Profile.BitmapDecodeTotalPixel) );
-                if( val > prop.Max ) val = (int)prop.Max;
-                if( val < prop.Min ) val = (int)prop.Min;
+                if( val > ProfileMember.BitmapDecodeTotalPixel.Max ) val = (int)ProfileMember.BitmapDecodeTotalPixel.Max;
+                if( val < ProfileMember.BitmapDecodeTotalPixel.Min ) val = (int)ProfileMember.BitmapDecodeTotalPixel.Min;
 
-                Setting.TempProfile.BitmapDecodeTotalPixel = val;
+                Setting.TempProfile.BitmapDecodeTotalPixel.Value = val;
                 mainWindow.Reload(true);
         }
     }

@@ -74,12 +74,7 @@ namespace C_SlideShow
         [OnDeserializing]
         public void DefaultDeserializing(StreamingContext sc)
         {
-            //this.editModeBackgroundColor = Colors.Gray;
-            TempProfile = new Profile();
-            TempProfile.ProfileType = ProfileType.Temp;
-            ProfileList = new List<Profile>();
-            History = new List<HistoryItem>();
-            NumofHistory = 30;
+
         }
 
 

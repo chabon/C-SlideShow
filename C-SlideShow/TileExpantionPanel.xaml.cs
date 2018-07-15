@@ -82,14 +82,14 @@ namespace C_SlideShow
             if( ExpandedImage.Source == null ) return;
 
             // ボーダー色、背景色
-            ExpandedBorder.BorderBrush = new SolidColorBrush(pf.GridLineColor);
-            if( pf.UsePlaidBackground )
+            ExpandedBorder.BorderBrush = new SolidColorBrush(pf.GridLineColor.Value);
+            if( pf.UsePlaidBackground.Value )
             {
                 ExpandedBorder.Background = Util.CreatePlaidBrush(
-                    pf.BaseGridBackgroundColor, pf.PairColorOfPlaidBackground);
+                    pf.BaseGridBackgroundColor.Value, pf.PairColorOfPlaidBackground.Value);
             }
             else
-                ExpandedBorder.Background = new SolidColorBrush(pf.BaseGridBackgroundColor);
+                ExpandedBorder.Background = new SolidColorBrush(pf.BaseGridBackgroundColor.Value);
 
             // 表示
             this.Visibility = Visibility.Visible;
@@ -111,7 +111,7 @@ namespace C_SlideShow
 
             // タイル拡大パネルの枠の太さ(拡大前)
             ExpandedBorder.BorderThickness = 
-                new Thickness(pf.TilePadding * containerScale);
+                new Thickness(pf.TilePadding.Value * containerScale);
 
             // 拡大アニメーション(パネル自体)
             // --------------------------------------------------------
@@ -149,8 +149,8 @@ namespace C_SlideShow
             // --------------------------------------------------------
 
             // タイル拡大パネルの拡大率
-            double panelScale = pf.NumofCol;
-            if( pf.NumofCol > pf.NumofRow ) panelScale = pf.NumofRow;
+            double panelScale = pf.NumofMatrix.Col;
+            if( pf.NumofMatrix.Col > pf.NumofMatrix.Row ) panelScale = pf.NumofMatrix.Row;
 
             var a4 = new ThicknessAnimation(); // BorderThickness
             Storyboard.SetTarget(a4, this.ExpandedBorder);
@@ -224,7 +224,7 @@ namespace C_SlideShow
 
             // タイル拡大パネルの枠の太さ(縮小後)
             Thickness destThickness = 
-                new Thickness(MainWindow.Setting.TempProfile.TilePadding * containerScale);
+                new Thickness(MainWindow.Setting.TempProfile.TilePadding.Value * containerScale);
 
             var a4 = new ThicknessAnimation(); // BorderThickness
             Storyboard.SetTarget(a4, this.ExpandedBorder);
@@ -255,7 +255,7 @@ namespace C_SlideShow
 
         private void LoadImage()
         {
-            int pixel = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixel;
+            int pixel = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixel.Value;
             Size pixelSize = new Size(pixel, pixel);
             var bitmap = ImageFileManager.LoadBitmap( targetTile.ImageFileInfo, pixelSize );
 
@@ -381,11 +381,11 @@ namespace C_SlideShow
 
             // タイル拡大パネルの枠の太さ(拡大前)
             double containerScale = MainWindow.MainContent.LayoutTransform.Value.M11;
-            double srcThicknessVal = pf.TilePadding * containerScale;
+            double srcThicknessVal = pf.TilePadding.Value * containerScale;
 
             // 現在のウインドウサイズに合わせて枠の太さを拡大
-            double panelScale = pf.NumofCol;
-            if( pf.NumofCol > pf.NumofRow ) panelScale = pf.NumofRow;
+            double panelScale = pf.NumofMatrix.Col;
+            if( pf.NumofMatrix.Col > pf.NumofMatrix.Row ) panelScale = pf.NumofMatrix.Row;
             this.ExpandedBorder.BorderThickness = new Thickness(srcThicknessVal * panelScale);
         }
 

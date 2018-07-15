@@ -39,14 +39,14 @@ namespace C_SlideShow
             // ウインドウ全体でドラッグ可能に
             this.MouseLeftButtonDown += (sender, e) =>
             {
-                if( Setting.TempProfile.IsFullScreenMode ) return;
+                if( Setting.TempProfile.IsFullScreenMode.Value ) return;
                 this.DragMove();
             };
             
 
             MenuItem_Matrix.SubmenuOpened += (s, e) =>
             {
-                matrixSelecter.SetMatrix(Setting.TempProfile.NumofRow, Setting.TempProfile.NumofCol);
+                matrixSelecter.SetMatrix(Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row);
             };
 
             MenuItem_SlideSetting.SubmenuOpened += (s, e) =>
@@ -75,7 +75,7 @@ namespace C_SlideShow
                 if( TileExpantionPanel.IsShowing ) TileExpantionPanel.FitToMainWindow();
 
                 // アス比非固定時
-                if( Setting.TempProfile.NonFixAspectRatio )
+                if( Setting.TempProfile.NonFixAspectRatio.Value )
                 {
                     // 現在のプロファイル
                     Profile pf = Setting.TempProfile;
@@ -85,30 +85,29 @@ namespace C_SlideShow
                     //Debug.WriteLine("Current top container: " + currentContainers[0].Order);
 
                     // タイルサイズ(アス比)、コンテナサイズの決定
-                    double w = (this.Width - MainContent.Margin.Left * 2) / pf.NumofCol;
-                    double h = (this.Height - MainContent.Margin.Left * 2) / pf.NumofRow;
+                    double w = (this.Width - MainContent.Margin.Left * 2) / pf.NumofMatrix.Col;
+                    double h = (this.Height - MainContent.Margin.Left * 2) / pf.NumofMatrix.Row;
                     double gridRatio = h / w;
 
-                    pf.AspectRatioH = TileContainer.StandardTileWidth;
-                    int gridWidth = pf.AspectRatioH + pf.TilePadding * 2;
+                    int gridWidth = TileContainer.StandardTileWidth + pf.TilePadding.Value * 2;
                     int gridHeight = (int)( gridWidth * gridRatio );
-                    pf.AspectRatioV = gridHeight - pf.TilePadding * 2;
+                    pf.AspectRatio.Value = new int[] { TileContainer.StandardTileWidth, gridHeight - pf.TilePadding.Value * 2 };
 
                     foreach( TileContainer tc in tileContainers )
                     {
-                        tc.InitSize(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+                        tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
                         tc.InitWrapPoint();
                     }
 
                     // 1タイルのバックバッファサイズを更新
-                    TileContainer.TileAspectRatio = pf.AspectRatioV / (double)pf.AspectRatioH;
-                    TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel, pf.NumofRow, pf.NumofCol);
+                    TileContainer.TileAspectRatio = pf.AspectRatio.V / (double)pf.AspectRatio.H;
+                    TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel.Value, pf.NumofMatrix.Col, pf.NumofMatrix.Row);
 
                     // 位置を正規化
                     containersInCurrentOrder[0].Margin = new Thickness(0);
                     double containerWidth = tileContainers[0].Width;
                     double containerHeight = tileContainers[0].Height;
-                    switch( pf.SlideDirection )
+                    switch( pf.SlideDirection.Value )
                     {
                         case SlideDirection.Left:
                         default:
@@ -139,7 +138,7 @@ namespace C_SlideShow
             {
                 SavePageIndexToHistory();
                 Setting.SettingDialogTabIndex = settingDialog.MainTabControl.SelectedIndex;
-                Setting.TempProfile.LastPageIndex = imageFileManager.CurrentIndex;
+                Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
                 SaveWindowRect();
                 Setting.saveToXmlFile();
             };
@@ -176,7 +175,7 @@ namespace C_SlideShow
             {
                 // 右クリック押しながらで、拡大縮小
                 // --------------------------------
-                if (!Setting.TempProfile.IsFullScreenMode)
+                if (!Setting.TempProfile.IsFullScreenMode.Value)
                 {
                     short stateR = Win32.GetAsyncKeyState(Win32.VK_RBUTTON);
                     if ( (stateR & 0x8000) != 0)
@@ -293,8 +292,8 @@ namespace C_SlideShow
 
                 if(e.Key == Key.T )
                 {
-                    Setting.TempProfile.UsePlaidBackground = !Setting.TempProfile.UsePlaidBackground;
-                    Setting.TempProfile.PairColorOfPlaidBackground = Colors.LightGray;
+                    Setting.TempProfile.UsePlaidBackground.Value = !Setting.TempProfile.UsePlaidBackground.Value;
+                    Setting.TempProfile.PairColorOfPlaidBackground.Value = Colors.LightGray;
                     ApplyColorAndOpacitySetting();
                 }
                 if(e.Key == Key.A )
@@ -312,20 +311,20 @@ namespace C_SlideShow
 
                 if(e.Key == Key.D1 )
                 {
-                    pf.TilePadding = Setting.TempProfile.TilePadding - 1;
-                    if( pf.TilePadding < 0 ) pf.TilePadding = 0;
+                    pf.TilePadding.Value = Setting.TempProfile.TilePadding.Value - 1;
+                    if( pf.TilePadding.Value < 0 ) pf.TilePadding.Value = 0;
                     foreach(TileContainer tc in tileContainers )
                     {
-                        tc.InitSize(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+                        tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
                     }
                     UpdateWindowSize();
                 }
                 if(e.Key == Key.D2 )
                 {
-                    pf.TilePadding = Setting.TempProfile.TilePadding + 1;
+                    pf.TilePadding.Value = Setting.TempProfile.TilePadding.Value + 1;
                     foreach(TileContainer tc in tileContainers )
                     {
-                        tc.InitSize(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+                        tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
                     }
                     UpdateWindowSize();
                 }
@@ -339,7 +338,7 @@ namespace C_SlideShow
                 //}
 
                 // フルスクリーン解除
-                if(e.Key == Key.Escape && Setting.TempProfile.IsFullScreenMode)
+                if(e.Key == Key.Escape && Setting.TempProfile.IsFullScreenMode.Value)
                 {
                     ToggleFullScreen();
                 }
@@ -357,14 +356,14 @@ namespace C_SlideShow
         {
             intervalSlideTimerCount += 1;
 
-            if(Setting.TempProfile.SlidePlayMethod == SlidePlayMethod.Interval)
+            if(Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Interval)
             {
-                if(intervalSlideTimerCount >= Setting.TempProfile.SlideInterval)
+                if(intervalSlideTimerCount >= Setting.TempProfile.SlideInterval.Value)
                 {
                     Profile pf = Setting.TempProfile;
-                    StartIntervalSlide(pf.SlideByOneImage, pf.SlideTimeInIntevalMethod);
+                    StartIntervalSlide(pf.SlideByOneImage.Value, pf.SlideTimeInIntevalMethod.Value);
 
-                    int slideTime = (int)( pf.SlideTimeInIntevalMethod / 1000 );
+                    int slideTime = (int)( pf.SlideTimeInIntevalMethod.Value / 1000 );
                     intervalSlideTimerCount = 0 - slideTime;
                 }
             }
@@ -398,7 +397,7 @@ namespace C_SlideShow
             if(ms != null)
             {
                 this.MenuItem_Matrix.IsSubmenuOpen = false;
-                ChangeGridDifinition(ms.RowValue, ms.ColValue);
+                ChangeGridDifinition(ms.ColValue, ms.RowValue);
                 this.Focus();
             }
 
@@ -572,7 +571,7 @@ namespace C_SlideShow
                 // 非固定を選択
                 if(item.Tag.ToString() == "FREE" )
                 {
-                    Setting.TempProfile.NonFixAspectRatio = true;
+                    Setting.TempProfile.NonFixAspectRatio.Value = true;
                     UpdateToolbarViewing();
                     return;
                 }
@@ -580,7 +579,7 @@ namespace C_SlideShow
                 // 固定値を選択
                 else
                 {
-                    Setting.TempProfile.NonFixAspectRatio = false;
+                    Setting.TempProfile.NonFixAspectRatio.Value = false;
                     string[] str = item.Tag.ToString().Split('_');
                     int w = int.Parse(str[0]);
                     int h = int.Parse(str[1]);
