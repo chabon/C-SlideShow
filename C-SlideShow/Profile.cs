@@ -64,6 +64,16 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         // ダイアログ未実装
 
+        // ダイアログにはない設定
+        [DataMember]
+        public ProfileMember.WindowPos WindowPos { get; set; } = new ProfileMember.WindowPos();
+
+        [DataMember]
+        public ProfileMember.WindowSize WindowSize { get; set; } = new ProfileMember.WindowSize();
+
+        [DataMember]
+        public ProfileMember.IsFullScreenMode IsFullScreenMode { get; set; } = new ProfileMember.IsFullScreenMode();
+
 
         // 読み込み
         [DataMember]
@@ -168,23 +178,11 @@ namespace C_SlideShow
         public ProfileMember.SeekbarColor SeekbarColor { get; set; } = new ProfileMember.SeekbarColor();
 
 
-        // ダイアログにはない設定
-        [DataMember]
-        public ProfileMember.WindowPos WindowPos { get; set; } = new ProfileMember.WindowPos();
-
-        [DataMember]
-        public ProfileMember.WindowSize WindowSize { get; set; } = new ProfileMember.WindowSize();
-
-        [DataMember]
-        public ProfileMember.IsFullScreenMode IsFullScreenMode { get; set; } = new ProfileMember.IsFullScreenMode();
 
         public Profile()
         {
-            // タイプ
-            ProfileType = ProfileType.Temp;
-
-            // プロファイル名
-            Name = "NoName";
+            ProfileType = ProfileType.Temp; // タイプ
+            Name = "NoName";                // プロファイル名
         }
 
         // 既定値(xmlファイルデシリアライズ時に呼ばれる)
@@ -196,65 +194,166 @@ namespace C_SlideShow
 
 
         /// <summary>
-        /// 他のプロファイルを統合(有効なメンバが衝突したら、他のプロファイルを優先)
+        /// 他のプロファイルの設定値を統合(有効なメンバが衝突したら、他のプロファイルを優先)
         /// </summary>
         /// <param name="pf">統合するプロファイル</param>
-        public void Marge(Profile pf)
+        public Profile Marge(Profile pf)
         {
             // 読み込み
-            if( pf.Path.IsEnabled ) Path.Value = new List<string>(pf.Path.Value);
+            if( pf.Path.IsEnabled )          Path.Value = new List<string>(pf.Path.Value);
             if( pf.LastPageIndex.IsEnabled ) LastPageIndex.Value = pf.LastPageIndex.Value;
 
             // 行列設定
-            if( pf.NumofMatrix.IsEnabled ) Array.Copy(pf.NumofMatrix.Value, NumofMatrix.Value, 2);
-            if( pf.TileOrigin.IsEnabled ) TileOrigin.Value = pf.TileOrigin.Value;
-            if( pf.TileOrientation.IsEnabled ) TileOrientation.Value = pf.TileOrientation.Value;
+            if( pf.NumofMatrix.IsEnabled )          Array.Copy(pf.NumofMatrix.Value, NumofMatrix.Value, 2);
+            if( pf.TileOrigin.IsEnabled )           TileOrigin.Value = pf.TileOrigin.Value;
+            if( pf.TileOrientation.IsEnabled )      TileOrientation.Value = pf.TileOrientation.Value;
             if( pf.UseDefaultTileOrigin.IsEnabled ) UseDefaultTileOrigin.Value = pf.UseDefaultTileOrigin.Value;
 
             // アスペクト比設定
-            if( pf.AspectRatio.IsEnabled ) Array.Copy(pf.AspectRatio.Value, AspectRatio.Value, 2);
+            if( pf.AspectRatio.IsEnabled )       Array.Copy(pf.AspectRatio.Value, AspectRatio.Value, 2);
             if( pf.NonFixAspectRatio.IsEnabled ) NonFixAspectRatio.Value = pf.NonFixAspectRatio.Value;
 
             // スライドの設定
-            if( pf.SlidePlayMethod.IsEnabled ) SlidePlayMethod.Value = pf.SlidePlayMethod.Value;
-            if( pf.SlideSpeed.IsEnabled ) SlideSpeed.Value = pf.SlideSpeed.Value;
-            if( pf.SlideInterval.IsEnabled ) SlideInterval.Value = pf.SlideInterval.Value;
-            if( pf.SlideDirection.IsEnabled ) SlideDirection.Value = pf.SlideDirection.Value;
+            if( pf.SlidePlayMethod.IsEnabled )          SlidePlayMethod.Value = pf.SlidePlayMethod.Value;
+            if( pf.SlideSpeed.IsEnabled )               SlideSpeed.Value = pf.SlideSpeed.Value;
+            if( pf.SlideInterval.IsEnabled )            SlideInterval.Value = pf.SlideInterval.Value;
+            if( pf.SlideDirection.IsEnabled )           SlideDirection.Value = pf.SlideDirection.Value;
             if( pf.SlideTimeInIntevalMethod.IsEnabled ) SlideTimeInIntevalMethod.Value = pf.SlideTimeInIntevalMethod.Value;
-            if( pf.SlideByOneImage.IsEnabled ) SlideByOneImage.Value = pf.SlideByOneImage.Value;
+            if( pf.SlideByOneImage.IsEnabled )          SlideByOneImage.Value = pf.SlideByOneImage.Value;
 
             // その他の設定_全般
-            if( pf.FileSortMethod.IsEnabled ) FileSortMethod.Value = pf.FileSortMethod.Value;
-            if( pf.TopMost.IsEnabled ) TopMost.Value = pf.TopMost.Value;
+            if( pf.FileSortMethod.IsEnabled )          FileSortMethod.Value = pf.FileSortMethod.Value;
+            if( pf.TopMost.IsEnabled )                 TopMost.Value = pf.TopMost.Value;
             if( pf.OpenPrevFolderOnStartUp.IsEnabled ) OpenPrevFolderOnStartUp.Value = pf.OpenPrevFolderOnStartUp.Value;
             if( pf.ApplyRotateInfoFromExif.IsEnabled ) ApplyRotateInfoFromExif.Value = pf.ApplyRotateInfoFromExif.Value;
-            if( pf.BitmapDecodeTotalPixel.IsEnabled ) BitmapDecodeTotalPixel.Value = pf.BitmapDecodeTotalPixel.Value;
+            if( pf.BitmapDecodeTotalPixel.IsEnabled )  BitmapDecodeTotalPixel.Value = pf.BitmapDecodeTotalPixel.Value;
 
             // その他の設定_外観1
-            if( pf.AllowTransparency.IsEnabled ) AllowTransparency.Value = pf.AllowTransparency.Value;
-            if( pf.OverallOpacity.IsEnabled ) OverallOpacity.Value = pf.OverallOpacity.Value;
-            if( pf.BackgroundOpacity.IsEnabled ) BackgroundOpacity.Value = pf.BackgroundOpacity.Value;
-            if( pf.BaseGridBackgroundColor.IsEnabled ) BaseGridBackgroundColor.Value = pf.BaseGridBackgroundColor.Value;
-            if( pf.UsePlaidBackground.IsEnabled ) UsePlaidBackground.Value = pf.UsePlaidBackground.Value;
+            if( pf.AllowTransparency.IsEnabled )          AllowTransparency.Value = pf.AllowTransparency.Value;
+            if( pf.OverallOpacity.IsEnabled )             OverallOpacity.Value = pf.OverallOpacity.Value;
+            if( pf.BackgroundOpacity.IsEnabled )          BackgroundOpacity.Value = pf.BackgroundOpacity.Value;
+            if( pf.BaseGridBackgroundColor.IsEnabled )    BaseGridBackgroundColor.Value = pf.BaseGridBackgroundColor.Value;
+            if( pf.UsePlaidBackground.IsEnabled )         UsePlaidBackground.Value = pf.UsePlaidBackground.Value;
             if( pf.PairColorOfPlaidBackground.IsEnabled ) PairColorOfPlaidBackground.Value = pf.PairColorOfPlaidBackground.Value;
 
             // その他の設定_外観2
-            if( pf.ResizeGripThickness.IsEnabled ) ResizeGripThickness.Value = pf.ResizeGripThickness.Value;
-            if( pf.ResizeGripColor.IsEnabled ) ResizeGripColor.Value = pf.ResizeGripColor.Value;
-            if( pf.TilePadding.IsEnabled ) TilePadding.Value = pf.TilePadding.Value;
-            if( pf.GridLineColor.IsEnabled ) GridLineColor.Value = pf.GridLineColor.Value;
-            if( pf.SeekbarColor.IsEnabled ) SeekbarColor.Value = pf.SeekbarColor.Value;
+            if( pf.ResizeGripThickness.IsEnabled )  ResizeGripThickness.Value = pf.ResizeGripThickness.Value;
+            if( pf.ResizeGripColor.IsEnabled )      ResizeGripColor.Value = pf.ResizeGripColor.Value;
+            if( pf.TilePadding.IsEnabled )          TilePadding.Value = pf.TilePadding.Value;
+            if( pf.GridLineColor.IsEnabled )        GridLineColor.Value = pf.GridLineColor.Value;
+            if( pf.SeekbarColor.IsEnabled )         SeekbarColor.Value = pf.SeekbarColor.Value;
 
             // ダイアログにはない設定
-            if( pf.WindowPos.IsEnabled ) WindowPos.Value = new Point(pf.WindowPos.Value.X, pf.WindowPos.Y);
-            if( pf.WindowSize.IsEnabled ) WindowSize.Value = new Size(pf.WindowSize.Value.Width, pf.WindowSize.Height);
+            if( pf.WindowPos.IsEnabled )        WindowPos.Value = new Point(pf.WindowPos.Value.X, pf.WindowPos.Y);
+            if( pf.WindowSize.IsEnabled )       WindowSize.Value = new Size(pf.WindowSize.Value.Width, pf.WindowSize.Height);
             if( pf.IsFullScreenMode.IsEnabled ) IsFullScreenMode.Value = pf.IsFullScreenMode.Value;
+
+            return this;
+        }
+
+
+        /// <summary>
+        /// クローン
+        /// </summary>
+        /// <returns></returns>
+        public Profile Clone()
+        {
+            Profile newProfile = new Profile();
+
+            PropertyInfo[] infoArraySrc  = this.GetType().GetProperties();
+            PropertyInfo[] infoArrayDest = newProfile.GetType().GetProperties();
+
+            for(int i=0; i < infoArraySrc.Count(); i++ )
+            {
+                ProfileMember.IProfileMember memberSrc = infoArraySrc[i].GetValue(this, null) as ProfileMember.IProfileMember;
+                ProfileMember.IProfileMember memberDest = infoArrayDest[i].GetValue(newProfile, null) as ProfileMember.IProfileMember;
+
+                if(memberSrc != null && memberDest != null)
+                {
+                    memberDest.IsEnabled = memberSrc.IsEnabled;
+                }
+            }
+
+            // Profile data
+            newProfile.Name = this.Name;
+            newProfile.ProfileType = this.ProfileType;
+
+            // 読み込み
+            newProfile.Path.Value = new List<string>(this.Path.Value);
+            newProfile.LastPageIndex.Value = this.LastPageIndex.Value;
+
+            // 行列設定
+            Array.Copy(this.NumofMatrix.Value, newProfile.NumofMatrix.Value, 2);
+            newProfile.TileOrigin.Value = this.TileOrigin.Value;
+            newProfile.TileOrientation.Value = this.TileOrientation.Value;
+            newProfile.UseDefaultTileOrigin.Value = this.UseDefaultTileOrigin.Value;
+
+            // アスペクト比設定
+            Array.Copy(this.AspectRatio.Value, newProfile.AspectRatio.Value, 2);
+            newProfile.NonFixAspectRatio.Value = this.NonFixAspectRatio.Value;
+
+            // スライドの設定
+            newProfile.SlidePlayMethod.Value = this.SlidePlayMethod.Value;
+            newProfile.SlideSpeed.Value = this.SlideSpeed.Value;
+            newProfile.SlideInterval.Value = this.SlideInterval.Value;
+            newProfile.SlideDirection.Value = this.SlideDirection.Value;
+            newProfile.SlideTimeInIntevalMethod.Value = this.SlideTimeInIntevalMethod.Value;
+            newProfile.SlideByOneImage.Value = this.SlideByOneImage.Value;
+
+            // その他の設定_全般
+            newProfile.FileSortMethod.Value = this.FileSortMethod.Value;
+            newProfile.TopMost.Value = this.TopMost.Value;
+            newProfile.OpenPrevFolderOnStartUp.Value = this.OpenPrevFolderOnStartUp.Value;
+            newProfile.ApplyRotateInfoFromExif.Value = this.ApplyRotateInfoFromExif.Value;
+            newProfile.BitmapDecodeTotalPixel.Value = this.BitmapDecodeTotalPixel.Value;
+
+            // その他の設定_外観1
+            newProfile.AllowTransparency.Value = this.AllowTransparency.Value;
+            newProfile.OverallOpacity.Value = this.OverallOpacity.Value;
+            newProfile.BackgroundOpacity.Value = this.BackgroundOpacity.Value;
+            newProfile.BaseGridBackgroundColor.Value = this.BaseGridBackgroundColor.Value;
+            newProfile.UsePlaidBackground.Value = this.UsePlaidBackground.Value;
+            newProfile.PairColorOfPlaidBackground.Value = this.PairColorOfPlaidBackground.Value;
+
+            // その他の設定_外観2
+            newProfile.ResizeGripThickness.Value = this.ResizeGripThickness.Value;
+            newProfile.ResizeGripColor.Value = this.ResizeGripColor.Value;
+            newProfile.TilePadding.Value = this.TilePadding.Value;
+            newProfile.GridLineColor.Value = this.GridLineColor.Value;
+            newProfile.SeekbarColor.Value = this.SeekbarColor.Value;
+
+            // ダイアログにはない設定
+            newProfile.WindowPos.Value = new Point(this.WindowPos.Value.X, this.WindowPos.Y);
+            newProfile.WindowSize.Value = new Size(this.WindowSize.Value.Width, this.WindowSize.Height);
+            newProfile.IsFullScreenMode.Value = this.IsFullScreenMode.Value;
+
+
+            return newProfile;
         }
 
 
         public string CreateProfileToolTip()
         {
-            return "tool tip";
+            string tooltip = "";
+
+            PropertyInfo[] infoArray = this.GetType().GetProperties();
+
+            foreach( PropertyInfo info in infoArray )
+            {
+                ProfileMember.IProfileMember member = info.GetValue(this, null) as ProfileMember.IProfileMember;
+                if(member != null && member.IsEnabled)
+                {
+                    tooltip += member.TooltipStr;
+                    tooltip += "\r\n";
+                }
+            }
+
+            // 最後の改行削除
+            tooltip = tooltip.TrimEnd('\r', '\n');
+
+            return tooltip;
         }
+
+
     }
 }

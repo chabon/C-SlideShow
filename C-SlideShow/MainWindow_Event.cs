@@ -69,6 +69,7 @@ namespace C_SlideShow
 
             this.SizeChanged += (s, e) =>
             {
+                //return;
                 if (ignoreResizeEvent) return;
 
                 // 画像拡大パネルのサイズ更新
@@ -84,7 +85,7 @@ namespace C_SlideShow
                     List<TileContainer> containersInCurrentOrder = GetTileContainersInCurrentOrder();
                     //Debug.WriteLine("Current top container: " + currentContainers[0].Order);
 
-                    // タイルサイズ(アス比)、コンテナサイズの決定
+                    // タイルサイズ(アス比)の決定
                     double w = (this.Width - MainContent.Margin.Left * 2) / pf.NumofMatrix.Col;
                     double h = (this.Height - MainContent.Margin.Left * 2) / pf.NumofMatrix.Row;
                     double gridRatio = h / w;
@@ -93,6 +94,7 @@ namespace C_SlideShow
                     int gridHeight = (int)( gridWidth * gridRatio );
                     pf.AspectRatio.Value = new int[] { TileContainer.StandardTileWidth, gridHeight - pf.TilePadding.Value * 2 };
 
+                    // コンテナサイズの決定
                     foreach( TileContainer tc in tileContainers )
                     {
                         tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
@@ -100,7 +102,7 @@ namespace C_SlideShow
                     }
 
                     // 1タイルのバックバッファサイズを更新
-                    TileContainer.TileAspectRatio = pf.AspectRatio.V / (double)pf.AspectRatio.H;
+                    TileContainer.TileAspectRatio = pf.AspectRatio.V / pf.AspectRatio.H;
                     TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel.Value, pf.NumofMatrix.Col, pf.NumofMatrix.Row);
 
                     // 位置を正規化
@@ -136,10 +138,10 @@ namespace C_SlideShow
 
             this.Closing += (s, e) =>
             {
+                if( ignoreClosingEvent ) return;
                 SavePageIndexToHistory();
                 Setting.SettingDialogTabIndex = settingDialog.MainTabControl.SelectedIndex;
-                Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
-                SaveWindowRect();
+                UpdateTempProfile();
                 Setting.saveToXmlFile();
             };
 
@@ -237,7 +239,7 @@ namespace C_SlideShow
                         if( source == null ) return;
 
                         // クリックされたTileContainer
-                        TileContainer tc = VisualTreeUtil.FindAncestor<TileContainer>(source);
+                        TileContainer tc = WpfTreeUtil.FindAncestor<TileContainer>(source);
                         if( tc == null ) return;
 
                         // クリックされたBorder
@@ -245,7 +247,7 @@ namespace C_SlideShow
                         if( e.OriginalSource is Border ) border = e.OriginalSource as Border;
                         else
                         {
-                            border = VisualTreeUtil.FindAncestor<Border>(source);
+                            border = WpfTreeUtil.FindAncestor<Border>(source);
                         }
                         if( border == null ) return;
 
@@ -298,11 +300,11 @@ namespace C_SlideShow
                 }
                 if(e.Key == Key.A )
                 {
-                    MenuItem continuation = (MenuItem)MenuItem_Load.Items[MenuItem_Load.Items.Count - 1];
-                    MenuItem mi = new MenuItem();
-                    mi.Header = "hoge";
-                    mi.ToolTip = "aaaa";
-                    continuation.Items.Add(mi);
+                    //MenuItem continuation = (MenuItem)MenuItem_Load.Items[MenuItem_Load.Items.Count - 1];
+                    //MenuItem mi = new MenuItem();
+                    //mi.Header = "hoge";
+                    //mi.ToolTip = "aaaa";
+                    //continuation.Items.Add(mi);
 
 
                     //pf.ApplyRotateInfoFromExif = !pf.ApplyRotateInfoFromExif;
@@ -571,7 +573,10 @@ namespace C_SlideShow
                 // 非固定を選択
                 if(item.Tag.ToString() == "FREE" )
                 {
-                    Setting.TempProfile.NonFixAspectRatio.Value = true;
+                    if( !Setting.TempProfile.NonFixAspectRatio.Value )
+                    {
+                        Setting.TempProfile.NonFixAspectRatio.Value = true;
+                    }
                     UpdateToolbarViewing();
                     return;
                 }
@@ -604,65 +609,161 @@ namespace C_SlideShow
         // プロファイルメニュー開いた時
         private void MenuItem_Profile_SubmenuOpened(object sender, RoutedEventArgs e)
         {
+            // Xmlからプロファイルをロード
+            string xmlDir = Directory.GetParent( System.Reflection.Assembly.GetExecutingAssembly().Location ).FullName + "\\Profile";
+            if( Setting.UserProfileList.All( pl => pl.Profile == null) && Directory.Exists(xmlDir) )
+            {
+                string[] xmls = Directory.GetFiles(xmlDir);
+                foreach(string xml in xmls )
+                {
+                    if( System.IO.Path.GetExtension(xml) == ".xml" )
+                    {
+                        // ロード
+                        Profile pf = UserProfileInfo.LoadProfileFromXmlFile(xml);
+
+                        // UserProfileListにあるなら、メンバとしてプロファイルを追加、ないなら新たにUserProfileInfoを作成して追加
+                        string relativePath = xml.Replace(xmlDir + "\\", "");
+                        UserProfileInfo upi = Setting.UserProfileList.FirstOrDefault(pl => pl.RelativePath == relativePath);
+                        if( upi != null ) upi.Profile = pf;
+                        else
+                        {
+                            UserProfileInfo newUpi = new UserProfileInfo(relativePath);
+                            newUpi.Profile = pf;
+                            Setting.UserProfileList.Add(newUpi);
+                        }
+                    }
+                }
+
+                // xmlファイルからロード出来なかった、UserProfileInfoを全て削除
+                Setting.UserProfileList.RemoveAll( pl => pl.Profile == null );
+            }
+
+
             // イベントの発生元チェック(子要素からのイベントなら無視)
             MenuItem miSrc = e.OriginalSource as MenuItem;
             if( miSrc == null || miSrc.Name != MenuItem_Profile.Name) return;
 
             // プロファイル追加前に削除
-            const int basicManuCnt = 2;
+            const int basicManuCnt = 1;
             while(MenuItem_Profile.Items.Count > basicManuCnt )
             {
                 MenuItem_Profile.Items.RemoveAt(basicManuCnt);
             }
 
+            // セパレータ追加
+            if(Setting.UserProfileList.Count > 0) MenuItem_Profile.Items.Add( new Separator() );
+
             // プロファイル追加
-            foreach(Profile pf in Setting.ProfileList )
+            foreach(UserProfileInfo upi in Setting.UserProfileList )
             {
                 MenuItem mi = new MenuItem();
-                mi.Header = pf.Name;
-                //mi.ToolTip = pf.CreateProfileToolTip();
+                mi.Header = upi.Profile.Name;
+                mi.ToolTip = upi.Profile.CreateProfileToolTip();
+                ToolTipService.SetShowDuration(mi, 1000000);
                 mi.Click += (se, ev) => 
                 {
-                    Setting.TempProfile.Marge(pf);
-                    LoadProfile(Setting.TempProfile);
+                    LoadUserProfile(upi.Profile);
                 };
-                //mi.ContextMenu = contextMenu;
+                mi.ContextMenu = CreateProfileContextMenu(upi);
                 MenuItem_Profile.Items.Add(mi);
             }
+        }
+
+        // プロファイルメニュー内、コンテキストメニュー作成
+        private ContextMenu CreateProfileContextMenu(UserProfileInfo upi)
+        {
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem cmi1 = new MenuItem();
+            MenuItem cmi2 = new MenuItem();
+            MenuItem cmi3 = new MenuItem();
+            MenuItem cmi4 = new MenuItem();
+            MenuItem cmi5 = new MenuItem();
+            Separator sep1 = new Separator();
+
+            cmi1.Header = "編集";
+            cmi2.Header = "コピー";
+            cmi3.Header = "削除";
+            cmi4.Header = "上へ";
+            cmi5.Header = "下へ";
+
+            Action updateMenu = () => { MenuItem_Profile_SubmenuOpened(this, new RoutedEventArgs(null, MenuItem_Profile)); };
+
+            // 編集
+            cmi1.Click += (se, ev) =>
+            {
+                MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem; if( mi == null ) return;
+
+                ShowProfileEditDialog(ProfileEditDialogMode.Edit, upi);
+            };
+
+            // コピー
+            cmi2.Click += (se, ev) =>
+            {
+                MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem; if( mi == null ) return;
+
+                int idx = Setting.UserProfileList.IndexOf(upi);
+                UserProfileInfo newUpi = CopyUserProfileInfo(upi);
+                Setting.UserProfileList.Insert(idx + 1, newUpi);
+
+                MenuItem_Profile.IsSubmenuOpen = false;
+                MenuItem_Profile.IsSubmenuOpen = true;
+            };
+
+            // 削除
+            cmi3.Click += (se, ev) =>
+            {
+                MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem; if( mi == null ) return;
+
+                MessageBoxResult result =  MessageBox.Show("プロファイル「" + upi.Profile.Name + "」を削除してもよろしいですか？", "確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if( !(result == MessageBoxResult.No) ) RemoveUserProfileInfo(upi);
+
+                MenuItem_Profile.IsSubmenuOpen = true;
+            };
+
+            // 上へ
+            cmi4.Click += (se, ev) =>
+            {
+                MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem; if( mi == null ) return;
+
+                int index = Setting.UserProfileList.IndexOf(upi);
+                if( index == 0 ) return;
+
+                Setting.UserProfileList.RemoveAt(index);
+                Setting.UserProfileList.Insert(index - 1, upi);
+
+                updateMenu.Invoke();
+            };
+
+            // 下へ
+            cmi5.Click += (se, ev) =>
+            {
+                MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem; if( mi == null ) return;
+
+                int index = Setting.UserProfileList.IndexOf(upi);
+                if( index == Setting.UserProfileList.Count - 1 ) return;
+
+                Setting.UserProfileList.RemoveAt(index);
+                Setting.UserProfileList.Insert(index + 1, upi);
+
+                updateMenu.Invoke();
+            };
+
+            contextMenu.Items.Add(cmi1);
+            contextMenu.Items.Add(cmi2);
+            contextMenu.Items.Add(cmi3);
+
+            contextMenu.Items.Add(sep1);
+
+            contextMenu.Items.Add(cmi4);
+            contextMenu.Items.Add(cmi5);
+
+            return contextMenu;
         }
 
         // プロファイル 新規作成
         private void Toolbar_Profile_New_Click(object sender, RoutedEventArgs e)
         {
-            if(profileEditDialog == null )
-            {
-                profileEditDialog = new ProfileEditDialog();
-                profileEditDialog.Owner = this;
-            }
-            profileEditDialog.Mode = ProfileEditDialogMode.New;
-            profileEditDialog.ProfileList = Setting.ProfileList;
-
-            // 表示前にメインウインドウのウインドウ情報保存
-            SaveWindowRect();
-
-            // 初期位置は、メインウインドウの中心に
-            Rect rcMw = new Rect(Left, Top, Width, Height);
-            Point ptCenter = new Point( rcMw.Left + rcMw.Width / 2 , rcMw.Top + rcMw.Height / 2 );
-            Rect rcDlg = new Rect(
-                ptCenter.X - profileEditDialog.Width / 2,
-                ptCenter.Y - profileEditDialog.Height / 2,
-                profileEditDialog.Width,
-                profileEditDialog.Height
-            );
-
-            // ワーキングエリアはみ出しの補正
-            rcDlg = Util.GetCorrectedWindowRect(rcDlg);
-            profileEditDialog.Left = rcDlg.Left;
-            profileEditDialog.Top = rcDlg.Top;
-
-            // プロファイルを読み込んで、表示
-            profileEditDialog.LoadProfile(Setting.TempProfile);
-            profileEditDialog.ShowDialog();
+            ShowProfileEditDialog(ProfileEditDialogMode.New, null);
         }
 
         // システムボタン
@@ -687,7 +788,7 @@ namespace C_SlideShow
         {
             HwndSource hwndSource = (HwndSource)PresentationSource.FromVisual(this);
             hwndSource.AddHook(uiHelper.HwndSourceHook);
-         
+
             base.OnSourceInitialized(e);
         }
 

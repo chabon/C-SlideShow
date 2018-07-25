@@ -88,5 +88,23 @@ namespace C_SlideShow
 
             return new Rect( input.Left + ptCorrected.X, input.Top + ptCorrected.Y, input.Width, input.Height );
         }
+
+        /// <summary>
+        /// ファイル名として無効な文字を「_」に置き換える
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string ValidFileName (string s)
+        {
+            string valid = s;
+            char[] invalidch = System.IO.Path.GetInvalidFileNameChars();
+
+            foreach (char c in invalidch)
+            {
+                valid = valid.Replace(c, '_');
+            }
+            return valid;
+        }
+
     }
 }

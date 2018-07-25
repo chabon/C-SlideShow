@@ -26,7 +26,12 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "Path: " + base.Value; }
+            get
+            {
+                string str = "パス: " + this.Value[0];
+                if( this.Value.Count != 1 ) str += " 他" + (this.Value.Count - 1) + "件";
+                return str;
+            }
         }
 
     }
@@ -41,7 +46,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "LastPageIndex: " + base.Value; }
+            get { return "ページ番号: " + (base.Value + 1); }
         }
 
         public static readonly int Min = 0;
@@ -62,7 +67,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "列数・行数: " + base.Value; }
+            get { return "列数・行数: " + this.Value[0] + "x" + this.Value[1]; }
         }
 
         public int Col { get { return Value[0]; } }
@@ -136,14 +141,14 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "AspectRatio: " + base.Value; }
+            get { return "アスペクト比(横:縦): " + this.Value[0] + ":" + this.Value[1]; }
         }
 
         public int H { get { return this.Value[0]; } }
         public int V { get { return this.Value[1]; } }
 
         public static readonly int Min = 1;
-        public static readonly int Max = 100000;
+        public static readonly int Max = 99;
     }
 
     public class NonFixAspectRatio : ProfileMemberBase
@@ -158,7 +163,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "NonFixAspectRatio: " + base.Value; }
+            get { return "アスペクト比: " + (this.Value ? "非固定" : "固定"); }
         }
     }
 
@@ -177,7 +182,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "SlidePlayMethod: " + base.Value; }
+            get { return "スライドショー設定: " + (this.Value == C_SlideShow.SlidePlayMethod.Continuous ? "常にスライド" : "一定時間待機してスライド"); }
         }
     }
 
@@ -193,7 +198,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "速度: " + base.Value; }
+            get { return "スライド速度: " + this.Value; }
         }
 
         public static readonly int Min = 1;
@@ -210,7 +215,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "SlideInterval: " + base.Value; }
+            get { return "待機時間(sec): " + base.Value; }
         }
 
         public static readonly int Min = 1;
@@ -229,7 +234,26 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "SlideDirection: " + base.Value; }
+            get
+            {
+                string dire = "";
+                switch( this.Value )
+                {
+                    case C_SlideShow.SlideDirection.Left:
+                        dire = "左";
+                        break;
+                    case C_SlideShow.SlideDirection.Top:
+                        dire = "上";
+                        break;
+                    case C_SlideShow.SlideDirection.Right:
+                        dire = "右";
+                        break;
+                    case C_SlideShow.SlideDirection.Bottom:
+                        dire = "下";
+                        break;
+                }
+                return "スライド方向: " + dire;
+            }
         }
     }
 
@@ -244,7 +268,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "SlideTimeInIntevalMethod: " + base.Value; }
+            get { return "スライド時間(ms): " + base.Value; }
         }
 
         public static readonly int Min = 100;
@@ -263,7 +287,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "SlideByOneImage: " + base.Value; }
+            get { return "画像一枚ずつスライド: " + (this.Value ? "させる" : "させない"); }
         }
     }
 
@@ -282,7 +306,38 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "FileSortMethod: " + base.Value; }
+            get
+            {
+                string method = "";
+                switch( this.Value )
+                {
+                    case C_SlideShow.FileSortMethod.FileName:
+                        method = "ファイル名(昇順)";
+                        break;
+                    case C_SlideShow.FileSortMethod.FileNameRev:
+                        method = "ファイル名(降順)";
+                        break;
+                    case C_SlideShow.FileSortMethod.FileNameNatural:
+                        method = "ファイル名 自然順(昇順)";
+                        break;
+                    case C_SlideShow.FileSortMethod.FileNameNaturalRev:
+                        method = "ファイル名 自然順(降順)";
+                        break;
+                    case C_SlideShow.FileSortMethod.LastWriteTime:
+                        method = "更新日時(昇順)";
+                        break;
+                    case C_SlideShow.FileSortMethod.LastWriteTimeRev:
+                        method = "更新日時(降順)";
+                        break;
+                    case C_SlideShow.FileSortMethod.Random:
+                        method = "ランダム";
+                        break;
+                    case C_SlideShow.FileSortMethod.None:
+                        method = "指定しない";
+                        break;
+                }
+                return "画像の並び順: " + method ;
+            }
         }
     }
 
@@ -298,7 +353,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "TopMost: " + base.Value; }
+            get { return "最前面表示: " + (this.Value ? "する" : "しない"); }
         }
     }
 
@@ -330,7 +385,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "ApplyRotateInfoFromExif: " + base.Value; }
+            get { return "Exifの回転・反転情報: " + (this.Value ? "反映させる" : "反映させない"); }
         }
     }
 
@@ -344,7 +399,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "BitmapDecodeTotalPixel: " + base.Value; }
+            get { return "バックバッファのサイズ(ピクセル値): " + base.Value; }
         }
 
         public static readonly int Min = 320;
@@ -366,7 +421,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "AllowTransparency: " + base.Value; }
+            get { return "透過: " + (this.Value ? "有効" : "無効"); }
         }
     }
 
@@ -382,7 +437,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "OverallOpacity: " + base.Value; }
+            get { return "不透明度(全体): " + (int)(this.Value * 100); }
         }
 
         public static readonly double Min = 0.005;
@@ -401,7 +456,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "BackgroundOpacity: " + base.Value; }
+            get { return "不透明度(背景): " + (int)(this.Value * 100); }
         }
 
         public static readonly double Min = 0.005;
@@ -420,7 +475,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "BaseGridBackgroundColor: " + base.Value; }
+            get { return "背景色: " + this.Value.ToString().Remove(1,2); }
         }
 
     }
@@ -437,7 +492,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "UsePlaidBackground: " + base.Value; }
+            get { return "チェック柄の背景に: " + (this.Value ? "する" : "しない"); }
         }
     }
 
@@ -453,7 +508,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "PairColorOfPlaidBackground: " + base.Value; }
+            get { return "ペアとなる色: " + this.Value.ToString().Remove(1,2); }
         }
     }
 
@@ -472,7 +527,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "ResizeGripThickness: " + base.Value; }
+            get { return "ウインドウ枠の太さ: " + this.Value; }
         }
 
         public static readonly int Min = 0;
@@ -491,7 +546,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "ResizeGripColor: " + base.Value; }
+            get { return "ウインドウ枠の色: " + this.Value.ToString().Remove(1,2); }
         }
     }
 
@@ -505,7 +560,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "TilePadding: " + base.Value; }
+            get { return "グリッド線の太さ: " + this.Value; }
         }
 
         public static readonly int Min = 0;
@@ -524,7 +579,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "GridLineColor: " + base.Value; }
+            get { return "グリッド線の色: " + this.Value.ToString().Remove(1,2); }
         }
     }
 
@@ -540,7 +595,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "SeekbarColor: " + base.Value; }
+            get { return "シークバーの色: " + this.Value.ToString().Remove(1,2); }
         }
     }
 
@@ -559,7 +614,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "WindowPos: " + base.Value; }
+            get { return "ウインドウの位置: " + "X=" + this.X + " Y=" + this.Y; }
         }
 
         public double X { get { return Value.X; } }
@@ -581,7 +636,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "WindowSize: " + base.Value; }
+            get { return "ウインドウサイズ: " + "幅=" + this.Width + " 高さ=" + this.Height; }
         }
 
         public double Width { get { return Value.Width; } }
@@ -603,7 +658,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "IsFullScreenMode: " + base.Value; }
+            get { return "フルスクリーンに: " + (this.Value? "する" : "しない"); }
         }
     }
 }

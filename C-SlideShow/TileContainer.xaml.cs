@@ -218,6 +218,11 @@ namespace C_SlideShow
             InitSize(aspectRatioH, aspectRatioV, tilePadding);
 
             // 座標
+            InitPos();
+        }
+
+        public void InitPos()
+        {
             switch (slideDirection)
             {
                 case SlideDirection.Left:

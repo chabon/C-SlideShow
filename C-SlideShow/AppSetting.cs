@@ -29,6 +29,7 @@ namespace C_SlideShow
         public int Index { get; set; }
     }
 
+
     [DataContract(Name = "AppSetting")]
     public class AppSetting
     {
@@ -36,13 +37,14 @@ namespace C_SlideShow
         [DataMember]
         public Profile TempProfile { get; set; }
 
-        // プロファイルリスト
-        [DataMember]
-        public List<Profile> ProfileList { get; set; }
 
         // ダイアログには無い設定
         [DataMember]
         public bool ShowFileInfoInTileExpantionPanel { get; set; }
+
+        [DataMember]
+        public List<UserProfileInfo> UserProfileList { get; set; }
+
 
         // ダイアログ未実装
         [DataMember]
@@ -62,8 +64,8 @@ namespace C_SlideShow
             // 初期化
             TempProfile = new Profile();
             TempProfile.ProfileType = ProfileType.Temp;
-            ProfileList = new List<Profile>();
             ShowFileInfoInTileExpantionPanel = false;
+            UserProfileList = new List<UserProfileInfo>();
             History = new List<HistoryItem>();
             NumofHistory = 30;
             SaveLastPageIndexToHistory = true;
@@ -74,7 +76,7 @@ namespace C_SlideShow
         [OnDeserializing]
         public void DefaultDeserializing(StreamingContext sc)
         {
-
+            UserProfileList = new List<UserProfileInfo>();
         }
 
 

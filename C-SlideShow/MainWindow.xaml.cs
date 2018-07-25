@@ -50,8 +50,10 @@ namespace C_SlideShow
         List<TileContainer> tileContainers = new List<TileContainer>();
         bool ignoreSliderValueChangeEvent = false; // SliderのValue変更時にイベントを飛ばさないフラグ
         bool ignoreResizeEvent = false;
+        bool ignoreClosingEvent = false;
         bool isSeekbarDragStarted = false;
         PrevMouseRButtonDownEventContext prevMouseRButtonDownEventContext = new PrevMouseRButtonDownEventContext();
+        //Point aspectRatioInNonFixMode = new Point( 4, 3 );
 
         UIHelper uiHelper;
         Rect windowRectBeforeFullScreen = new Rect(50, 50, 400, 300);
@@ -66,6 +68,7 @@ namespace C_SlideShow
         // property
         public static MainWindow Current { get; private set; }
         public AppSetting Setting { get; set; }
+
         public bool IsHorizontalSlide
         {
             get
@@ -145,6 +148,8 @@ namespace C_SlideShow
             Setting = setting;
             this.AllowsTransparency = (bool)Setting.TempProfile.AllowTransparency.Value;
 
+            ignoreResizeEvent = true;
+
             InitializeComponent();
 
             // debug
@@ -158,8 +163,44 @@ namespace C_SlideShow
             InitControls();
             InitHelper();
             InitEvent();
-            LoadProfile(Setting.TempProfile);
 
+            // 前回の状態を復元
+            Profile pf = Setting.TempProfile;
+
+            // ウインドウ位置・フルスクリーン復元
+            this.Left   = pf.WindowPos.X;
+            this.Top    = pf.WindowPos.Y;
+            this.Width  = pf.WindowSize.Width;
+            this.Height = pf.WindowSize.Height;
+
+            if( pf.IsFullScreenMode.Value )
+            {
+                pf.IsFullScreenMode.Value = false;
+                ToggleFullScreen();
+                ignoreResizeEvent = true;
+            }
+
+            // 画像情報の読み込みとソート
+            String[] files = pf.Path.Value.ToArray();
+            ReadFilesAndInitMainContent(files, false, pf.LastPageIndex.Value);
+
+            // 背景色と不透明度
+            ApplyColorAndOpacitySetting();
+
+            // UI設定
+            UpdateUI();
+
+            // ツールバーの見た目
+            UpdateToolbarViewing();
+
+            // 最前面
+            this.Topmost = Setting.TempProfile.TopMost.Value;
+
+            // ウインドウ描画完了後、リサイズイベントの許可
+            this.ContentRendered += (s, e) =>
+            {
+                ignoreResizeEvent = false;
+            };
         }
 
         private void InitControls()
@@ -216,35 +257,78 @@ namespace C_SlideShow
             this.TileExpantionPanel.ImageFileManager = imageFileManager;
         }
 
-        private void LoadProfile(Profile profile)
+        private void LoadUserProfile(Profile userProfile)
         {
-            // ウインドウ位置
-            this.Left   = profile.WindowPos.X;
-            this.Top    = profile.WindowPos.Y;
-            this.Width  = profile.WindowSize.Width;
-            this.Height = profile.WindowSize.Height;
+            // 統合前のTempProfileの設定値
+            bool before_IsFullScreenMode = Setting.TempProfile.IsFullScreenMode.Value;
 
-            // 画像情報の読み込みとソート
-            String[] files = profile.Path.Value.ToArray();
-            ReadFilesAndInitMainContent(files, false, profile.LastPageIndex.Value);
+            // TempProfileに統合
+            UpdateTempProfile();
+            Setting.TempProfile.Marge(userProfile);
 
-            // 背景色と不透明度
-            ApplyColorAndOpacitySetting();
+            Profile tp = Setting.TempProfile;
 
-            // UI設定
-            UpdateUI();
-
-            // ツールバーの見た目
-            UpdateToolbarViewing();
-
-            // 最前面
-            this.Topmost = Setting.TempProfile.TopMost.Value;
-
-            // フルスクリーン復元
-            if( profile.IsFullScreenMode.Value )
+            // ファイルを読み込む場合は、ページ番号は初期化(有効時は除く)、読み込む前のファイルのページ番号履歴は保存
+            if( userProfile.Path.IsEnabled && !userProfile.LastPageIndex.IsEnabled )
             {
-                profile.IsFullScreenMode.Value = false;
-                ToggleFullScreen();
+                SavePageIndexToHistory();
+                tp.LastPageIndex.Value = 0; 
+            }
+
+            // 透過有効
+            if( tp.AllowTransparency.Value != this.AllowsTransparency)
+            {
+                ApplyAllowTransparency(false); // InitMainWindow()でプロファイル適用
+                return; 
+            }
+
+            // ウインドウ位置
+            if( !before_IsFullScreenMode )
+            {
+                this.Left   = tp.WindowPos.X;
+                this.Top    = tp.WindowPos.Y;
+                this.Width  = tp.WindowSize.Width;
+                this.Height = tp.WindowSize.Height;
+            }
+            else
+            {
+                // 既にフルスクリーン中だった場合
+                windowRectBeforeFullScreen = new Rect(tp.WindowPos.X, tp.WindowPos.Y, tp.WindowSize.Width, tp.WindowSize.Height);
+            }
+
+            // 画像情報の読み込み、ソート、コンテンツ初期化
+            if( userProfile.Path.IsEnabled )
+            {
+                String[] files = tp.Path.Value.ToArray();
+                ReadFilesAndInitMainContent(files, false, tp.LastPageIndex.Value);
+            }
+            else
+            {
+                this.WaitingMessageBase.Visibility = Visibility.Visible;
+                if( userProfile.FileSortMethod.IsEnabled ) Sort(); // ファイルは読み込まずにソート
+                InitMainContent(tp.LastPageIndex.Value);
+            }
+            
+            // 外観更新
+            ApplyColorAndOpacitySetting(); // 背景色と不透明度
+            UpdateUI(); // UI設定
+            UpdateToolbarViewing(); // ツールバーの見た目
+            this.Topmost = Setting.TempProfile.TopMost.Value; // 最前面
+
+            // フルスクリーン設定
+            if( userProfile.IsFullScreenMode.IsEnabled )
+            {
+                // UserProfile読み込み前と状態が変わらないなら、ToggleFullScreen()を呼ばない
+                if( tp.IsFullScreenMode.Value && !before_IsFullScreenMode)
+                {
+                    tp.IsFullScreenMode.Value = false;
+                    ToggleFullScreen();
+                }
+                else if( !tp.IsFullScreenMode.Value && before_IsFullScreenMode )
+                {
+                    tp.IsFullScreenMode.Value = true;
+                    ToggleFullScreen();
+                }
             }
         }
 
@@ -270,8 +354,13 @@ namespace C_SlideShow
 
             // profile
             Profile pf = Setting.TempProfile;
-            ProfileMember.NumofMatrix mtx = Setting.TempProfile.NumofMatrix; // 行列
-            ProfileMember.AspectRatio ar = Setting.TempProfile.AspectRatio; // アス比
+            
+            // 行列
+            ProfileMember.NumofMatrix mtx = Setting.TempProfile.NumofMatrix;
+
+            // アス比
+            //ProfileMember.AspectRatio ar = Setting.TempProfile.AspectRatio;
+            Point ar = new Point(pf.AspectRatio.H, pf.AspectRatio.V);
 
             // set up imageFileManager
             int grids = mtx.Col * mtx.Row;
@@ -281,14 +370,14 @@ namespace C_SlideShow
             imageFileManager.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif.Value;
 
             // init container
-            TileContainer.TileAspectRatio = ar.H / ar.V;
+            TileContainer.TileAspectRatio = ar.Y / ar.X;
             TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel.Value, mtx.Col, mtx.Row);
             foreach(TileContainer tc in tileContainers)
             {
                 tc.InitSlideDerection(pf.SlideDirection.Value);
                 tc.InitGrid(mtx.Col, mtx.Row);
                 tc.InitGridLineColor(pf.GridLineColor.Value);
-                tc.InitSizeAndPos(ar.H, ar.V, pf.TilePadding.Value);
+                tc.InitSizeAndPos((int)ar.X, (int)ar.Y, pf.TilePadding.Value);
                 tc.InitWrapPoint();
                 tc.InitTileOrigin(pf.TileOrigin.Value, pf.TileOrientation.Value, true);
             }
@@ -353,15 +442,7 @@ namespace C_SlideShow
             }
 
             // ソート
-            if(pathes.Length == 1 && Directory.Exists(pathes[0]) && !isAddition )
-            {
-                // 追加ではなく、フォルダ１つだけを読み込んだ場合ファイル名順になっているので、
-                // 並び順設定が「ファイル名(昇順)」ならばソートの必要なし
-            }
-            else
-            {
-                imageFileManager.Sort( (FileSortMethod)pf.FileSortMethod.Value );
-            }
+            if( !isAddition ) Sort();
 
             // ヒストリーに追加
             imageFileManager.Archivers.Where(a1 => a1.LeaveHistory).ToList().ForEach( a2 => 
@@ -378,6 +459,19 @@ namespace C_SlideShow
             if(Setting.History.Count > Setting.NumofHistory )
             {
                 Setting.History.RemoveRange( Setting.NumofHistory, Setting.History.Count - Setting.NumofHistory);
+            }
+        }
+
+        private void Sort()
+        {
+            if( imageFileManager.Archivers.Count == 1 && Directory.Exists(imageFileManager.Archivers[0].ArchiverPath) && Setting.TempProfile.FileSortMethod.Value == FileSortMethod.FileName)
+            {
+                // 追加ではなく、フォルダ１つだけを読み込んだ場合ファイル名順になっているので、
+                // 並び順設定が「ファイル名(昇順)」ならばソートの必要なし
+            }
+            else
+            {
+                imageFileManager.Sort( Setting.TempProfile.FileSortMethod.Value );
             }
         }
 
@@ -581,7 +675,7 @@ namespace C_SlideShow
 
         private void ChangeGridDifinition(int numofCol, int numofRow)
         {
-            if ( Setting.TempProfile.NumofMatrix.Col == numofRow && Setting.TempProfile.NumofMatrix.Row == numofCol) return;
+            if ( Setting.TempProfile.NumofMatrix.Col == numofCol && Setting.TempProfile.NumofMatrix.Row == numofRow) return;
 
             Setting.TempProfile.NumofMatrix.Value = new int[] { numofCol, numofRow };
 
@@ -624,7 +718,8 @@ namespace C_SlideShow
 
             foreach(TileContainer tc in tileContainers)
             {
-                tc.InitSizeAndPos(Setting.TempProfile.AspectRatio.H, Setting.TempProfile.AspectRatio.V, Setting.TempProfile.TilePadding.Value);
+                //tc.InitSizeAndPos(Setting.TempProfile.AspectRatio.H, Setting.TempProfile.AspectRatio.V, Setting.TempProfile.TilePadding.Value);
+                tc.InitPos();
                 tc.LoadImageToGrid(false, true);
             }
 
@@ -811,11 +906,13 @@ namespace C_SlideShow
                 // 解除
                 this.MainContent.Margin = new Thickness(Setting.TempProfile.ResizeGripThickness.Value);
                 this.ResizeGrip.Visibility = Visibility.Visible;
+                this.ignoreResizeEvent = true;
                 this.Topmost = isTopmostBeforeFullScreen;
                 this.Left = windowRectBeforeFullScreen.Left;
                 this.Top = windowRectBeforeFullScreen.Top;
                 this.Width = windowRectBeforeFullScreen.Width;
                 this.Height = windowRectBeforeFullScreen.Height;
+                this.ignoreResizeEvent = false;
                 Setting.TempProfile.IsFullScreenMode.Value = false;
                 FullScreenBase_TopLeft.Visibility = Visibility.Hidden;
                 FullScreenBase_BottomRight.Visibility = Visibility.Hidden;
@@ -909,12 +1006,14 @@ namespace C_SlideShow
             this.MainContent.LayoutTransform = new ScaleTransform(zoomFactor, zoomFactor);
         }
 
-        public void ApplyAllowTransparency()
+        public void ApplyAllowTransparency(bool bSavePageIndex)
         {
             if (this.AllowsTransparency == Setting.TempProfile.AllowTransparency.Value) return;
 
+            this.ignoreClosingEvent = true;
+
             SaveWindowRect();
-            Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
+            if(bSavePageIndex) Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
             MainWindow mw = new MainWindow(this.Setting);
 
             mw.Show();
@@ -973,6 +1072,12 @@ namespace C_SlideShow
 
             Setting.TempProfile.WindowPos.Value = new Point( rc.Left, rc.Top );
             Setting.TempProfile.WindowSize.Value = new Size( rc.Width, rc.Height );
+        }
+
+        private void UpdateTempProfile()
+        {
+            SaveWindowRect();
+            Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
         }
 
         public void SortAllImage(FileSortMethod order)
@@ -1071,6 +1176,100 @@ namespace C_SlideShow
             if( hi != null ) index = hi.Index;
 
             return index;
+        }
+
+        public void ShowProfileEditDialog(ProfileEditDialogMode mode, UserProfileInfo targetUseProfileInfo)
+        {
+            if(profileEditDialog == null )
+            {
+                profileEditDialog = new ProfileEditDialog();
+                profileEditDialog.Owner = this;
+            }
+            profileEditDialog.Mode = mode;
+            profileEditDialog.UserProfileList = Setting.UserProfileList;
+
+            // 表示前にメインウインドウのウインドウ情報、ページ情報保存
+            UpdateTempProfile();
+
+            // モードに依る挙動
+            string message = "";
+            if(mode == ProfileEditDialogMode.New || targetUseProfileInfo == null)
+            {
+                profileEditDialog.Title = "プロファイルの作成";
+                message = "現在の状態・設定をプロファイルとして保存することが出来ます。\r\nプロファイルに含める項目にチェックを入れて下さい。";
+                profileEditDialog.SetControlValue(Setting.TempProfile);
+            }
+            else if( mode == ProfileEditDialogMode.Edit )
+            {
+                profileEditDialog.Title = "プロファイルの編集 (" + targetUseProfileInfo.Profile.Name + ")";
+                message = null;
+                profileEditDialog.EditingUserProfileInfo = targetUseProfileInfo;
+
+                // コントロールの値は、TempProfileに統合したものを表示
+                Profile pf = Setting.TempProfile.Clone().Marge(targetUseProfileInfo.Profile);
+                pf.Name = targetUseProfileInfo.Profile.Name;
+                profileEditDialog.SetControlValue(pf); 
+            }
+            profileEditDialog.Label_Message.Content = message;
+
+            // 初期位置は、メインウインドウの中心に
+            Rect rcMw = new Rect(Left, Top, Width, Height);
+            Point ptCenter = new Point( rcMw.Left + rcMw.Width / 2 , rcMw.Top + rcMw.Height / 2 );
+            Rect rcDlg = new Rect(
+                ptCenter.X - profileEditDialog.Width / 2,
+                ptCenter.Y - profileEditDialog.Height / 2,
+                profileEditDialog.Width,
+                profileEditDialog.Height
+            );
+
+            // ワーキングエリアはみ出しの補正
+            rcDlg = Util.GetCorrectedWindowRect(rcDlg);
+            profileEditDialog.Left = rcDlg.Left;
+            profileEditDialog.Top = rcDlg.Top;
+
+            // プロファイル編集ダイアログ表示
+            profileEditDialog.ShowDialog();
+            profileEditDialog.MainScrollViewer.ScrollToTop();
+        }
+
+        public void RemoveUserProfileInfo(UserProfileInfo upi)
+        {
+            Setting.UserProfileList.Remove(upi);
+            string xmlDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName + "\\Profile";
+            string xmlPath = xmlDir + "\\" + upi.RelativePath;
+            if(File.Exists(xmlPath) ) File.Delete(xmlPath);
+        }
+
+        public UserProfileInfo CopyUserProfileInfo(UserProfileInfo upi)
+        {
+            string xmlDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName + "\\Profile";
+
+            // コピー先の相対パスを決める
+            string srcRelativePathWithoutExt = System.IO.Path.GetFileNameWithoutExtension(upi.RelativePath);
+            string newRelativePath = srcRelativePathWithoutExt + "_コピー.xml";
+            int cnt = 2;
+            while( File.Exists(xmlDir + "\\" + newRelativePath) )
+            {
+                newRelativePath = srcRelativePathWithoutExt + "_コピー(" + cnt + ").xml";
+                cnt++;
+                if( cnt >= int.MaxValue ) return null;
+            }
+
+            // Profileのコピー
+            Profile newProfile = upi.Profile.Clone();
+            string newProfileName = System.IO.Path.GetFileName(newRelativePath);
+            newProfileName = System.IO.Path.GetFileNameWithoutExtension(newProfileName);
+            newProfile.Name = newProfileName;
+
+            // UserProfileInfoのコピー
+            UserProfileInfo newUpi = new UserProfileInfo(newRelativePath);
+            newUpi.Profile = newProfile;
+
+            // Profileのコピーをxmlに保存
+            newUpi.SaveProfileToXmlFile();
+
+
+            return newUpi;
         }
 
     }

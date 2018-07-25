@@ -231,9 +231,9 @@
                                 </Border>
                             </MenuItem.Header>
                                 <MenuItem Header="新規作成" Click="Toolbar_Profile_New_Click"/>
-                                <MenuItem Header="リストの編集"/>
-                                <!--<Separator/>
-                                <MenuItem Header="デフォルト"/>
+                                <!--<MenuItem Header="リストの編集"/>-->
+                                <!--<Separator/>-->
+                                <!--<MenuItem Header="デフォルト"/>
                                 <MenuItem Header="書籍用(右綴じ)"  IsCheckable="True"/>
                                 <MenuItem Header="書籍用(左綴じ)"  IsCheckable="True"/>-->
                         </MenuItem>

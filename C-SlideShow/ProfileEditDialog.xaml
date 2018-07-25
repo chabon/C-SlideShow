@@ -37,9 +37,9 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
+    <Grid x:Name="MainGrid">
         <ScrollViewer x:Name="MainScrollViewer" Margin="0,0,0,60">
-            <StackPanel Orientation="Vertical">
+            <StackPanel x:Name="MainStackPanel" Orientation="Vertical">
                 <Label x:Name="Label_Message" Margin="10,10,10,0"
                        Content="現在の状態・設定をプロファイルとして保存することが出来ます。
                        &#10;プロファイルに含める項目にチェックを入れて下さい。">
@@ -84,18 +84,19 @@
                         <StackPanel Orientation="Horizontal">
                             <CheckBox x:Name="PfCheckBox_Path" Style="{StaticResource ProfileCheckboxStyle}">フォルダ・ファイル</CheckBox>
                             <StackPanel Orientation="Vertical">
-                                <TextBox x:Name="Path" MinWidth="250" Width="300"></TextBox>
+                                <TextBox x:Name="Path" MinWidth="250" Width="300" 
+                                         AllowDrop="True" Drop="Path_Drop" PreviewDragOver="Path_PreviewDragOver"></TextBox>
                                 <Label>↑にドロップすることで、項目を追加出来ます</Label>
                                 <StackPanel Orientation="Horizontal">
                                     <Label x:Name="Path_Label">1件の項目</Label>
-                                    <Button Margin="4" x:Name="Path_ClearButton">クリア</Button>
+                                    <Button Margin="4" x:Name="Path_ClearButton" Click="Path_ClearButton_Click">クリア</Button>
                                 </StackPanel>
                             </StackPanel>
                         </StackPanel>
                         <Line Style="{StaticResource SeparateLine}"></Line>
                         <!-- ページ番号 -->
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox x:Name="PfCheckBoxd_LastPageIndex" Style="{StaticResource ProfileCheckboxStyle}">ページ番号</CheckBox>
+                            <CheckBox x:Name="PfCheckBox_LastPageIndex" Style="{StaticResource ProfileCheckboxStyle}">ページ番号</CheckBox>
                             <cc:NumericUpDown x:Name="LastPageIndex" Width="65"></cc:NumericUpDown>
                         </StackPanel>
                     </StackPanel>

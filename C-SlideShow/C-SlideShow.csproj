@@ -113,8 +113,9 @@
     <Compile Include="CommonControl\NumericUpDown.xaml.cs">
       <DependentUpon>NumericUpDown.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserProfileInfo.cs" />
     <Compile Include="Util.cs" />
-    <Compile Include="VisualTreeUtil.cs" />
+    <Compile Include="WpfTreeUtil.cs" />
     <Compile Include="Win32.cs" />
     <Page Include="CommonControl\ColorPickerButton.xaml">
       <SubType>Designer</SubType>

@@ -34,9 +34,9 @@ namespace C_SlideShow
         //     プロパティ
         /* ---------------------------------------------------- */
         /// <summary>
-        /// 編集中のプロファイル(モードがEditの時のみ扱う)
+        /// 編集中のプロファイル情報(モードがEditの時のみ扱う)
         /// </summary>
-        public Profile EditingProfile { get; set; }
+        public UserProfileInfo EditingUserProfileInfo { get; set; }
 
         /// <summary>
         /// モード
@@ -46,7 +46,7 @@ namespace C_SlideShow
         /// <summary>
         /// 現在のプロファイルリスト
         /// </summary>
-        public List<Profile> ProfileList { get; set; }
+        public List<UserProfileInfo> UserProfileList { get; set; }
 
         /* ---------------------------------------------------- */
         //     コンストラクタ
@@ -115,11 +115,79 @@ namespace C_SlideShow
         }
 
         /// <summary>
+        /// プロファイルの「有効・無効」をチェックボックスへ入力
+        /// </summary>
+        private void SetProfileMembaersWhetherEnabled()
+        {
+            if(Mode == ProfileEditDialogMode.New )
+            {
+                // 新規作成の場合
+                //bool b = false;
+                WpfTreeUtil.OperateLogicalChildren(MainStackPanel, obj =>
+                {
+                    CheckBox cb = obj as CheckBox;
+                    if(cb != null )
+                    {
+                        //if( cb == this.PfCheckBox_AllowTransparency ) b = true;
+                        //if( b ) cb.IsChecked = false; // 「外観」以降にはチェックを入れない
+                        //else cb.IsChecked = true;
+
+                        cb.IsChecked = false;
+                    }
+                });
+            }
+            else if(Mode == ProfileEditDialogMode.Edit )
+            {
+                // 編集の場合
+                WpfTreeUtil.OperateLogicalChildren(MainStackPanel, obj =>
+                {
+                    CheckBox cb = obj as CheckBox;
+                    if(cb != null ) { cb.IsChecked = false; }
+                });
+
+                Profile pf = EditingUserProfileInfo.Profile;
+
+                if( pf.WindowPos.IsEnabled ) PfCheckBox_WinPos.IsChecked = true;
+                if( pf.WindowSize.IsEnabled ) PfCheckBox_WinSize.IsChecked = true;
+                if( pf.IsFullScreenMode.IsEnabled ) PfCheckBox_IsFullScreenMode.IsChecked = true;
+                if( pf.Path.IsEnabled ) PfCheckBox_Path.IsChecked = true;
+                if( pf.LastPageIndex.IsEnabled ) PfCheckBox_LastPageIndex.IsChecked = true;
+                if( pf.NumofMatrix.IsEnabled ) PfCheckBox_NumofMatrix.IsChecked = true;
+                if( pf.NonFixAspectRatio.IsEnabled ) PfCheckBox_FixAspectRatio.IsChecked = true;
+                if( pf.AspectRatio.IsEnabled ) PfCheckBox_AspectRatio.IsChecked = true;
+                if( pf.SlidePlayMethod.IsEnabled ) PfCheckBox_SlidePlayMethod.IsChecked = true;
+                if( pf.SlideDirection.IsEnabled ) PfCheckBox_SlideDirection.IsChecked = true;
+                if( pf.SlideSpeed.IsEnabled ) PfCheckBox_SlideSpeed.IsChecked = true;
+                if( pf.SlideInterval.IsEnabled ) PfCheckBox_SlideInterval.IsChecked = true;
+                if( pf.SlideTimeInIntevalMethod.IsEnabled ) PfCheckBox_SlideTimeInIntevalMethod.IsChecked = true;
+                if( pf.SlideByOneImage.IsEnabled ) PfCheckBox_SlideByOneImage.IsChecked = true;
+                if( pf.TopMost.IsEnabled ) PfCheckBox_TopMost.IsChecked = true;
+                if( pf.FileSortMethod.IsEnabled ) PfCheckBox_FileSortMethod.IsChecked = true;
+                if( pf.ApplyRotateInfoFromExif.IsEnabled ) PfCheckBox_ApplyRotateInfoFromExif.IsChecked = true;
+                if( pf.BitmapDecodeTotalPixel.IsEnabled ) PfCheckBox_BitmapDecodeTotalPixel.IsChecked = true;
+                if( pf.AllowTransparency.IsEnabled ) PfCheckBox_AllowTransparency.IsChecked = true;
+                if( pf.OverallOpacity.IsEnabled ) PfCheckBox_OverallOpacity.IsChecked = true;
+                if( pf.BackgroundOpacity.IsEnabled ) PfCheckBox_BackgroundOpacity.IsChecked = true;
+                if( pf.BaseGridBackgroundColor.IsEnabled ) PfCheckBox_BaseGridBackgroundColor.IsChecked = true;
+                if( pf.UsePlaidBackground.IsEnabled ) PfCheckBox_UsePlaidBackground.IsChecked = true;
+                if( pf.PairColorOfPlaidBackground.IsEnabled ) PfCheckBox_PairColorOfPlaidBackground.IsChecked = true;
+                if( pf.ResizeGripThickness.IsEnabled ) PfCheckBox_ResizeGripThickness.IsChecked = true;
+                if( pf.ResizeGripColor.IsEnabled ) PfCheckBox_ResizeGripColor.IsChecked = true;
+                if( pf.TilePadding.IsEnabled ) PfCheckBox_TilePadding.IsChecked = true;
+                if( pf.GridLineColor.IsEnabled ) PfCheckBox_GridLineColor.IsChecked = true;
+                if( pf.SeekbarColor.IsEnabled ) PfCheckBox_SeekbarColor.IsChecked = true;
+            }
+        }
+
+        /// <summary>
         /// プロファイルを読み込み、コントロールに値を代入
         /// </summary>
         /// <param name="pf"></param>
-        public void LoadProfile(Profile pf)
+        public void SetControlValue(Profile pf)
         {
+            // 有効・無効の反映
+            SetProfileMembaersWhetherEnabled();
+
             /* ---------------------------------------------------- */
             // ウインドウの状態
             /* ---------------------------------------------------- */
@@ -142,7 +210,7 @@ namespace C_SlideShow
             UpdatePathListView();
 
             // ページ番号
-            LastPageIndex.Value = pf.LastPageIndex.Value;
+            LastPageIndex.Value = pf.LastPageIndex.Value + 1;
 
             /* ---------------------------------------------------- */
             // 列数・行数
@@ -157,8 +225,16 @@ namespace C_SlideShow
             FixAspectRatio.SelectedIndex = pf.NonFixAspectRatio.Value ? 1 : 0;
 
             // アスペクト比
-            AspectRatioH.Value = pf.AspectRatio.H;
-            AspectRatioV.Value = pf.AspectRatio.V;
+            if(pf.AspectRatio.H > 99 || pf.AspectRatio.V > 99 )
+            {
+                AspectRatioH.Value = 4;
+                AspectRatioV.Value = 3;
+            }
+            else
+            {
+                AspectRatioH.Value = pf.AspectRatio.H;
+                AspectRatioV.Value = pf.AspectRatio.V;
+            }
 
             /* ---------------------------------------------------- */
             // スライド
@@ -284,17 +360,17 @@ namespace C_SlideShow
             /* ---------------------------------------------------- */
             // プロファイル名
             /* ---------------------------------------------------- */
+            Footer_ProfileName.Items.Clear();
             switch( Mode )
             {
                 case ProfileEditDialogMode.New:
                     Footer_ProfileName.Text = SuggestNewProfileName();
-                    Footer_ProfileName.Items.Clear();
-                    ProfileList.ForEach( p => Footer_ProfileName.Items.Add(p.Name) );
                     break;
                 case ProfileEditDialogMode.Edit:
-                    Footer_ProfileName.Text = EditingProfile.Name;
+                    Footer_ProfileName.Text = pf.Name;
                     break;
             }
+            UserProfileList.ForEach( pl => Footer_ProfileName.Items.Add(pl.Profile.Name) );
 
         }
 
@@ -304,7 +380,7 @@ namespace C_SlideShow
             while(cnt != int.MaxValue )
             {
                 string newName = "新規プロファイル" + cnt.ToString();
-                if( !ProfileList.Any(p => p.Name == newName) ) return newName;
+                if( !UserProfileList.Any(pl => pl.Profile.Name == newName) ) return newName;
                 cnt++;
             }
             return Guid.NewGuid ().ToString ("N").Substring(0, 12); // 適当な文字列
@@ -315,6 +391,11 @@ namespace C_SlideShow
         /// </summary>
         private void UpdatePathListView()
         {
+            // テキストボックス
+            if( editingPath.Count > 0 ) Path.Text = editingPath[0];
+            else Path.Text = "";
+
+            // ツールチップ
             string pathTooltip = "";
 
             for(int i=0; i<editingPath.Count; i++ )
@@ -330,12 +411,21 @@ namespace C_SlideShow
             }
             Path.ToolTip = pathTooltip;
             ToolTipService.SetShowDuration(Path, 1000000);
+
+            // ラベル
             Path_Label.Content = string.Format("{0}件の項目", editingPath.Count);
         }
 
         private Profile CreateProfile()
         {
             Profile pf = new Profile();
+
+            /* ---------------------------------------------------- */
+            // プロファイル名、タイプ、有効無効
+            /* ---------------------------------------------------- */
+            pf.Name = Footer_ProfileName.Text;
+            pf.ProfileType = ProfileType.User;
+
 
             /* ---------------------------------------------------- */
             // ウインドウの状態
@@ -372,10 +462,10 @@ namespace C_SlideShow
             }
 
             // ページ番号
-            if( (bool)PfCheckBoxd_LastPageIndex.IsChecked )
+            if( (bool)PfCheckBox_LastPageIndex.IsChecked )
             {
                 pf.LastPageIndex.IsEnabled = true;
-                pf.LastPageIndex.Value = LastPageIndex.Value;
+                pf.LastPageIndex.Value = LastPageIndex.Value - 1;
             }
 
             /* ---------------------------------------------------- */
@@ -614,14 +704,37 @@ namespace C_SlideShow
                 pf.SeekbarColor.Value = SeekbarColor.PickedColor;
             }
 
-            /* ---------------------------------------------------- */
-            // プロファイル名、タイプ
-            /* ---------------------------------------------------- */
-            pf.Name = Footer_ProfileName.Text;
-            pf.ProfileType = ProfileType.User;
 
             return pf;
             // End of method
+        }
+
+        /// <summary>
+        /// プロファイルリストに追加
+        /// </summary>
+        /// <param name="pf"></param>
+        /// <param name="index">上書きではない場合、リストのどの位置に追加するか(-1指定で末尾に追加)</param>
+        private void AddToUserProfileList(UserProfileInfo newUserProfileInfo, int index)
+        {
+            if( UserProfileList.Any( pl => pl.RelativePath == newUserProfileInfo.RelativePath) )
+            {
+                //　上書き
+                UserProfileInfo oldProfileInfo = UserProfileList.FirstOrDefault( pl => pl.RelativePath == newUserProfileInfo.RelativePath);
+                if(oldProfileInfo != null )
+                {
+                    index = UserProfileList.IndexOf(oldProfileInfo);
+                    UserProfileList.RemoveAt(index);
+                    UserProfileList.Insert(index, newUserProfileInfo);
+                    newUserProfileInfo.SaveProfileToXmlFile();
+                }
+            }
+            else
+            {
+                // 追加
+                if(index > -1) UserProfileList.Insert(index, newUserProfileInfo);
+                else UserProfileList.Add(newUserProfileInfo);
+                newUserProfileInfo.SaveProfileToXmlFile();
+            }
         }
 
         /* ---------------------------------------------------- */
@@ -631,6 +744,31 @@ namespace C_SlideShow
         {
             e.Cancel = true;
             this.Visibility = Visibility.Collapsed;
+        }
+
+
+        // ファイルパス テキストボックス
+        private void Path_Drop(object sender, DragEventArgs e)
+        {
+            string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+            this.editingPath.AddRange( files.ToList() );
+            UpdatePathListView();
+        }
+
+        private void Path_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, true))
+                e.Effects = DragDropEffects.All;
+            else
+                e.Effects = DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        // ファイルパス クリアボタン
+        private void Path_ClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.editingPath.RemoveRange(0, editingPath.Count);
+            UpdatePathListView();
         }
 
         // フッター
@@ -658,11 +796,16 @@ namespace C_SlideShow
 
         private void Footer_OK_Click(object sender, RoutedEventArgs e)
         {
+            // ファイル名に使用できない文字をアンダーバーに書き換え
+            Footer_ProfileName.Text = Util.ValidFileName(Footer_ProfileName.Text);
+
             Profile newProfile = CreateProfile();
+            UserProfileInfo newUserProfileInfo = new UserProfileInfo( newProfile.Name + ".xml" );
+            newUserProfileInfo.Profile = newProfile;
 
             // プロファイル名重複確認
             bool conflict = false;
-            if( ProfileList.Any( p => p.Name == newProfile.Name) )
+            if( UserProfileList.Any( pl => pl.RelativePath == newUserProfileInfo.RelativePath) )
             {
                 switch( Mode )
                 {
@@ -670,7 +813,7 @@ namespace C_SlideShow
                         conflict = true;
                         break;
                     case ProfileEditDialogMode.Edit:
-                        if( EditingProfile.Name == newProfile.Name ) conflict = false;
+                        if( EditingUserProfileInfo.RelativePath == newUserProfileInfo.RelativePath ) conflict = false;
                         else conflict = true;
                         break;
                 }
@@ -683,24 +826,21 @@ namespace C_SlideShow
             }
 
             // プロファイル追加or上書き
-            if( ProfileList.Any( p => p.Name == newProfile.Name) )
+            if(Mode == ProfileEditDialogMode.New )
             {
-                //　上書き
-                Profile oldProfile = ProfileList.FirstOrDefault( p => p.Name == newProfile.Name);
-                if(oldProfile != null )
-                {
-                    int idx = ProfileList.IndexOf(oldProfile);
-                    ProfileList.RemoveAt(idx);
-                    ProfileList.Insert(idx, newProfile);
-                }
+                AddToUserProfileList(newUserProfileInfo, -1);
             }
-            else
+            else if(Mode == ProfileEditDialogMode.Edit )
             {
-                // 追加
-                this.ProfileList.Add(newProfile);
+                // 編集前のプロファイルを削除
+                int editingProfileIndex = UserProfileList.IndexOf(EditingUserProfileInfo);
+                MainWindow.Current.RemoveUserProfileInfo(EditingUserProfileInfo);
+
+                AddToUserProfileList(newUserProfileInfo, editingProfileIndex);
             }
 
             this.Close();
         }
+
     }
 }

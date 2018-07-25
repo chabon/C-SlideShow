@@ -9,8 +9,9 @@ namespace C_SlideShow
     /// <summary>
     /// @ref http://tawamuredays.blog.fc2.com/blog-entry-82.html
     /// @ref http://blog.xin9le.net/entry/2013/10/29/222336
+    /// @ref https://magelixir.wordpress.com/2011/05/22/wpfallcontrols/
     /// </summary>
-    public static class VisualTreeUtil
+    public static class WpfTreeUtil
     {
 
         /// <summary>
@@ -88,6 +89,39 @@ namespace C_SlideShow
             where T : DependencyObject
         {
             return obj.Descendants().OfType<T>();
+        }
+
+
+
+        /// <summary>
+        /// targetの論理ツリー上の子要素全てに対してactionを実行します。
+        /// actionはtarget自身にも作用する。再帰処理なのでスタックフレームに注意。
+        /// </summary>
+        /// <param name="target">ルートとするオブジェクト</param>
+        /// <param name="action">実行するメソッドのデリゲート</param>
+        public static void OperateLogicalChildren(DependencyObject target, Action<DependencyObject> action)
+        {
+            action(target);
+            foreach(var child in LogicalTreeHelper.GetChildren(target))
+            {
+                if (child is DependencyObject)
+                {
+                    OperateLogicalChildren((DependencyObject)child, action);
+                }
+            }
+        }
+     
+        /// <summary>targetの論理ツリー内での階層を返す</summary>
+        public static int GetDepthInLogicalTree(DependencyObject target)
+        {
+            DependencyObject parent = LogicalTreeHelper.GetParent(target);
+            int depth = 0;
+            while (parent != null)
+            {
+                depth++;
+                parent = LogicalTreeHelper.GetParent(parent);
+            }
+            return depth;
         }
     }
 }
