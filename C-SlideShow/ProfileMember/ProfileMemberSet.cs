@@ -291,6 +291,23 @@ namespace C_SlideShow.ProfileMember
         }
     }
 
+    public class SlideShowAutoStart : ProfileMemberBase
+    {
+        public SlideShowAutoStart()
+        {
+            this.Value = false;
+            IsEnabled  = false;
+        }
+
+        public new bool Value { get; set; }
+
+        public override string TooltipStr
+        {
+            get { return "自動でスライドショーを開始: " + (this.Value ? "する" : "しない"); }
+        }
+
+    }
+
     /* ---------------------------------------------------- */
     //     その他の設定_全般
     /* ---------------------------------------------------- */

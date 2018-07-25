@@ -123,6 +123,8 @@ namespace C_SlideShow
         [DataMember]
         public ProfileMember.SlideByOneImage SlideByOneImage { get; set; } = new ProfileMember.SlideByOneImage();
 
+        [DataMember]
+        public ProfileMember.SlideShowAutoStart SlideShowAutoStart { get; set; } = new ProfileMember.SlideShowAutoStart();
 
         // その他の設定_全般
         [DataMember]
@@ -189,7 +191,7 @@ namespace C_SlideShow
         [OnDeserializing]
         public void DefaultDeserializing(StreamingContext sc)
         {
-
+            this.SlideShowAutoStart = new ProfileMember.SlideShowAutoStart();
         }
 
 
@@ -220,6 +222,7 @@ namespace C_SlideShow
             if( pf.SlideDirection.IsEnabled )           SlideDirection.Value = pf.SlideDirection.Value;
             if( pf.SlideTimeInIntevalMethod.IsEnabled ) SlideTimeInIntevalMethod.Value = pf.SlideTimeInIntevalMethod.Value;
             if( pf.SlideByOneImage.IsEnabled )          SlideByOneImage.Value = pf.SlideByOneImage.Value;
+            if( pf.SlideShowAutoStart.IsEnabled )       SlideShowAutoStart.Value = pf.SlideShowAutoStart.Value;
 
             // その他の設定_全般
             if( pf.FileSortMethod.IsEnabled )          FileSortMethod.Value = pf.FileSortMethod.Value;
@@ -299,6 +302,7 @@ namespace C_SlideShow
             newProfile.SlideDirection.Value = this.SlideDirection.Value;
             newProfile.SlideTimeInIntevalMethod.Value = this.SlideTimeInIntevalMethod.Value;
             newProfile.SlideByOneImage.Value = this.SlideByOneImage.Value;
+            newProfile.SlideShowAutoStart.Value = this.SlideShowAutoStart.Value;
 
             // その他の設定_全般
             newProfile.FileSortMethod.Value = this.FileSortMethod.Value;

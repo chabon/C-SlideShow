@@ -201,6 +201,9 @@ namespace C_SlideShow
             {
                 ignoreResizeEvent = false;
             };
+
+            // 自動再生
+            if( pf.SlideShowAutoStart.Value ) StartSlideShow();
         }
 
         private void InitControls()
@@ -278,7 +281,10 @@ namespace C_SlideShow
             // 透過有効
             if( tp.AllowTransparency.Value != this.AllowsTransparency)
             {
-                ApplyAllowTransparency(false); // InitMainWindow()でプロファイル適用
+                this.ignoreClosingEvent = true;
+                MainWindow mw = new MainWindow(this.Setting);
+                mw.Show(); // InitMainWindow()でプロファイル適用
+                this.Close();
                 return; 
             }
 
@@ -305,7 +311,7 @@ namespace C_SlideShow
             else
             {
                 this.WaitingMessageBase.Visibility = Visibility.Visible;
-                if( userProfile.FileSortMethod.IsEnabled ) Sort(); // ファイルは読み込まずにソート
+                if( userProfile.FileSortMethod.IsEnabled ) SortOnFileLoaded(); // ファイルは読み込まずにソート
                 InitMainContent(tp.LastPageIndex.Value);
             }
             
@@ -330,6 +336,9 @@ namespace C_SlideShow
                     ToggleFullScreen();
                 }
             }
+
+            // 自動再生
+            if( tp.SlideShowAutoStart.Value ) StartSlideShow();
         }
 
 
@@ -442,7 +451,7 @@ namespace C_SlideShow
             }
 
             // ソート
-            if( !isAddition ) Sort();
+            if( !isAddition ) SortOnFileLoaded();
 
             // ヒストリーに追加
             imageFileManager.Archivers.Where(a1 => a1.LeaveHistory).ToList().ForEach( a2 => 
@@ -462,7 +471,7 @@ namespace C_SlideShow
             }
         }
 
-        private void Sort()
+        private void SortOnFileLoaded()
         {
             if( imageFileManager.Archivers.Count == 1 && Directory.Exists(imageFileManager.Archivers[0].ArchiverPath) && Setting.TempProfile.FileSortMethod.Value == FileSortMethod.FileName)
             {
@@ -1006,16 +1015,14 @@ namespace C_SlideShow
             this.MainContent.LayoutTransform = new ScaleTransform(zoomFactor, zoomFactor);
         }
 
-        public void ApplyAllowTransparency(bool bSavePageIndex)
+        public void ApplyAllowTransparency()
         {
             if (this.AllowsTransparency == Setting.TempProfile.AllowTransparency.Value) return;
 
-            this.ignoreClosingEvent = true;
-
-            SaveWindowRect();
-            if(bSavePageIndex) Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
+            UpdateTempProfile();
             MainWindow mw = new MainWindow(this.Setting);
 
+            this.ignoreClosingEvent = true;
             mw.Show();
             this.Close();
         }
@@ -1078,6 +1085,8 @@ namespace C_SlideShow
         {
             SaveWindowRect();
             Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
+            if( IsPlaying ) Setting.TempProfile.SlideShowAutoStart.Value = true;
+            else Setting.TempProfile.SlideShowAutoStart.Value = false;
         }
 
         public void SortAllImage(FileSortMethod order)

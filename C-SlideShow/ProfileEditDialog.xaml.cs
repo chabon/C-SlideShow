@@ -147,30 +147,40 @@ namespace C_SlideShow
 
                 Profile pf = EditingUserProfileInfo.Profile;
 
+                // ウインドウの状態
                 if( pf.WindowPos.IsEnabled ) PfCheckBox_WinPos.IsChecked = true;
                 if( pf.WindowSize.IsEnabled ) PfCheckBox_WinSize.IsChecked = true;
                 if( pf.IsFullScreenMode.IsEnabled ) PfCheckBox_IsFullScreenMode.IsChecked = true;
+                // 読み込み
                 if( pf.Path.IsEnabled ) PfCheckBox_Path.IsChecked = true;
                 if( pf.LastPageIndex.IsEnabled ) PfCheckBox_LastPageIndex.IsChecked = true;
+                // 列数・行数
                 if( pf.NumofMatrix.IsEnabled ) PfCheckBox_NumofMatrix.IsChecked = true;
+                // グリッドのアスペクト比
                 if( pf.NonFixAspectRatio.IsEnabled ) PfCheckBox_FixAspectRatio.IsChecked = true;
                 if( pf.AspectRatio.IsEnabled ) PfCheckBox_AspectRatio.IsChecked = true;
+                // スライド
                 if( pf.SlidePlayMethod.IsEnabled ) PfCheckBox_SlidePlayMethod.IsChecked = true;
                 if( pf.SlideDirection.IsEnabled ) PfCheckBox_SlideDirection.IsChecked = true;
+                // スライドショー詳細
                 if( pf.SlideSpeed.IsEnabled ) PfCheckBox_SlideSpeed.IsChecked = true;
                 if( pf.SlideInterval.IsEnabled ) PfCheckBox_SlideInterval.IsChecked = true;
                 if( pf.SlideTimeInIntevalMethod.IsEnabled ) PfCheckBox_SlideTimeInIntevalMethod.IsChecked = true;
                 if( pf.SlideByOneImage.IsEnabled ) PfCheckBox_SlideByOneImage.IsChecked = true;
+                if( pf.SlideShowAutoStart.IsEnabled ) PfCheckBox_SlideShowAutoStart.IsChecked = true;
+                // その他/全般
                 if( pf.TopMost.IsEnabled ) PfCheckBox_TopMost.IsChecked = true;
                 if( pf.FileSortMethod.IsEnabled ) PfCheckBox_FileSortMethod.IsChecked = true;
                 if( pf.ApplyRotateInfoFromExif.IsEnabled ) PfCheckBox_ApplyRotateInfoFromExif.IsChecked = true;
                 if( pf.BitmapDecodeTotalPixel.IsEnabled ) PfCheckBox_BitmapDecodeTotalPixel.IsChecked = true;
+                // その他/外観1
                 if( pf.AllowTransparency.IsEnabled ) PfCheckBox_AllowTransparency.IsChecked = true;
                 if( pf.OverallOpacity.IsEnabled ) PfCheckBox_OverallOpacity.IsChecked = true;
                 if( pf.BackgroundOpacity.IsEnabled ) PfCheckBox_BackgroundOpacity.IsChecked = true;
                 if( pf.BaseGridBackgroundColor.IsEnabled ) PfCheckBox_BaseGridBackgroundColor.IsChecked = true;
                 if( pf.UsePlaidBackground.IsEnabled ) PfCheckBox_UsePlaidBackground.IsChecked = true;
                 if( pf.PairColorOfPlaidBackground.IsEnabled ) PfCheckBox_PairColorOfPlaidBackground.IsChecked = true;
+                // その他/外観2
                 if( pf.ResizeGripThickness.IsEnabled ) PfCheckBox_ResizeGripThickness.IsChecked = true;
                 if( pf.ResizeGripColor.IsEnabled ) PfCheckBox_ResizeGripColor.IsChecked = true;
                 if( pf.TilePadding.IsEnabled ) PfCheckBox_TilePadding.IsChecked = true;
@@ -275,7 +285,8 @@ namespace C_SlideShow
             // 画像一枚ずつスライド
             SlideByOneImage.SelectedIndex = pf.SlideByOneImage.Value ? 0 : 1;
 
-            // [todo] 自動再生
+            // 自動再生
+            SlideShowAutoStart.SelectedIndex = pf.SlideShowAutoStart.Value ? 0 : 1;
 
             /* ---------------------------------------------------- */
             // その他/全般
@@ -556,7 +567,12 @@ namespace C_SlideShow
                 pf.SlideByOneImage.Value = SlideByOneImage.SelectedIndex == 0 ? true : false;
             }
 
-            // [todo] 自動再生
+            // 自動再生
+            if( (bool)PfCheckBox_SlideShowAutoStart.IsChecked )
+            {
+                pf.SlideShowAutoStart.IsEnabled = true;
+                pf.SlideShowAutoStart.Value = SlideShowAutoStart.SelectedIndex == 0 ? true : false;
+            }
 
             /* ---------------------------------------------------- */
             // その他/全般

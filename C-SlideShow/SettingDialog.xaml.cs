@@ -135,7 +135,7 @@ namespace C_SlideShow
             else
                 Setting.TempProfile.AllowTransparency.Value = false;
 
-            mainWindow.ApplyAllowTransparency(true);
+            mainWindow.ApplyAllowTransparency();
         }
 
         // 画像の不透明度

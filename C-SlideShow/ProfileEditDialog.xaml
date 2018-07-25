@@ -190,11 +190,12 @@
                                 <ComboBoxItem>させない</ComboBoxItem>
                             </ComboBox>
                         </StackPanel>
-                        <!-- 自動再生 (保留)-->
-                        <StackPanel Orientation="Horizontal" Visibility="Collapsed">
-                            <CheckBox Style="{StaticResource ProfileCheckboxStyle}">自動再生</CheckBox>
-                            <Label>読み込み後、スライドショーを開始</Label>
-                            <ComboBox Width="60" SelectedIndex="0">
+                        <Line Style="{StaticResource SeparateLine}"></Line>
+                        <!-- 自動再生 -->
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="PfCheckBox_SlideShowAutoStart" Style="{StaticResource ProfileCheckboxStyle}">自動再生</CheckBox>
+                            <Label>読み込み後、自動でスライドショーを開始</Label>
+                            <ComboBox x:Name="SlideShowAutoStart" Width="60" SelectedIndex="0">
                                 <ComboBoxItem>する</ComboBoxItem>
                                 <ComboBoxItem>しない</ComboBoxItem>
                             </ComboBox>
