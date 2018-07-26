@@ -75,6 +75,17 @@ namespace C_SlideShow
             }
         }
 
+        public ImageFileInfo CurrentImageFileInfo
+        {
+            get
+            {
+                if( ImgFileInfo.Count > 0 && CurrentIndex < ImgFileInfo.Count )
+                    return ImgFileInfo[CurrentIndex];
+                else
+                    return null;
+            }
+        }
+
         public bool IsCurrentIndexDummy
         {
             get

@@ -139,7 +139,7 @@ namespace C_SlideShow
             this.Closing += (s, e) =>
             {
                 if( ignoreClosingEvent ) return;
-                SavePageIndexToHistory();
+                SaveHistoryItem();
                 Setting.SettingDialogTabIndex = settingDialog.MainTabControl.SelectedIndex;
                 UpdateTempProfile();
                 Setting.saveToXmlFile();
@@ -160,7 +160,10 @@ namespace C_SlideShow
                 this.WaitingMessageBase.Visibility = Visibility.Visible;
                 this.WaitingMessageBase.Refresh();
 
+                SaveHistoryItem();
+
                 string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
+
                 if( IsCtrlOrShiftKeyPressed )
                 {
                     // 追加読み込み
@@ -169,7 +172,15 @@ namespace C_SlideShow
                 else
                 {
                     // 通常読み込み
-                    ReadFilesAndInitMainContent(files, false,  LoadPageIndexFromHistory() );
+                    if( Setting.EnabledItemsInHistory.ArchiverPath && files.Length == 1 && Setting.History.Any( hi => hi.ArchiverPath ==  files[0]))
+                    {
+                        // 履歴に存在する場合
+                        LoadHistory(files[0]);
+                    }
+                    else
+                    {
+                        ReadFilesAndInitMainContent(files, false, 0);
+                    }
                 }
             };
 
@@ -433,6 +444,8 @@ namespace C_SlideShow
             cmi1.Header = "追加読み込み";
             cmi2.Header = "外部プログラムで開く";
             cmi3.Header = "外部プログラムで親フォルダを開く";
+
+            // 追加読み込み
             cmi1.Click += (se, ev) =>
             {
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
@@ -441,6 +454,8 @@ namespace C_SlideShow
                 string[] path = { mi.ToolTip.ToString() };
                 ReadFilesAndInitMainContent(path, true, 0);
             };
+
+            // 外部プログラムで開く
             cmi2.Click += (se, ev) =>
             {
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
@@ -449,6 +464,8 @@ namespace C_SlideShow
                 string path = mi.ToolTip.ToString();
                 Process.Start(path);
             };
+
+            // 外部プログラムで親フォルダを開く
             cmi3.Click += (se, ev) =>
             {
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
@@ -469,8 +486,8 @@ namespace C_SlideShow
                 if(i < Setting.History.Count )
                 {
                     MenuItem mi = new MenuItem();
-                    mi.Header = System.IO.Path.GetFileName( Setting.History[i].Path );
-                    mi.ToolTip = Setting.History[i].Path;
+                    mi.Header = System.IO.Path.GetFileName( Setting.History[i].ArchiverPath );
+                    mi.ToolTip = Setting.History[i].ArchiverPath;
                     mi.Click += OnHistoryItemSelected;
                     mi.ContextMenu = contextMenu;
                     MenuItem_Load.Items.Add(mi);
@@ -487,8 +504,8 @@ namespace C_SlideShow
                 for( int i = numofMainHistory; i < Setting.History.Count; i++ )
                 {
                     MenuItem mi = new MenuItem();
-                    mi.Header = System.IO.Path.GetFileName(Setting.History[i].Path);
-                    mi.ToolTip = Setting.History[i].Path;
+                    mi.Header = System.IO.Path.GetFileName(Setting.History[i].ArchiverPath);
+                    mi.ToolTip = Setting.History[i].ArchiverPath;
                     mi.Click += OnHistoryItemSelected;
                     mi.ContextMenu = contextMenu;
                     continuation.Items.Add(mi);
@@ -502,8 +519,8 @@ namespace C_SlideShow
             MenuItem miSrc = e.OriginalSource as MenuItem;
             if( miSrc == null ) return;
 
-            string[] path = { miSrc.ToolTip.ToString() };
-            ReadFilesAndInitMainContent(path, false,  LoadPageIndexFromHistory() );
+            SaveHistoryItem();
+            LoadHistory( miSrc.ToolTip.ToString() );
         }
         
 
@@ -514,8 +531,18 @@ namespace C_SlideShow
             dlg.Description = "画像フォルダーを選択してください。";
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                string[] path = { dlg.SelectedPath };
-                ReadFilesAndInitMainContent(path, false,  LoadPageIndexFromHistory() );
+                SaveHistoryItem();
+
+                if( Setting.EnabledItemsInHistory.ArchiverPath && Setting.History.Any( hi => hi.ArchiverPath ==  dlg.SelectedPath) )
+                {
+                    // 履歴に存在する場合
+                    LoadHistory(dlg.SelectedPath);
+                }
+                else
+                {
+                    string[] path = { dlg.SelectedPath };
+                    ReadFilesAndInitMainContent(path, false, 0);
+                }
             }
         }
 
@@ -528,7 +555,17 @@ namespace C_SlideShow
 
             if (ofd.ShowDialog() == Forms.DialogResult.OK)
             {
-                ReadFilesAndInitMainContent(ofd.FileNames, false,  LoadPageIndexFromHistory() );
+                SaveHistoryItem();
+
+                if( Setting.EnabledItemsInHistory.ArchiverPath && ofd.FileNames.Length == 1 && Setting.History.Any( hi => hi.ArchiverPath == ofd.FileNames[0]) )
+                {
+                    // 履歴に存在する場合
+                    LoadHistory(ofd.FileNames[0]);
+                }
+                else
+                {
+                    ReadFilesAndInitMainContent(ofd.FileNames, false, 0);
+                }
             }
         }
 

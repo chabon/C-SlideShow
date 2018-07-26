@@ -15,7 +15,7 @@ namespace C_SlideShow
 {
     public enum SlideDirection
     {
-        Left, Top, Right, Bottom
+        Left, Top, Right, Bottom, None
     }
 
     public enum TileOrigin

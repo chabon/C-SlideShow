@@ -16,17 +16,45 @@ namespace C_SlideShow
     [DataContract(Name = "HistoryItem")]
     public class HistoryItem
     {
-        public HistoryItem(string path, int index)
+        public HistoryItem(string archverPath)
         {
-            Path = path;
-            Index = index;
+            ArchiverPath = archverPath;
         }
 
         [DataMember]
-        public string Path { get; set; }
+        public string ArchiverPath { get; set; }
 
         [DataMember]
-        public int Index { get; set; }
+        public string ImagePath { get; set; } = null;
+
+        [DataMember]
+        public int[] AspectRatio { get; set; } = null;
+
+        [DataMember]
+        public int[] Matrix { get; set; } = null;
+
+        [DataMember]
+        public SlideDirection SlideDirection { get; set; } = SlideDirection.None;
+    }
+
+    // 履歴に残す項目
+    [DataContract(Name = "EnabledItemsInHistory")]
+    public class EnabledItemsInHistory
+    {
+        [DataMember]
+        public bool ArchiverPath { get; set; } = true;
+
+        [DataMember]
+        public bool ImagePath { get; set; } = true;
+
+        [DataMember]
+        public bool AspectRatio { get; set; } = true;
+
+        [DataMember]
+        public bool Matrix { get; set; } = true;
+
+        [DataMember]
+        public bool SlideDirection { get; set; } = true;
     }
 
 
@@ -54,7 +82,7 @@ namespace C_SlideShow
         public int NumofHistory { get; set; }
 
         [DataMember]
-        public bool SaveLastPageIndexToHistory { get; set; }
+        public EnabledItemsInHistory EnabledItemsInHistory { get; set; }
 
         [DataMember]
         public int SettingDialogTabIndex { get; set; }
@@ -68,7 +96,7 @@ namespace C_SlideShow
             UserProfileList = new List<UserProfileInfo>();
             History = new List<HistoryItem>();
             NumofHistory = 30;
-            SaveLastPageIndexToHistory = true;
+            EnabledItemsInHistory = new EnabledItemsInHistory();
             SettingDialogTabIndex = 0;
         }
 

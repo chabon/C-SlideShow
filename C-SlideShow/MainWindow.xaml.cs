@@ -153,11 +153,11 @@ namespace C_SlideShow
             InitializeComponent();
 
             // debug
-            //Setting.TempProfile.TilePadding = 3;
-            //this.TileContainer1.PreviewMouseDoubleClick += (s, e) =>
-            //{
-            //    MessageBox.Show("hoge");
-            //};
+            //Setting.EnabledItemsInHistory = new EnabledItemsInHistory();
+            //Setting.EnabledItemsInHistory.ImagePath = true;
+            //Setting.EnabledItemsInHistory.Matrix = true;
+            //Setting.EnabledItemsInHistory.SlideDirection = true;
+            //Setting.EnabledItemsInHistory.AspectRatio = true;
 
             // init
             InitControls();
@@ -187,7 +187,7 @@ namespace C_SlideShow
             // 背景色と不透明度
             ApplyColorAndOpacitySetting();
 
-            // UI設定
+            // UI設定( UpdateMainWindowView()も実行される )
             UpdateUI();
 
             // ツールバーの見た目
@@ -265,16 +265,18 @@ namespace C_SlideShow
             // 統合前のTempProfileの設定値
             bool before_IsFullScreenMode = Setting.TempProfile.IsFullScreenMode.Value;
 
+            // 読み込む前のファイルの履歴情報を保存
+            SaveHistoryItem();
+
             // TempProfileに統合
             UpdateTempProfile();
             Setting.TempProfile.Marge(userProfile);
 
             Profile tp = Setting.TempProfile;
 
-            // ファイルを読み込む場合は、ページ番号は初期化(有効時は除く)、読み込む前のファイルのページ番号履歴は保存
+            // ファイルを読み込む場合は、ページ番号は初期化(有効時は除く)
             if( userProfile.Path.IsEnabled && !userProfile.LastPageIndex.IsEnabled )
             {
-                SavePageIndexToHistory();
                 tp.LastPageIndex.Value = 0; 
             }
 
@@ -426,7 +428,6 @@ namespace C_SlideShow
             else
             {
                 // 追加じゃない場合、色々クリア
-                SavePageIndexToHistory(); // クリア前にページ番号保存
                 pf.Path.Value.Clear();
                 imageFileManager.ClearFileInfo();
                 tileContainers.ForEach( tc => tc.ClearAllTileImage() );
@@ -454,15 +455,18 @@ namespace C_SlideShow
             if( !isAddition ) SortOnFileLoaded();
 
             // ヒストリーに追加
-            imageFileManager.Archivers.Where(a1 => a1.LeaveHistory).ToList().ForEach( a2 => 
+            if( Setting.EnabledItemsInHistory.ArchiverPath )
             {
-                HistoryItem hiOld = Setting.History.FirstOrDefault( h => h.Path == a2.ArchiverPath );
-                Setting.History.RemoveAll(h => h.Path == a2.ArchiverPath);
-                if(hiOld != null)
-                    Setting.History.Insert( 0, hiOld );
-                else
-                    Setting.History.Insert( 0, new HistoryItem(a2.ArchiverPath, 0) );
-            });
+                imageFileManager.Archivers.Where(a1 => a1.LeaveHistory).ToList().ForEach( a2 => 
+                {
+                    HistoryItem hiOld = Setting.History.FirstOrDefault( h => h.ArchiverPath == a2.ArchiverPath );
+                    Setting.History.RemoveAll(h => h.ArchiverPath == a2.ArchiverPath);
+                    if(hiOld != null)
+                        Setting.History.Insert( 0, hiOld );
+                    else
+                        Setting.History.Insert( 0, new HistoryItem(a2.ArchiverPath) );
+                });
+            }
 
             // ヒストリー上限超えを削除
             if(Setting.History.Count > Setting.NumofHistory )
@@ -690,15 +694,7 @@ namespace C_SlideShow
 
             InitMainContent(imageFileManager.CurrentIndex);
 
-            if ( Setting.TempProfile.IsFullScreenMode.Value )
-            {
-                UpdateFullScreenView();
-            }
-            else
-            {
-                UpdateWindowSize();
-                FitMainContentToWindow();
-            }
+            UpdateMainWindowView();
         }
 
         private void ChangeAspectRatio(int h, int v)
@@ -707,15 +703,7 @@ namespace C_SlideShow
             InitMainContent(imageFileManager.CurrentIndex);
             UpdateToolbarViewing();
 
-            if ( Setting.TempProfile.IsFullScreenMode.Value )
-            {
-                UpdateFullScreenView();
-            }
-            else
-            {
-                UpdateWindowSize();
-                FitMainContentToWindow();
-            }
+            UpdateMainWindowView();
         }
 
         public void ChangeCurrentImageIndex(int index)
@@ -742,6 +730,19 @@ namespace C_SlideShow
         {
             double zoomFactor = (this.Width - MainContent.Margin.Left * 2 ) / this.tileContainers[0].Width;
             this.MainContent.LayoutTransform = new ScaleTransform(zoomFactor, zoomFactor);
+        }
+
+        public void UpdateMainWindowView()
+        {
+            if ( Setting.TempProfile.IsFullScreenMode.Value )
+            {
+                UpdateFullScreenView();
+            }
+            else
+            {
+                UpdateWindowSize();
+                FitMainContentToWindow();
+            }
         }
 
         public void UpdateWindowSize()
@@ -802,15 +803,7 @@ namespace C_SlideShow
                 tc.InitWrapPoint();
             }
 
-            if ( (bool)Setting.TempProfile.IsFullScreenMode.Value )
-            {
-                UpdateFullScreenView();
-            }
-            else
-            {
-                UpdateWindowSize();
-                FitMainContentToWindow();
-            }
+            UpdateMainWindowView();
         }
 
         public void UpdateUI()
@@ -821,15 +814,7 @@ namespace C_SlideShow
             this.ResizeGrip.BorderBrush = new SolidColorBrush(pf.ResizeGripColor.Value);
             this.Seekbar.Foreground = new SolidColorBrush(pf.SeekbarColor.Value);
 
-            if (Setting.TempProfile.IsFullScreenMode.Value)
-            {
-                UpdateFullScreenView();
-            }
-            else
-            {
-                UpdateWindowSize();
-                FitMainContentToWindow();
-            }
+            UpdateMainWindowView();
         }
 
         public void UpdateToolbarViewing()
@@ -925,8 +910,7 @@ namespace C_SlideShow
                 Setting.TempProfile.IsFullScreenMode.Value = false;
                 FullScreenBase_TopLeft.Visibility = Visibility.Hidden;
                 FullScreenBase_BottomRight.Visibility = Visibility.Hidden;
-                UpdateWindowSize();
-                FitMainContentToWindow();
+                UpdateMainWindowView();
 
                 // システムアイコン変更
                 SystemButton_Maximize_Image.Source = 
@@ -1145,46 +1129,90 @@ namespace C_SlideShow
             }
 
             // 画面更新
-            if (Setting.TempProfile.IsFullScreenMode.Value)
-            {
-                UpdateFullScreenView();
-            }
-            else
-            {
-                UpdateWindowSize();
-                FitMainContentToWindow();
-            }
+            UpdateMainWindowView();
         }
 
-        public void SavePageIndexToHistory()
+        public void SaveHistoryItem()
         {
-            if( !Setting.SaveLastPageIndexToHistory ) return;
+            EnabledItemsInHistory ei = Setting.EnabledItemsInHistory;
+            if( !ei.ImagePath && !ei.Matrix && !ei.SlideDirection ) return;
 
+            // アーカイバが１つの時だけ保存
             if( imageFileManager.IsSingleArchiver && imageFileManager.Archivers[0].LeaveHistory )
             {
-                HistoryItem hi = Setting.History.FirstOrDefault( h => h.Path == imageFileManager.Archivers[0].ArchiverPath );
+                HistoryItem hi = Setting.History.FirstOrDefault( h => h.ArchiverPath == imageFileManager.Archivers[0].ArchiverPath );
                 if(hi != null )
                 {
-                    hi.Index = imageFileManager.CurrentIndex;
+                    // 最後に読み込んだ画像のパス(並び順に依らないページ番号復元用)
+                    if( ei.ImagePath )
+                    {
+                        ImageFileInfo ifi = imageFileManager.CurrentImageFileInfo;
+                        if( ifi != null ) hi.ImagePath = imageFileManager.CurrentImageFileInfo.FilePath;
+                        else hi.ImagePath = null;
+                    }
+                    // アス比
+                    if(ei.AspectRatio)
+                        hi.AspectRatio = new int[] { Setting.TempProfile.AspectRatio.H, Setting.TempProfile.AspectRatio.V };
+                    // 行列
+                    if( ei.Matrix )
+                        hi.Matrix = new int[] { Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row };
+                    // スライド方向
+                    if( ei.SlideDirection )
+                        hi.SlideDirection = Setting.TempProfile.SlideDirection.Value;
                 }
             }
         }
 
-        public int LoadPageIndexFromHistory()
+        public void LoadHistory(string path)
         {
-            if( !Setting.SaveLastPageIndexToHistory ) return 0;
-            if( !imageFileManager.IsSingleArchiver ) return 0;
+            EnabledItemsInHistory ei = Setting.EnabledItemsInHistory;
+            HistoryItem hi = Setting.History.FirstOrDefault( h => h.ArchiverPath == path );
+            Profile pf = Setting.TempProfile;
 
-            ArchiverBase archiver = imageFileManager.Archivers[0];
-            if( archiver == null ) return 0;
+            if(  hi != null && ( Directory.Exists(path) || File.Exists(path) )  )
+            {
+                // ファイル情報読み込み
+                ReadFiles(new string[]{ hi.ArchiverPath }, false);
 
-            string path = archiver.ArchiverPath;
-            int index = 0;
+                // 最後に読み込んだ画像(ページ番号)
+                pf.LastPageIndex.Value = 0;
+                if( ei.ImagePath && hi.ImagePath != null)
+                {
+                    ImageFileInfo lastImageInfo = imageFileManager.ImgFileInfo.FirstOrDefault( ifi => ifi.FilePath == hi.ImagePath );
+                    if( lastImageInfo != null )
+                    {
+                        pf.LastPageIndex.Value = imageFileManager.ImgFileInfo.IndexOf(lastImageInfo);
+                    }
+                }
+                // アス比
+                if( ei.AspectRatio && hi.AspectRatio != null )
+                {
+                    Array.Copy(hi.AspectRatio, pf.AspectRatio.Value, pf.AspectRatio.Value.Length);
+                }
 
-            HistoryItem hi = Setting.History.FirstOrDefault( h => h.Path == path );
-            if( hi != null ) index = hi.Index;
+                // 行列設定
+                if( ei.Matrix && hi.Matrix != null )
+                {
+                    Array.Copy(hi.Matrix, pf.NumofMatrix.Value, pf.NumofMatrix.Value.Length);
+                }
 
-            return index;
+                // スライド方向
+                if( ei.SlideDirection && !(hi.SlideDirection == SlideDirection.None) )
+                {
+                    pf.SlideDirection.Value = hi.SlideDirection;
+                }
+
+                this.WaitingMessageBase.Visibility = Visibility.Visible; 
+                this.WaitingMessageBase.Refresh();
+
+                InitMainContent(pf.LastPageIndex.Value);
+
+                // 更新
+                UpdateMainWindowView();
+                UpdateToolbarViewing();
+
+                this.WaitingMessageBase.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void ShowProfileEditDialog(ProfileEditDialogMode mode, UserProfileInfo targetUseProfileInfo)
