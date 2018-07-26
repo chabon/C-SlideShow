@@ -358,7 +358,7 @@ namespace C_SlideShow
 
         private void InitMainContent(int firstIndex)
         {
-            if(tileContainers.Any( tc => tc.IsActiveSliding || tc.IsContinuousSliding))
+            if( IsPlaying || tileContainers.Any(tc => tc.IsActiveSliding) )
                 StopSlideShow();
 
             // profile
