@@ -108,6 +108,8 @@ namespace C_SlideShow
         // スライド方法
         private void SlidePlayMethod_Click(object sender, RoutedEventArgs e)
         {
+            bool b = mainWindow.IsPlaying;
+
             if ((bool)SlidePlayMethod_Continuous.IsChecked)
             {
                 Setting.TempProfile.SlidePlayMethod.Value = SlidePlayMethod.Continuous;
@@ -120,6 +122,8 @@ namespace C_SlideShow
             mainWindow.StopSlideShow();
             mainWindow.UpdateToolbarViewing();
             UpdateDlgShowing();
+
+            if( b ) mainWindow.StartSlideShow(); // 方法を変えても、スライドしてたら継続
         }
 
         // 速度
