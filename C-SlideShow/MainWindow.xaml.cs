@@ -792,10 +792,11 @@ namespace C_SlideShow
             foreach(TileContainer tc in tileContainers)
             {
                 tc.InitGridLineColor( (Color)pf.GridLineColor.Value );
-                //tc.InitSize(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+                tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
                 //tc.InitSizeAndPos(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
             }
 
+            // 現在表示中の画像をそのままに、コンテナの位置を初期化する
             ChangeCurrentImageIndex(imageFileManager.CurrentIndex);
 
             foreach(TileContainer tc in tileContainers)
