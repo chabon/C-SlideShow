@@ -126,12 +126,12 @@ namespace C_SlideShow
             //w = pixelSize / numofCol;
             //h = pixelSize / numofRow;
 
-            if( numofRow > numofCol )
+            if( numofRow > numofCol ) // 行が多い(横3x縦4等)
             {
                 h = pixelSize / numofRow;
                 w = (int)(h / TileAspectRatio);
             }
-            else
+            else // 列が多い(書籍の横2x縦1等)
             {
                 w = pixelSize / numofCol;
                 h = (int)(w * TileAspectRatio);

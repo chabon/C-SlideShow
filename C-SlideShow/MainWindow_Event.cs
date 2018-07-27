@@ -101,7 +101,7 @@ namespace C_SlideShow
                     }
 
                     // 1タイルのバックバッファサイズを更新
-                    TileContainer.TileAspectRatio = pf.AspectRatio.V / pf.AspectRatio.H;
+                    TileContainer.TileAspectRatio = (double)pf.AspectRatio.V / pf.AspectRatio.H;
                     TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel.Value, pf.NumofMatrix.Col, pf.NumofMatrix.Row);
 
                     // 位置を正規化
