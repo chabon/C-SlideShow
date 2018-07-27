@@ -148,7 +148,8 @@ namespace C_SlideShow.ProfileMember
         public int V { get { return this.Value[1]; } }
 
         public static readonly int Min = 1;
-        public static readonly int Max = 99;
+        public static readonly int MaxH = 1000;
+        public static readonly int MaxV = 99999;
     }
 
     public class NonFixAspectRatio : ProfileMemberBase

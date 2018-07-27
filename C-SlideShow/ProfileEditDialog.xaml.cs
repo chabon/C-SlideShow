@@ -78,8 +78,8 @@ namespace C_SlideShow
             SetMinAndMaxToNumericUpDown( NumofRow, ProfileMember.NumofMatrix.Min, ProfileMember.NumofMatrix.Max);
 
             // アスペクト比(横：縦)
-            SetMinAndMaxToNumericUpDown( AspectRatioH, ProfileMember.AspectRatio.Min, ProfileMember.AspectRatio.Max);
-            SetMinAndMaxToNumericUpDown( AspectRatioV, ProfileMember.AspectRatio.Min, ProfileMember.AspectRatio.Max);
+            SetMinAndMaxToNumericUpDown( AspectRatioH, ProfileMember.AspectRatio.Min, ProfileMember.AspectRatio.MaxH);
+            SetMinAndMaxToNumericUpDown( AspectRatioV, ProfileMember.AspectRatio.Min, ProfileMember.AspectRatio.MaxV);
 
             // 速度(スライドショー)
             SetMinAndMaxToNumericUpDown( SlideSpeed, ProfileMember.SlideSpeed.Min, ProfileMember.SlideSpeed.Max);
@@ -235,16 +235,8 @@ namespace C_SlideShow
             FixAspectRatio.SelectedIndex = pf.NonFixAspectRatio.Value ? 1 : 0;
 
             // アスペクト比
-            if(pf.AspectRatio.H > 99 || pf.AspectRatio.V > 99 )
-            {
-                AspectRatioH.Value = 4;
-                AspectRatioV.Value = 3;
-            }
-            else
-            {
-                AspectRatioH.Value = pf.AspectRatio.H;
-                AspectRatioV.Value = pf.AspectRatio.V;
-            }
+            AspectRatioH.Value = pf.AspectRatio.H;
+            AspectRatioV.Value = pf.AspectRatio.V;
 
             /* ---------------------------------------------------- */
             // スライド

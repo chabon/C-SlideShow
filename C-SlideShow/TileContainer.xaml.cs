@@ -185,8 +185,9 @@ namespace C_SlideShow
         public void InitSize(int aspectRatioH, int aspectRatioV, int tilePadding)
         {
             // タイルのインナーサイズ(Paddingを抜いたサイズ)
+            if( aspectRatioH > StandardTileWidth ) aspectRatioH = StandardTileWidth;
             int mod = StandardTileWidth % aspectRatioH;
-            InnerTileWidth = StandardTileWidth - mod;
+            InnerTileWidth = StandardTileWidth - mod; // InnerTileWidthがaspectRatioHの整数倍になるようにする
             int p = InnerTileWidth / aspectRatioH;
             InnerTileHeight = aspectRatioV * p;
 
