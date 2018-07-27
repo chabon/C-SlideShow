@@ -73,8 +73,16 @@ namespace C_SlideShow
         [DataMember]
         public List<UserProfileInfo> UserProfileList { get; set; }
 
+        [DataMember]
+        public int SettingDialogTabIndex { get; set; }
+
+        [DataMember]
+        public int GlobalSettingDialogTabIndex { get; set; }
 
         // ダイアログ未実装
+
+
+        // 履歴設定
         [DataMember]
         public List<HistoryItem> History { get; set; }
 
@@ -82,10 +90,17 @@ namespace C_SlideShow
         public int NumofHistory { get; set; }
 
         [DataMember]
+        public int NumofHistoryInMenu { get; set; }
+
+        [DataMember]
+        public int NumofHistoryInMainMenu { get; set; }
+
+        [DataMember]
         public EnabledItemsInHistory EnabledItemsInHistory { get; set; }
 
         [DataMember]
-        public int SettingDialogTabIndex { get; set; }
+        public bool ApplyHistoryInfoInNewArchiverReading { get; set; }
+
 
         public AppSetting()
         {
@@ -94,10 +109,16 @@ namespace C_SlideShow
             TempProfile.ProfileType = ProfileType.Temp;
             ShowFileInfoInTileExpantionPanel = false;
             UserProfileList = new List<UserProfileInfo>();
+
             History = new List<HistoryItem>();
-            NumofHistory = 30;
+            NumofHistory = 100;
+            NumofHistoryInMenu = 30;
+            NumofHistoryInMainMenu = 10;
             EnabledItemsInHistory = new EnabledItemsInHistory();
+            ApplyHistoryInfoInNewArchiverReading = true;
+
             SettingDialogTabIndex = 0;
+            GlobalSettingDialogTabIndex = 0;
         }
 
         // 既定値(xmlファイルデシリアライズ時に呼ばれる)

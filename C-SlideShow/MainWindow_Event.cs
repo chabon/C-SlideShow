@@ -63,8 +63,7 @@ namespace C_SlideShow
             this.SourceInitialized += (s, e) =>
             {
                 // ウインドウ位置復元が正常に行われたかチェック
-                Win32.SetWindowPosProperly(new WindowInteropHelper(this).Handle, 
-                    (int)this.Left, (int)this.Top, true, 0, true);
+                Win32.SetWindowPosProperly(new WindowInteropHelper(this).Handle, (int)this.Left, (int)this.Top, true, 0, true);
             };
 
             this.SizeChanged += (s, e) =>
@@ -424,7 +423,7 @@ namespace C_SlideShow
             if( miSrc == null || miSrc.Name != MenuItem_Load.Name) return;
 
             // ヒストリー追加前に削除
-            const int hIndex = 7;
+            const int hIndex = 9;
             while(MenuItem_Load.Items.Count - 1 >= hIndex )
             {
                 MenuItem_Load.Items.RemoveAt(MenuItem_Load.Items.Count - 1);
@@ -480,8 +479,7 @@ namespace C_SlideShow
             contextMenu.Items.Add(cmi3);
 
             // メインヒストリー追加
-            const int numofMainHistory = 10;
-            for(int i=0; i<numofMainHistory; i++ )
+            for(int i=0; i<Setting.NumofHistoryInMainMenu; i++ )
             {
                 if(i < Setting.History.Count )
                 {
@@ -495,14 +493,15 @@ namespace C_SlideShow
             }
 
             // サブヒストリー追加
-            if(Setting.History.Count > numofMainHistory )
+            if(Setting.History.Count > Setting.NumofHistoryInMainMenu && Setting.NumofHistoryInMenu > Setting.NumofHistoryInMainMenu)
             {
                 MenuItem continuation = new MenuItem();
-                continuation.Header = "フォルダ履歴の続き...";
+                continuation.Header = "フォルダ履歴の続き";
                 MenuItem_Load.Items.Add(continuation);
 
-                for( int i = numofMainHistory; i < Setting.History.Count; i++ )
+                for( int i = Setting.NumofHistoryInMainMenu; i < Setting.NumofHistoryInMenu; i++ )
                 {
+                    if( i > Setting.History.Count - 1) break;
                     MenuItem mi = new MenuItem();
                     mi.Header = System.IO.Path.GetFileName(Setting.History[i].ArchiverPath);
                     mi.ToolTip = Setting.History[i].ArchiverPath;
@@ -631,6 +630,21 @@ namespace C_SlideShow
             }
         }
 
+        // 履歴設定
+        private void Toolbar_Load_HistorySetting_Click(object sender, RoutedEventArgs e)
+        {
+            GlobalSettingDialog globalSettingDialog = new GlobalSettingDialog();
+
+            // 表示位置はメインウインドウ中心に
+            Util.SetWindowCenterOnWindow(this, globalSettingDialog);
+
+            // 値の代入
+            globalSettingDialog.Initialize();
+            globalSettingDialog.MainTabControl.SelectedIndex = 0;
+
+            // 表示
+            globalSettingDialog.ShowDialog();
+        }
 
         // 再生
         private void Toolbar_Play_Click(object sender, RoutedEventArgs e)
@@ -752,7 +766,7 @@ namespace C_SlideShow
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem; if( mi == null ) return;
 
                 MessageBoxResult result =  MessageBox.Show("プロファイル「" + upi.Profile.Name + "」を削除してもよろしいですか？", "確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if( !(result == MessageBoxResult.No) ) RemoveUserProfileInfo(upi);
+                if( result == MessageBoxResult.Yes ) RemoveUserProfileInfo(upi);
 
                 MenuItem_Profile.IsSubmenuOpen = true;
             };

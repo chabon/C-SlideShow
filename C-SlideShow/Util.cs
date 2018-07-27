@@ -106,5 +106,24 @@ namespace C_SlideShow
             return valid;
         }
 
+
+        /// <summary>
+        /// ウインドウを指定ウインドウの中心に移動
+        /// </summary>
+        /// <param name="underWindow"></param>
+        /// <param name="UpperWindow"></param>
+        public static void SetWindowCenterOnWindow(Window underWindow, Window upperWindow)
+        {
+            // 初期位置は、メインウインドウの中心に
+            Rect rcUnder = new Rect(underWindow.Left, underWindow.Top, underWindow.Width, underWindow.Height);
+            Point ptCenter = new Point( rcUnder.Left + rcUnder.Width / 2 , rcUnder.Top + rcUnder.Height / 2 );
+            Rect rcDlg = new Rect( ptCenter.X - upperWindow.Width / 2, ptCenter.Y - upperWindow.Height / 2, upperWindow.Width, upperWindow.Height );
+
+            // ワーキングエリアはみ出しの補正
+            rcDlg = Util.GetCorrectedWindowRect(rcDlg);
+            upperWindow.Left = rcDlg.Left;
+            upperWindow.Top = rcDlg.Top;
+        }
+
     }
 }

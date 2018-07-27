@@ -343,8 +343,8 @@
                         <ComboBox x:Name="Footer_ProfileName" IsEditable="True" Width="200" Margin="0,2"></ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button x:Name="Footer_Cancel" Click="Footer_Cancel_Click" Height="22" Margin="5" Width="70" HorizontalAlignment="Right">キャンセル</Button>
-                        <Button x:Name="Footer_OK" Click="Footer_OK_Click" Height="22" Margin="5,5,0,5" Width="70" HorizontalAlignment="Right">OK</Button>
+                        <Button x:Name="Footer_OK" Click="Footer_OK_Click" Height="22" Margin="5" Width="70" HorizontalAlignment="Right">OK</Button>
+                        <Button x:Name="Footer_Cancel" Click="Footer_Cancel_Click" Height="22" Margin="5,5,0,5" Width="70" HorizontalAlignment="Right">キャンセル</Button>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>

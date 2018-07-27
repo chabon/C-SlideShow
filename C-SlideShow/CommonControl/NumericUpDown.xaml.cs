@@ -71,6 +71,8 @@ namespace C_SlideShow.CommonControl
             set { variation = value; }
         }
 
+        public event EventHandler ValueChanged;
+
         private void NUDButtonUP_Click(object sender, RoutedEventArgs e)
         {
             int number;
@@ -124,6 +126,7 @@ namespace C_SlideShow.CommonControl
             if (number < minvalue) NUDTextBox.Text = minvalue.ToString();
             NUDTextBox.SelectionStart = NUDTextBox.Text.Length;
 
+            if( ValueChanged != null ) ValueChanged.Invoke(this, new EventArgs());
         }
 
     }

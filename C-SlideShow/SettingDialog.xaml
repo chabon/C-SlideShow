@@ -56,9 +56,9 @@
                                 </TextBlock>
                             </ComboBox.ToolTip>
                         </ComboBox>
-                        
                     </StackPanel>
 
+                    <Button x:Name="GlobalSetting" Click="GlobalSetting_Click" Width="94" HorizontalAlignment="Left" Margin="0,10">グローバル設定...</Button>
                     <CheckBox Visibility="Hidden" x:Name="StartUp_OpenPrevFolder" Click="StartUp_OpenPrevFolder_Click" Margin="0,4">起動時、前回のフォルダを開く</CheckBox>
                 </StackPanel>
             </TabItem>

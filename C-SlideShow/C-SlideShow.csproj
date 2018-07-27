@@ -81,6 +81,9 @@
     <Compile Include="Comparer.cs" />
     <Compile Include="ExifInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="GlobalSettingDialog.xaml.cs">
+      <DependentUpon>GlobalSettingDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageFileInfo.cs" />
     <Compile Include="MainWindow_Event.cs" />
     <Compile Include="MatrixSelecter.xaml.cs">
@@ -118,6 +121,10 @@
     <Compile Include="WpfTreeUtil.cs" />
     <Compile Include="Win32.cs" />
     <Page Include="CommonControl\ColorPickerButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GlobalSettingDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

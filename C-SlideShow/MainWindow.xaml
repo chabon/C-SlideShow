@@ -118,7 +118,9 @@
                                 <MenuItem Header="フォルダを追加読み込み" Click="Toolbar_Add_Folder_Click" x:Name="Toolbar_Add_Folder"/>
                                 <MenuItem Header="ファイルを追加読み込み" Click="Toolbar_Add_File_Click" x:Name="Toolbar_Add_File"/>
                                 <Separator/>
-                                <MenuItem Header="再読込み" Click="Toolbar_Load_Reload_Click" x:Name="Toolbar_Load_Reload"/>
+                                <MenuItem Header="再読み込み" Click="Toolbar_Load_Reload_Click" x:Name="Toolbar_Load_Reload"/>
+                                <Separator/>
+                                <MenuItem Header="履歴設定..." Click="Toolbar_Load_HistorySetting_Click" x:Name="Toolbar_Load_HistorySetting"/>
                         </MenuItem>
                     </Menu>
                 </Border>
