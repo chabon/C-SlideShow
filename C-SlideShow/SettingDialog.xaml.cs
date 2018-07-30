@@ -337,17 +337,7 @@ namespace C_SlideShow
         // グローバル設定
         private void GlobalSetting_Click(object sender, RoutedEventArgs e)
         {
-            GlobalSettingDialog globalSettingDialog = new GlobalSettingDialog();
-
-            // 表示位置はメインウインドウ中心に
-            Util.SetWindowCenterOnWindow(mainWindow, globalSettingDialog);
-
-            // 値の代入
-            globalSettingDialog.Initialize();
-            globalSettingDialog.MainTabControl.SelectedIndex = Setting.GlobalSettingDialogTabIndex;
-
-            // 表示
-            globalSettingDialog.ShowDialog();
+            mainWindow.ShowGlobalSettingDialog(Setting.GlobalSettingDialogTabIndex);
         }
     }
 }

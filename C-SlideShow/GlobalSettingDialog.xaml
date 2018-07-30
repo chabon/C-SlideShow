@@ -9,15 +9,16 @@
         Title="グローバル設定 (ここの設定項目はプロファイルに含まれません)" Height="480" Width="500">
     <Grid>
         <TabControl x:Name="MainTabControl" Margin="3,3,3,40">
-            <TabItem Header="履歴" Width="60">
+            <!-- 履歴 -->
+            <TabItem Header="履歴" Width="70">
                 <StackPanel>
-                    <CheckBox x:Name="EnabledItemsInHistory_ArchiverPath" Margin="5" Click="EnabledItemsInHistory_ArchiverPath_Click">開いたフォルダ(書庫)の履歴を保存する</CheckBox>
+                    <CheckBox x:Name="EnabledItemsInHistory_ArchiverPath" Margin="5" >開いたフォルダ(書庫)の履歴を保存する</CheckBox>
                     <GroupBox Header="付随して保存する情報" Margin="10,0">
                         <StackPanel>
-                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_ImagePath" Click="EnabledItemsInHistory_ImagePath_Click">最後に開いた画像</CheckBox>
-                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_AspectRatio" Click="EnabledItemsInHistory_AspectRatio_Click">アスペクト比</CheckBox>
-                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_Matrix" Click="EnabledItemsInHistory_Matrix_Click">行列数</CheckBox>
-                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_SlideDirection" Click="EnabledItemsInHistory_SlideDirection_Click">スライド方向</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_ImagePath" >最後に開いた画像</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_AspectRatio" >アスペクト比</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_Matrix" >行列数</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_SlideDirection" >スライド方向</CheckBox>
                         </StackPanel>
                     </GroupBox>
                     <StackPanel Orientation="Horizontal">
@@ -25,7 +26,7 @@
                         <cc:NumericUpDown Width="60" x:Name="NumofHistory" ValueChanged="NumofHistory_ValueChanged" MinValue="1" MaxValue="10000"></cc:NumericUpDown>
                     </StackPanel>
 
-                    <CheckBox Margin="5" x:Name="ApplyHistoryInfoInNewArchiverReading" Click="ApplyHistoryInfoInNewArchiverReading_Click">新たにフォルダ(書庫)を開いた時、それが履歴にあるなら、その履歴情報の設定を適用する</CheckBox>
+                    <CheckBox Margin="5" x:Name="ApplyHistoryInfoInNewArchiverReading" >新たにフォルダ(書庫)を開いた時、それが履歴にあるなら、その履歴情報の設定を適用する</CheckBox>
 
                     <GroupBox Header="メニュー" Margin="5">
                         <StackPanel>
@@ -44,8 +45,37 @@
                     <Button x:Name="AllDefault_History" Click="AllDefault_History_Click" Width="100" Margin="10,5" HorizontalAlignment="Left">すべてデフォルト</Button>
                 </StackPanel>
             </TabItem>
+
+            <!-- アスペクト比 -->
+            <TabItem Header="アスペクト比" Width="70">
+                <StackPanel Margin="20,3">
+                    <Label>アスペクト比リストの編集</Label>
+                    <StackPanel Orientation="Horizontal" Margin="3,10">
+                        <ListBox x:Name="AspectRatioList"  SelectionChanged="AspectRatioList_SelectionChanged" Height="250" Width="150" Margin="0,0"></ListBox>
+                        <StackPanel Margin="10,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label>横</Label>
+                                    <cc:NumericUpDown Width="55" x:Name="AspectRatio_H" ValueChanged="AspectRatio_H_ValueChanged" Value="4"></cc:NumericUpDown>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="10,0">
+                                    <Label>縦</Label>
+                                    <cc:NumericUpDown Width="55" x:Name="AspectRatio_V" ValueChanged="AspectRatio_V_ValueChanged" Value="3"></cc:NumericUpDown>
+                                </StackPanel>
+                            </StackPanel>
+                            <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_Up" Click="AspectRatioList_Up_Click">↑</Button>
+                            <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_Down" Click="AspectRatioList_Down_Click">↓</Button>
+                            <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_New" Click="AspectRatioList_New_Click">新規作成</Button>
+                            <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_Delete" Click="AspectRatioList_Delete_Click">削除</Button>
+                        </StackPanel>
+                    </StackPanel>
+                    <Button x:Name="AllDefault_AspectRatio" Click="AllDefault_AspectRatio_Click" Width="100" Margin="10,5" HorizontalAlignment="Left">すべてデフォルト</Button>
+                </StackPanel>
+            </TabItem>
+
         </TabControl>
-        <Button x:Name="CloseButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Width="70" Click="CloseButton_Click">閉じる</Button>
+        <Button x:Name="OkButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Width="70" Click="OkButton_Click">OK</Button>
+        <Button x:Name="CancelButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="90,10" Width="70" Click="CancelButton_Click">キャンセル</Button>
 
     </Grid>
 </Window>

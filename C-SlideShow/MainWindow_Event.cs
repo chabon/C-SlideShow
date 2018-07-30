@@ -600,7 +600,44 @@ namespace C_SlideShow
             Reload(false);
         }
 
-        // グリッドのアスペクト比
+        // グリッドのアスペクト比 開いた時
+        private void MenuItem_AspectRatio_SubmenuOpened(object sender, RoutedEventArgs e)
+        {
+            MenuItem_AspectRatio.Items.Clear();
+
+            // 非固定
+            MenuItem m1 = new MenuItem();
+            m1.Header = "非固定";
+            m1.Tag = "FREE";
+            m1.IsCheckable = true;
+            m1.Click += Toolbar_AspectRate_Click;
+            MenuItem_AspectRatio.Items.Add(m1);
+            MenuItem_AspectRatio.Items.Add( new Separator() );
+
+            // 固定
+            foreach(Point pt in Setting.AspectRatioList )
+            {
+                MenuItem mi = new MenuItem();
+                mi.Header = string.Format("{0} : {1}", pt.X, pt.Y);
+                mi.Tag    = string.Format("{0}_{1}", pt.X, pt.Y);
+                mi.IsCheckable = true;
+                mi.Click += Toolbar_AspectRate_Click;
+                MenuItem_AspectRatio.Items.Add(mi);
+            }
+
+            // リストを編集...
+            MenuItem_AspectRatio.Items.Add( new Separator() );
+            MenuItem m2 = new MenuItem();
+            m2.Header = "リストを編集...";
+            m2.Tag = "EDIT";
+            m2.IsCheckable = true;
+            m2.Click += (s, ev) => { ShowGlobalSettingDialog(1); };
+            MenuItem_AspectRatio.Items.Add(m2);
+
+            UpdateToolbarViewing();
+        }
+
+        // グリッドのアスペクト比 選択時
         private void Toolbar_AspectRate_Click(object sender, RoutedEventArgs e)
         {
             MenuItem item = sender as MenuItem;
@@ -609,8 +646,14 @@ namespace C_SlideShow
                 // 非固定を選択
                 if(item.Tag.ToString() == "FREE" )
                 {
-                    if( !Setting.TempProfile.NonFixAspectRatio.Value )
+                    if( Setting.TempProfile.NonFixAspectRatio.Value )
                     {
+                        // 非固定解除
+                        Setting.TempProfile.NonFixAspectRatio.Value = false;
+                    }
+                    else
+                    {
+                        // 非固定にする
                         Setting.TempProfile.NonFixAspectRatio.Value = true;
                     }
                     UpdateToolbarViewing();
@@ -630,20 +673,11 @@ namespace C_SlideShow
             }
         }
 
+
         // 履歴設定
         private void Toolbar_Load_HistorySetting_Click(object sender, RoutedEventArgs e)
         {
-            GlobalSettingDialog globalSettingDialog = new GlobalSettingDialog();
-
-            // 表示位置はメインウインドウ中心に
-            Util.SetWindowCenterOnWindow(this, globalSettingDialog);
-
-            // 値の代入
-            globalSettingDialog.Initialize();
-            globalSettingDialog.MainTabControl.SelectedIndex = 0;
-
-            // 表示
-            globalSettingDialog.ShowDialog();
+            ShowGlobalSettingDialog(0);
         }
 
         // 再生

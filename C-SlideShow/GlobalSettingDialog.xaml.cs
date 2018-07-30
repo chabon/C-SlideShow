@@ -69,80 +69,54 @@ namespace C_SlideShow
             NumofHistoryInMainMenu.Value = setting.NumofHistoryInMainMenu;
 
 
+            // アスペクト比
+            AspectRatio_H.MinValue = ProfileMember.AspectRatio.Min;
+            AspectRatio_H.MaxValue = ProfileMember.AspectRatio.MaxH;
+            AspectRatio_V.MinValue = ProfileMember.AspectRatio.Min;
+            AspectRatio_V.MaxValue = ProfileMember.AspectRatio.MaxV;
+
+            foreach(Point pt in setting.AspectRatioList )
+            {
+                AspectRatioList.Items.Add( string.Format("{0} : {1}", pt.X, pt.Y) );
+            }
+            if( setting.AspectRatioList.Count > 0 )
+            {
+                AspectRatioList.SelectedIndex = 0;
+                AspectRatio_H.Value = (int)setting.AspectRatioList[0].X;
+                AspectRatio_V.Value = (int)setting.AspectRatioList[0].Y;
+            }
+
+
+
             isInitializing = false;
         }
 
-        public void CorrectNumofHistory()
+        private void CorrectNumofHistory()
         {
-            if( setting.NumofHistory < setting.NumofHistoryInMenu ) setting.NumofHistoryInMenu = setting.NumofHistory;
-            if( setting.NumofHistoryInMenu < setting.NumofHistoryInMainMenu ) setting.NumofHistoryInMainMenu = setting.NumofHistoryInMenu;
-
-            NumofHistory.Value = setting.NumofHistory;
-            NumofHistoryInMenu.Value = setting.NumofHistoryInMenu;
-            NumofHistoryInMainMenu.Value = setting.NumofHistoryInMainMenu;
+            if( NumofHistory.Value < NumofHistoryInMenu.Value ) NumofHistoryInMenu.Value = NumofHistory.Value;
+            if( NumofHistoryInMenu.Value < NumofHistoryInMainMenu.Value ) NumofHistoryInMainMenu.Value = NumofHistoryInMenu.Value;
         }
+
 
         /* ---------------------------------------------------- */
         //     イベント
         /* ---------------------------------------------------- */
         // 履歴設定
-        private void EnabledItemsInHistory_ArchiverPath_Click(object sender, RoutedEventArgs e)
-        {
-            if( (bool)EnabledItemsInHistory_ArchiverPath.IsChecked ) setting.EnabledItemsInHistory.ArchiverPath = true;
-            else setting.EnabledItemsInHistory.ArchiverPath = false;
-        }
-
-        private void EnabledItemsInHistory_ImagePath_Click(object sender, RoutedEventArgs e)
-        {
-            if( (bool)EnabledItemsInHistory_ImagePath.IsChecked ) setting.EnabledItemsInHistory.ImagePath = true;
-            else setting.EnabledItemsInHistory.ImagePath = false;
-        }
-
-        private void EnabledItemsInHistory_AspectRatio_Click(object sender, RoutedEventArgs e)
-        {
-            if( (bool)EnabledItemsInHistory_AspectRatio.IsChecked ) setting.EnabledItemsInHistory.AspectRatio = true;
-            else setting.EnabledItemsInHistory.AspectRatio = false;
-        }
-
-        private void EnabledItemsInHistory_Matrix_Click(object sender, RoutedEventArgs e)
-        {
-            if( (bool)EnabledItemsInHistory_Matrix.IsChecked ) setting.EnabledItemsInHistory.Matrix = true;
-            else setting.EnabledItemsInHistory.Matrix = false;
-        }
-
-        private void EnabledItemsInHistory_SlideDirection_Click(object sender, RoutedEventArgs e)
-        {
-            if( (bool)EnabledItemsInHistory_SlideDirection.IsChecked ) setting.EnabledItemsInHistory.SlideDirection = true;
-            else setting.EnabledItemsInHistory.SlideDirection = false;
-        }
-
         private void NumofHistory_ValueChanged(object sender, EventArgs e)
         {
             if( isInitializing ) return;
-
-            setting.NumofHistory = NumofHistory.Value;
             CorrectNumofHistory();
-        }
-
-        private void ApplyHistoryInfoInNewArchiverReading_Click(object sender, RoutedEventArgs e)
-        {
-            if( (bool)ApplyHistoryInfoInNewArchiverReading.IsChecked ) setting.ApplyHistoryInfoInNewArchiverReading = true;
-            else setting.ApplyHistoryInfoInNewArchiverReading = false;
         }
 
         private void NumofHistoryInMenu_ValueChanged(object sender, EventArgs e)
         {
             if( isInitializing ) return;
-
-            setting.NumofHistoryInMenu = NumofHistoryInMenu.Value;
             CorrectNumofHistory();
         }
 
         private void NumofHistoryInMainMenu_ValueChanged(object sender, EventArgs e)
         {
             if( isInitializing ) return;
-
-            setting.NumofHistoryInMainMenu = NumofHistoryInMainMenu.Value;
             CorrectNumofHistory();
         }
 
@@ -154,23 +128,181 @@ namespace C_SlideShow
 
         private void AllDefault_History_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result =  MessageBox.Show("履歴設定をすべてデフォルトに戻します。よろしいですか？", "確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if( result == MessageBoxResult.No ) return;
+            //MessageBoxResult result =  MessageBox.Show("履歴設定をすべてデフォルトに戻します。よろしいですか？", "確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            //if( result == MessageBoxResult.No ) return;
 
-            setting.EnabledItemsInHistory = new EnabledItemsInHistory();
-            setting.NumofHistory = 100;
-            setting.NumofHistoryInMenu = 30;
-            setting.NumofHistoryInMainMenu = 10;
-            setting.ApplyHistoryInfoInNewArchiverReading = true;
+            EnabledItemsInHistory_ArchiverPath.IsChecked = true;
+            EnabledItemsInHistory_ImagePath.IsChecked = true;
+            EnabledItemsInHistory_AspectRatio.IsChecked = true;
+            EnabledItemsInHistory_Matrix.IsChecked = true;
+            EnabledItemsInHistory_SlideDirection.IsChecked = true;
+            NumofHistory.Value = 100;
+            ApplyHistoryInfoInNewArchiverReading.IsChecked = true;
+            NumofHistoryInMenu.Value = 30;
+            NumofHistoryInMainMenu.Value = 10;
 
-            Initialize();
+        }
+
+        // アスペクト比
+        private void AspectRatioList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string str = AspectRatioList.SelectedItem as string;
+            int sIdx = AspectRatioList.SelectedIndex;
+            if(str != null )
+            {
+                str = str.ToString().Replace(" ", "");
+                string[] ar = str.Split(':');
+                int w = int.Parse(ar[0]);
+                int h = int.Parse(ar[1]);
+                AspectRatio_H.Value = w;
+                AspectRatio_V.Value = h;
+                AspectRatioList.SelectedIndex = sIdx;
+            }
+        }
+
+        private void AspectRatio_H_ValueChanged(object sender, EventArgs e)
+        {
+            if( isInitializing ) return;
+            int sIdx = AspectRatioList.SelectedIndex;
+            if(sIdx >= 0 )
+            {
+                AspectRatioList.Items[sIdx] = string.Format( "{0} : {1}", AspectRatio_H.Value, AspectRatio_V.Value );
+                AspectRatioList.SelectedIndex = sIdx;
+            }
+        }
+
+        private void AspectRatio_V_ValueChanged(object sender, EventArgs e)
+        {
+            if( isInitializing ) return;
+            int sIdx = AspectRatioList.SelectedIndex;
+            if(sIdx >= 0 )
+            {
+                AspectRatioList.Items[sIdx] = string.Format( "{0} : {1}", AspectRatio_H.Value, AspectRatio_V.Value );
+                AspectRatioList.SelectedIndex = sIdx;
+            }
+        }
+
+        private void AspectRatioList_Up_Click(object sender, RoutedEventArgs e)
+        {
+            if( AspectRatioList.Items.Count < 2 ) return;
+
+            int sIdx = AspectRatioList.SelectedIndex;
+            if(sIdx > 0 && sIdx < AspectRatioList.Items.Count)
+            {
+                string str = AspectRatioList.SelectedItem as string;
+                AspectRatioList.Items.RemoveAt(sIdx);
+                AspectRatioList.Items.Insert(sIdx - 1, str);
+                AspectRatioList.SelectedIndex = sIdx - 1;
+            }
+        }
+
+        private void AspectRatioList_Down_Click(object sender, RoutedEventArgs e)
+        {
+            if( AspectRatioList.Items.Count < 2 ) return;
+
+            int sIdx = AspectRatioList.SelectedIndex;
+            if(sIdx < AspectRatioList.Items.Count - 1 && sIdx >= 0)
+            {
+                string str = AspectRatioList.SelectedItem as string;
+                AspectRatioList.Items.RemoveAt(sIdx);
+                AspectRatioList.Items.Insert(sIdx + 1, str);
+                AspectRatioList.SelectedIndex = sIdx + 1;
+            }
+        }
+
+        private void AspectRatioList_New_Click(object sender, RoutedEventArgs e)
+        {
+            string str = AspectRatioList.SelectedItem as string;
+            if( str != null )
+            {
+                AspectRatioList.Items.Add( string.Copy(str) );
+                AspectRatioList.SelectedIndex = AspectRatioList.Items.Count - 1;
+            }
+            else
+                AspectRatioList.Items.Add("4 : 3");
+        }
+
+        private void AspectRatioList_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            int sIdx = AspectRatioList.SelectedIndex;
+            if( sIdx >= 0 && sIdx < AspectRatioList.Items.Count)
+            {
+                AspectRatioList.Items.RemoveAt(sIdx);
+                if(sIdx < AspectRatioList.Items.Count )
+                    AspectRatioList.SelectedIndex = sIdx;
+                else
+                    AspectRatioList.SelectedIndex = AspectRatioList.Items.Count - 1;
+            }
+        }
+
+        private void AllDefault_AspectRatio_Click(object sender, RoutedEventArgs e)
+        {
+            AspectRatioList.Items.Clear();
+            AspectRatioList.Items.Add("4 : 3");
+            AspectRatioList.Items.Add("3 : 4");
+            AspectRatioList.Items.Add("16 : 9");
+            AspectRatioList.Items.Add("9 : 16");
+            AspectRatioList.Items.Add("3 : 2");
+            AspectRatioList.Items.Add("2 : 3");
+            AspectRatioList.Items.Add("1 : 1");
         }
 
 
-        // 閉じる
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        /* ---------------------------------------------------- */
+        //     OK / キャンセル
+        /* ---------------------------------------------------- */
+        private void OkButton_Click(object sender, RoutedEventArgs e)
+        {
+            // 履歴設定
+            if( (bool)EnabledItemsInHistory_ArchiverPath.IsChecked ) setting.EnabledItemsInHistory.ArchiverPath = true;
+            else setting.EnabledItemsInHistory.ArchiverPath = false;
+
+            if( (bool)EnabledItemsInHistory_ImagePath.IsChecked ) setting.EnabledItemsInHistory.ImagePath = true;
+            else setting.EnabledItemsInHistory.ImagePath = false;
+
+            if( (bool)EnabledItemsInHistory_AspectRatio.IsChecked ) setting.EnabledItemsInHistory.AspectRatio = true;
+            else setting.EnabledItemsInHistory.AspectRatio = false;
+
+            if( (bool)EnabledItemsInHistory_Matrix.IsChecked ) setting.EnabledItemsInHistory.Matrix = true;
+            else setting.EnabledItemsInHistory.Matrix = false;
+
+            if( (bool)EnabledItemsInHistory_SlideDirection.IsChecked ) setting.EnabledItemsInHistory.SlideDirection = true;
+            else setting.EnabledItemsInHistory.SlideDirection = false;
+
+            setting.NumofHistory = NumofHistory.Value;
+
+            if( (bool)ApplyHistoryInfoInNewArchiverReading.IsChecked ) setting.ApplyHistoryInfoInNewArchiverReading = true;
+            else setting.ApplyHistoryInfoInNewArchiverReading = false;
+
+            setting.NumofHistoryInMenu = NumofHistoryInMenu.Value;
+
+            setting.NumofHistoryInMainMenu = NumofHistoryInMainMenu.Value;
+
+
+            // アスペクト比
+            setting.AspectRatioList.Clear();
+            foreach(object item in AspectRatioList.Items )
+            {
+                string str = item as string;
+                if(str != null )
+                {
+                    str = str.ToString().Replace(" ", "");
+                    string[] ar = str.Split(':');
+                    int w = int.Parse(ar[0]);
+                    int h = int.Parse(ar[1]);
+                    setting.AspectRatioList.Add( new Point(w, h) );
+                }
+            }
+
+
+
+            this.Close();
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
+
     }
 }

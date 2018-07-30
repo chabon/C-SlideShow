@@ -8,7 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Windows.Media;
-
+using System.Windows;
 
 namespace C_SlideShow
 {
@@ -101,6 +101,10 @@ namespace C_SlideShow
         [DataMember]
         public bool ApplyHistoryInfoInNewArchiverReading { get; set; }
 
+        // アスペクト比のリスト
+        [DataMember]
+        public List<Point> AspectRatioList { get; set; }
+
 
         public AppSetting()
         {
@@ -116,6 +120,8 @@ namespace C_SlideShow
             NumofHistoryInMainMenu = 10;
             EnabledItemsInHistory = new EnabledItemsInHistory();
             ApplyHistoryInfoInNewArchiverReading = true;
+
+            AspectRatioList = new List<Point> { new Point(4, 3), new Point(3, 4), new Point(16, 9), new Point(9, 16), new Point(3, 2), new Point(2, 3), new Point(1, 1)};
 
             SettingDialogTabIndex = 0;
             GlobalSettingDialogTabIndex = 0;
