@@ -822,36 +822,8 @@ namespace C_SlideShow
         {
             Profile pf = Setting.TempProfile;
 
-            // アス比 ボタン
-            if( pf.NonFixAspectRatio.Value )
-            {
-                Toolbar_AspectRate_Text.Text = "Free";
-            }
-            else
-            {
-                string aRateTxt = pf.AspectRatio.H.ToString() + " : " + pf.AspectRatio.V.ToString();
-                Toolbar_AspectRate_Text.Text = aRateTxt;
-            }
-
-            // アス比 チェックマーク更新
-            foreach( var child in LogicalTreeHelper.GetChildren( MenuItem_AspectRatio ) )
-            {
-                MenuItem i = child as MenuItem;
-                if(i != null)
-                {
-                    i.IsChecked = false;
-
-                    if( !pf.NonFixAspectRatio.Value && i.Tag.ToString() != "FREE")
-                    {
-                        string[] str = i.Tag.ToString().Split('_');
-                        int w = int.Parse(str[0]);
-                        int h = int.Parse(str[1]);
-                        if(w == pf.AspectRatio.H && h == pf.AspectRatio.V ) i.IsChecked = true;
-                    }
-                }
-            }
-            if( pf.NonFixAspectRatio.Value ) Toolbar_AspectRate_Free.IsChecked = true;
-
+            // アス比
+            UpdateToolbarViewing_AspectRatio();
 
             // 再生 / 停止
             if (IsPlaying)
@@ -892,6 +864,52 @@ namespace C_SlideShow
             MenuItem_SlideSetting_Image.Source = new BitmapImage(new Uri(uri, UriKind.Relative));
 
 
+        }
+
+        public void UpdateToolbarViewing_AspectRatio()
+        {
+            Profile pf = Setting.TempProfile;
+
+            // アス比 ボタン
+            if( pf.NonFixAspectRatio.Value )
+            {
+                Toolbar_AspectRate_Text.Text = "Free";
+            }
+            else
+            {
+                string h = pf.AspectRatio.H.ToString();
+                string v = pf.AspectRatio.V.ToString();
+                string aRateTxt;
+                if( h.Length + v.Length > 4 )
+                    aRateTxt = "Fixed";
+                else
+                    aRateTxt = h + " : " + v;
+                Toolbar_AspectRate_Text.Text = aRateTxt;
+            }
+
+            // ツールチップ
+            string tooltip = "グリッドのアスペクト比\r\n";
+            tooltip += string.Format("現在のアスペクト比 {0}:{1}", pf.AspectRatio.H, pf.AspectRatio.V);
+            MenuItem_AspectRatio.ToolTip = tooltip;
+
+            // アス比 チェックマーク更新
+            foreach( var child in LogicalTreeHelper.GetChildren( MenuItem_AspectRatio ) )
+            {
+                MenuItem i = child as MenuItem;
+                if(i != null)
+                {
+                    i.IsChecked = false;
+
+                    if( !pf.NonFixAspectRatio.Value && i.Tag.ToString() != "FREE")
+                    {
+                        string[] str = i.Tag.ToString().Split('_');
+                        int w = int.Parse(str[0]);
+                        int h = int.Parse(str[1]);
+                        if(w == pf.AspectRatio.H && h == pf.AspectRatio.V ) i.IsChecked = true;
+                    }
+                }
+            }
+            if( pf.NonFixAspectRatio.Value ) Toolbar_AspectRate_Free.IsChecked = true;
         }
 
         public void ToggleFullScreen()
