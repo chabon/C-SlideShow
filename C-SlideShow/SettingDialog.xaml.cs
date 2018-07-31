@@ -103,6 +103,31 @@ namespace C_SlideShow
             // バックバッファの幅(ピクセル値)
             BitmapDecodeTotalPixel.Text = pf.BitmapDecodeTotalPixel.Value.ToString();
 
+            // グリッドへの画像の配置方法
+            if( pf.UseDefaultTileOrigin.Value )
+            {
+                UseDefaultTileOrigin.SelectedIndex = 0;
+                TileOrigin.IsEnabled = false;
+                TileOrientation.IsEnabled = false;
+
+                SetTileArrangeSettingBySlideDirection();
+            }
+            else
+            {
+                UseDefaultTileOrigin.SelectedIndex = 1;
+                TileOrigin.IsEnabled = true;
+                TileOrientation.IsEnabled = true;
+            }
+
+            // 配置する起点
+            TileOrigin.SelectedIndex = (int)pf.TileOrigin.Value;
+
+            // 配置方向
+            TileOrientation.SelectedIndex = (int)pf.TileOrientation.Value;
+
+            // 配置プレビュー
+            UpdateTileArrangePreview();
+
 
             UpdateDlgShowing();
 
@@ -339,5 +364,193 @@ namespace C_SlideShow
         {
             mainWindow.ShowGlobalSettingDialog(Setting.GlobalSettingDialogTabIndex);
         }
+
+
+        // 配置設定 グリッドへの画像の配置方法
+        private void UseDefaultTileOrigin_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            Profile pf = Setting.TempProfile;
+
+            if(UseDefaultTileOrigin.SelectedIndex == 0 )
+            {
+                pf.UseDefaultTileOrigin.Value = true;
+                TileOrigin.IsEnabled = false;
+                TileOrientation.IsEnabled = false;
+
+                SetTileArrangeSettingBySlideDirection();
+                mainWindow.UpdateTileArrange();
+            }
+            else
+            {
+                pf.UseDefaultTileOrigin.Value = false;
+                TileOrigin.IsEnabled = true;
+                TileOrientation.IsEnabled = true;
+            }
+
+            UpdateTileArrangePreview();
+        }
+
+        // 配置設定 配置する起点
+        private void TileOrigin_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            Setting.TempProfile.TileOrigin.Value = (TileOrigin)TileOrigin.SelectedIndex;
+            UpdateTileArrangePreview();
+            mainWindow.UpdateTileArrange();
+        }
+
+        // 配置設定 配置方向
+        private void TileOrientation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            Setting.TempProfile.TileOrientation.Value = (TileOrientation)TileOrientation.SelectedIndex;
+            UpdateTileArrangePreview();
+            mainWindow.UpdateTileArrange();
+        }
+
+        // スライド方向により、配置設定を決める
+        private void SetTileArrangeSettingBySlideDirection()
+        {
+            isInitializing = true;
+
+            Profile pf = Setting.TempProfile;
+
+            switch( pf.SlideDirection.Value )
+            {
+                case SlideDirection.Left:
+                    TileOrigin.SelectedIndex = 0;
+                    TileOrientation.SelectedIndex = 1;
+                    pf.TileOrigin.Value = C_SlideShow.TileOrigin.TopLeft;
+                    pf.TileOrientation.Value = C_SlideShow.TileOrientation.Vertical;
+                    break;
+                case SlideDirection.Top:
+                    TileOrigin.SelectedIndex = 0;
+                    TileOrientation.SelectedIndex = 0;
+                    pf.TileOrigin.Value = C_SlideShow.TileOrigin.TopLeft;
+                    pf.TileOrientation.Value = C_SlideShow.TileOrientation.Horizontal;
+                    break;
+                case SlideDirection.Right:
+                    TileOrigin.SelectedIndex = 1;
+                    TileOrientation.SelectedIndex = 1;
+                    pf.TileOrigin.Value = C_SlideShow.TileOrigin.TopRight;
+                    pf.TileOrientation.Value = C_SlideShow.TileOrientation.Vertical;
+                    break;
+                case SlideDirection.Bottom:
+                    TileOrigin.SelectedIndex = 2;
+                    TileOrientation.SelectedIndex = 0;
+                    pf.TileOrigin.Value = C_SlideShow.TileOrigin.BottomRight;
+                    pf.TileOrientation.Value = C_SlideShow.TileOrientation.Horizontal;
+                    break;
+            }
+            isInitializing = false;
+        }
+
+        // 配置設定プレビュー
+        private void UpdateTileArrangePreview()
+        {
+            Profile pf = Setting.TempProfile;
+
+            if( pf.UseDefaultTileOrigin.Value )
+            {
+                switch( pf.SlideDirection.Value )
+                {
+                    case SlideDirection.Left:
+                        TileArrangePreview_TopLeft.Content     = "1";
+                        TileArrangePreview_TopRight.Content    = "3";
+                        TileArrangePreview_BottomRight.Content = "4";
+                        TileArrangePreview_BottomLeft.Content  = "2";
+                        break;
+                    case SlideDirection.Top:
+                        TileArrangePreview_TopLeft.Content     = "1";
+                        TileArrangePreview_TopRight.Content    = "2";
+                        TileArrangePreview_BottomRight.Content = "4";
+                        TileArrangePreview_BottomLeft.Content  = "3";
+                        break;
+                    case SlideDirection.Right:
+                        TileArrangePreview_TopLeft.Content     = "3";
+                        TileArrangePreview_TopRight.Content    = "1";
+                        TileArrangePreview_BottomRight.Content = "2";
+                        TileArrangePreview_BottomLeft.Content  = "4";
+                        break;
+                    case SlideDirection.Bottom:
+                        TileArrangePreview_TopLeft.Content     = "4";
+                        TileArrangePreview_TopRight.Content    = "3";
+                        TileArrangePreview_BottomRight.Content = "1";
+                        TileArrangePreview_BottomLeft.Content  = "2";
+                        break;
+                }
+            }
+            else
+            {
+                switch( pf.TileOrigin.Value )
+                {
+                    case C_SlideShow.TileOrigin.TopLeft:
+                        TileArrangePreview_TopLeft.Content     = "1";
+                        if(pf.TileOrientation.Value == C_SlideShow.TileOrientation.Horizontal )
+                        {
+                            TileArrangePreview_TopRight.Content    = "2";
+                            TileArrangePreview_BottomRight.Content = "4";
+                            TileArrangePreview_BottomLeft.Content  = "3";
+                        }
+                        else
+                        {
+                            TileArrangePreview_TopRight.Content    = "3";
+                            TileArrangePreview_BottomRight.Content = "4";
+                            TileArrangePreview_BottomLeft.Content  = "2";
+                        }
+                        break;
+                    case C_SlideShow.TileOrigin.TopRight:
+                        TileArrangePreview_TopRight.Content    = "1";
+                        if(pf.TileOrientation.Value == C_SlideShow.TileOrientation.Horizontal )
+                        {
+                            TileArrangePreview_TopLeft.Content     = "2";
+                            TileArrangePreview_BottomRight.Content = "3";
+                            TileArrangePreview_BottomLeft.Content  = "4";
+                        }
+                        else
+                        {
+                            TileArrangePreview_TopLeft.Content     = "3";
+                            TileArrangePreview_BottomRight.Content = "2";
+                            TileArrangePreview_BottomLeft.Content  = "4";
+                        }
+                        break;
+                    case C_SlideShow.TileOrigin.BottomRight:
+                        TileArrangePreview_BottomRight.Content = "1";
+                        if(pf.TileOrientation.Value == C_SlideShow.TileOrientation.Horizontal )
+                        {
+                            TileArrangePreview_TopLeft.Content     = "4";
+                            TileArrangePreview_TopRight.Content    = "3";
+                            TileArrangePreview_BottomLeft.Content  = "2";
+                        }
+                        else
+                        {
+                            TileArrangePreview_TopLeft.Content     = "4";
+                            TileArrangePreview_TopRight.Content    = "2";
+                            TileArrangePreview_BottomLeft.Content  = "3";
+                        }
+                        break;
+                    case C_SlideShow.TileOrigin.BottomLeft:
+                        TileArrangePreview_BottomLeft.Content  = "1";
+                        if(pf.TileOrientation.Value == C_SlideShow.TileOrientation.Horizontal )
+                        {
+                            TileArrangePreview_TopLeft.Content     = "3";
+                            TileArrangePreview_TopRight.Content    = "4";
+                            TileArrangePreview_BottomRight.Content = "2";
+                        }
+                        else
+                        {
+                            TileArrangePreview_TopLeft.Content     = "2";
+                            TileArrangePreview_TopRight.Content    = "4";
+                            TileArrangePreview_BottomRight.Content = "3";
+                        }
+                        break;
+                }
+            }
+        }
+
     }
 }

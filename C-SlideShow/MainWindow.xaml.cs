@@ -390,7 +390,7 @@ namespace C_SlideShow
                 tc.InitGridLineColor(pf.GridLineColor.Value);
                 tc.InitSizeAndPos((int)ar.X, (int)ar.Y, pf.TilePadding.Value);
                 tc.InitWrapPoint();
-                tc.InitTileOrigin(pf.TileOrigin.Value, pf.TileOrientation.Value, true);
+                tc.InitTileOrigin(pf.TileOrigin.Value, pf.TileOrientation.Value, pf.UseDefaultTileOrigin.Value);
             }
 
             // load image
@@ -805,6 +805,12 @@ namespace C_SlideShow
             }
 
             UpdateMainWindowView();
+        }
+
+        public void UpdateTileArrange()
+        {
+            // タイルの配置を更新
+            InitMainContent(imageFileManager.CurrentIndex);
         }
 
         public void UpdateUI()

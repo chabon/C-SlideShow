@@ -173,6 +173,10 @@ namespace C_SlideShow
                 if( pf.FileSortMethod.IsEnabled ) PfCheckBox_FileSortMethod.IsChecked = true;
                 if( pf.ApplyRotateInfoFromExif.IsEnabled ) PfCheckBox_ApplyRotateInfoFromExif.IsChecked = true;
                 if( pf.BitmapDecodeTotalPixel.IsEnabled ) PfCheckBox_BitmapDecodeTotalPixel.IsChecked = true;
+                // その他/配置
+                if( pf.UseDefaultTileOrigin.IsEnabled ) PfCheckBox_UseDefaultTileOrigin.IsChecked = true;
+                if( pf.TileOrigin.IsEnabled ) PfCheckBox_TileOrigin.IsChecked = true;
+                if( pf.TileOrientation.IsEnabled ) PfCheckBox_TileOrientation.IsChecked = true;
                 // その他/外観1
                 if( pf.AllowTransparency.IsEnabled ) PfCheckBox_AllowTransparency.IsChecked = true;
                 if( pf.OverallOpacity.IsEnabled ) PfCheckBox_OverallOpacity.IsChecked = true;
@@ -320,6 +324,40 @@ namespace C_SlideShow
 
             // バックバッファのサイズ(ピクセル値)
             BitmapDecodeTotalPixel.Value = pf.BitmapDecodeTotalPixel.Value;
+
+            /* ---------------------------------------------------- */
+            // その他/配置
+            /* ---------------------------------------------------- */
+            // グリッドへの画像の配置方法
+            UseDefaultTileOrigin.SelectedIndex = pf.UseDefaultTileOrigin.Value ? 0 : 1;
+
+            // 配置する起点
+            switch( pf.TileOrigin.Value )
+            {
+                case C_SlideShow.TileOrigin.TopLeft:
+                    TileOrigin.SelectedIndex = 0;
+                    break;
+                case C_SlideShow.TileOrigin.TopRight:
+                    TileOrigin.SelectedIndex = 1;
+                    break;
+                case C_SlideShow.TileOrigin.BottomRight:
+                    TileOrigin.SelectedIndex = 2;
+                    break;
+                case C_SlideShow.TileOrigin.BottomLeft:
+                    TileOrigin.SelectedIndex = 3;
+                    break;
+            }
+
+            // 配置方向
+            switch( pf.TileOrientation.Value )
+            {
+                case C_SlideShow.TileOrientation.Horizontal:
+                    TileOrientation.SelectedIndex = 0;
+                    break;
+                case C_SlideShow.TileOrientation.Vertical:
+                    TileOrientation.SelectedIndex = 1;
+                    break;
+            }
 
             /* ---------------------------------------------------- */
             // その他/外観1
@@ -622,6 +660,44 @@ namespace C_SlideShow
             {
                 pf.BitmapDecodeTotalPixel.IsEnabled = true;
                 pf.BitmapDecodeTotalPixel.Value = BitmapDecodeTotalPixel.Value;
+            }
+
+            /* ---------------------------------------------------- */
+            // その他/配置
+            /* ---------------------------------------------------- */
+            // グリッドへの画像の配置方法
+            if( (bool)PfCheckBox_UseDefaultTileOrigin.IsChecked )
+            {
+                pf.UseDefaultTileOrigin.IsEnabled = true;
+                pf.UseDefaultTileOrigin.Value = UseDefaultTileOrigin.SelectedIndex == 0 ? true : false;
+            }
+
+            // 配置する起点
+            if( (bool)PfCheckBox_TileOrigin.IsChecked )
+            {
+                pf.TileOrigin.IsEnabled = true;
+                switch( TileOrigin.SelectedIndex )
+                {
+                    case 0:
+                        pf.TileOrigin.Value = C_SlideShow.TileOrigin.TopLeft;
+                        break;
+                    case 1:
+                        pf.TileOrigin.Value = C_SlideShow.TileOrigin.TopRight;
+                        break;
+                    case 2:
+                        pf.TileOrigin.Value = C_SlideShow.TileOrigin.BottomRight;
+                        break;
+                    case 3:
+                        pf.TileOrigin.Value = C_SlideShow.TileOrigin.BottomLeft;
+                        break;
+                }
+            }
+
+            // 配置方向
+            if( (bool)PfCheckBox_TileOrientation.IsChecked )
+            {
+                pf.TileOrientation.IsEnabled = true;
+                pf.TileOrientation.Value = TileOrientation.SelectedIndex == 0 ? C_SlideShow.TileOrientation.Horizontal : C_SlideShow.TileOrientation.Vertical;
             }
 
             /* ---------------------------------------------------- */

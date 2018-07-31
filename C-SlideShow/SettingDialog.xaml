@@ -9,6 +9,7 @@
     <Grid>
         <TabControl x:Name="MainTabControl" TabStripPlacement="Bottom" Width="260" Height="230" VerticalAlignment="Top" >
 
+            <!-- 全般 -->
             <TabItem Header="全般" Width="50">
                 <StackPanel Margin="10,4,10,5">
 
@@ -63,6 +64,60 @@
                 </StackPanel>
             </TabItem>
 
+            <!-- 配置 -->
+            <TabItem Header="配置" Width="50">
+                <StackPanel Margin="5">
+                    <Label>グリッドへの画像の配置方法</Label>
+                    <ComboBox x:Name="UseDefaultTileOrigin" Width="200" HorizontalAlignment="Left" SelectionChanged="UseDefaultTileOrigin_SelectionChanged">
+                        <ComboBoxItem>スライド方向から自動で決定する</ComboBoxItem>
+                        <ComboBoxItem>以下で指定する</ComboBoxItem>
+                    </ComboBox>
+                    <StackPanel Orientation="Horizontal" Margin="0,10">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,15,0,8">
+                                <Label Width="80">配置する起点</Label>
+                                <ComboBox Width="55" x:Name="TileOrigin" SelectionChanged="TileOrigin_SelectionChanged">
+                                    <ComboBoxItem>左上</ComboBoxItem>
+                                    <ComboBoxItem>右上</ComboBoxItem>
+                                    <ComboBoxItem>右下</ComboBoxItem>
+                                    <ComboBoxItem>左下</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0">
+                                <Label Width="80">配置方向</Label>
+                                <ComboBox Width="55" x:Name="TileOrientation" SelectionChanged="TileOrientation_SelectionChanged">
+                                    <ComboBoxItem>横</ComboBoxItem>
+                                    <ComboBoxItem>縦</ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                        <Grid Margin="30,15" Width="60" Height="60">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition Height="30"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30"></ColumnDefinition>
+                                <ColumnDefinition Width="30"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Border BorderBrush="Black" BorderThickness="1">
+                                <Label x:Name="TileArrangePreview_TopLeft">1</Label>
+                            </Border>
+                            <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1">
+                                <Label x:Name="TileArrangePreview_BottomLeft">2</Label>
+                            </Border>
+                            <Border BorderBrush="Black" BorderThickness="1" Grid.Column="1">
+                                <Label x:Name="TileArrangePreview_TopRight">3</Label>
+                            </Border>
+                            <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Grid.Column="1">
+                                <Label x:Name="TileArrangePreview_BottomRight">4</Label>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+
+            <!-- 外観1 -->
             <TabItem Header="外観1" Width="50">
                 <StackPanel Margin="10,4,10,5">
                     <GroupBox Header="透過" Padding="3">
@@ -104,6 +159,7 @@
                 </StackPanel>
             </TabItem>
 
+            <!-- 外観2 -->
             <TabItem Header="外観2" Width="50">
                 <StackPanel Margin="10">
 

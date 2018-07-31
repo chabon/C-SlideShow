@@ -78,54 +78,6 @@ namespace C_SlideShow.ProfileMember
         public static readonly int Max = 32;
     }
 
-    public class TileOrigin : ProfileMemberBase
-    {
-        public TileOrigin()
-        {
-            this.Value = C_SlideShow.TileOrigin.TopLeft;
-            IsEnabled  = false;
-        }
-
-        public new C_SlideShow.TileOrigin Value { get; set; }
-
-        public override string TooltipStr
-        {
-            get { return "TileOrigin: " + base.Value; }
-        }
-    }
-
-    public class TileOrientation : ProfileMemberBase
-    {
-        public TileOrientation()
-        {
-            this.Value = C_SlideShow.TileOrientation.Vertical;
-            IsEnabled  = false;
-        }
-
-        public new C_SlideShow.TileOrientation Value { get; set; }
-
-        public override string TooltipStr
-        {
-            get { return "TileOrientation: " + base.Value; }
-        }
-    }
-
-    public class UseDefaultTileOrigin : ProfileMemberBase
-    {
-        public UseDefaultTileOrigin()
-        {
-            this.Value = true;
-            IsEnabled  = false;
-        }
-
-        public new bool Value { get; set; }
-
-        public override string TooltipStr
-        {
-            get { return "UseDefaultTileOrigin: " + base.Value; }
-        }
-    }
-
     /* ---------------------------------------------------- */
     // アスペクト比設定
     /* ---------------------------------------------------- */
@@ -422,6 +374,77 @@ namespace C_SlideShow.ProfileMember
 
         public static readonly int Min = 320;
         public static readonly int Max = 10000;
+    }
+
+
+    /* ---------------------------------------------------- */
+    //    その他の設定_配置
+    /* ---------------------------------------------------- */
+    public class UseDefaultTileOrigin : ProfileMemberBase
+    {
+        public UseDefaultTileOrigin()
+        {
+            this.Value = true;
+            IsEnabled  = false;
+        }
+
+        public new bool Value { get; set; }
+
+        public override string TooltipStr
+        {
+            get { return "画像の配置方法: " + (this.Value ? "スライド方法から自動で決定する" : "指定する"); }
+        }
+    }
+
+    public class TileOrigin : ProfileMemberBase
+    {
+        public TileOrigin()
+        {
+            this.Value = C_SlideShow.TileOrigin.TopLeft;
+            IsEnabled  = false;
+        }
+
+        public new C_SlideShow.TileOrigin Value { get; set; }
+
+        public override string TooltipStr
+        {
+            get
+            {
+                string orig = "";
+                switch( this.Value )
+                {
+                    case C_SlideShow.TileOrigin.TopLeft:
+                        orig = "左上";
+                        break;
+                    case C_SlideShow.TileOrigin.TopRight:
+                        orig = "右上";
+                        break;
+                    case C_SlideShow.TileOrigin.BottomRight:
+                        orig = "右下";
+                        break;
+                    case C_SlideShow.TileOrigin.BottomLeft:
+                        orig = "左下";
+                        break;
+                }
+                return "配置する起点: " + orig;
+            }
+        }
+    }
+
+    public class TileOrientation : ProfileMemberBase
+    {
+        public TileOrientation()
+        {
+            this.Value = C_SlideShow.TileOrientation.Vertical;
+            IsEnabled  = false;
+        }
+
+        public new C_SlideShow.TileOrientation Value { get; set; }
+
+        public override string TooltipStr
+        {
+            get { return "配置方向: " + (this.Value == C_SlideShow.TileOrientation.Vertical ? "縦" : "横"); }
+        }
     }
 
     /* ---------------------------------------------------- */

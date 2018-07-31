@@ -20,7 +20,7 @@ namespace C_SlideShow
 
     public enum TileOrigin
     {
-        TopLeft, TopRight, BottomLeft, BottomRight
+        TopLeft, TopRight, BottomRight, BottomLeft
     }
 
     public enum TileOrientation
@@ -86,15 +86,6 @@ namespace C_SlideShow
         [DataMember]
         public ProfileMember.NumofMatrix NumofMatrix { get; set; } = new ProfileMember.NumofMatrix();
 
-        [DataMember]
-        public ProfileMember.TileOrigin TileOrigin { get; set; } = new ProfileMember.TileOrigin();
-
-        [DataMember]
-        public ProfileMember.TileOrientation TileOrientation { get; set; } = new ProfileMember.TileOrientation();
-
-        [DataMember]
-        public ProfileMember.UseDefaultTileOrigin UseDefaultTileOrigin { get; set; } = new ProfileMember.UseDefaultTileOrigin();
-
 
         // アスペクト比設定
         [DataMember]
@@ -141,6 +132,17 @@ namespace C_SlideShow
 
         [DataMember]
         public ProfileMember.BitmapDecodeTotalPixel BitmapDecodeTotalPixel { get; set; } = new ProfileMember.BitmapDecodeTotalPixel();
+
+
+        // その他の設定_配置
+        [DataMember]
+        public ProfileMember.UseDefaultTileOrigin UseDefaultTileOrigin { get; set; } = new ProfileMember.UseDefaultTileOrigin();
+
+        [DataMember]
+        public ProfileMember.TileOrigin TileOrigin { get; set; } = new ProfileMember.TileOrigin();
+
+        [DataMember]
+        public ProfileMember.TileOrientation TileOrientation { get; set; } = new ProfileMember.TileOrientation();
 
 
         // その他の設定_外観1
@@ -207,9 +209,6 @@ namespace C_SlideShow
 
             // 行列設定
             if( pf.NumofMatrix.IsEnabled )          Array.Copy(pf.NumofMatrix.Value, NumofMatrix.Value, 2);
-            if( pf.TileOrigin.IsEnabled )           TileOrigin.Value = pf.TileOrigin.Value;
-            if( pf.TileOrientation.IsEnabled )      TileOrientation.Value = pf.TileOrientation.Value;
-            if( pf.UseDefaultTileOrigin.IsEnabled ) UseDefaultTileOrigin.Value = pf.UseDefaultTileOrigin.Value;
 
             // アスペクト比設定
             if( pf.AspectRatio.IsEnabled )       Array.Copy(pf.AspectRatio.Value, AspectRatio.Value, 2);
@@ -230,6 +229,11 @@ namespace C_SlideShow
             if( pf.OpenPrevFolderOnStartUp.IsEnabled ) OpenPrevFolderOnStartUp.Value = pf.OpenPrevFolderOnStartUp.Value;
             if( pf.ApplyRotateInfoFromExif.IsEnabled ) ApplyRotateInfoFromExif.Value = pf.ApplyRotateInfoFromExif.Value;
             if( pf.BitmapDecodeTotalPixel.IsEnabled )  BitmapDecodeTotalPixel.Value = pf.BitmapDecodeTotalPixel.Value;
+
+            // その他の設定_配置
+            if( pf.UseDefaultTileOrigin.IsEnabled ) UseDefaultTileOrigin.Value = pf.UseDefaultTileOrigin.Value;
+            if( pf.TileOrigin.IsEnabled )           TileOrigin.Value = pf.TileOrigin.Value;
+            if( pf.TileOrientation.IsEnabled )      TileOrientation.Value = pf.TileOrientation.Value;
 
             // その他の設定_外観1
             if( pf.AllowTransparency.IsEnabled )          AllowTransparency.Value = pf.AllowTransparency.Value;
@@ -287,9 +291,6 @@ namespace C_SlideShow
 
             // 行列設定
             Array.Copy(this.NumofMatrix.Value, newProfile.NumofMatrix.Value, 2);
-            newProfile.TileOrigin.Value = this.TileOrigin.Value;
-            newProfile.TileOrientation.Value = this.TileOrientation.Value;
-            newProfile.UseDefaultTileOrigin.Value = this.UseDefaultTileOrigin.Value;
 
             // アスペクト比設定
             Array.Copy(this.AspectRatio.Value, newProfile.AspectRatio.Value, 2);
@@ -310,6 +311,11 @@ namespace C_SlideShow
             newProfile.OpenPrevFolderOnStartUp.Value = this.OpenPrevFolderOnStartUp.Value;
             newProfile.ApplyRotateInfoFromExif.Value = this.ApplyRotateInfoFromExif.Value;
             newProfile.BitmapDecodeTotalPixel.Value = this.BitmapDecodeTotalPixel.Value;
+
+            // その他の設定_配置
+            newProfile.UseDefaultTileOrigin.Value = this.UseDefaultTileOrigin.Value;
+            newProfile.TileOrigin.Value = this.TileOrigin.Value;
+            newProfile.TileOrientation.Value = this.TileOrientation.Value;
 
             // その他の設定_外観1
             newProfile.AllowTransparency.Value = this.AllowTransparency.Value;
