@@ -14,6 +14,12 @@ using System.Windows.Shapes;
 
 namespace C_SlideShow
 {
+    public enum AppSettingDialogTabIndex
+    {
+        History = 0,
+        AspectRatio = 1
+    }
+
     /// <summary>
     /// AppSettingDialog.xaml の相互作用ロジック
     /// </summary>
