@@ -73,13 +73,6 @@
                 </StackPanel>
             </TabItem>
 
-            <!-- プロファイル -->
-            <TabItem Header="プロファイル" Width="70">
-                <StackPanel Margin="20,3">
-                    <CheckBox x:Name="UsePresetProfile" Margin="4">プリセットのプロファイルを表示する</CheckBox>
-                </StackPanel>
-            </TabItem>
-
         </TabControl>
         <Button x:Name="OkButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="90,10" Width="70" Click="OkButton_Click">OK</Button>
         <Button x:Name="CancelButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Width="70" Click="CancelButton_Click">キャンセル</Button>

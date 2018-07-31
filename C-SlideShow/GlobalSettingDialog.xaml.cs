@@ -76,9 +76,6 @@ namespace C_SlideShow
             }
 
 
-            // プロファイル
-            UsePresetProfile.IsChecked = setting.UsePresetProfile;
-
 
             isInitializing = false;
         }
@@ -270,9 +267,6 @@ namespace C_SlideShow
                     setting.AspectRatioList.Add( new Point(w, h) );
                 }
             }
-
-            // プロファイル
-            setting.UsePresetProfile = (bool)UsePresetProfile.IsChecked;
 
 
             this.Close();

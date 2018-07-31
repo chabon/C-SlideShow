@@ -94,6 +94,9 @@
     <Compile Include="ProfileEditDialog.xaml.cs">
       <DependentUpon>ProfileEditDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ProfileListEditDialog.xaml.cs">
+      <DependentUpon>ProfileListEditDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProfileMember\IProfileMember.cs" />
     <Compile Include="ProfileMember\ProfileMemberBase.cs" />
     <Compile Include="ProfileMember\ProfileMemberSet.cs" />
@@ -146,6 +149,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ProfileEditDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProfileListEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

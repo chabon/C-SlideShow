@@ -1295,6 +1295,14 @@ namespace C_SlideShow
             globalSettingDialog.ShowDialog();
         }
 
+        public void ShowProfileListEditDialog()
+        {
+            ProfileListEditDialog profileListEditDialog = new ProfileListEditDialog();
+            Util.SetWindowCenterOnWindow(this, profileListEditDialog);
+            profileListEditDialog.Initialize();
+            profileListEditDialog.ShowDialog();
+        }
+
         public void RemoveUserProfileInfo(UserProfileInfo upi)
         {
             Setting.UserProfileList.Remove(upi);

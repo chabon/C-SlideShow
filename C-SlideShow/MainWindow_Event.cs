@@ -423,14 +423,26 @@ namespace C_SlideShow
             if( miSrc == null || miSrc.Name != MenuItem_Load.Name) return;
 
             // ヒストリー追加前に削除
-            const int hIndex = 9;
+            const int hIndex = 7;
             while(MenuItem_Load.Items.Count - 1 >= hIndex )
             {
                 MenuItem_Load.Items.RemoveAt(MenuItem_Load.Items.Count - 1);
             }
 
             // ヒストリーなし
-            if( Setting.History.Count < 1 ) return;
+            Action addHistorySettingMenu = () =>
+            {
+                MenuItem_Load.Items.Add( new Separator() );
+                MenuItem m0 = new MenuItem();
+                m0.Header = "履歴設定...";
+                m0.Click += (s, ev) => ShowGlobalSettingDialog(0);
+                MenuItem_Load.Items.Add(m0);
+            };
+            if( Setting.History.Count < 1 )
+            {
+                addHistorySettingMenu.Invoke();
+                return;
+            }
 
             // セパレータ
             MenuItem_Load.Items.Add( new Separator() );
@@ -510,6 +522,9 @@ namespace C_SlideShow
                     continuation.Items.Add(mi);
                 }
             }
+
+            // 履歴設定
+            addHistorySettingMenu.Invoke();
         }
 
         // ヒストリー選択時
@@ -600,6 +615,13 @@ namespace C_SlideShow
             Reload(false);
         }
 
+        // 履歴設定
+        private void Toolbar_Load_HistorySetting_Click(object sender, RoutedEventArgs e)
+        {
+            ShowGlobalSettingDialog(0);
+        }
+
+
         // グリッドのアスペクト比 開いた時
         private void MenuItem_AspectRatio_SubmenuOpened(object sender, RoutedEventArgs e)
         {
@@ -673,12 +695,6 @@ namespace C_SlideShow
             }
         }
 
-
-        // 履歴設定
-        private void Toolbar_Load_HistorySetting_Click(object sender, RoutedEventArgs e)
-        {
-            ShowGlobalSettingDialog(0);
-        }
 
         // 再生
         private void Toolbar_Play_Click(object sender, RoutedEventArgs e)
@@ -761,13 +777,17 @@ namespace C_SlideShow
                 mi.Header = upi.Profile.Name;
                 mi.ToolTip = upi.Profile.CreateProfileToolTip();
                 ToolTipService.SetShowDuration(mi, 1000000);
-                mi.Click += (se, ev) => 
-                {
-                    LoadUserProfile(upi.Profile);
-                };
+                mi.Click += (se, ev) => { LoadUserProfile(upi.Profile); };
                 mi.ContextMenu = CreateProfileContextMenu(upi);
                 MenuItem_Profile.Items.Add(mi);
             }
+
+            // リストを編集... を追加
+            MenuItem_Profile.Items.Add( new Separator() );
+            MenuItem ms = new MenuItem();
+            ms.Header = "リストを編集...";
+            ms.Click += (se, ev) => { ShowProfileListEditDialog(); };
+            MenuItem_Profile.Items.Add(ms);
         }
 
         // プロファイルメニュー内、コンテキストメニュー作成
@@ -827,7 +847,7 @@ namespace C_SlideShow
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem; if( mi == null ) return;
 
                 int index = Setting.UserProfileList.IndexOf(upi);
-                if( index == 0 ) return;
+                if( index <= 0 ) return;
 
                 Setting.UserProfileList.RemoveAt(index);
                 Setting.UserProfileList.Insert(index - 1, upi);
