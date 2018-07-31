@@ -89,6 +89,7 @@
     <Compile Include="MatrixSelecter.xaml.cs">
       <DependentUpon>MatrixSelecter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PresetProfile.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="ProfileEditDialog.xaml.cs">
       <DependentUpon>ProfileEditDialog.xaml</DependentUpon>

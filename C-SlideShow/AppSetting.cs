@@ -105,6 +105,9 @@ namespace C_SlideShow
         [DataMember]
         public List<Point> AspectRatioList { get; set; }
 
+        // プロファイル
+        [DataMember]
+        public bool UsePresetProfile { get; set; }
 
         public AppSetting()
         {
@@ -122,6 +125,8 @@ namespace C_SlideShow
             ApplyHistoryInfoInNewArchiverReading = true;
 
             AspectRatioList = new List<Point> { new Point(4, 3), new Point(3, 4), new Point(16, 9), new Point(9, 16), new Point(3, 2), new Point(2, 3), new Point(1, 1)};
+
+            UsePresetProfile = true;
 
             SettingDialogTabIndex = 0;
             GlobalSettingDialogTabIndex = 0;

@@ -735,6 +735,22 @@ namespace C_SlideShow
                 MenuItem_Profile.Items.RemoveAt(basicManuCnt);
             }
 
+            // プリセットプロファイル追加
+            if( Setting.UsePresetProfile )
+            {
+                MenuItem_Profile.Items.Add( new Separator() );
+                foreach(Profile ppf in PresetProfile.Items)
+                {
+                    MenuItem mi = new MenuItem();
+                    mi.Header = ppf.Name;
+                    if( ppf.Name == "デフォルト" ) mi.ToolTip = "デフォルト";
+                    else mi.ToolTip = ppf.CreateProfileToolTip();
+                    ToolTipService.SetShowDuration(mi, 1000000);
+                    mi.Click += (se, ev) => { LoadUserProfile(ppf); };
+                    MenuItem_Profile.Items.Add(mi);
+                }
+            }
+
             // セパレータ追加
             if(Setting.UserProfileList.Count > 0) MenuItem_Profile.Items.Add( new Separator() );
 

@@ -28,6 +28,7 @@ namespace C_SlideShow.ProfileMember
         {
             get
             {
+                if( this.Value.Count < 1 ) return "パス: ";
                 string str = "パス: " + this.Value[0];
                 if( this.Value.Count != 1 ) str += " 他" + (this.Value.Count - 1) + "件";
                 return str;

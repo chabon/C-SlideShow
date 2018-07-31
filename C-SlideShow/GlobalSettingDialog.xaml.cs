@@ -45,25 +45,14 @@ namespace C_SlideShow
             setting = MainWindow.Current.Setting;
 
             // 履歴設定
-            if( setting.EnabledItemsInHistory.ArchiverPath ) EnabledItemsInHistory_ArchiverPath.IsChecked = true;
-            else EnabledItemsInHistory_ArchiverPath.IsChecked = false;
-
-            if( setting.EnabledItemsInHistory.ImagePath ) EnabledItemsInHistory_ImagePath.IsChecked = true;
-            else EnabledItemsInHistory_ImagePath.IsChecked = false;
-
-            if( setting.EnabledItemsInHistory.AspectRatio ) EnabledItemsInHistory_AspectRatio.IsChecked = true;
-            else EnabledItemsInHistory_AspectRatio.IsChecked = false;
-
-            if( setting.EnabledItemsInHistory.Matrix ) EnabledItemsInHistory_Matrix.IsChecked = true;
-            else EnabledItemsInHistory_Matrix.IsChecked = false;
-
-            if( setting.EnabledItemsInHistory.SlideDirection ) EnabledItemsInHistory_SlideDirection.IsChecked = true;
-            else EnabledItemsInHistory_SlideDirection.IsChecked = false;
+            EnabledItemsInHistory_ArchiverPath.IsChecked = setting.EnabledItemsInHistory.ArchiverPath;
+            EnabledItemsInHistory_ImagePath.IsChecked =  setting.EnabledItemsInHistory.ImagePath ;
+            EnabledItemsInHistory_AspectRatio.IsChecked =  setting.EnabledItemsInHistory.AspectRatio ;
+            EnabledItemsInHistory_Matrix.IsChecked =  setting.EnabledItemsInHistory.Matrix ;
+            EnabledItemsInHistory_SlideDirection.IsChecked =  setting.EnabledItemsInHistory.SlideDirection ;
 
             NumofHistory.Value = setting.NumofHistory;
-
-            if( setting.ApplyHistoryInfoInNewArchiverReading ) ApplyHistoryInfoInNewArchiverReading.IsChecked = true;
-            else ApplyHistoryInfoInNewArchiverReading.IsChecked = false;
+            ApplyHistoryInfoInNewArchiverReading.IsChecked =  setting.ApplyHistoryInfoInNewArchiverReading ;
             
             NumofHistoryInMenu.Value = setting.NumofHistoryInMenu;
             NumofHistoryInMainMenu.Value = setting.NumofHistoryInMainMenu;
@@ -86,6 +75,9 @@ namespace C_SlideShow
                 AspectRatio_V.Value = (int)setting.AspectRatioList[0].Y;
             }
 
+
+            // プロファイル
+            UsePresetProfile.IsChecked = setting.UsePresetProfile;
 
 
             isInitializing = false;
@@ -122,7 +114,7 @@ namespace C_SlideShow
 
         private void DeleteHistory_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result =  MessageBox.Show("全てのフォルダ(書庫)の履歴を削除してもよろしいですか？", "削除確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            MessageBoxResult result =  MessageBox.Show("全てのフォルダ(書庫)の履歴を削除してもよろしいですか？\r\nこの操作はキャンセル出来ません", "削除確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if( result == MessageBoxResult.Yes ) setting.History.Clear();
         }
 
@@ -254,30 +246,15 @@ namespace C_SlideShow
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             // 履歴設定
-            if( (bool)EnabledItemsInHistory_ArchiverPath.IsChecked ) setting.EnabledItemsInHistory.ArchiverPath = true;
-            else setting.EnabledItemsInHistory.ArchiverPath = false;
-
-            if( (bool)EnabledItemsInHistory_ImagePath.IsChecked ) setting.EnabledItemsInHistory.ImagePath = true;
-            else setting.EnabledItemsInHistory.ImagePath = false;
-
-            if( (bool)EnabledItemsInHistory_AspectRatio.IsChecked ) setting.EnabledItemsInHistory.AspectRatio = true;
-            else setting.EnabledItemsInHistory.AspectRatio = false;
-
-            if( (bool)EnabledItemsInHistory_Matrix.IsChecked ) setting.EnabledItemsInHistory.Matrix = true;
-            else setting.EnabledItemsInHistory.Matrix = false;
-
-            if( (bool)EnabledItemsInHistory_SlideDirection.IsChecked ) setting.EnabledItemsInHistory.SlideDirection = true;
-            else setting.EnabledItemsInHistory.SlideDirection = false;
-
+            setting.EnabledItemsInHistory.ArchiverPath =  (bool)EnabledItemsInHistory_ArchiverPath.IsChecked ;
+            setting.EnabledItemsInHistory.ImagePath =  (bool)EnabledItemsInHistory_ImagePath.IsChecked ;
+            setting.EnabledItemsInHistory.AspectRatio =  (bool)EnabledItemsInHistory_AspectRatio.IsChecked ;
+            setting.EnabledItemsInHistory.Matrix =  (bool)EnabledItemsInHistory_Matrix.IsChecked ;
+            setting.EnabledItemsInHistory.SlideDirection =  (bool)EnabledItemsInHistory_SlideDirection.IsChecked ;
             setting.NumofHistory = NumofHistory.Value;
-
-            if( (bool)ApplyHistoryInfoInNewArchiverReading.IsChecked ) setting.ApplyHistoryInfoInNewArchiverReading = true;
-            else setting.ApplyHistoryInfoInNewArchiverReading = false;
-
+            setting.ApplyHistoryInfoInNewArchiverReading =  (bool)ApplyHistoryInfoInNewArchiverReading.IsChecked ;
             setting.NumofHistoryInMenu = NumofHistoryInMenu.Value;
-
             setting.NumofHistoryInMainMenu = NumofHistoryInMainMenu.Value;
-
 
             // アスペクト比
             setting.AspectRatioList.Clear();
@@ -294,6 +271,8 @@ namespace C_SlideShow
                 }
             }
 
+            // プロファイル
+            setting.UsePresetProfile = (bool)UsePresetProfile.IsChecked;
 
 
             this.Close();
