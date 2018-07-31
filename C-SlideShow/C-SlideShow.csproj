@@ -81,8 +81,8 @@
     <Compile Include="Comparer.cs" />
     <Compile Include="ExifInfo.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="GlobalSettingDialog.xaml.cs">
-      <DependentUpon>GlobalSettingDialog.xaml</DependentUpon>
+    <Compile Include="AppSettingDialog.xaml.cs">
+      <DependentUpon>AppSettingDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageFileInfo.cs" />
     <Compile Include="MainWindow_Event.cs" />
@@ -128,7 +128,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GlobalSettingDialog.xaml">
+    <Page Include="AppSettingDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

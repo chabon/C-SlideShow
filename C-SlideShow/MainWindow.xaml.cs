@@ -1280,19 +1280,19 @@ namespace C_SlideShow
             profileEditDialog.MainScrollViewer.ScrollToTop();
         }
 
-        public void ShowGlobalSettingDialog(int tabIndex)
+        public void ShowAppSettingDialog(int tabIndex)
         {
-            GlobalSettingDialog globalSettingDialog = new GlobalSettingDialog();
+            AppSettingDialog appSettingDialog = new AppSettingDialog();
 
             // 表示位置はメインウインドウ中心に
-            Util.SetWindowCenterOnWindow(this, globalSettingDialog);
+            Util.SetWindowCenterOnWindow(this, appSettingDialog);
 
             // 値の代入
-            globalSettingDialog.Initialize();
-            globalSettingDialog.MainTabControl.SelectedIndex = tabIndex;
+            appSettingDialog.Initialize();
+            appSettingDialog.MainTabControl.SelectedIndex = tabIndex;
 
             // 表示
-            globalSettingDialog.ShowDialog();
+            appSettingDialog.ShowDialog();
         }
 
         public void ShowProfileListEditDialog()

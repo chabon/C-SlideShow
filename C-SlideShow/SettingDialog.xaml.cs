@@ -359,10 +359,10 @@ namespace C_SlideShow
                 mainWindow.Reload(true);
         }
 
-        // グローバル設定
-        private void GlobalSetting_Click(object sender, RoutedEventArgs e)
+        // アプリの設定
+        private void AppSettingButton_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.ShowGlobalSettingDialog(Setting.GlobalSettingDialogTabIndex);
+            mainWindow.ShowAppSettingDialog(Setting.AppSettingDialogTabIndex);
         }
 
 

@@ -435,7 +435,7 @@ namespace C_SlideShow
                 MenuItem_Load.Items.Add( new Separator() );
                 MenuItem m0 = new MenuItem();
                 m0.Header = "履歴設定...";
-                m0.Click += (s, ev) => ShowGlobalSettingDialog(0);
+                m0.Click += (s, ev) => ShowAppSettingDialog(0);
                 MenuItem_Load.Items.Add(m0);
             };
             if( Setting.History.Count < 1 )
@@ -618,7 +618,7 @@ namespace C_SlideShow
         // 履歴設定
         private void Toolbar_Load_HistorySetting_Click(object sender, RoutedEventArgs e)
         {
-            ShowGlobalSettingDialog(0);
+            ShowAppSettingDialog(0);
         }
 
 
@@ -653,7 +653,7 @@ namespace C_SlideShow
             m2.Header = "リストを編集...";
             m2.Tag = "EDIT";
             m2.IsCheckable = true;
-            m2.Click += (s, ev) => { ShowGlobalSettingDialog(1); };
+            m2.Click += (s, ev) => { ShowAppSettingDialog(1); };
             MenuItem_AspectRatio.Items.Add(m2);
 
             UpdateToolbarViewing();

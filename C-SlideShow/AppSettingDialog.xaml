@@ -1,4 +1,4 @@
-﻿<Window x:Class="C_SlideShow.GlobalSettingDialog"
+﻿<Window x:Class="C_SlideShow.AppSettingDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:C_SlideShow"
         xmlns:cc="clr-namespace:C_SlideShow.CommonControl"
         mc:Ignorable="d"
-        Title="グローバル設定 (ここの設定項目はプロファイルに含まれません)" Height="480" Width="500">
+        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="480" Width="500">
     <Grid>
         <TabControl x:Name="MainTabControl" Margin="3,3,3,40">
             <!-- 履歴 -->

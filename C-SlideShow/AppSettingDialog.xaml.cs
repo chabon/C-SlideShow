@@ -15,21 +15,21 @@ using System.Windows.Shapes;
 namespace C_SlideShow
 {
     /// <summary>
-    /// GlobalSettingDialog.xaml の相互作用ロジック
+    /// AppSettingDialog.xaml の相互作用ロジック
     /// </summary>
-    public partial class GlobalSettingDialog : Window
+    public partial class AppSettingDialog : Window
     {
 
         bool isInitializing = false;
         AppSetting setting;
 
-        public GlobalSettingDialog()
+        public AppSettingDialog()
         {
             InitializeComponent();
 
             this.Closing += (s, e) =>
             {
-                MainWindow.Current.Setting.GlobalSettingDialogTabIndex = MainTabControl.SelectedIndex;
+                MainWindow.Current.Setting.AppSettingDialogTabIndex = MainTabControl.SelectedIndex;
 
                 // 履歴上限数を超えてたら削除
                 if(setting.History.Count > setting.NumofHistory )

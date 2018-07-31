@@ -77,7 +77,7 @@ namespace C_SlideShow
         public int SettingDialogTabIndex { get; set; }
 
         [DataMember]
-        public int GlobalSettingDialogTabIndex { get; set; }
+        public int AppSettingDialogTabIndex { get; set; }
 
         // ダイアログ未実装
 
@@ -129,7 +129,7 @@ namespace C_SlideShow
             UsePresetProfile = true;
 
             SettingDialogTabIndex = 0;
-            GlobalSettingDialogTabIndex = 0;
+            AppSettingDialogTabIndex = 0;
         }
 
         // 既定値(xmlファイルデシリアライズ時に呼ばれる)
