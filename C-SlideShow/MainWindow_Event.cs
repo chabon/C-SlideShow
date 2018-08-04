@@ -496,7 +496,7 @@ namespace C_SlideShow
                 if(i < Setting.History.Count )
                 {
                     MenuItem mi = new MenuItem();
-                    mi.Header = System.IO.Path.GetFileName( Setting.History[i].ArchiverPath );
+                    mi.Header = System.IO.Path.GetFileName( Setting.History[i].ArchiverPath ).Replace("_", "__");
                     mi.ToolTip = Setting.History[i].ArchiverPath;
                     mi.Click += OnHistoryItemSelected;
                     mi.ContextMenu = contextMenu;
@@ -515,7 +515,7 @@ namespace C_SlideShow
                 {
                     if( i > Setting.History.Count - 1) break;
                     MenuItem mi = new MenuItem();
-                    mi.Header = System.IO.Path.GetFileName(Setting.History[i].ArchiverPath);
+                    mi.Header = System.IO.Path.GetFileName(Setting.History[i].ArchiverPath).Replace("_", "__");
                     mi.ToolTip = Setting.History[i].ArchiverPath;
                     mi.Click += OnHistoryItemSelected;
                     mi.ContextMenu = contextMenu;
@@ -774,7 +774,7 @@ namespace C_SlideShow
             foreach(UserProfileInfo upi in Setting.UserProfileList )
             {
                 MenuItem mi = new MenuItem();
-                mi.Header = upi.Profile.Name;
+                mi.Header = upi.Profile.Name.Replace("_", "__");
                 mi.ToolTip = upi.Profile.CreateProfileToolTip();
                 ToolTipService.SetShowDuration(mi, 1000000);
                 mi.Click += (se, ev) => { LoadUserProfile(upi.Profile); };

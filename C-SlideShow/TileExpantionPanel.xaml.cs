@@ -15,6 +15,7 @@ using System.Windows.Media.Animation;
 
 using System.IO;
 using System.Diagnostics;
+using WpfAnimatedGif;
 
 
 namespace C_SlideShow
@@ -255,14 +256,32 @@ namespace C_SlideShow
 
         private void LoadImage()
         {
-            int pixel = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixel.Value;
-            Size pixelSize = new Size(pixel, pixel);
-            var bitmap = ImageFileManager.LoadBitmap( targetTile.ImageFileInfo, pixelSize );
+            ImageFileInfo fi = targetTile.ImageFileInfo;
 
-            if(bitmap != null)
-                this.ExpandedImage.Source = bitmap;
+            // gif拡大時
+            if(fi.Archiver.CanReadFile && Path.GetExtension( fi.FilePath ).ToLower() == ".gif" )
+            {
+                var source = new BitmapImage();
+                source.BeginInit();
+                source.CacheOption = BitmapCacheOption.OnLoad;
+                source.CreateOptions = BitmapCreateOptions.None;
+                source.UriSource = new Uri(fi.FilePath);
+                ImageBehavior.SetAnimatedSource(ExpandedImage, source);
+                ExpandedImage.Source = source;
+                source.EndInit();
+                source.Freeze();
+            }
             else
-                this.ExpandedImage.Source = null;
+            {
+                ImageBehavior.SetAnimatedSource(ExpandedImage, null);
+                int pixel = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixel.Value;
+                Size pixelSize = new Size(pixel, pixel);
+                var bitmap = ImageFileManager.LoadBitmap( fi, pixelSize );
+
+                if(bitmap != null) this.ExpandedImage.Source = bitmap;
+                else this.ExpandedImage.Source = null;
+            }
+
         }
 
         private void UpdateFileInfoText()

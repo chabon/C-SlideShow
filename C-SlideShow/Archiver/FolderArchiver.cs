@@ -13,6 +13,7 @@ namespace C_SlideShow.Archiver
         public FolderArchiver(string archiverPath) : base(archiverPath)
         {
             LeaveHistory = true;
+            CanReadFile  = true;
         }
 
         public override Stream OpenStream(string path)

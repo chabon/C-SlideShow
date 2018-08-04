@@ -14,6 +14,11 @@ namespace C_SlideShow.Archiver
     /// </summary>
     public class NullArchiver : ArchiverBase
     {
+        public NullArchiver() : base()
+        {
+            CanReadFile  = true;
+        }
+
         public override Stream OpenStream(string path)
         {
             if( File.Exists(path) )
