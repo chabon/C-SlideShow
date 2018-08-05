@@ -963,6 +963,9 @@ namespace C_SlideShow
                 // システムアイコン変更
                 SystemButton_Maximize_Image.Source = 
                     new BitmapImage(new Uri("Resources/maximize.png", UriKind.Relative));
+
+                // 拡大パネル
+                if( TileExpantionPanel.IsShowing ) TileExpantionPanel.FitToMainWindow();
             }
             else
             {
