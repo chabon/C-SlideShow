@@ -880,6 +880,13 @@ namespace C_SlideShow
 
         private void Footer_OK_Click(object sender, RoutedEventArgs e)
         {
+            // １つ以上チェックが入っているか
+            if( this.Descendants<CheckBox>().ToList().All( x => !(bool)x.IsChecked) )
+            {
+                MessageBox.Show("プロファイルを作成するには、1つ以上の項目にチェックを入れて下さい", "エラー", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             // ファイル名に使用できない文字をアンダーバーに書き換え
             Footer_ProfileName.Text = Util.ValidFileName(Footer_ProfileName.Text);
 
