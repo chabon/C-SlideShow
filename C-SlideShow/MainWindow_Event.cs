@@ -171,15 +171,7 @@ namespace C_SlideShow
                 else
                 {
                     // 通常読み込み
-                    if( Setting.EnabledItemsInHistory.ArchiverPath && files.Length == 1 && Setting.History.Any( hi => hi.ArchiverPath ==  files[0]))
-                    {
-                        // 履歴に存在する場合
-                        LoadHistory(files[0]);
-                    }
-                    else
-                    {
-                        ReadFilesAndInitMainContent(files, false, 0);
-                    }
+                    DropNewFiles(files);
                 }
             };
 
@@ -537,16 +529,7 @@ namespace C_SlideShow
             {
                 SaveHistoryItem();
 
-                if( Setting.EnabledItemsInHistory.ArchiverPath && Setting.History.Any( hi => hi.ArchiverPath ==  dlg.SelectedPath) )
-                {
-                    // 履歴に存在する場合
-                    LoadHistory(dlg.SelectedPath);
-                }
-                else
-                {
-                    string[] path = { dlg.SelectedPath };
-                    ReadFilesAndInitMainContent(path, false, 0);
-                }
+                DropNewFiles( new string[] { dlg.SelectedPath });
             }
         }
 
@@ -561,15 +544,7 @@ namespace C_SlideShow
             {
                 SaveHistoryItem();
 
-                if( Setting.EnabledItemsInHistory.ArchiverPath && ofd.FileNames.Length == 1 && Setting.History.Any( hi => hi.ArchiverPath == ofd.FileNames[0]) )
-                {
-                    // 履歴に存在する場合
-                    LoadHistory(ofd.FileNames[0]);
-                }
-                else
-                {
-                    ReadFilesAndInitMainContent(ofd.FileNames, false, 0);
-                }
+                DropNewFiles(ofd.FileNames);
             }
         }
 

@@ -125,7 +125,7 @@ namespace C_SlideShow
         }
 
 
-        public MainWindow()
+        public MainWindow() // 起動時
         {
             Current = this;
 
@@ -133,6 +133,19 @@ namespace C_SlideShow
             AppSetting setting = new AppSetting().loadFromXmlFile();
 
             InitMainWindow(setting);
+        }
+
+        public MainWindow(string[] args)  // 起動時(引数有り)
+        {
+            Current = this;
+
+            // load setting from xml
+            AppSetting setting = new AppSetting().loadFromXmlFile();
+
+            setting.TempProfile.Path.Value.Clear();
+
+            InitMainWindow(setting);
+            DropNewFiles(args);
         }
 
         public MainWindow(AppSetting setting)  // AllowTransparency の切替時に利用
@@ -470,6 +483,19 @@ namespace C_SlideShow
             if(Setting.History.Count > Setting.NumofHistory )
             {
                 Setting.History.RemoveRange( Setting.NumofHistory, Setting.History.Count - Setting.NumofHistory);
+            }
+        }
+
+        private void DropNewFiles(string[] pathes)
+        {
+            if( Setting.EnabledItemsInHistory.ArchiverPath && pathes.Length == 1 && Setting.History.Any( hi => hi.ArchiverPath == pathes[0]) )
+            {
+                // 履歴に存在する場合
+                LoadHistory(pathes[0]);
+            }
+            else
+            {
+                ReadFilesAndInitMainContent(pathes, false, 0);
             }
         }
 

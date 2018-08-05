@@ -13,5 +13,21 @@ namespace C_SlideShow
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+
+            MainWindow mainWindow;
+
+            if(e.Args.Length > 0 )
+            {
+                mainWindow = new MainWindow(e.Args);
+            }
+            else
+            {
+                mainWindow = new MainWindow();
+            }
+
+            mainWindow.Show();
+        }
     }
 }
