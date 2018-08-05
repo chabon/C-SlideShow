@@ -76,7 +76,7 @@ namespace C_SlideShow.ProfileMember
         public int Grid { get { return Col * Row; } }
 
         public static readonly int Min = 1;
-        public static readonly int Max = 32;
+        public static readonly int Max = 16;
     }
 
     /* ---------------------------------------------------- */

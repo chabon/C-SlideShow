@@ -221,6 +221,8 @@ namespace C_SlideShow
 
             MenuItem_MatrixSelecter.ApplyTemplate();
             matrixSelecter = MenuItem_MatrixSelecter.Template.FindName("MatrixSelecter", MenuItem_MatrixSelecter) as MatrixSelecter;
+            matrixSelecter.MaxSize = Setting.MatrixSelecterMaxSize;
+            matrixSelecter.Initialize();
 
             // タイル拡大パネル
             TileExpantionPanel.MainWindow = this;
@@ -242,10 +244,6 @@ namespace C_SlideShow
             intervalSlideTimer.Tick += intervalSlideTimer_Tick;
             intervalSlideTimer.Interval = new TimeSpan(0, 0, 0, 1);
 
-            // setting to dialog components
-            matrixSelecter.SetMatrix(Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row);
-            slideSettingDialog.ApplySettingToDlg();
-            settingDialog.ApplySettingToDlg();
         }
 
         private void InitHelper()

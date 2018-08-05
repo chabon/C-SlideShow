@@ -140,7 +140,7 @@
                             <MenuItem x:Name="MenuItem_MatrixSelecter"  StaysOpenOnClick="True">
                                 <MenuItem.Template>
                                     <ControlTemplate>
-                                        <local:MatrixSelecter x:Name="MatrixSelecter" MatrixSelected="MatrixSelecter_MatrixSelected"></local:MatrixSelecter>
+                                        <local:MatrixSelecter x:Name="MatrixSelecter" MatrixSelected="MatrixSelecter_MatrixSelected" MaxSizeChanged="MatrixSelecter_MaxSizeChanged"></local:MatrixSelecter>
                                     </ControlTemplate>
                                 </MenuItem.Template>
                             </MenuItem>

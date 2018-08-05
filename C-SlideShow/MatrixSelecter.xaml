@@ -15,5 +15,14 @@
                Margin="10,0,0,0"
                Content=""
                VerticalAlignment="Bottom"/>
+
+        <Button x:Name="MatrixMaxSizeUpButton" Click="MatrixMaxSizeUpButton_Click" Width="13" Height="13" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="6,4">
+            <Label FontSize="13" Margin="-9,-14">+</Label> 
+        </Button>
+        <Button x:Name="MatrixMaxSizeDownButton" Click="MatrixMaxSizeDownButton_Click" Width="13" Height="13" 
+                HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="21,4" FontSize="8">
+            <Label FontSize="13" Margin="-7,-14">-</Label> 
+        </Button>
     </Grid>
 </UserControl>

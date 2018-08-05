@@ -94,6 +94,9 @@ namespace C_SlideShow
         [DataMember]
         public int AppSettingDialogTabIndex { get; set; }
 
+        [DataMember]
+        public int MatrixSelecterMaxSize { get; set; }
+
 
         // プロファイル
         [DataMember]
@@ -136,7 +139,11 @@ namespace C_SlideShow
             // 初期化
             TempProfile = new Profile();
             TempProfile.ProfileType = ProfileType.Temp;
+
             ShowFileInfoInTileExpantionPanel = false;
+            SettingDialogTabIndex = 0;
+            AppSettingDialogTabIndex = 0;
+            MatrixSelecterMaxSize = 6;
 
             UserProfileList = new List<UserProfileInfo>();
             UsePresetProfile = true;
@@ -153,8 +160,6 @@ namespace C_SlideShow
             ExternalAppInfoList = new List<ExternalAppInfo>();
             ExternalAppInfoList.Add( new ExternalAppInfo() );
 
-            SettingDialogTabIndex = 0;
-            AppSettingDialogTabIndex = 0;
         }
 
 

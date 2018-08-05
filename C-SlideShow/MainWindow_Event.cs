@@ -403,17 +403,6 @@ namespace C_SlideShow
             ChangeCurrentImageIndex(index);
         }
 
-        private void MatrixSelecter_MatrixSelected(object sender, EventArgs e)
-        {
-            MatrixSelecter ms = sender as MatrixSelecter;
-            if(ms != null)
-            {
-                this.MenuItem_Matrix.IsSubmenuOpen = false;
-                ChangeGridDifinition(ms.ColValue, ms.RowValue);
-                this.Focus();
-            }
-
-        }
 
         // ツールバーボタン(読み込み)
         private void MenuItem_Load_SubmenuOpened(object sender, RoutedEventArgs e)
@@ -694,6 +683,27 @@ namespace C_SlideShow
                     ChangeAspectRatio(w, h);
                 }
             }
+        }
+
+
+        // 行列設定ダイアログ
+        private void MatrixSelecter_MatrixSelected(object sender, EventArgs e)
+        {
+            MatrixSelecter ms = sender as MatrixSelecter;
+            if(ms != null)
+            {
+                this.MenuItem_Matrix.IsSubmenuOpen = false;
+                this.WaitingMessageBase.Visibility = Visibility.Visible;
+                this.WaitingMessageBase.Refresh();
+                ChangeGridDifinition(ms.ColValue, ms.RowValue);
+                this.Focus();
+            }
+
+        }
+
+        private void MatrixSelecter_MaxSizeChanged(object sender, EventArgs e)
+        {
+            Setting.MatrixSelecterMaxSize = matrixSelecter.MaxSize;
         }
 
 

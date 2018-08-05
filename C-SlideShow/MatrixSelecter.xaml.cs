@@ -20,11 +20,13 @@ namespace C_SlideShow
     /// </summary>
     public partial class MatrixSelecter : UserControl
     {
-        const int maxSize = 6;
-        Rectangle[,] rects = new Rectangle[maxSize, maxSize];
+        Rectangle[,] rects;
         Rectangle rect_mouseLbuttonDown;
 
         public event EventHandler MatrixSelected;
+        public event EventHandler MaxSizeChanged;
+        public int MaxSize { get; set; } = 6;
+        public int MaxSizeLimit { get; set; } = 10;
         public int RowValue { get; set; } 
         public int ColValue { get; set; }
         public Color SelectColor { get; set; }
@@ -38,25 +40,37 @@ namespace C_SlideShow
 
             //MainGrid.Height = Width * 3 / 4;
             //Height = Width * 9 / 16;
+        }
+
+        public void Initialize()
+        {
+            if( MaxSize < 2 ) MaxSize = 2;
+            else if( MaxSize > MaxSizeLimit ) MaxSize = MaxSizeLimit;
+
+            rects = new Rectangle[MaxSize, MaxSize];
 
             this.SelectColor = Colors.DarkGray;
             this.BaseColor = Colors.LightGray;
 
-            for (int i=0; i< maxSize; i++)
+            MainGrid.Children.Clear();
+            MainGrid.ColumnDefinitions.Clear();
+            MainGrid.RowDefinitions.Clear();
+
+            for (int i=0; i< MaxSize; i++)
             {
                 ColumnDefinition c = new ColumnDefinition();
                 MainGrid.ColumnDefinitions.Add(c);
             }
 
-            for(int i=0; i< maxSize; i++)
+            for(int i=0; i< MaxSize; i++)
             {
                 RowDefinition r = new RowDefinition();
                 MainGrid.RowDefinitions.Add(r);
             }
 
-            for(int i=0; i<maxSize; i++)
+            for(int i=0; i<MaxSize; i++)
             {
-                for(int j=0; j<maxSize; j++)
+                for(int j=0; j<MaxSize; j++)
                 {
                     Rectangle rect = new Rectangle();
                     rect.Fill = new SolidColorBrush(BaseColor);
@@ -70,6 +84,7 @@ namespace C_SlideShow
                     MainGrid.Children.Add(rect);
                 }
             }
+
         }
 
 
@@ -100,9 +115,9 @@ namespace C_SlideShow
 
             if (! ( rect_mouseLbuttonDown == rect) ) return;
 
-            for(int i=0; i<maxSize; i++)
+            for(int i=0; i<MaxSize; i++)
             {
-                for(int j=0; j<maxSize; j++)
+                for(int j=0; j<MaxSize; j++)
                 {
                     if(rects[i,j] == rect)
                     {
@@ -118,13 +133,16 @@ namespace C_SlideShow
 
         public void SetMatrix(int numofCol, int numofRow)
         {
-            for(int i=0; i<maxSize; i++)
+            for(int i=0; i<MaxSize; i++)
             {
-                for(int j=0; j<maxSize; j++)
+                for(int j=0; j<MaxSize; j++)
                 {
                     rects[i, j].Fill = new SolidColorBrush(BaseColor);
                 }
             }
+
+            if( numofCol > MaxSize ) numofCol = MaxSize;
+            if( numofRow > MaxSize ) numofRow = MaxSize;
 
             for(int i=0; i<numofRow; i++)
             {
@@ -136,5 +154,39 @@ namespace C_SlideShow
 
             this.MatrixInfoLabel.Content = String.Format("{0} × {1}", numofCol, numofRow);
         }
+
+
+        // 表示レベル増減ボタン
+        private void MatrixMaxSizeUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            MaxSize += 1;
+            if( MaxSize > MaxSizeLimit )
+            {
+                MaxSize = MaxSizeLimit;
+                return;
+            }
+
+            Initialize();
+            this.MatrixInfoLabel.Content = String.Format("{0} × {1}", MaxSize, MaxSize);
+            MaxSizeChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void MatrixMaxSizeDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            MaxSize -= 1;
+            if( MaxSize < 2 )
+            {
+                MaxSize = 2;
+                return;
+            }
+
+            Initialize();
+            this.MatrixInfoLabel.Content = String.Format("{0} × {1}", MaxSize, MaxSize);
+            MaxSizeChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+
+
+        // end of class
     }
 }
