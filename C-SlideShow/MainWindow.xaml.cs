@@ -488,7 +488,8 @@ namespace C_SlideShow
 
         private void DropNewFiles(string[] pathes)
         {
-            if( Setting.EnabledItemsInHistory.ArchiverPath && pathes.Length == 1 && Setting.History.Any( hi => hi.ArchiverPath == pathes[0]) )
+            if( Setting.EnabledItemsInHistory.ArchiverPath && pathes.Length == 1 &&
+                Setting.History.Any( hi => hi.ArchiverPath == pathes[0]) && Setting.ApplyHistoryInfoInNewArchiverReading)
             {
                 // 履歴に存在する場合
                 LoadHistory(pathes[0]);
