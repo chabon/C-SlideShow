@@ -131,21 +131,32 @@ namespace C_SlideShow
         [DataMember]
         public bool ApplyHistoryInfoInNewArchiverReading { get; set; }
 
+
         // アスペクト比のリスト
         [DataMember]
         public List<Point> AspectRatioList { get; set; }
 
-        // 詳細
+
+        // 外部連携
         [DataMember]
         public List<ExternalAppInfo> ExternalAppInfoList { get; set; }
+
+
+        // 詳細
+        [DataMember]
+        public bool ShowMenuItem_AdditionalRead { get; set; }
+
 
 
         public AppSetting()
         {
             // 初期化
+
+            // 一時的プロファイル
             TempProfile = new Profile();
             TempProfile.ProfileType = ProfileType.Temp;
 
+            // ダイアログにはない設定
             ShowFileInfoInTileExpantionPanel = false;
             SettingDialogTabIndex = 0;
             AppSettingDialogTabIndex = 0;
@@ -153,9 +164,11 @@ namespace C_SlideShow
             FolderOpenDialogLastSelectedPath = null;
             FileOpenDialogLastSelectedPath = null;
 
+            // プロファイル
             UserProfileList = new List<UserProfileInfo>();
             UsePresetProfile = true;
 
+            // 履歴設定
             History = new List<HistoryItem>();
             NumofHistory = 100;
             NumofHistoryInMenu = 30;
@@ -163,11 +176,15 @@ namespace C_SlideShow
             EnabledItemsInHistory = new EnabledItemsInHistory();
             ApplyHistoryInfoInNewArchiverReading = true;
 
+            // アスペクト比のリスト
             AspectRatioList = new List<Point> { new Point(4, 3), new Point(3, 4), new Point(16, 9), new Point(9, 16), new Point(3, 2), new Point(2, 3), new Point(1, 1)};
 
+            // 外部連携
             ExternalAppInfoList = new List<ExternalAppInfo>();
             ExternalAppInfoList.Add( new ExternalAppInfo() );
 
+            // 詳細
+            ShowMenuItem_AdditionalRead = true;
         }
 
 

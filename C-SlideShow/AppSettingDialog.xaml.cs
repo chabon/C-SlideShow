@@ -19,8 +19,10 @@ namespace C_SlideShow
 {
     public enum AppSettingDialogTabIndex
     {
-        History = 0,
-        AspectRatio = 1
+        History     = 0,
+        AspectRatio = 1,
+        ExternalApp = 2,
+        Detail      = 3
     }
 
     /// <summary>
@@ -88,6 +90,10 @@ namespace C_SlideShow
             // 外部連携
             ExternalAppPath.Text = setting.ExternalAppInfoList[0].Path;
             ExternalAppArg.Text  = setting.ExternalAppInfoList[0].Arg;
+
+
+            // 詳細
+            ShowMenuItem_AdditionalRead.IsChecked = setting.ShowMenuItem_AdditionalRead;
 
 
             isInitializing = false;
@@ -309,6 +315,10 @@ namespace C_SlideShow
             // 外部連携
             setting.ExternalAppInfoList[0].Path = ExternalAppPath.Text;
             setting.ExternalAppInfoList[0].Arg  = ExternalAppArg.Text;
+
+            // 詳細
+            setting.ShowMenuItem_AdditionalRead = (bool)ShowMenuItem_AdditionalRead.IsChecked ;
+
 
             this.Close();
         }

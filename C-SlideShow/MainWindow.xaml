@@ -113,7 +113,7 @@
                                 </Border>
                             </MenuItem.Header>
                                 <MenuItem Header="フォルダを読み込み" Click="Toolbar_Load_Folder_Click" x:Name="Toolbar_Load_Folder"/>
-                                <MenuItem Header="ファイルを読み込み" Click="Toolbar_Load_File_Click" x:Name="Toolbar_Load_File"/>
+                                <MenuItem  Tag="BasicItemLast" Header="ファイルを読み込み" Click="Toolbar_Load_File_Click" x:Name="Toolbar_Load_File"/>
                                 <Separator/>
                                 <MenuItem Header="フォルダを追加読み込み" Click="Toolbar_Add_Folder_Click" x:Name="Toolbar_Add_Folder"/>
                                 <MenuItem Header="ファイルを追加読み込み" Click="Toolbar_Add_File_Click" x:Name="Toolbar_Add_File"/>

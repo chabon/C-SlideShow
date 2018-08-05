@@ -403,12 +403,35 @@ namespace C_SlideShow
             MenuItem miSrc = e.OriginalSource as MenuItem;
             if( miSrc == null || miSrc.Name != MenuItem_Load.Name) return;
 
-            // ヒストリー追加前に削除
-            const int hIndex = 7;
-            while(MenuItem_Load.Items.Count - 1 >= hIndex )
+            // 項目追加前に、基本メニュー以外を削除
+            for(int i=MenuItem_Load.Items.Count - 1; i>=0; i-- )
             {
-                MenuItem_Load.Items.RemoveAt(MenuItem_Load.Items.Count - 1);
+                MenuItem mi = MenuItem_Load.Items[i] as MenuItem;
+                if(mi != null && (string)mi.Tag == "BasicItemLast" ) break;
+                MenuItem_Load.Items.RemoveAt(i);
             }
+
+            // 追加読み込み
+            if( Setting.ShowMenuItem_AdditionalRead )
+            {
+                MenuItem_Load.Items.Add( new Separator() );
+                MenuItem mi_addFolder = new MenuItem();
+                mi_addFolder.Header = "フォルダを追加読み込み";
+                mi_addFolder.Click += Toolbar_Add_Folder_Click;
+                MenuItem_Load.Items.Add(mi_addFolder);
+
+                MenuItem mi_addFile = new MenuItem();
+                mi_addFile.Header = "ファイルを追加読み込み";
+                mi_addFile.Click += Toolbar_Add_File_Click;
+                MenuItem_Load.Items.Add(mi_addFile);
+            }
+
+            // 再読込み(必ず表示)
+            MenuItem_Load.Items.Add( new Separator() );
+            MenuItem mi_reload = new MenuItem();
+            mi_reload.Header = "再読み込み";
+            mi_reload.Click += Toolbar_Load_Reload_Click;
+            MenuItem_Load.Items.Add(mi_reload);
 
             // ヒストリーなし
             Action addHistorySettingMenu = () =>

@@ -96,6 +96,13 @@
                 </StackPanel>
             </TabItem>
 
+            <!-- 詳細 -->
+            <TabItem Header="詳細" Width="70">
+                <StackPanel Margin="10">
+                    <CheckBox x:Name="ShowMenuItem_AdditionalRead">「フォルダを追加読み込み」「ファイルを追加読み込み」を読み込みメニューに表示する</CheckBox>
+                </StackPanel>
+            </TabItem>
+
         </TabControl>
         <Button x:Name="OkButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="90,10" Width="70" Click="OkButton_Click">OK</Button>
         <Button x:Name="CancelButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Width="70" Click="CancelButton_Click">キャンセル</Button>
