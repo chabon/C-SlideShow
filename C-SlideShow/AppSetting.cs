@@ -97,6 +97,12 @@ namespace C_SlideShow
         [DataMember]
         public int MatrixSelecterMaxSize { get; set; }
 
+        [DataMember]
+        public string FolderOpenDialogLastSelectedPath { get; set; }
+
+        [DataMember]
+        public string FileOpenDialogLastSelectedPath { get; set; }
+
 
         // プロファイル
         [DataMember]
@@ -144,6 +150,8 @@ namespace C_SlideShow
             SettingDialogTabIndex = 0;
             AppSettingDialogTabIndex = 0;
             MatrixSelecterMaxSize = 6;
+            FolderOpenDialogLastSelectedPath = null;
+            FileOpenDialogLastSelectedPath = null;
 
             UserProfileList = new List<UserProfileInfo>();
             UsePresetProfile = true;

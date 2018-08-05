@@ -525,8 +525,12 @@ namespace C_SlideShow
         {
             var dlg = new Forms.FolderBrowserDialog();
             dlg.Description = "画像フォルダーを選択してください。";
+            if( Setting.FolderOpenDialogLastSelectedPath != null && Directory.Exists(Setting.FolderOpenDialogLastSelectedPath) )
+                dlg.SelectedPath = Setting.FolderOpenDialogLastSelectedPath;
+
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                Setting.FolderOpenDialogLastSelectedPath = dlg.SelectedPath;
                 SaveHistoryItem();
 
                 DropNewFiles( new string[] { dlg.SelectedPath });
@@ -539,9 +543,12 @@ namespace C_SlideShow
             Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
             ofd.Title = "ファイルを選択してください";
             ofd.Multiselect = true;
+            if( Setting.FileOpenDialogLastSelectedPath != null && File.Exists(Setting.FileOpenDialogLastSelectedPath) )
+                ofd.InitialDirectory = Directory.GetParent( Setting.FileOpenDialogLastSelectedPath ).FullName;
 
             if (ofd.ShowDialog() == Forms.DialogResult.OK)
             {
+                if(ofd.FileNames.Length > 0) Setting.FileOpenDialogLastSelectedPath = ofd.FileNames[0];
                 SaveHistoryItem();
 
                 DropNewFiles(ofd.FileNames);
@@ -553,8 +560,12 @@ namespace C_SlideShow
         {
             var dlg = new Forms.FolderBrowserDialog();
             dlg.Description = "追加する画像フォルダーを選択してください。";
+            if( Setting.FolderOpenDialogLastSelectedPath != null && Directory.Exists(Setting.FolderOpenDialogLastSelectedPath) )
+                dlg.SelectedPath = Setting.FolderOpenDialogLastSelectedPath;
+
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
+                Setting.FolderOpenDialogLastSelectedPath = dlg.SelectedPath;
                 string[] path = { dlg.SelectedPath };
                 ReadFilesAndInitMainContent(path, true,  0);
             }
@@ -566,9 +577,12 @@ namespace C_SlideShow
             Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
             ofd.Title = "追加するファイルを選択してください";
             ofd.Multiselect = true;
+            if( Setting.FileOpenDialogLastSelectedPath != null && File.Exists(Setting.FileOpenDialogLastSelectedPath) )
+                ofd.InitialDirectory = Directory.GetParent( Setting.FileOpenDialogLastSelectedPath ).FullName;
 
             if (ofd.ShowDialog() == Forms.DialogResult.OK)
             {
+                if(ofd.FileNames.Length > 0) Setting.FileOpenDialogLastSelectedPath = ofd.FileNames[0];
                 ReadFilesAndInitMainContent(ofd.FileNames, true,  0);
             }
         }
