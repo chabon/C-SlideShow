@@ -94,6 +94,7 @@ namespace C_SlideShow
 
             // 詳細
             ShowMenuItem_AdditionalRead.IsChecked = setting.ShowMenuItem_AdditionalRead;
+            SerachAllDirectoriesInFolderReading.IsChecked = setting.SerachAllDirectoriesInFolderReading;
 
 
             isInitializing = false;
@@ -318,6 +319,7 @@ namespace C_SlideShow
 
             // 詳細
             setting.ShowMenuItem_AdditionalRead = (bool)ShowMenuItem_AdditionalRead.IsChecked ;
+            setting.SerachAllDirectoriesInFolderReading = (bool)SerachAllDirectoriesInFolderReading.IsChecked;
 
 
             this.Close();

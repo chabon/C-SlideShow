@@ -26,8 +26,13 @@ namespace C_SlideShow.Archiver
 
         public override List<ImageFileInfo> LoadImageFileInfoList()
         {
+            // サブディレクトリを含める/含めない オプション
+            SearchOption searchOpt;
+            if( MainWindow.Current.Setting.SerachAllDirectoriesInFolderReading ) searchOpt = SearchOption.AllDirectories;
+            else searchOpt = SearchOption.TopDirectoryOnly;
+
             // フォルダ内のファイルパスを取得し、拡張子でフィルタ
-            var imgPathes = Directory.GetFiles( this.ArchiverPath, "*.*", SearchOption.AllDirectories );
+            var imgPathes = Directory.GetFiles( this.ArchiverPath, "*.*", searchOpt );
             var filteredFiles = imgPathes.Where(file => AllowedFileExt.Any(ext => 
                 file.ToLower().EndsWith(ext)));
 

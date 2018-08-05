@@ -146,6 +146,8 @@ namespace C_SlideShow
         [DataMember]
         public bool ShowMenuItem_AdditionalRead { get; set; }
 
+        [DataMember]
+        public bool SerachAllDirectoriesInFolderReading { get; set; }
 
 
         public AppSetting()
@@ -185,6 +187,7 @@ namespace C_SlideShow
 
             // 詳細
             ShowMenuItem_AdditionalRead = true;
+            SerachAllDirectoriesInFolderReading = true;
         }
 
 
