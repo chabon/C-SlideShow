@@ -57,10 +57,28 @@ namespace C_SlideShow
         public bool SlideDirection { get; set; } = true;
     }
 
+    // 外部プログラム
+    [DataContract(Name = "ExternalAppInfo")]
+    public class ExternalAppInfo
+    {
+        [DataMember]
+        public string Name { get; set; } = "";
+
+        [DataMember]
+        public string Path { get; set; } = "";
+
+        [DataMember]
+        public string Arg { get; set; } = "\"$FilePath$\"";
+    }
+
 
     [DataContract(Name = "AppSetting")]
     public class AppSetting
     {
+        // ダイアログ未実装
+
+
+
         // 一時的プロファイル
         [DataMember]
         public Profile TempProfile { get; set; }
@@ -71,15 +89,18 @@ namespace C_SlideShow
         public bool ShowFileInfoInTileExpantionPanel { get; set; }
 
         [DataMember]
-        public List<UserProfileInfo> UserProfileList { get; set; }
-
-        [DataMember]
         public int SettingDialogTabIndex { get; set; }
 
         [DataMember]
         public int AppSettingDialogTabIndex { get; set; }
 
-        // ダイアログ未実装
+
+        // プロファイル
+        [DataMember]
+        public List<UserProfileInfo> UserProfileList { get; set; }
+
+        [DataMember]
+        public bool UsePresetProfile { get; set; }
 
 
         // 履歴設定
@@ -105,9 +126,10 @@ namespace C_SlideShow
         [DataMember]
         public List<Point> AspectRatioList { get; set; }
 
-        // プロファイル
+        // 詳細
         [DataMember]
-        public bool UsePresetProfile { get; set; }
+        public List<ExternalAppInfo> ExternalAppInfoList { get; set; }
+
 
         public AppSetting()
         {
@@ -115,7 +137,9 @@ namespace C_SlideShow
             TempProfile = new Profile();
             TempProfile.ProfileType = ProfileType.Temp;
             ShowFileInfoInTileExpantionPanel = false;
+
             UserProfileList = new List<UserProfileInfo>();
+            UsePresetProfile = true;
 
             History = new List<HistoryItem>();
             NumofHistory = 100;
@@ -126,17 +150,19 @@ namespace C_SlideShow
 
             AspectRatioList = new List<Point> { new Point(4, 3), new Point(3, 4), new Point(16, 9), new Point(9, 16), new Point(3, 2), new Point(2, 3), new Point(1, 1)};
 
-            UsePresetProfile = true;
+            ExternalAppInfoList = new List<ExternalAppInfo>();
+            ExternalAppInfoList.Add( new ExternalAppInfo() );
 
             SettingDialogTabIndex = 0;
             AppSettingDialogTabIndex = 0;
         }
 
+
         // 既定値(xmlファイルデシリアライズ時に呼ばれる)
         [OnDeserializing]
         public void DefaultDeserializing(StreamingContext sc)
         {
-            UserProfileList = new List<UserProfileInfo>();
+
         }
 
 

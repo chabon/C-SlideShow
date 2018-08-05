@@ -146,25 +146,29 @@ namespace C_SlideShow
             if( panel.IsShowing )
             {
                 // ツールバー、シークバーは常に隠す
-                mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
+                mainWindow.ToolbarWrapper.Visibility = Visibility.Collapsed;
                 HideSeekbar();
 
+                // 上部 1/3
                 if(pt.Y < ptWnd.Y + h3 )
                 {
-                    panel.ShowFileInfoOrButton();
                     mainWindow.SystemButtonWrapper.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    mainWindow.SystemButtonWrapper.Visibility = Visibility.Hidden;
-                    if( pf.NumofMatrix.Col == 1 && pf.NumofMatrix.Row == 1 ) // 行列数が共に1の時は表示(切り替えの視認性のため)
-                        panel.ShowFileInfoOrButton();
-                    else
-                    {
-                        panel.FileInfoGrid.Visibility = Visibility.Hidden;
-                        panel.FileInfoDisplayButton.Visibility = Visibility.Hidden;
-                    }
+                    mainWindow.SystemButtonWrapper.Visibility = Visibility.Collapsed;
                 }
+
+                // 下部 1/3
+                if( pt.Y > ptWnd.Y + (2 * h3) )
+                {
+                    panel.ToolbarWrapper.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    panel.ToolbarWrapper.Visibility = Visibility.Collapsed;
+                }
+
                 return;
             }
 
@@ -209,6 +213,8 @@ namespace C_SlideShow
             //mainWindow.BaseGrid.Opacity = mainWindow.Setting.TempProfile.BaseGridOpacity;
             mainWindow.PageInfo.Visibility = Visibility.Hidden;
             mainWindow.SeekbarWrapper.Visibility = Visibility.Hidden;
+            //mainWindow.TileExpantionPanel.FileInfoGrid.Visibility = Visibility.Collapsed;
+            mainWindow.TileExpantionPanel.ToolbarWrapper.Visibility = Visibility.Collapsed;
         }
 
         public void ShowSeekbar()

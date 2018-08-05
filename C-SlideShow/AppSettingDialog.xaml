@@ -26,7 +26,7 @@
                         <cc:NumericUpDown Width="60" x:Name="NumofHistory" ValueChanged="NumofHistory_ValueChanged" MinValue="1" MaxValue="10000"></cc:NumericUpDown>
                     </StackPanel>
 
-                    <CheckBox Margin="5" x:Name="ApplyHistoryInfoInNewArchiverReading" >新たにフォルダ(書庫)を開いた時、それが履歴にあるなら、その履歴情報の設定を適用する</CheckBox>
+                    <CheckBox Margin="5" x:Name="ApplyHistoryInfoInNewArchiverReading" >新たにフォルダ(書庫)を開いた時、それが履歴にあるなら、その履歴情報を適用する</CheckBox>
 
                     <GroupBox Header="メニュー" Margin="5">
                         <StackPanel>
@@ -70,6 +70,29 @@
                         </StackPanel>
                     </StackPanel>
                     <Button x:Name="AllDefault_AspectRatio" Click="AllDefault_AspectRatio_Click" Width="100" Margin="10,5" HorizontalAlignment="Left">すべてデフォルト</Button>
+                </StackPanel>
+            </TabItem>
+
+            <!-- 外部連携 -->
+            <TabItem Header="外部連携" Width="70">
+                <StackPanel Margin="10">
+                    <GroupBox Header="外部プログラム">
+                        <StackPanel>
+                            <DockPanel Margin="3">
+                                <Label Width="40" DockPanel.Dock="Left">パス</Label>
+                                <Grid>
+                                    <TextBox Height="22" Margin="0,0,32,0" x:Name="ExternalAppPath"
+                                             ToolTip="指定がなければ、拡張子で関連付けされたプログラムで開きます"></TextBox>
+                                    <Button x:Name="ExternalAppPathBrowse" Click="ExternalAppPathBrowse_Click" Width="30" HorizontalAlignment="Right" Height="22">参照</Button>
+                                </Grid>
+                            </DockPanel>
+                            <DockPanel Margin="3">
+                                <Label Width="40" DockPanel.Dock="Left">引数</Label>
+                                <TextBox x:Name="ExternalAppArg" Height="22" ToolTip="$FilePath$がファイルパスに変換されます"></TextBox>
+                            </DockPanel>
+                            <Button x:Name="ExternalAppDefault" Click="ExternalAppDefault_Click" Width="50" HorizontalAlignment="Left" Margin="42,4,4,4">デフォルト</Button>
+                        </StackPanel>
+                    </GroupBox>
                 </StackPanel>
             </TabItem>
 

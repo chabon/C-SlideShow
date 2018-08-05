@@ -453,8 +453,8 @@ namespace C_SlideShow
             MenuItem cmi2 = new MenuItem();
             MenuItem cmi3 = new MenuItem();
             cmi1.Header = "追加読み込み";
-            cmi2.Header = "外部プログラムで開く";
-            cmi3.Header = "外部プログラムで親フォルダを開く";
+            cmi2.Header = "エクスプローラーで開く";
+            cmi3.Header = "削除";
 
             // 追加読み込み
             cmi1.Click += (se, ev) =>
@@ -466,25 +466,26 @@ namespace C_SlideShow
                 ReadFilesAndInitMainContent(path, true, 0);
             };
 
-            // 外部プログラムで開く
+            // エクスプローラーで開く
             cmi2.Click += (se, ev) =>
             {
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
                 if( mi == null ) return;
 
                 string path = mi.ToolTip.ToString();
-                Process.Start(path);
+                //Process.Start(path);
+                Process.Start("explorer.exe", "/select,\"" + path + "\"");
             };
 
-            // 外部プログラムで親フォルダを開く
+            // 削除
             cmi3.Click += (se, ev) =>
             {
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem;
                 if( mi == null ) return;
 
-                string parentDir = Directory.GetParent(mi.ToolTip.ToString()).FullName;
-                //Process.Start( "EXPLORER.EXE", parentDir);
-                Process.Start(parentDir);
+                string path = mi.ToolTip.ToString();
+                Setting.History.RemoveAll( h => h.ArchiverPath == path );
+                MenuItem_Load_SubmenuOpened(this, new RoutedEventArgs(null, MenuItem_Load));
             };
             contextMenu.Items.Add(cmi1);
             contextMenu.Items.Add(cmi2);

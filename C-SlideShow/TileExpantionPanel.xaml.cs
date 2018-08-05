@@ -46,13 +46,7 @@ namespace C_SlideShow
             this.FileInfoTextBlock.MouseLeftButtonDown += (s, e) =>
             {
                 MainWindow.Setting.ShowFileInfoInTileExpantionPanel = false;
-                ShowFileInfoOrButton();
-            };
-
-            this.FileInfoDisplayButton.Click += (s, e) =>
-            {
-                MainWindow.Setting.ShowFileInfoInTileExpantionPanel = true;
-                ShowFileInfoOrButton();
+                UpdateFileInfoAreaVisiblity();
             };
         }
 
@@ -167,6 +161,9 @@ namespace C_SlideShow
                 MainWindow.TileContainer1.Visibility = Visibility.Hidden;
                 MainWindow.TileContainer2.Visibility = Visibility.Hidden;
                 MainWindow.TileContainer3.Visibility = Visibility.Hidden;
+
+                // ファイル情報表示
+                UpdateFileInfoAreaVisiblity();
             };
 
             // アニメーションを開始
@@ -177,7 +174,6 @@ namespace C_SlideShow
         {
             // ファイル情報を隠す
             this.FileInfoGrid.Visibility = Visibility.Hidden;
-            this.FileInfoDisplayButton.Visibility = Visibility.Hidden;
             IsShowing = false;
 
             // タイルの矩形を取得
@@ -350,17 +346,15 @@ namespace C_SlideShow
         }
 
 
-        public void ShowFileInfoOrButton()
+        public void UpdateFileInfoAreaVisiblity()
         {
             if( MainWindow.Setting.ShowFileInfoInTileExpantionPanel )
             {
                 this.FileInfoGrid.Visibility = Visibility.Visible;
-                this.FileInfoDisplayButton.Visibility = Visibility.Hidden;
             }
             else
             {
                 this.FileInfoGrid.Visibility = Visibility.Hidden;
-                this.FileInfoDisplayButton.Visibility = Visibility.Visible;
             }
         }
 
@@ -441,5 +435,116 @@ namespace C_SlideShow
 
             return rect;
         }
+
+
+        /* ---------------------------------------------------- */
+        //     ツールバー
+        /* ---------------------------------------------------- */
+        // ファイル情報を表示
+        private void Toolbar_ShowFileInfo_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.Setting.ShowFileInfoInTileExpantionPanel = !MainWindow.Setting.ShowFileInfoInTileExpantionPanel;
+            UpdateFileInfoAreaVisiblity();
+        }
+
+        // エクスプローラーで開く
+        private void Toolbar_OpenExplorer_Click(object sender, RoutedEventArgs e)
+        {
+            string folderDirPath;
+            string filePath;
+            if( targetTile.ImageFileInfo.Archiver.CanReadFile )
+            {
+                folderDirPath = Directory.GetParent(targetTile.ImageFileInfo.FilePath).FullName;
+                filePath = targetTile.ImageFileInfo.FilePath;
+            }
+            else
+            {
+                folderDirPath = Directory.GetParent(targetTile.ImageFileInfo.Archiver.ArchiverPath).FullName;
+                filePath = targetTile.ImageFileInfo.Archiver.ArchiverPath;
+            }
+            Process.Start("explorer.exe", "/select,\"" + filePath + "\"");
+            //Process.Start(folderDirPath);
+        }
+
+        // クリップボードへコピー
+        private void MenuItem_Copy_SubmenuOpened(object sender, RoutedEventArgs e)
+        {
+            MenuItem_Copy.Items.Clear();
+
+            ImageFileInfo fi = targetTile.ImageFileInfo;
+
+            // ファイル(書庫内ファイルは現在不可)
+            if( fi.Archiver.CanReadFile )
+            {
+                MenuItem mi_file = new MenuItem();
+                mi_file.Header = Path.GetFileName("ファイル");
+                mi_file.ToolTip = Path.GetFileName("コピー後、エクスプローラーで貼り付けが出来ます");
+                mi_file.Click += (s, ev) => {
+                    System.Collections.Specialized.StringCollection files = new System.Collections.Specialized.StringCollection();
+                    files.Add(fi.FilePath);
+                    Clipboard.SetFileDropList(files);
+                };
+                MenuItem_Copy.Items.Add(mi_file);
+            }
+
+            // 画像データ
+            MenuItem mi_image = new MenuItem();
+            mi_image.Header = Path.GetFileName("画像データ");
+            mi_image.ToolTip = Path.GetFileName("コピー後、ペイント等の画像編集ソフトへ貼り付けが出来ます");
+            mi_image.Click += (s, ev) => {
+                BitmapSource source = ImageFileManager.LoadBitmap( fi, new Size(0, 0) );
+                Clipboard.SetImage(source);
+            };
+            MenuItem_Copy.Items.Add(mi_image);
+
+            // ファイルパス
+            string filePath;
+            if( fi.Archiver.CanReadFile ) filePath = fi.FilePath;
+            else filePath = fi.Archiver.ArchiverPath;
+            MenuItem mi_filePath = new MenuItem();
+            mi_filePath.Header = Path.GetFileName("ファイルパス");
+            mi_filePath.ToolTip = filePath;
+            mi_filePath.Click += (s, ev) => { Clipboard.SetText(filePath); };
+            MenuItem_Copy.Items.Add(mi_filePath);
+
+            // ファイル名
+            MenuItem mi_fileName = new MenuItem();
+            mi_fileName.Header = "ファイル名";
+            mi_fileName.ToolTip = Path.GetFileName( fi.FilePath );
+            mi_fileName.Click += (s, ev) => { Clipboard.SetText( Path.GetFileName(fi.FilePath) ); };
+            MenuItem_Copy.Items.Add(mi_fileName);
+
+        }
+
+        // 外部プログラムで画像を開く(書庫内ファイルは現在不可)
+        private void Toolbar_OpenByExternalApp_Click(object sender, RoutedEventArgs e)
+        {
+            ImageFileInfo fi = targetTile.ImageFileInfo;
+            if( fi.Archiver.CanReadFile )
+            {
+                ExternalAppInfo exAppInfo = MainWindow.Setting.ExternalAppInfoList[0];
+                string filePathFormat = "$FilePath$";
+
+                string arg = exAppInfo.Arg;
+                if( arg == "" ) arg = "\"" + filePathFormat + "\"";
+
+                if(exAppInfo.Path != "" )
+                {
+                    // プログラムの指定あり
+                    try { Process.Start( exAppInfo.Path, arg.Replace(filePathFormat, fi.FilePath) ); }
+                    catch { }
+                }
+                else
+                {
+                    // プログラムの指定がなければ、拡張子で関連付けられているプログラムで開く
+                    try { Process.Start( "\"" +  fi.FilePath +"\"" ); }
+                    catch { }
+                }
+            }
+        }
+
+
+
+        // end of class
     }
 }

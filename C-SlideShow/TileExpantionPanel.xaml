@@ -18,7 +18,7 @@
 
 
         <!-- ファイル情報テキスト表示ボタン -->
-        <Button x:Name="FileInfoDisplayButton"
+        <!--<Button x:Name="FileInfoDisplayButton"
                 Width="16"
                 Height="16"
                 Margin="6,6,0,0"
@@ -32,12 +32,12 @@
                    Margin="-2"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"
                    Width="16" Height="16"></Image>
-        </Button>
+        </Button>-->
         
         
         <!-- ファイル情報テキスト -->
         <Grid x:Name="FileInfoGrid"
-              Margin="10,10,0,0"
+              Margin="10,10"
               HorizontalAlignment="Left"
               VerticalAlignment="Top"
               Visibility="Hidden"
@@ -55,6 +55,96 @@
                        Foreground="Black">
             </TextBlock>
         </Grid>
+
+        <!-- ツールバー -->
+        <Border Margin="8" 
+                x:Name="ToolbarWrapper"
+                Opacity="0.9"
+                Visibility="Visible"
+                VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                Background="Transparent">
+            <WrapPanel Orientation="Horizontal"
+                       Background="Transparent"
+                       ItemHeight="26">
+                <WrapPanel.Resources>
+                    <Style x:Key="ToolbarMenuStyle" TargetType="Menu">
+                        <Setter Property="Background" Value="Transparent"></Setter>
+                    </Style>
+                    <Style x:Key="ToolbarMenuBorderStyle" TargetType="Border">
+                        <Setter Property="Background" Value="White"></Setter>
+                        <Setter Property="Margin" Value="2"></Setter>
+                    </Style>
+                    <Style x:Key="ToolbarMenuItemStyle" TargetType="MenuItem">
+                        <Setter Property="BorderBrush" Value="Gray"></Setter>
+                        <Setter Property="Height" Value="22"></Setter>
+                        <Setter Property="Width" Value="26"></Setter>
+                    </Style>
+                    <Style x:Key="ToolbarButtonStyle" TargetType="Button">
+                        <Setter Property="Background" Value="White"></Setter>
+                        <Setter Property="BorderBrush" Value="Gray"></Setter>
+                        <Setter Property="Height" Value="22"></Setter>
+                        <Setter Property="Width" Value="26"></Setter>
+                        <Setter Property="Margin" Value="2"></Setter>
+                        <Setter Property="VerticalAlignment" Value="Top"></Setter>
+                    </Style>
+                </WrapPanel.Resources>
+
+                <!-- ファイル情報を表示 -->
+                <Button x:Name="Toolbar_ShowFileInfo"
+                        ToolTip="ファイル情報を表示/非表示"
+                        Style="{StaticResource ToolbarButtonStyle}"
+                        Click="Toolbar_ShowFileInfo_Click"
+                        >
+                    <Image Source="Resources\info.png" 
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Width="16" Height="16"></Image>
+                </Button>
+
+                <!-- エクスプローラーで開く -->
+                <Button x:Name="Toolbar_OpenExplorer"
+                        ToolTip="エクスプローラーで開く"
+                        Style="{StaticResource ToolbarButtonStyle}"
+                        Click="Toolbar_OpenExplorer_Click"
+                        >
+                    <Image Source="Resources\folder_open.png" 
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Width="16" Height="16"></Image>
+                </Button>
+
+                <!-- クリップボードへコピー -->
+                <Border Style="{StaticResource ToolbarMenuBorderStyle}">
+                    <Menu Style="{StaticResource ToolbarMenuStyle}">
+                        <MenuItem Style="{StaticResource ToolbarMenuItemStyle}"
+                            ToolTip="クリップボードへコピー"
+                            x:Name="MenuItem_Copy"
+                            SubmenuOpened="MenuItem_Copy_SubmenuOpened"
+                                  >
+                            <MenuItem.Header>
+                                <Border Margin="-2,0,0,0"
+                                        >
+                                <Image Source="Resources\copy.png" 
+                                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                       Width="16" Height="16"></Image>
+                                </Border>
+                            </MenuItem.Header>
+                                <MenuItem Header="ファイルパス"/>
+                        </MenuItem>
+                    </Menu>
+                </Border>
+
+                <!-- 外部プログラムで開く -->
+                <Button x:Name="Toolbar_OpenByExternalApp"
+                        ToolTip="外部プログラムで画像を開く"
+                        Style="{StaticResource ToolbarButtonStyle}"
+                        Click="Toolbar_OpenByExternalApp_Click"
+                        >
+                    <Image Source="Resources\open.png" 
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Width="16" Height="16"></Image>
+                </Button>
+
+            </WrapPanel>
+        </Border>
 
     </Grid>
 </UserControl>

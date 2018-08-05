@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using Forms = System.Windows.Forms;
+
+
 namespace C_SlideShow
 {
     public enum AppSettingDialogTabIndex
@@ -81,6 +84,10 @@ namespace C_SlideShow
                 AspectRatio_V.Value = (int)setting.AspectRatioList[0].Y;
             }
 
+
+            // 外部連携
+            ExternalAppPath.Text = setting.ExternalAppInfoList[0].Path;
+            ExternalAppArg.Text  = setting.ExternalAppInfoList[0].Arg;
 
 
             isInitializing = false;
@@ -243,6 +250,26 @@ namespace C_SlideShow
         }
 
 
+        // 外部連携
+        private void ExternalAppPathBrowse_Click(object sender, RoutedEventArgs e)
+        {
+            Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
+            ofd.Title = "プログラムを選択してください";
+            ofd.Filter = "EXEファイル(*.exe)|*.exe|すべてのファイル(*.*)|*.*";
+            ofd.Multiselect = false;
+
+            if (ofd.ShowDialog() == Forms.DialogResult.OK)
+            {
+                ExternalAppPath.Text = ofd.FileNames[0];
+            }
+        }
+
+        private void ExternalAppDefault_Click(object sender, RoutedEventArgs e)
+        {
+            ExternalAppPath.Text = "";
+            ExternalAppArg.Text  = "\"$FilePath$\"";
+        }
+
         /* ---------------------------------------------------- */
         //     OK / キャンセル
         /* ---------------------------------------------------- */
@@ -274,6 +301,9 @@ namespace C_SlideShow
                 }
             }
 
+            // 外部連携
+            setting.ExternalAppInfoList[0].Path = ExternalAppPath.Text;
+            setting.ExternalAppInfoList[0].Arg  = ExternalAppArg.Text;
 
             this.Close();
         }
