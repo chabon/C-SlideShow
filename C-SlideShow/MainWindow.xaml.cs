@@ -1371,5 +1371,24 @@ namespace C_SlideShow
             return newUpi;
         }
 
+        public void OpenCurrentFolderByExplorer()
+        {
+            ImageFileInfo fi = imageFileManager.CurrentImageFileInfo;
+            string archiverPath;
+
+            if(fi.Archiver is NullArchiver )
+            {
+                if( fi.IsDummy ) return;
+                archiverPath = Directory.GetParent(fi.FilePath).FullName;
+            }
+            else
+            {
+                archiverPath = fi.Archiver.ArchiverPath;
+            }
+
+            Process.Start("explorer.exe", "/select,\"" + archiverPath + "\"");
+
+        }
+
     }
 }

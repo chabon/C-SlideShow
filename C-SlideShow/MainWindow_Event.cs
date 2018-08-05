@@ -433,6 +433,13 @@ namespace C_SlideShow
             mi_reload.Click += Toolbar_Load_Reload_Click;
             MenuItem_Load.Items.Add(mi_reload);
 
+            // エクスプローラーでフォルダを開く(必ず表示)
+            MenuItem mi_openFolder = new MenuItem();
+            mi_openFolder.Header = "エクスプローラーでフォルダを開く";
+            mi_openFolder.Click += (s, ev) => { OpenCurrentFolderByExplorer(); };
+            MenuItem_Load.Items.Add(mi_openFolder);
+
+
             // ヒストリーなし
             Action addHistorySettingMenu = () =>
             {
