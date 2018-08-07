@@ -27,6 +27,7 @@ namespace C_SlideShow
     {
         private Tile targetTile;
         private Storyboard storyboard;
+        private double zoomFactor = 1.0;
 
         public MainWindow MainWindow { private get; set; }
         public ImageFileManager ImageFileManager { private get; set; }
@@ -175,6 +176,9 @@ namespace C_SlideShow
             // ファイル情報を隠す
             this.FileInfoGrid.Visibility = Visibility.Hidden;
             IsShowing = false;
+
+            // ズーム解除
+            ZoomReset();
 
             // タイルの矩形を取得
             Rect rc = GetTileRect();
@@ -434,6 +438,80 @@ namespace C_SlideShow
             rect.Y = location.Y;
 
             return rect;
+        }
+
+
+        public void Zoom(double vari)
+        {
+            double zoomFactorPrev = zoomFactor;
+            zoomFactor += vari;
+
+            // カーソル位置取得(ExpandedBorder上の座標系)
+            Point pos = Mouse.GetPosition(ExpandedBorder);
+
+            // 拡大
+            if(zoomFactor > 1.0 )
+            {
+                //ExpandedBorder.RenderTransform = new ScaleTransform(zoomFactor, zoomFactor);
+                ExpandedBorder.Width = this.ActualWidth * zoomFactor;
+                ExpandedBorder.Height = this.ActualHeight * zoomFactor;
+            }
+            else
+            {
+                //ExpandedBorder.RenderTransform = new ScaleTransform(1.0, 1.0);
+                ExpandedBorder.Width = double.NaN;
+                ExpandedBorder.Height = double.NaN;
+            }
+
+            // 拡大に依る移動量算出
+            Point move = new Point();
+            move.X = pos.X * (zoomFactor / zoomFactorPrev) - pos.X;
+            move.Y = pos.Y * (zoomFactor / zoomFactorPrev) - pos.Y;
+
+            // 移動した分だけ、引き戻す(拡大率が1.0になったら位置リセット)
+            if(zoomFactor > 1.0 )
+            {
+                ExpandedBorder.Margin = new Thickness(
+                    ExpandedBorder.Margin.Left - move.X, ExpandedBorder.Margin.Top - move.Y, 0, 0);
+            }
+            else
+            {
+                zoomFactor = 1.0;
+                ExpandedBorder.Margin = new Thickness( 0, 0, 0, 0);
+            }
+
+            Debug.WriteLine("pos: " + pos.ToString() );
+            Debug.WriteLine("move: " + move.ToString() );
+            Debug.WriteLine("this Width: " + this.ActualWidth );
+            Debug.WriteLine("this Height: " + this.ActualHeight );
+            Debug.WriteLine("Window Width: " + MainWindow.Width );
+            Debug.WriteLine("Window Height: " + MainWindow.Height );
+            Debug.WriteLine("ExpandedBorder Width: " + ExpandedBorder.ActualWidth );
+            Debug.WriteLine("ExpandedBorder Height: " + ExpandedBorder.ActualHeight );
+            Debug.WriteLine("ExpandedBorder Left: " + ExpandedBorder.Margin.Left );
+            Debug.WriteLine("ExpandedBorder Top: " + ExpandedBorder.Margin.Top );
+            Debug.WriteLine("--------------------------------------------------------------------------------------------------------");
+        }
+
+        public void ZoomIn()
+        {
+            Zoom(0.5);
+        }
+
+        public void ZoomOut()
+        {
+            Zoom(-0.5);
+        }
+
+        public void ZoomReset()
+        {
+            if(zoomFactor != 1.0 )
+            {
+                zoomFactor = 1.0;
+                ExpandedBorder.Width = double.NaN;
+                ExpandedBorder.Height = double.NaN;
+                ExpandedBorder.Margin = new Thickness( 0, 0, 0, 0);
+            }
         }
 
 

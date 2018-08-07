@@ -71,8 +71,12 @@ namespace C_SlideShow
                 //return;
                 if (ignoreResizeEvent) return;
 
-                // 画像拡大パネルのサイズ更新
-                if( TileExpantionPanel.IsShowing ) TileExpantionPanel.FitToMainWindow();
+                // 画像拡大パネルのサイズ更新、拡大中ならリセット
+                if( TileExpantionPanel.IsShowing )
+                {
+                    TileExpantionPanel.ZoomReset();
+                    TileExpantionPanel.FitToMainWindow();
+                }
 
                 // アス比非固定時
                 if( Setting.TempProfile.NonFixAspectRatio.Value )
@@ -201,9 +205,18 @@ namespace C_SlideShow
                     }
                 }
 
+                // 拡大パネル表示時は、拡大縮小
+                // --------------------------------
+                if( TileExpantionPanel.IsShowing )
+                {
+                    if( e.Delta > 0 ) TileExpantionPanel.ZoomIn();
+                    else TileExpantionPanel.ZoomOut();
+
+                    return;
+                }
+
                 // スライド操作
                 // --------------------------------
-                if( TileExpantionPanel.IsShowing ) return;
 
                 bool isPlayback; // 巻き戻しかどうか
                 if (e.Delta > 0) isPlayback = true;  // wheel up
