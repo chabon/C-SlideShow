@@ -21,6 +21,7 @@ using System.Windows.Interop;
 using System.IO;
 
 using C_SlideShow.Archiver;
+using C_SlideShow.Shortcut;
 
 using Forms = System.Windows.Forms;
 
@@ -63,6 +64,7 @@ namespace C_SlideShow
         SlideSettingDialog slideSettingDialog;
         SettingDialog settingDialog;
         ProfileEditDialog profileEditDialog;
+        ShortcutManager shortcutManager;
 
 
         // property
@@ -166,16 +168,17 @@ namespace C_SlideShow
             InitializeComponent();
 
             // debug
-            //Setting.EnabledItemsInHistory = new EnabledItemsInHistory();
-            //Setting.EnabledItemsInHistory.ImagePath = true;
-            //Setting.EnabledItemsInHistory.Matrix = true;
-            //Setting.EnabledItemsInHistory.SlideDirection = true;
-            //Setting.EnabledItemsInHistory.AspectRatio = true;
+#if DEBUG
+            //Setting.ShortcutSetting = new ShortcutSetting();
+#endif
 
             // init
             InitControls();
             InitHelper();
             InitEvent();
+
+            // ショートカットマネージャー
+            shortcutManager = new ShortcutManager();
 
             // 前回の状態を復元
             Profile pf = Setting.TempProfile;
@@ -358,7 +361,7 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         //     
         /* ---------------------------------------------------- */
-        private void ReadFilesAndInitMainContent(string[] pathes, bool isAddition, int firstIndex)
+        public void ReadFilesAndInitMainContent(string[] pathes, bool isAddition, int firstIndex)
         {
             // 「読み込み中」メッセージ
             this.WaitingMessageBase.Visibility = Visibility.Visible; 
@@ -369,7 +372,7 @@ namespace C_SlideShow
             this.WaitingMessageBase.Visibility = Visibility.Collapsed;
         }
 
-        private void InitMainContent(int firstIndex)
+        public void InitMainContent(int firstIndex)
         {
             if( IsPlaying || tileContainers.Any(tc => tc.IsActiveSliding) )
                 StopSlideShow();
@@ -486,7 +489,7 @@ namespace C_SlideShow
             }
         }
 
-        private void DropNewFiles(string[] pathes)
+        public void DropNewFiles(string[] pathes)
         {
             if( Setting.EnabledItemsInHistory.ArchiverPath && pathes.Length == 1 &&
                 Setting.History.Any( hi => hi.ArchiverPath == pathes[0]) && Setting.ApplyHistoryInfoInNewArchiverReading)
@@ -605,7 +608,7 @@ namespace C_SlideShow
             UpdateToolbarViewing();
         }
 
-        public void StartOperationSlide(bool isPlayback, bool slideByOneImage, int moveTime)
+        public void StartOperationSlide(bool isPlayback, bool slideByOneImage)
         {
             // ファイル無し
             if (imageFileManager.ImgFileInfo.Count < 1) return;
@@ -649,7 +652,7 @@ namespace C_SlideShow
 
             foreach(TileContainer tc in tileContainers)
             {
-                int param = moveTime;
+                int param = 300; // (todo)設定可能にする
                 Debug.WriteLine("active slide start: " + tc.Margin);
                 Debug.WriteLine("isNodeviation: " + isNoDeviation);
                 tc.BeginActiveSlideAnimation(isNoDeviation, isPlayback, slideByOneImage, param);

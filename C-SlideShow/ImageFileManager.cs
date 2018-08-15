@@ -203,7 +203,7 @@ namespace C_SlideShow
         /// WPFで利用可能なBitmapをロード
         /// </summary>
         /// <param name="imageFileInfo"></param>
-        /// <param name="bitmapDecodePixelWidth"></param>
+        /// <param name="bitmapDecodePixel"></param>
         /// <returns>BitmapSource(失敗時はnullを返す)</returns>
         public BitmapSource LoadBitmap(ImageFileInfo imageFileInfo, Size bitmapDecodePixel)
         {

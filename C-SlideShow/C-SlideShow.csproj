@@ -70,7 +70,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AppSetting.cs" />
+    <Compile Include="Setting\AppSetting.cs" />
     <Compile Include="Archiver\ArchiverBase.cs" />
     <Compile Include="Archiver\FolderArchiver.cs" />
     <Compile Include="Archiver\NullArchver.cs" />
@@ -79,6 +79,26 @@
     <Compile Include="Archiver\RarArchiver.cs" />
     <Compile Include="Archiver\SharpCompressArchiver.cs" />
     <Compile Include="Archiver\ZipArchiver.cs" />
+    <Compile Include="Setting\KeyMap.cs" />
+    <Compile Include="Setting\ShortcutSetting.cs" />
+    <Compile Include="Shortcut\CommandID.cs" />
+    <Compile Include="Shortcut\Command\SlideToBottom.cs" />
+    <Compile Include="Shortcut\Command\SlideToTop.cs" />
+    <Compile Include="Shortcut\Command\SlideToRight.cs" />
+    <Compile Include="Shortcut\Command\SlideToLeft.cs" />
+    <Compile Include="Shortcut\Command\ZoomImageUnderCurosr.cs" />
+    <Compile Include="Shortcut\Command\DecreaseWindowSize.cs" />
+    <Compile Include="Shortcut\Command\IncreaseWindowSize.cs" />
+    <Compile Include="Shortcut\Command\SlideToBackwardByOneImage.cs" />
+    <Compile Include="Shortcut\Command\SlideToForwardByOneImage.cs" />
+    <Compile Include="Shortcut\Command\SlideToForward.cs" />
+    <Compile Include="Shortcut\Command\SlideToBackward.cs" />
+    <Compile Include="Shortcut\Command\OpenAdditionalFolder.cs" />
+    <Compile Include="Shortcut\Command\OpenAdditionalFile.cs" />
+    <Compile Include="Shortcut\Command\OpenFile.cs" />
+    <Compile Include="Shortcut\Command\OpenFolder.cs" />
+    <Compile Include="Shortcut\Command\Null.cs" />
+    <Compile Include="Shortcut\ICommand.cs" />
     <Compile Include="CommonControl\ColorPickerButton.xaml.cs">
       <DependentUpon>ColorPickerButton.xaml</DependentUpon>
     </Compile>
@@ -94,7 +114,7 @@
       <DependentUpon>MatrixSelecter.xaml</DependentUpon>
     </Compile>
     <Compile Include="PresetProfile.cs" />
-    <Compile Include="Profile.cs" />
+    <Compile Include="Setting\Profile.cs" />
     <Compile Include="ProfileEditDialog.xaml.cs">
       <DependentUpon>ProfileEditDialog.xaml</DependentUpon>
     </Compile>
@@ -109,6 +129,9 @@
     </Compile>
     <Compile Include="SettingSerializer.cs" />
     <Compile Include="ListExtension.cs" />
+    <Compile Include="Shortcut\KeyInput.cs" />
+    <Compile Include="Shortcut\Scene.cs" />
+    <Compile Include="Shortcut\ShortcutManager.cs" />
     <Compile Include="SlideSettingDialog.xaml.cs">
       <DependentUpon>SlideSettingDialog.xaml</DependentUpon>
     </Compile>
@@ -296,6 +319,7 @@
   <ItemGroup>
     <Resource Include="Resources\open.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

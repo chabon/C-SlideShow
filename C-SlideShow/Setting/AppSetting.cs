@@ -10,6 +10,7 @@ using System.Runtime.Serialization;
 using System.Windows.Media;
 using System.Windows;
 
+
 namespace C_SlideShow
 {
     // 履歴情報
@@ -56,6 +57,7 @@ namespace C_SlideShow
         [DataMember]
         public bool SlideDirection { get; set; } = true;
     }
+
 
     // 外部プログラム
     [DataContract(Name = "ExternalAppInfo")]
@@ -132,6 +134,11 @@ namespace C_SlideShow
         public bool ApplyHistoryInfoInNewArchiverReading { get; set; }
 
 
+        // ショートカット
+        [DataMember]
+        public ShortcutSetting ShortcutSetting { get; set; }
+
+
         // アスペクト比のリスト
         [DataMember]
         public List<Point> AspectRatioList { get; set; }
@@ -177,6 +184,9 @@ namespace C_SlideShow
             NumofHistoryInMainMenu = 10;
             EnabledItemsInHistory = new EnabledItemsInHistory();
             ApplyHistoryInfoInNewArchiverReading = true;
+
+            // ショートカット
+            ShortcutSetting = new ShortcutSetting();
 
             // アスペクト比のリスト
             AspectRatioList = new List<Point> { new Point(4, 3), new Point(3, 4), new Point(16, 9), new Point(9, 16), new Point(3, 2), new Point(2, 3), new Point(1, 1)};

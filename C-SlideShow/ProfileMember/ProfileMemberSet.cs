@@ -328,22 +328,6 @@ namespace C_SlideShow.ProfileMember
         }
     }
 
-    public class OpenPrevFolderOnStartUp : ProfileMemberBase
-    {
-        public OpenPrevFolderOnStartUp()
-        {
-            this.Value = true;
-            IsEnabled  = false;
-        }
-
-        public new bool Value { get; set; }
-
-        public override string TooltipStr
-        {
-            get { return "OpenPrevFolderOnStartUp: " + base.Value; }
-        }
-    }
-
     public class ApplyRotateInfoFromExif : ProfileMemberBase
     {
         public ApplyRotateInfoFromExif()

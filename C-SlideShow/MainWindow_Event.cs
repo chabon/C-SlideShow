@@ -21,6 +21,7 @@ using System.Windows.Interop;
 using System.IO;
 
 using Forms = System.Windows.Forms;
+using C_SlideShow.Shortcut;
 
 
 
@@ -190,15 +191,11 @@ namespace C_SlideShow
                     {
                         if(e.Delta > 0)
                         {
-                            this.Width = Width * 1.1;
-                            this.Height = Height * 1.1;
-                            UpdateWindowSize();
+                            shortcutManager.ExecuteCommand(CommandID.IncreaseWindowSize);
                         }
                         else
                         {
-                            this.Width = Width * 0.9;
-                            this.Height = Height * 0.9;
-                            UpdateWindowSize();
+                            shortcutManager.ExecuteCommand(CommandID.DecreaseWindowSize);
                         }
                         prevMouseRButtonDownEventContext.Handled = true;
                         return;
@@ -217,15 +214,16 @@ namespace C_SlideShow
 
                 // スライド操作
                 // --------------------------------
-
-                bool isPlayback; // 巻き戻しかどうか
-                if (e.Delta > 0) isPlayback = true;  // wheel up
-                else isPlayback = false;
-
-                bool slideByOneImage = false; // 画像１枚毎のスライド
-                if (IsCtrlOrShiftKeyPressed) slideByOneImage = true;
-
-                StartOperationSlide(isPlayback, slideByOneImage, 300);
+                if(e.Delta > 0 ) // wheel up
+                {
+                    if( IsCtrlOrShiftKeyPressed ) shortcutManager.ExecuteCommand(CommandID.SlideToBackwardByOneImage);
+                    else shortcutManager.ExecuteCommand(CommandID.SlideToBackward);
+                }
+                else // wheel down
+                {
+                    if( IsCtrlOrShiftKeyPressed ) shortcutManager.ExecuteCommand(CommandID.SlideToForwardByOneImage);
+                    else shortcutManager.ExecuteCommand(CommandID.SlideToForward);
+                }
             };
 
             // 右クリックの制御
@@ -246,37 +244,9 @@ namespace C_SlideShow
                 }
                 else
                 {
-                    // 画像拡大パネルの表示
-                    if( TileExpantionPanel.IsShowing ) return;
-                    try
-                    {
-                        DependencyObject source = e.OriginalSource as DependencyObject;
-                        if( source == null ) return;
-
-                        // クリックされたTileContainer
-                        TileContainer tc = WpfTreeUtil.FindAncestor<TileContainer>(source);
-                        if( tc == null ) return;
-
-                        // クリックされたBorder
-                        Border border;
-                        if( e.OriginalSource is Border ) border = e.OriginalSource as Border;
-                        else
-                        {
-                            border = WpfTreeUtil.FindAncestor<Border>(source);
-                        }
-                        if( border == null ) return;
-
-                        // 紐づけられているTileオブジェクトを特定
-                        Tile targetTile = tc.Tiles.First(t => t.Border == border);
-                        if( targetTile == null ) return;
-
-                        // 表示
-                        TileExpantionPanel.Show(targetTile);
-                    }
-                    catch { }
+                    shortcutManager.ExecuteCommand(CommandID.ZoomImageUnderCursor);
                 }
             };
-
 
             this.Seekbar.ValueChanged += (s, e) =>
             {
@@ -294,12 +264,6 @@ namespace C_SlideShow
                 OnSeekbarValueChanged(value);
             };
 
-            //this.Toolbar_Test.Click += (s, e) =>
-            //{
-            //    this.tileContainers.ForEach( tc => tc.StopSlideAnimation() );
-            //};
-
-
             // キーイベント（暫定的に）
             this.PreviewKeyDown += (s, e) =>
             {
@@ -309,62 +273,16 @@ namespace C_SlideShow
 
                 if(e.Key == Key.T )
                 {
-                    Setting.TempProfile.UsePlaidBackground.Value = !Setting.TempProfile.UsePlaidBackground.Value;
-                    Setting.TempProfile.PairColorOfPlaidBackground.Value = Colors.LightGray;
-                    ApplyColorAndOpacitySetting();
+                    shortcutManager.ExecuteCommand(CommandID.ZoomImageUnderCursor);
                 }
                 if(e.Key == Key.A )
                 {
-                    //MenuItem continuation = (MenuItem)MenuItem_Load.Items[MenuItem_Load.Items.Count - 1];
-                    //MenuItem mi = new MenuItem();
-                    //mi.Header = "hoge";
-                    //mi.ToolTip = "aaaa";
-                    //continuation.Items.Add(mi);
-
-
-                    //pf.ApplyRotateInfoFromExif = !pf.ApplyRotateInfoFromExif;
-                    //InitMainContent(imageFileManager.CurrentIndex);
-                }
-
-                if(e.Key == Key.D1 )
-                {
-                    pf.TilePadding.Value = Setting.TempProfile.TilePadding.Value - 1;
-                    if( pf.TilePadding.Value < 0 ) pf.TilePadding.Value = 0;
-                    foreach(TileContainer tc in tileContainers )
-                    {
-                        tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
-                    }
-                    UpdateWindowSize();
-                }
-                if(e.Key == Key.D2 )
-                {
-                    pf.TilePadding.Value = Setting.TempProfile.TilePadding.Value + 1;
-                    foreach(TileContainer tc in tileContainers )
-                    {
-                        tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
-                    }
-                    UpdateWindowSize();
                 }
 #endif
-
-                // alt + enter でフルスクリーン切り替え
-                //if (e.SystemKey == Key.LeftAlt && e.Key == Key.Enter)
-                //{
-                //    ToggleFullScreen();
-                //    return;
-                //}
-
-                // フルスクリーン解除
-                if(e.Key == Key.Escape && Setting.TempProfile.IsFullScreenMode.Value)
-                {
-                    ToggleFullScreen();
-                }
             };
 
 
-
-            //this.PreviewMouseDoubleClick += (s, e) => ToggleFullScreen();
-
+            // end of method
         }
 
 
@@ -566,68 +484,25 @@ namespace C_SlideShow
         // フォルダ読み込み
         private void Toolbar_Load_Folder_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new Forms.FolderBrowserDialog();
-            dlg.Description = "画像フォルダーを選択してください。";
-            if( Setting.FolderOpenDialogLastSelectedPath != null && Directory.Exists(Setting.FolderOpenDialogLastSelectedPath) )
-                dlg.SelectedPath = Setting.FolderOpenDialogLastSelectedPath;
-
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Setting.FolderOpenDialogLastSelectedPath = dlg.SelectedPath;
-                SaveHistoryItem();
-
-                DropNewFiles( new string[] { dlg.SelectedPath });
-            }
+            shortcutManager.ExecuteCommand(CommandID.OpenFolder);
         }
 
         // ファイル読み込み
         private void Toolbar_Load_File_Click(object sender, RoutedEventArgs e)
         {
-            Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
-            ofd.Title = "ファイルを選択してください";
-            ofd.Multiselect = true;
-            if( Setting.FileOpenDialogLastSelectedPath != null && File.Exists(Setting.FileOpenDialogLastSelectedPath) )
-                ofd.InitialDirectory = Directory.GetParent( Setting.FileOpenDialogLastSelectedPath ).FullName;
-
-            if (ofd.ShowDialog() == Forms.DialogResult.OK)
-            {
-                if(ofd.FileNames.Length > 0) Setting.FileOpenDialogLastSelectedPath = ofd.FileNames[0];
-                SaveHistoryItem();
-
-                DropNewFiles(ofd.FileNames);
-            }
+            shortcutManager.ExecuteCommand(CommandID.OpenFile);
         }
 
         // フォルダ追加読み込み
         private void Toolbar_Add_Folder_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new Forms.FolderBrowserDialog();
-            dlg.Description = "追加する画像フォルダーを選択してください。";
-            if( Setting.FolderOpenDialogLastSelectedPath != null && Directory.Exists(Setting.FolderOpenDialogLastSelectedPath) )
-                dlg.SelectedPath = Setting.FolderOpenDialogLastSelectedPath;
-
-            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                Setting.FolderOpenDialogLastSelectedPath = dlg.SelectedPath;
-                string[] path = { dlg.SelectedPath };
-                ReadFilesAndInitMainContent(path, true,  0);
-            }
+            shortcutManager.ExecuteCommand(CommandID.OpenAdditionalFolder);
         }
 
         // ファイル追加読み込み
         private void Toolbar_Add_File_Click(object sender, RoutedEventArgs e)
         {
-            Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
-            ofd.Title = "追加するファイルを選択してください";
-            ofd.Multiselect = true;
-            if( Setting.FileOpenDialogLastSelectedPath != null && File.Exists(Setting.FileOpenDialogLastSelectedPath) )
-                ofd.InitialDirectory = Directory.GetParent( Setting.FileOpenDialogLastSelectedPath ).FullName;
-
-            if (ofd.ShowDialog() == Forms.DialogResult.OK)
-            {
-                if(ofd.FileNames.Length > 0) Setting.FileOpenDialogLastSelectedPath = ofd.FileNames[0];
-                ReadFilesAndInitMainContent(ofd.FileNames, true,  0);
-            }
+            shortcutManager.ExecuteCommand(CommandID.OpenAdditionalFile);
         }
 
 

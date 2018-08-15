@@ -125,9 +125,6 @@ namespace C_SlideShow
         public ProfileMember.TopMost TopMost { get; set; } = new ProfileMember.TopMost();
 
         [DataMember]
-        public ProfileMember.OpenPrevFolderOnStartUp OpenPrevFolderOnStartUp { get; set; } = new ProfileMember.OpenPrevFolderOnStartUp();
-
-        [DataMember]
         public ProfileMember.ApplyRotateInfoFromExif ApplyRotateInfoFromExif { get; set; } = new ProfileMember.ApplyRotateInfoFromExif();
 
         [DataMember]
@@ -226,7 +223,6 @@ namespace C_SlideShow
             // その他の設定_全般
             if( pf.FileSortMethod.IsEnabled )          FileSortMethod.Value = pf.FileSortMethod.Value;
             if( pf.TopMost.IsEnabled )                 TopMost.Value = pf.TopMost.Value;
-            if( pf.OpenPrevFolderOnStartUp.IsEnabled ) OpenPrevFolderOnStartUp.Value = pf.OpenPrevFolderOnStartUp.Value;
             if( pf.ApplyRotateInfoFromExif.IsEnabled ) ApplyRotateInfoFromExif.Value = pf.ApplyRotateInfoFromExif.Value;
             if( pf.BitmapDecodeTotalPixel.IsEnabled )  BitmapDecodeTotalPixel.Value = pf.BitmapDecodeTotalPixel.Value;
 
@@ -308,7 +304,6 @@ namespace C_SlideShow
             // その他の設定_全般
             newProfile.FileSortMethod.Value = this.FileSortMethod.Value;
             newProfile.TopMost.Value = this.TopMost.Value;
-            newProfile.OpenPrevFolderOnStartUp.Value = this.OpenPrevFolderOnStartUp.Value;
             newProfile.ApplyRotateInfoFromExif.Value = this.ApplyRotateInfoFromExif.Value;
             newProfile.BitmapDecodeTotalPixel.Value = this.BitmapDecodeTotalPixel.Value;
 

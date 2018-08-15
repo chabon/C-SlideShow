@@ -27,7 +27,6 @@ namespace C_SlideShow
                 if(member != null) member.IsEnabled = true;
             }
             Default.Path.IsEnabled = false;
-            Default.OpenPrevFolderOnStartUp.IsEnabled = false;
 
             // 書籍用(左綴じ)
             BookBoundOnLeftSide = new Profile();

@@ -88,12 +88,6 @@ namespace C_SlideShow
             // ファイル読み込み順
             FileReadingOrder.SelectedIndex = (int)pf.FileSortMethod.Value;
 
-            // 起動時、前回のフォルダを開く(未実装)
-            if(pf.OpenPrevFolderOnStartUp.Value)
-                StartUp_OpenPrevFolder.IsChecked = true;
-            else
-                StartUp_OpenPrevFolder.IsChecked = false;
-
             // Exifの回転・反転情報を反映させる
             if( pf.ApplyRotateInfoFromExif.Value )
                 ApplyRotateInfoFromExif.IsChecked = true;
@@ -319,17 +313,6 @@ namespace C_SlideShow
             int idx = FileReadingOrder.SelectedIndex;
             Setting.TempProfile.FileSortMethod.Value = (FileSortMethod)idx;
             mainWindow.SortAllImage(Setting.TempProfile.FileSortMethod.Value);
-        }
-
-        // 起動時、前回のフォルダを開く(未実装)
-        private void StartUp_OpenPrevFolder_Click(object sender, RoutedEventArgs e)
-        {
-            if (isInitializing) return;
-
-            if ((bool)StartUp_OpenPrevFolder.IsChecked)
-                Setting.TempProfile.OpenPrevFolderOnStartUp.Value = true;
-            else
-                Setting.TempProfile.OpenPrevFolderOnStartUp.Value = false;
         }
 
         // Exifの回転・反転情報を反映させる
