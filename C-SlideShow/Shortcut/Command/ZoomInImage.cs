@@ -7,23 +7,23 @@ using System.Threading.Tasks;
 namespace C_SlideShow.Shortcut.Command
 {
     /// <summary>
-    /// 上方向にスライド
+    /// 拡大率をアップ
     /// </summary>
-    public class SlideToTop : ICommand
+    public class ZoomInImage : ICommand
     {
         public CommandID ID      { set; get; }
         public Scene     Scene   { set; get; }
         public string    Message { get; }
 
-        public SlideToTop()
+        public ZoomInImage()
         {
-            ID    = CommandID.SlideToTop;
-            Scene = Scene.Nomal;
+            ID    = CommandID.ZoomInImage;
+            Scene = Scene.Expand;
         }
         
         public bool CanExecute()
         {
-            if( !MainWindow.Current.IsHorizontalSlide )
+            if( MainWindow.Current.TileExpantionPanel.IsShowing )
             {
                 return true;
             }
@@ -35,21 +35,14 @@ namespace C_SlideShow.Shortcut.Command
 
         public void Execute()
         {
-            MainWindow mw = MainWindow.Current;
+            MainWindow.Current.TileExpantionPanel.ZoomIn();
 
-            if(mw.Setting.TempProfile.SlideDirection.Value == SlideDirection.Top )
-            {
-                mw.StartOperationSlide(false, false);
-            }
-            else
-            {
-                mw.StartOperationSlide(true, false);
-            }
+            return;
         }
 
         public string GetDetail()
         {
-            return "上方向にスライド";
+            return "画像の拡大率をアップ";
         }
     }
 }

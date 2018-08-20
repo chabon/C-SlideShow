@@ -12,17 +12,60 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
 using Forms = System.Windows.Forms;
+using C_SlideShow.Shortcut;
 
 
 namespace C_SlideShow
 {
     public enum AppSettingDialogTabIndex
     {
-        History     = 0,
-        AspectRatio = 1,
-        ExternalApp = 2,
-        Detail      = 3
+        Shortcut    = 0,
+        History     = 1,
+        AspectRatio = 2,
+        ExternalApp = 3,
+        Detail      = 4
+    }
+
+    public class ShortcutListViewItem : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private string commandStr;
+        public string CommandStr
+        {
+            get { return commandStr; }
+            set
+            {
+                if(value != this.commandStr)
+                {
+                    this.commandStr = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private string keyStr;
+        public string KeyStr
+        {
+            get { return keyStr; }
+            set
+            {
+                if(value != this.keyStr)
+                {
+                    this.keyStr = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        public Shortcut.CommandID CommandID { get; set; }
+        public KeyInput  KeyInput { get; set; }
     }
 
     /// <summary>
@@ -54,6 +97,30 @@ namespace C_SlideShow
         {
             isInitializing = true;
             setting = MainWindow.Current.Setting;
+
+            // ショートカット
+            foreach( Shortcut.ICommand command in MainWindow.Current.ShortcutManager.GetCommandList() )
+            {
+                KeyMap km = setting.ShortcutSetting.KeyMap.FirstOrDefault(k => k.CommandID == command.ID);
+                switch( command.Scene )
+                {
+                    case Shortcut.Scene.All:
+                        // 全般
+                        ShortcutListView_ALL.Items.Add(  new ShortcutListViewItem {
+                            CommandStr = command.GetDetail(), KeyStr = km?.KeyInput.ToString(), CommandID = command.ID, KeyInput = km?.KeyInput.Clone() }  );
+                        break;
+                    case Shortcut.Scene.Nomal:
+                        // 通常時
+                        ShortcutListView_Normal.Items.Add(  new ShortcutListViewItem {
+                            CommandStr = command.GetDetail(), KeyStr = km?.KeyInput.ToString(), CommandID = command.ID, KeyInput = km?.KeyInput.Clone() }  );
+                        break;
+                    case Shortcut.Scene.Expand:
+                        // 拡大時
+                        ShortcutListView_Expand.Items.Add(  new ShortcutListViewItem {
+                            CommandStr = command.GetDetail(), KeyStr = km?.KeyInput.ToString(), CommandID = command.ID, KeyInput = km?.KeyInput.Clone() }  );
+                        break;
+                }
+            }
 
             // 履歴設定
             EnabledItemsInHistory_ArchiverPath.IsChecked = setting.EnabledItemsInHistory.ArchiverPath;
@@ -110,6 +177,121 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         //     イベント
         /* ---------------------------------------------------- */
+
+        // ショートカット設定
+        private void ShortcutListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+
+            if( item != null )
+            {
+                HotkeyControl.IsEnabled = true;
+                KeymapClearButton.IsEnabled = true;
+            }
+            else
+            {
+                HotkeyControl.IsEnabled = false;
+                KeymapClearButton.IsEnabled = false;
+            }
+
+            if(item != null && item.KeyInput != null)
+            {
+                HotkeyControl.SetKey( item.KeyInput.Modifiers, item.KeyInput.Key );
+            }
+            else
+            {
+                HotkeyControl.Clear();
+            }
+        }
+
+        private void HotkeyControl_KeyAssigned(object sender, EventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+            KeyInput ki = new KeyInput(HotkeyControl.Modifiers, HotkeyControl.Key);
+
+            item.KeyInput = ki;
+            item.KeyStr = ki.ToString();
+
+            // 重複キーの削除
+            foreach( var li in GetCurrentShortcutListView().Items )
+            {
+                ShortcutListViewItem si = li as ShortcutListViewItem;
+                if(si != null && si.KeyInput != null && si.CommandID != item.CommandID )
+                {
+                    if( si.KeyInput.Equals(ki) )
+                    {
+                        si.KeyInput = null;
+                        si.KeyStr = "";
+                    }
+                }
+            }
+        }
+
+        private ListView GetCurrentShortcutListView()
+        {
+            switch(ShortcutSettingTab.SelectedIndex)
+            {
+                default:
+                case 0:
+                    return ShortcutListView_ALL;
+                case 1:
+                    return ShortcutListView_Normal;
+                case 2:
+                    return ShortcutListView_Expand;
+            }
+        }
+
+        private void ShortcutSettingTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ShortcutListView_SelectionChanged(this, null);
+        }
+
+        private void KeymapClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+            KeyInput ki = new KeyInput(HotkeyControl.Modifiers, HotkeyControl.Key);
+
+            item.KeyInput = null;
+            item.KeyStr = "";
+            HotkeyControl.Clear();
+        }
+
+        private void AllDefault_Shortcut_Click(object sender, RoutedEventArgs e)
+        {
+            var defaultKeymap = ShortcutSetting.CreateDefaultKeyMap();
+
+            Action<ListView> makeAllItemsInListViewDefault = (ListView listView) =>
+            {
+                foreach( var li in listView.Items )
+                {
+                    ShortcutListViewItem si = li as ShortcutListViewItem;
+
+                    if(si != null)
+                    {
+                        si.KeyInput = null;
+                        si.KeyStr = "";
+                        var km = defaultKeymap.FirstOrDefault(k => k.CommandID == si.CommandID);
+                        if(km != null )
+                        {
+                            si.KeyInput = km.KeyInput;
+                            si.KeyStr = km.KeyInput.ToString();
+                        }
+                    }
+                }
+            };
+
+            makeAllItemsInListViewDefault( GetCurrentShortcutListView() );
+        }
+
+
         // 履歴設定
         private void NumofHistory_ValueChanged(object sender, EventArgs e)
         {
@@ -287,6 +469,24 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            // ショートカット設定 キー
+            List<KeyMap> keymapList = new List<KeyMap>();
+            Action<ListView> addToKeymapList = (ListView listView) =>
+            {
+                foreach(var item in listView.Items )
+                {
+                    ShortcutListViewItem si = item as ShortcutListViewItem;
+                    if(si != null && si.KeyInput != null)
+                    {
+                        keymapList.Add( new KeyMap(si.KeyInput, si.CommandID) );
+                    }
+                }
+            };
+            addToKeymapList.Invoke(ShortcutListView_ALL);
+            addToKeymapList.Invoke(ShortcutListView_Normal);
+            addToKeymapList.Invoke(ShortcutListView_Expand);
+            setting.ShortcutSetting.KeyMap = keymapList;
+
             // 履歴設定
             setting.EnabledItemsInHistory.ArchiverPath =  (bool)EnabledItemsInHistory_ArchiverPath.IsChecked ;
             setting.EnabledItemsInHistory.ImagePath =  (bool)EnabledItemsInHistory_ImagePath.IsChecked ;
@@ -330,5 +530,8 @@ namespace C_SlideShow
             this.Close();
         }
 
+
+
+        // end of class
     }
 }

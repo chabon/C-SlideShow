@@ -28,6 +28,7 @@ namespace C_SlideShow
         private Tile targetTile;
         private Storyboard storyboard;
         private double zoomFactor = 1.0;
+        private Point lastZoomedPos; // 最後に拡大縮小をした後の位置(ExpandedBorder上の座標系)
 
         public MainWindow MainWindow { private get; set; }
         public ImageFileManager ImageFileManager { private get; set; }
@@ -449,6 +450,14 @@ namespace C_SlideShow
             // カーソル位置取得(ExpandedBorder上の座標系)
             Point pos = Mouse.GetPosition(ExpandedBorder);
 
+            // カーソル位置はみ出しチェック
+            Point posOfPanel = Mouse.GetPosition(this);
+            if(posOfPanel.X < 0 || posOfPanel.X > this.ActualWidth || posOfPanel.Y < 0 || posOfPanel.Y > this.ActualHeight )
+            {
+                if( zoomFactorPrev == 1.0 ) pos = new Point(this.ActualWidth / 2, this.ActualHeight / 2);
+                else pos = new Point(lastZoomedPos.X, lastZoomedPos.Y);
+            }
+
             // 拡大
             if(zoomFactor > 1.0 )
             {
@@ -473,6 +482,7 @@ namespace C_SlideShow
             {
                 ExpandedBorder.Margin = new Thickness(
                     ExpandedBorder.Margin.Left - move.X, ExpandedBorder.Margin.Top - move.Y, 0, 0);
+                lastZoomedPos = new Point(pos.X + move.X, pos.Y + move.Y);
             }
             else
             {

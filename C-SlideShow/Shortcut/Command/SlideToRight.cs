@@ -23,23 +23,27 @@ namespace C_SlideShow.Shortcut.Command
         
         public bool CanExecute()
         {
-            return true;
+            if( MainWindow.Current.IsHorizontalSlide )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Execute()
         {
             MainWindow mw = MainWindow.Current;
-            if( mw.IsHorizontalSlide )
-            {
-                if(mw.Setting.TempProfile.SlideDirection.Value == SlideDirection.Left )
-                {
-                    mw.StartOperationSlide(true, false);
-                }
-                else
-                {
-                    mw.StartOperationSlide(false, false);
-                }
 
+            if(mw.Setting.TempProfile.SlideDirection.Value == SlideDirection.Left )
+            {
+                mw.StartOperationSlide(true, false);
+            }
+            else
+            {
+                mw.StartOperationSlide(false, false);
             }
         }
 

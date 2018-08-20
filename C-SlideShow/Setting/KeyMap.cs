@@ -26,5 +26,10 @@ namespace C_SlideShow
             KeyInput = keyInput;
             CommandID = commandId;
         }
+
+        public KeyMap Clone()
+        {
+            return new KeyMap(this.KeyInput, this.CommandID);
+        }
     }
 }

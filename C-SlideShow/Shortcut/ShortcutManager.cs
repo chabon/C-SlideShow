@@ -14,7 +14,7 @@ namespace C_SlideShow.Shortcut
     /// <summary>
     /// ショートカット全般を管理
     /// </summary>
-    class ShortcutManager
+    public class ShortcutManager
     {
         // コマンドリスト
         List<ICommand> commands;
@@ -56,8 +56,8 @@ namespace C_SlideShow.Shortcut
             commands.Add( new OpenAdditionalFolder() );
             commands.Add( new OpenFile() );
             commands.Add( new OpenAdditionalFile() );
-            commands.Add( new IncreaseWindowSize() );
-            commands.Add( new DecreaseWindow() );
+            commands.Add( new WindowSizeUp() );
+            commands.Add( new WindowSizeDown() );
 
             // 通常時
             commands.Add( new SlideToForward() );
@@ -71,6 +71,8 @@ namespace C_SlideShow.Shortcut
             commands.Add( new ZoomImageUnderCursor() );
 
             // 画像拡大時
+            commands.Add( new ZoomInImage() );
+            commands.Add( new ZoomOutImage() );
         }
         
         // IDからコマンド取得
@@ -96,7 +98,7 @@ namespace C_SlideShow.Shortcut
             ICommand command = GetCommand(id);
             if( command != null )
             {
-                command.Execute();
+                if( command.CanExecute() ) command.Execute();
             }
         }
 
@@ -109,6 +111,14 @@ namespace C_SlideShow.Shortcut
                 return Scene.Nomal;
         }
 
+        // コマンドリスト取得
+        public List<ICommand> GetCommandList()
+        {
+            if( commands == null ) CreateCommands();
+
+            return commands;
+        }
+
         /* ---------------------------------------------------- */
         //       EventHandler
         /* ---------------------------------------------------- */
@@ -117,7 +127,9 @@ namespace C_SlideShow.Shortcut
         {
             // キー情報取得
             ModifierKeys modKeys = Keyboard.Modifiers;
-            KeyInput keyInput = new KeyInput(modKeys, e.Key);
+            KeyInput keyInput;
+            if(e.Key == Key.System ) { keyInput = new KeyInput(modKeys, e.SystemKey); }
+            else { keyInput = new KeyInput(modKeys, e.Key); }
             System.Diagnostics.Debug.WriteLine( "key: " + keyInput.Key.ToString() + "\nmod: " + keyInput.Modifiers.ToString() );
 
             // ディクショナリから検索して、キーマップ、シーンが共に引っかかればコマンド実行
@@ -132,6 +144,7 @@ namespace C_SlideShow.Shortcut
                     if( cmd.Scene == Scene.All || cmd.Scene == currentScene )
                     {
                         cmd.Execute();
+                        e.Handled = true;
                         return;
                     }
                 }

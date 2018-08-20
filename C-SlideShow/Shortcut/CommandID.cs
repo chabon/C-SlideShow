@@ -15,8 +15,8 @@ namespace C_SlideShow.Shortcut
         OpenAdditionalFolder,          // フォルダ追加読み込み
         OpenFile,                      // ファイルを開く
         OpenAdditionalFile,            // ファイル追加読み込み
-        IncreaseWindowSize,            // ウインドウサイズを大きく
-        DecreaseWindowSize,            // ウインドウサイズを小さく
+        WindowSizeUp,                  // ウインドウサイズを大きく
+        WindowSizeDown,                // ウインドウサイズを小さく
 
         // 通常時
         SlideToForward,                // 前方向にスライド
@@ -30,5 +30,7 @@ namespace C_SlideShow.Shortcut
         ZoomImageUnderCursor,          // カーソル下の画像を全体に拡大
 
         // 画像拡大時
+        ZoomInImage,                   // 画像の拡大率をアップ
+        ZoomOutImage,                  // 画像の拡大率をダウン
     }
 }

@@ -70,6 +70,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommonControl\HotkeyControl.xaml.cs">
+      <DependentUpon>HotkeyControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Setting\AppSetting.cs" />
     <Compile Include="Archiver\ArchiverBase.cs" />
     <Compile Include="Archiver\FolderArchiver.cs" />
@@ -87,8 +90,8 @@
     <Compile Include="Shortcut\Command\SlideToRight.cs" />
     <Compile Include="Shortcut\Command\SlideToLeft.cs" />
     <Compile Include="Shortcut\Command\ZoomImageUnderCurosr.cs" />
-    <Compile Include="Shortcut\Command\DecreaseWindowSize.cs" />
-    <Compile Include="Shortcut\Command\IncreaseWindowSize.cs" />
+    <Compile Include="Shortcut\Command\WindowSizeDown.cs" />
+    <Compile Include="Shortcut\Command\WindowSizeUp.cs" />
     <Compile Include="Shortcut\Command\SlideToBackwardByOneImage.cs" />
     <Compile Include="Shortcut\Command\SlideToForwardByOneImage.cs" />
     <Compile Include="Shortcut\Command\SlideToForward.cs" />
@@ -98,6 +101,7 @@
     <Compile Include="Shortcut\Command\OpenFile.cs" />
     <Compile Include="Shortcut\Command\OpenFolder.cs" />
     <Compile Include="Shortcut\Command\Null.cs" />
+    <Compile Include="Shortcut\Command\ZoomOutImage.cs" />
     <Compile Include="Shortcut\ICommand.cs" />
     <Compile Include="CommonControl\ColorPickerButton.xaml.cs">
       <DependentUpon>ColorPickerButton.xaml</DependentUpon>
@@ -130,6 +134,7 @@
     <Compile Include="SettingSerializer.cs" />
     <Compile Include="ListExtension.cs" />
     <Compile Include="Shortcut\KeyInput.cs" />
+    <Compile Include="Shortcut\Command\ZoomInImage.cs" />
     <Compile Include="Shortcut\Scene.cs" />
     <Compile Include="Shortcut\ShortcutManager.cs" />
     <Compile Include="SlideSettingDialog.xaml.cs">
@@ -156,6 +161,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AppSettingDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CommonControl\HotkeyControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

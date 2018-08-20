@@ -9,15 +9,15 @@ namespace C_SlideShow.Shortcut.Command
     /// <summary>
     /// ウインドウサイズを小さく
     /// </summary>
-    public class DecreaseWindow : ICommand
+    public class WindowSizeDown : ICommand
     {
         public CommandID ID      { set; get; }
         public Scene     Scene   { set; get; }
         public string    Message { get; }
 
-        public DecreaseWindow()
+        public WindowSizeDown()
         {
-            ID    = CommandID.DecreaseWindowSize;
+            ID    = CommandID.WindowSizeDown;
             Scene = Scene.All;
         }
         

@@ -6,11 +6,60 @@
         xmlns:local="clr-namespace:C_SlideShow"
         xmlns:cc="clr-namespace:C_SlideShow.CommonControl"
         mc:Ignorable="d"
-        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="480" Width="500">
+        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="500" Width="600">
     <Grid>
         <TabControl x:Name="MainTabControl" Margin="3,3,3,40">
+            <!-- ショートカット -->
+            <TabItem Header="ショートカット" Width="80">
+                <Grid>
+                    <TabControl Margin="3,10,3,110" x:Name="ShortcutSettingTab" SelectionChanged="ShortcutSettingTab_SelectionChanged">
+                        <TabItem Header="全般" Width="70">
+                            <ListView x:Name="ShortcutListView_ALL" SelectionChanged="ShortcutListView_SelectionChanged">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
+                                        <GridViewColumn Header="キー" Width="100" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </TabItem>
+                        <TabItem Header="通常時" Width="70">
+                            <ListView x:Name="ShortcutListView_Normal" SelectionChanged="ShortcutListView_SelectionChanged" >
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
+                                        <GridViewColumn Header="キー" Width="100" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </TabItem>
+                        <TabItem Header="拡大時" Width="70">
+                            <ListView x:Name="ShortcutListView_Expand" SelectionChanged="ShortcutListView_SelectionChanged" >
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
+                                        <GridViewColumn Header="キー" Width="100" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </TabItem>
+                    </TabControl>
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                            <GroupBox  Header="キー" Height="75" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                                <StackPanel>
+                                    <cc:HotkeyControl x:Name="HotkeyControl" Height="20" KeyAssigned="HotkeyControl_KeyAssigned" Margin="4"></cc:HotkeyControl>
+                                    <Button x:Name="KeymapClearButton" Click="KeymapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
+                                </StackPanel>
+                            </GroupBox>
+                            <Button x:Name="AllDefault_Shortcut" Click="AllDefault_Shortcut_Click" Margin="4" Width="100" HorizontalAlignment="Left">すべてデフォルト</Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
             <!-- 履歴 -->
-            <TabItem Header="履歴" Width="70">
+            <TabItem Header="履歴" Width="80">
                 <StackPanel>
                     <CheckBox x:Name="EnabledItemsInHistory_ArchiverPath" Margin="5" >開いたフォルダ(書庫)の履歴を保存する</CheckBox>
                     <GroupBox Header="付随して保存する情報" Margin="10,0">
@@ -47,7 +96,7 @@
             </TabItem>
 
             <!-- アスペクト比 -->
-            <TabItem Header="アスペクト比" Width="70">
+            <TabItem Header="アスペクト比" Width="80">
                 <StackPanel Margin="20,3">
                     <Label>アスペクト比リストの編集</Label>
                     <StackPanel Orientation="Horizontal" Margin="3,10">
@@ -74,7 +123,7 @@
             </TabItem>
 
             <!-- 外部連携 -->
-            <TabItem Header="外部連携" Width="70">
+            <TabItem Header="外部連携" Width="80">
                 <StackPanel Margin="10">
                     <GroupBox Header="外部プログラム">
                         <StackPanel>
@@ -97,7 +146,7 @@
             </TabItem>
 
             <!-- 詳細 -->
-            <TabItem Header="詳細" Width="70">
+            <TabItem Header="詳細" Width="80">
                 <StackPanel Margin="10">
                     <CheckBox x:Name="ShowMenuItem_AdditionalRead">「フォルダを追加読み込み」「ファイルを追加読み込み」を読み込みメニューに表示する</CheckBox>
                     <CheckBox Margin="0,5" x:Name="SerachAllDirectoriesInFolderReading">フォルダ読み込み時、サブディレクトリ以下のファイルも読み込む</CheckBox>

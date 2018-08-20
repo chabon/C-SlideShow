@@ -40,6 +40,54 @@ namespace C_SlideShow.Shortcut
 			this.Key = key;
 		}
 
+        public KeyInput Clone()
+        {
+            return new KeyInput(this.Modifiers, this.Key);
+        }
+
+        public override string ToString()
+        {
+            string modStr = "";
+
+            // 修飾キー
+            if(  ( (int)Modifiers & (int)ModifierKeys.Control ) != 0  )
+            {
+                modStr += "Ctrl + ";
+            }
+            if(  ( (int)Modifiers & (int)ModifierKeys.Shift ) != 0  )
+            {
+                modStr += "Shift + ";
+            }
+            if(  ( (int)Modifiers & (int)ModifierKeys.Alt ) != 0  )
+            {
+                modStr += "Alt + ";
+            }
+
+            // キー
+            string keyStr = Key.ToString();
+            if(Key.D0 <= this.Key && this.Key <= Key.D9 )
+            {
+                keyStr = keyStr.Replace("D", "");
+            }
+
+            else if(Key.LeftShift <= this.Key && this.Key <= Key.RightAlt )
+            {
+                keyStr = "";
+            }
+
+            else if(this.Key == Key.None )
+            {
+                keyStr = "";
+            }
+
+            else if(this.Key == Key.System )
+            {
+                keyStr = "";
+            }
+
+            return modStr + keyStr;
+        }
+
 		/// <summary>
 		/// Dictionary用比較処理
 		/// </summary>

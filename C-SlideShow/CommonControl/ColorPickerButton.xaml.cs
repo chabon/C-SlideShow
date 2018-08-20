@@ -26,7 +26,7 @@ namespace C_SlideShow.CommonControl
             InitializeComponent();
         }
 
-        // "Click"イベントをルーティングイベントとして登録する。  
+        // ルーティングイベントとして登録する。  
         public static readonly RoutedEvent ColorPickedEvent = EventManager.RegisterRoutedEvent("ColorPicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(ColorPickerButton));  
 
         public event RoutedEventHandler ColorPicked

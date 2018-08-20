@@ -191,11 +191,11 @@ namespace C_SlideShow
                     {
                         if(e.Delta > 0)
                         {
-                            shortcutManager.ExecuteCommand(CommandID.IncreaseWindowSize);
+                            ShortcutManager.ExecuteCommand(CommandID.WindowSizeUp);
                         }
                         else
                         {
-                            shortcutManager.ExecuteCommand(CommandID.DecreaseWindowSize);
+                            ShortcutManager.ExecuteCommand(CommandID.WindowSizeDown);
                         }
                         prevMouseRButtonDownEventContext.Handled = true;
                         return;
@@ -216,13 +216,13 @@ namespace C_SlideShow
                 // --------------------------------
                 if(e.Delta > 0 ) // wheel up
                 {
-                    if( IsCtrlOrShiftKeyPressed ) shortcutManager.ExecuteCommand(CommandID.SlideToBackwardByOneImage);
-                    else shortcutManager.ExecuteCommand(CommandID.SlideToBackward);
+                    if( IsCtrlOrShiftKeyPressed ) ShortcutManager.ExecuteCommand(CommandID.SlideToBackwardByOneImage);
+                    else ShortcutManager.ExecuteCommand(CommandID.SlideToBackward);
                 }
                 else // wheel down
                 {
-                    if( IsCtrlOrShiftKeyPressed ) shortcutManager.ExecuteCommand(CommandID.SlideToForwardByOneImage);
-                    else shortcutManager.ExecuteCommand(CommandID.SlideToForward);
+                    if( IsCtrlOrShiftKeyPressed ) ShortcutManager.ExecuteCommand(CommandID.SlideToForwardByOneImage);
+                    else ShortcutManager.ExecuteCommand(CommandID.SlideToForward);
                 }
             };
 
@@ -244,7 +244,7 @@ namespace C_SlideShow
                 }
                 else
                 {
-                    shortcutManager.ExecuteCommand(CommandID.ZoomImageUnderCursor);
+                    ShortcutManager.ExecuteCommand(CommandID.ZoomImageUnderCursor);
                 }
             };
 
@@ -273,7 +273,7 @@ namespace C_SlideShow
 
                 if(e.Key == Key.T )
                 {
-                    shortcutManager.ExecuteCommand(CommandID.ZoomImageUnderCursor);
+                    ShortcutManager.ExecuteCommand(CommandID.ZoomImageUnderCursor);
                 }
                 if(e.Key == Key.A )
                 {
@@ -484,25 +484,25 @@ namespace C_SlideShow
         // フォルダ読み込み
         private void Toolbar_Load_Folder_Click(object sender, RoutedEventArgs e)
         {
-            shortcutManager.ExecuteCommand(CommandID.OpenFolder);
+            ShortcutManager.ExecuteCommand(CommandID.OpenFolder);
         }
 
         // ファイル読み込み
         private void Toolbar_Load_File_Click(object sender, RoutedEventArgs e)
         {
-            shortcutManager.ExecuteCommand(CommandID.OpenFile);
+            ShortcutManager.ExecuteCommand(CommandID.OpenFile);
         }
 
         // フォルダ追加読み込み
         private void Toolbar_Add_Folder_Click(object sender, RoutedEventArgs e)
         {
-            shortcutManager.ExecuteCommand(CommandID.OpenAdditionalFolder);
+            ShortcutManager.ExecuteCommand(CommandID.OpenAdditionalFolder);
         }
 
         // ファイル追加読み込み
         private void Toolbar_Add_File_Click(object sender, RoutedEventArgs e)
         {
-            shortcutManager.ExecuteCommand(CommandID.OpenAdditionalFile);
+            ShortcutManager.ExecuteCommand(CommandID.OpenAdditionalFile);
         }
 
 

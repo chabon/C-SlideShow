@@ -7,39 +7,42 @@ using System.Threading.Tasks;
 namespace C_SlideShow.Shortcut.Command
 {
     /// <summary>
-    /// ウインドウサイズを大きく
+    /// 拡大率をダウン
     /// </summary>
-    public class IncreaseWindowSize : ICommand
+    public class ZoomOutImage : ICommand
     {
         public CommandID ID      { set; get; }
         public Scene     Scene   { set; get; }
         public string    Message { get; }
 
-        public IncreaseWindowSize()
+        public ZoomOutImage()
         {
-            ID    = CommandID.IncreaseWindowSize;
-            Scene = Scene.All;
+            ID    = CommandID.ZoomOutImage;
+            Scene = Scene.Expand;
         }
         
         public bool CanExecute()
         {
-            return true;
+            if( MainWindow.Current.TileExpantionPanel.IsShowing )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Execute()
         {
-            MainWindow mw = MainWindow.Current;
+            MainWindow.Current.TileExpantionPanel.ZoomOut();
 
-            if( mw.Setting.TempProfile.IsFullScreenMode.Value ) return;
-
-            mw.Width = mw.Width * 1.1;
-            mw.Height = mw.Height * 1.1;
-            mw.UpdateWindowSize();
+            return;
         }
 
         public string GetDetail()
         {
-            return "ウインドウサイズを大きく";
+            return "画像の拡大率をダウン";
         }
     }
 }

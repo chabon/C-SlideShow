@@ -64,12 +64,12 @@ namespace C_SlideShow
         SlideSettingDialog slideSettingDialog;
         SettingDialog settingDialog;
         ProfileEditDialog profileEditDialog;
-        ShortcutManager shortcutManager;
 
 
         // property
         public static MainWindow Current { get; private set; }
         public AppSetting Setting { get; set; }
+        public ShortcutManager ShortcutManager { get; set; }
 
         public bool IsHorizontalSlide
         {
@@ -178,7 +178,7 @@ namespace C_SlideShow
             InitEvent();
 
             // ショートカットマネージャー
-            shortcutManager = new ShortcutManager();
+            ShortcutManager = new ShortcutManager();
 
             // 前回の状態を復元
             Profile pf = Setting.TempProfile;
