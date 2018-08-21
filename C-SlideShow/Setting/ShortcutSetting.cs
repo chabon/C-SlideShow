@@ -22,6 +22,9 @@ namespace C_SlideShow
         [DataMember]
         public List<KeyMap> KeyMap = new List<KeyMap>();
 
+        // マウス入力Map (マウス入力 - コマンドID)
+        public List<MouseInputMap> MouseInputMap = new List<MouseInputMap>();
+
 		// マウスジェスチャーMap (ジェスチャー -> コマンドIDを取得)
         //[DataMember]
         //public Dictionary<string, Commands> GestureMap = new Dictionary<string, Commands>();
@@ -32,13 +35,20 @@ namespace C_SlideShow
         public ShortcutSetting()
         {
             initKeyMap();
+            initMouseInputMap();
         }
 
-        public void initKeyMap()
+        private void initKeyMap()
         {
             KeyMap.Clear();
             KeyMap = CreateDefaultKeyMap();
         }
+
+        private void initMouseInputMap()
+        {
+            MouseInputMap.Clear();
+            MouseInputMap = CreateDefaultMouseInputMap();
+        } 
 
         public static List<KeyMap> CreateDefaultKeyMap()
         {
@@ -65,6 +75,34 @@ namespace C_SlideShow
 
 
             return defaultKeyMap;
+        }
+
+        public static List<MouseInputMap> CreateDefaultMouseInputMap()
+        {
+            List<MouseInputMap> defaultMouseInputMap = new List<MouseInputMap>();
+
+            // 全般
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Button, MouseInputButton.WheelUp),      CommandID.WindowSizeUp             )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Button, MouseInputButton.WheelDown),    CommandID.WindowSizeDown           )  );
+
+            // 通常時
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.R_Click),          CommandID.ZoomImageUnderCursor     )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelUp),          CommandID.SlideToBackward          )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelDown),        CommandID.SlideToForward           )  );
+
+            // 画像拡大時
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelUp),          CommandID.ZoomInImage             )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelDown),        CommandID.ZoomOutImage            )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.R_Click),          CommandID.ExitZoom                )  );
+
+            // test
+            //defaultMouseInputMap.Add(new MouseInputMap(new MouseInput(MouseInputHold.Shift, MouseInputButton.L_Click), CommandID.OpenFolder));
+            //defaultMouseInputMap.Add(new MouseInputMap(new MouseInput(MouseInputHold.L_Button, MouseInputButton.M_Click), CommandID.OpenFile));
+            //defaultMouseInputMap.Add(new MouseInputMap(new MouseInput(MouseInputHold.None, MouseInputButton.L_DoubleClick), CommandID.OpenFolder));
+
+
+            return defaultMouseInputMap;
+
         }
     }
 }

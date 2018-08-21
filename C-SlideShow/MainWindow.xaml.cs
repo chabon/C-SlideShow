@@ -29,17 +29,6 @@ using Forms = System.Windows.Forms;
 namespace C_SlideShow
 {
     /// <summary>
-    /// PreviewMouseRightButtonDownイベントからUpまでの付随情報
-    /// 右クリック押しながらのマウス操作(ホイール等)と右クリック操作の切り分けに利用
-    /// </summary>
-    public class PrevMouseRButtonDownEventContext
-    {
-        public bool IsPressed { get; set; } = false;
-        public bool Handled { get; set; } = false;
-        //public Point Position { get; set; } = new Point(0, 0);
-    }
-
-    /// <summary>
     /// MainWindow.xaml の相互作用ロジック
     /// </summary>
     public partial class MainWindow : Window
@@ -53,7 +42,6 @@ namespace C_SlideShow
         bool ignoreResizeEvent = false;
         bool ignoreClosingEvent = false;
         bool isSeekbarDragStarted = false;
-        PrevMouseRButtonDownEventContext prevMouseRButtonDownEventContext = new PrevMouseRButtonDownEventContext();
         //Point aspectRatioInNonFixMode = new Point( 4, 3 );
 
         UIHelper uiHelper;
@@ -169,7 +157,7 @@ namespace C_SlideShow
 
             // debug
 #if DEBUG
-            //Setting.ShortcutSetting = new ShortcutSetting();
+            Setting.ShortcutSetting = new ShortcutSetting();
 #endif
 
             // init

@@ -37,14 +37,6 @@ namespace C_SlideShow
             //     init events
             /* ---------------------------------------------------- */
 
-            // ウインドウ全体でドラッグ可能に
-            this.MouseLeftButtonDown += (sender, e) =>
-            {
-                if( Setting.TempProfile.IsFullScreenMode.Value ) return;
-                this.DragMove();
-            };
-            
-
             MenuItem_Matrix.SubmenuOpened += (s, e) =>
             {
                 matrixSelecter.SetMatrix(Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row);
@@ -177,74 +169,6 @@ namespace C_SlideShow
                 {
                     // 通常読み込み
                     DropNewFiles(files);
-                }
-            };
-
-            this.MouseWheel += (s, e) =>
-            {
-                // 右クリック押しながらで、拡大縮小
-                // --------------------------------
-                if (!Setting.TempProfile.IsFullScreenMode.Value)
-                {
-                    short stateR = Win32.GetAsyncKeyState(Win32.VK_RBUTTON);
-                    if ( (stateR & 0x8000) != 0)
-                    {
-                        if(e.Delta > 0)
-                        {
-                            ShortcutManager.ExecuteCommand(CommandID.WindowSizeUp);
-                        }
-                        else
-                        {
-                            ShortcutManager.ExecuteCommand(CommandID.WindowSizeDown);
-                        }
-                        prevMouseRButtonDownEventContext.Handled = true;
-                        return;
-                    }
-                }
-
-                // 拡大パネル表示時は、拡大縮小
-                // --------------------------------
-                if( TileExpantionPanel.IsShowing )
-                {
-                    if( e.Delta > 0 ) TileExpantionPanel.ZoomIn();
-                    else TileExpantionPanel.ZoomOut();
-
-                    return;
-                }
-
-                // スライド操作
-                // --------------------------------
-                if(e.Delta > 0 ) // wheel up
-                {
-                    if( IsCtrlOrShiftKeyPressed ) ShortcutManager.ExecuteCommand(CommandID.SlideToBackwardByOneImage);
-                    else ShortcutManager.ExecuteCommand(CommandID.SlideToBackward);
-                }
-                else // wheel down
-                {
-                    if( IsCtrlOrShiftKeyPressed ) ShortcutManager.ExecuteCommand(CommandID.SlideToForwardByOneImage);
-                    else ShortcutManager.ExecuteCommand(CommandID.SlideToForward);
-                }
-            };
-
-            // 右クリックの制御
-            this.PreviewMouseRightButtonDown += (s, e) =>
-            {
-                prevMouseRButtonDownEventContext.IsPressed = true;
-                prevMouseRButtonDownEventContext.Handled = false;
-            };
-
-            this.PreviewMouseRightButtonUp += (s, e) =>
-            {
-                prevMouseRButtonDownEventContext.IsPressed = false;
-
-                if( prevMouseRButtonDownEventContext.Handled )
-                {
-                    e.Handled = true;
-                    return;
-                }
-                else
-                {
-                    ShortcutManager.ExecuteCommand(CommandID.ZoomImageUnderCursor);
                 }
             };
 

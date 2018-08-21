@@ -32,5 +32,6 @@ namespace C_SlideShow.Shortcut
         // 画像拡大時
         ZoomInImage,                   // 画像の拡大率をアップ
         ZoomOutImage,                  // 画像の拡大率をダウン
+        ExitZoom,                      // 画像の拡大をを終了
     }
 }

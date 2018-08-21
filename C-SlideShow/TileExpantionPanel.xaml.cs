@@ -40,11 +40,6 @@ namespace C_SlideShow
         {
             InitializeComponent();
 
-            this.MouseRightButtonUp += (s, e) =>
-            {
-                Hide();
-            };
-
             this.FileInfoTextBlock.MouseLeftButtonDown += (s, e) =>
             {
                 MainWindow.Setting.ShowFileInfoInTileExpantionPanel = false;

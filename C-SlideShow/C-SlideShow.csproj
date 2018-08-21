@@ -82,6 +82,7 @@
     <Compile Include="Archiver\RarArchiver.cs" />
     <Compile Include="Archiver\SharpCompressArchiver.cs" />
     <Compile Include="Archiver\ZipArchiver.cs" />
+    <Compile Include="Setting\MouseInputMap.cs" />
     <Compile Include="Setting\KeyMap.cs" />
     <Compile Include="Setting\ShortcutSetting.cs" />
     <Compile Include="Shortcut\CommandID.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Shortcut\Command\OpenFile.cs" />
     <Compile Include="Shortcut\Command\OpenFolder.cs" />
     <Compile Include="Shortcut\Command\Null.cs" />
+    <Compile Include="Shortcut\Command\ExitZoom.cs" />
     <Compile Include="Shortcut\Command\ZoomOutImage.cs" />
     <Compile Include="Shortcut\ICommand.cs" />
     <Compile Include="CommonControl\ColorPickerButton.xaml.cs">
@@ -135,6 +137,7 @@
     <Compile Include="ListExtension.cs" />
     <Compile Include="Shortcut\KeyInput.cs" />
     <Compile Include="Shortcut\Command\ZoomInImage.cs" />
+    <Compile Include="Shortcut\MouseInput.cs" />
     <Compile Include="Shortcut\Scene.cs" />
     <Compile Include="Shortcut\ShortcutManager.cs" />
     <Compile Include="SlideSettingDialog.xaml.cs">
