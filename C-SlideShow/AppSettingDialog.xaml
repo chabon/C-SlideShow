@@ -12,13 +12,14 @@
             <!-- ショートカット -->
             <TabItem Header="ショートカット" Width="80">
                 <Grid>
-                    <TabControl Margin="3,10,3,110" x:Name="ShortcutSettingTab" SelectionChanged="ShortcutSettingTab_SelectionChanged">
+                    <TabControl Margin="3,10,3,120" x:Name="ShortcutSettingTab" SelectionChanged="ShortcutSettingTab_SelectionChanged">
                         <TabItem Header="全般" Width="70">
                             <ListView x:Name="ShortcutListView_ALL" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
-                                        <GridViewColumn Header="キー" Width="100" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                        <GridViewColumn Header="キー" Width="120" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウス入力" Width="140" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -29,6 +30,7 @@
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
                                         <GridViewColumn Header="キー" Width="100" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウス入力" Width="140" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -39,6 +41,7 @@
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
                                         <GridViewColumn Header="キー" Width="100" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウス入力" Width="140" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -46,7 +49,7 @@
                     </TabControl>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Left">
-                            <GroupBox  Header="キー" Height="75" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                            <GroupBox  Header="キー" Height="85" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                                 <StackPanel>
                                     <cc:HotkeyControl x:Name="HotkeyControl" Height="20" KeyAssigned="HotkeyControl_KeyAssigned" Margin="4"></cc:HotkeyControl>
                                     <Button x:Name="KeymapClearButton" Click="KeymapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
@@ -54,6 +57,35 @@
                             </GroupBox>
                             <Button x:Name="AllDefault_Shortcut" Click="AllDefault_Shortcut_Click" Margin="4" Width="100" HorizontalAlignment="Left">すべてデフォルト</Button>
                         </StackPanel>
+                        <GroupBox  Header="マウス入力" Height="113" Width="200" Margin="4,4,4,4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="2">
+                                    <Label Width="50">ホールド</Label>
+                                    <ComboBox x:Name="MouseInputHold" Width="130" Height="20" SelectionChanged="MouseInputHold_SelectionChanged">
+                                        <ComboBoxItem Tag="None">なし</ComboBoxItem>
+                                        <ComboBoxItem Tag="R_Click">右クリック押しながら</ComboBoxItem>
+                                        <ComboBoxItem Tag="M_Click">中クリック押しながら</ComboBoxItem>
+                                        <ComboBoxItem Tag="Shift">Shiftキー押しながら</ComboBoxItem>
+                                        <ComboBoxItem Tag="Ctrl">Ctrlキー押しながら</ComboBoxItem>
+                                        <ComboBoxItem Tag="Alt">Altキー押しながら</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="2">
+                                    <Label Width="50">ボタン</Label>
+                                    <ComboBox x:Name="MouseInputButton" Width="130" Height="20" SelectionChanged="MouseInputButton_SelectionChanged">
+                                        <ComboBoxItem>なし</ComboBoxItem>
+                                        <ComboBoxItem>左クリック</ComboBoxItem>
+                                        <ComboBoxItem>右クリック</ComboBoxItem>
+                                        <ComboBoxItem>中クリック</ComboBoxItem>
+                                        <ComboBoxItem>ホイールアップ</ComboBoxItem>
+                                        <ComboBoxItem>ホイールダウン</ComboBoxItem>
+                                        <ComboBoxItem>左ダブルクリック</ComboBoxItem>
+                                        <ComboBoxItem>右ダブルクリック</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
+                                <Button x:Name="MouseInputMapClearButton" Click="MouseInputMapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
+                            </StackPanel>
+                        </GroupBox>
                     </StackPanel>
                 </Grid>
             </TabItem>

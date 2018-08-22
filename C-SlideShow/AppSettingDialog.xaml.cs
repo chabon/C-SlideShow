@@ -64,8 +64,22 @@ namespace C_SlideShow
                 }
             }
         }
+        private string mouseInputStr;
+        public string MouseInputStr
+        {
+            get { return mouseInputStr; }
+            set
+            {
+                if(value != this.mouseInputStr)
+                {
+                    this.mouseInputStr = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public Shortcut.CommandID CommandID { get; set; }
         public KeyInput  KeyInput { get; set; }
+        public MouseInput MouseInput { get; set; }
     }
 
     /// <summary>
@@ -102,22 +116,29 @@ namespace C_SlideShow
             foreach( Shortcut.ICommand command in MainWindow.Current.ShortcutManager.GetCommandList() )
             {
                 KeyMap km = setting.ShortcutSetting.KeyMap.FirstOrDefault(k => k.CommandID == command.ID);
+                MouseInputMap mm = setting.ShortcutSetting.MouseInputMap.FirstOrDefault(k => k.CommandID == command.ID);
+
+                Action<ListView> AddShortcutItemToListView = new Action<ListView>(listView => 
+                {
+                    listView.Items.Add(  new ShortcutListViewItem {
+                        CommandStr = command.GetDetail(), CommandID = command.ID,
+                        KeyStr = km?.KeyInput.ToString(), KeyInput = km?.KeyInput.Clone(),
+                        MouseInputStr = mm?.MouseInput.ToString(), MouseInput = mm?.MouseInput.Clone()}  );
+                });
+
                 switch( command.Scene )
                 {
                     case Shortcut.Scene.All:
                         // 全般
-                        ShortcutListView_ALL.Items.Add(  new ShortcutListViewItem {
-                            CommandStr = command.GetDetail(), KeyStr = km?.KeyInput.ToString(), CommandID = command.ID, KeyInput = km?.KeyInput.Clone() }  );
+                        AddShortcutItemToListView(ShortcutListView_ALL);
                         break;
                     case Shortcut.Scene.Nomal:
                         // 通常時
-                        ShortcutListView_Normal.Items.Add(  new ShortcutListViewItem {
-                            CommandStr = command.GetDetail(), KeyStr = km?.KeyInput.ToString(), CommandID = command.ID, KeyInput = km?.KeyInput.Clone() }  );
+                        AddShortcutItemToListView(ShortcutListView_Normal);
                         break;
                     case Shortcut.Scene.Expand:
                         // 拡大時
-                        ShortcutListView_Expand.Items.Add(  new ShortcutListViewItem {
-                            CommandStr = command.GetDetail(), KeyStr = km?.KeyInput.ToString(), CommandID = command.ID, KeyInput = km?.KeyInput.Clone() }  );
+                        AddShortcutItemToListView(ShortcutListView_Expand);
                         break;
                 }
             }
@@ -173,12 +194,100 @@ namespace C_SlideShow
             if( NumofHistoryInMenu.Value < NumofHistoryInMainMenu.Value ) NumofHistoryInMainMenu.Value = NumofHistoryInMenu.Value;
         }
 
+        private ListView GetCurrentShortcutListView()
+        {
+            switch(ShortcutSettingTab.SelectedIndex)
+            {
+                default:
+                case 0:
+                    return ShortcutListView_ALL;
+                case 1:
+                    return ShortcutListView_Normal;
+                case 2:
+                    return ShortcutListView_Expand;
+            }
+        }
+
+        private void SetMouseInputToControl(MouseInput mouseInput)
+        {
+            switch( mouseInput.MouseInputHold )
+            {
+                case Shortcut.MouseInputHold.None:
+                    SelectComboBoxItemByTag(MouseInputHold, "None");
+                    break;
+                case Shortcut.MouseInputHold.R_Click:
+                    SelectComboBoxItemByTag(MouseInputHold, "R_Click");
+                    break;
+                case Shortcut.MouseInputHold.M_Click:
+                    SelectComboBoxItemByTag(MouseInputHold, "M_Click");
+                    break;
+                case Shortcut.MouseInputHold.Shift:
+                    SelectComboBoxItemByTag(MouseInputHold, "Shift");
+                    break;
+                case Shortcut.MouseInputHold.Ctrl:
+                    SelectComboBoxItemByTag(MouseInputHold, "Ctrl");
+                    break;
+                case Shortcut.MouseInputHold.Alt:
+                    SelectComboBoxItemByTag(MouseInputHold, "Alt");
+                    break;
+            }
+
+            UpdateMouseInputButtonItems();
+            MouseInputButton.SelectedIndex = (int)mouseInput.MouseInputButton;
+        }
+
+        private void SelectComboBoxItemByTag(ComboBox comboBox, string tag)
+        {
+            ComboBoxItem tagMatchedItem = null;
+            foreach(ComboBoxItem item in comboBox.Items )
+            {
+                if( item.Tag.ToString() == tag )
+                {
+                    tagMatchedItem = item;
+                    break;
+                }
+            }
+
+            if(tagMatchedItem != null )
+            {
+                comboBox.SelectedItem = tagMatchedItem;
+            }
+        }
+
+        private void ClearMouseInputControl()
+        {
+            MouseInputHold.SelectedIndex = 0;
+            UpdateMouseInputButtonItems();
+            MouseInputButton.SelectedIndex = 0;
+        }
+
+        private void UpdateMouseInputButtonItems()
+        {
+            foreach(ComboBoxItem item in MouseInputButton.Items )
+            {
+                item.IsEnabled = true;
+            }
+
+            string tag = ( (ComboBoxItem)MouseInputHold.SelectedItem ).Tag.ToString();
+
+            if( tag == "R_Click" )
+            {
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.R_Click] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.R_DoubleClick] ).IsEnabled = false;
+            }
+
+            if( tag == "M_Click" )
+            {
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.M_Click] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.WheelUp] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.WheelDown] ).IsEnabled = false;
+            }
+        }
 
         /* ---------------------------------------------------- */
         //     イベント
         /* ---------------------------------------------------- */
-
-        // ショートカット設定
+        // ショートカット設定 (共通)
         private void ShortcutListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if( isInitializing ) return;
@@ -189,13 +298,20 @@ namespace C_SlideShow
             {
                 HotkeyControl.IsEnabled = true;
                 KeymapClearButton.IsEnabled = true;
+                MouseInputHold.IsEnabled = true;
+                MouseInputButton.IsEnabled = true;
+                MouseInputMapClearButton.IsEnabled = true;
             }
             else
             {
                 HotkeyControl.IsEnabled = false;
                 KeymapClearButton.IsEnabled = false;
+                MouseInputHold.IsEnabled = false;
+                MouseInputButton.IsEnabled = false;
+                MouseInputMapClearButton.IsEnabled = false;
             }
 
+            // キー
             if(item != null && item.KeyInput != null)
             {
                 HotkeyControl.SetKey( item.KeyInput.Modifiers, item.KeyInput.Key );
@@ -204,8 +320,66 @@ namespace C_SlideShow
             {
                 HotkeyControl.Clear();
             }
+
+            // マウス入力
+            if(item != null && item.MouseInput != null)
+            {
+                SetMouseInputToControl(item.MouseInput);
+            }
+            else
+            {
+                ClearMouseInputControl();
+            }
         }
 
+        private void AllDefault_Shortcut_Click(object sender, RoutedEventArgs e)
+        {
+            var defaultKeymap = ShortcutSetting.CreateDefaultKeyMap();
+            var defaultMouseInputmap = ShortcutSetting.CreateDefaultMouseInputMap();
+
+            Action<ListView> makeAllItemsInListViewDefault = (ListView listView) =>
+            {
+                foreach( var li in listView.Items )
+                {
+                    ShortcutListViewItem si = li as ShortcutListViewItem;
+
+                    if(si != null)
+                    {
+                        // キー
+                        si.KeyInput = null;
+                        si.KeyStr = "";
+                        var km = defaultKeymap.FirstOrDefault(k => k.CommandID == si.CommandID);
+                        if(km != null )
+                        {
+                            si.KeyInput = km.KeyInput;
+                            si.KeyStr = km.KeyInput.ToString();
+                        }
+
+                        // マウス入力
+                        si.MouseInput = null;
+                        si.MouseInputStr = "";
+                        var mm = defaultMouseInputmap.FirstOrDefault(k => k.CommandID == si.CommandID);
+                        if(mm != null )
+                        {
+                            si.MouseInput = mm.MouseInput;
+                            si.MouseInputStr = mm.MouseInput.ToString();
+                        }
+                    }
+                }
+            };
+
+            makeAllItemsInListViewDefault( GetCurrentShortcutListView() );
+            ShortcutListView_SelectionChanged(this, null);
+        }
+
+        private void ShortcutSettingTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+            ShortcutListView_SelectionChanged(this, null);
+        }
+
+
+        // ショートカット設定 (キー)
         private void HotkeyControl_KeyAssigned(object sender, EventArgs e)
         {
             if( isInitializing ) return;
@@ -232,64 +406,102 @@ namespace C_SlideShow
             }
         }
 
-        private ListView GetCurrentShortcutListView()
-        {
-            switch(ShortcutSettingTab.SelectedIndex)
-            {
-                default:
-                case 0:
-                    return ShortcutListView_ALL;
-                case 1:
-                    return ShortcutListView_Normal;
-                case 2:
-                    return ShortcutListView_Expand;
-            }
-        }
-
-        private void ShortcutSettingTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ShortcutListView_SelectionChanged(this, null);
-        }
-
         private void KeymapClearButton_Click(object sender, RoutedEventArgs e)
         {
             if( isInitializing ) return;
 
             ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
             if( item == null ) return;
-            KeyInput ki = new KeyInput(HotkeyControl.Modifiers, HotkeyControl.Key);
 
             item.KeyInput = null;
             item.KeyStr = "";
             HotkeyControl.Clear();
         }
 
-        private void AllDefault_Shortcut_Click(object sender, RoutedEventArgs e)
+
+        // ショートカット設定 (マウス入力)
+        private void MouseInputHold_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var defaultKeymap = ShortcutSetting.CreateDefaultKeyMap();
+            if( isInitializing ) return;
 
-            Action<ListView> makeAllItemsInListViewDefault = (ListView listView) =>
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+
+            if( item.MouseInput == null ) item.MouseInput = new MouseInput();
+
+            string tag = ( (ComboBoxItem)MouseInputHold.SelectedItem ).Tag.ToString();
+            switch( tag )
             {
-                foreach( var li in listView.Items )
-                {
-                    ShortcutListViewItem si = li as ShortcutListViewItem;
+                case "None":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.None;
+                    break;
+                case "R_Click":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.R_Click;
+                    break;
+                case "M_Click":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.M_Click;
+                    break;
+                case "Shift":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.Shift;
+                    break;
+                case "Ctrl":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.Ctrl;
+                    break;
+                case "Alt":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.Alt;
+                    break;
+            }
 
-                    if(si != null)
+            UpdateMouseInputButtonItems();
+
+            // ホールドとボタンが同時指定になることを防止
+            if( ( (ComboBoxItem)MouseInputButton.SelectedItem ).IsEnabled == false)
+            {
+                MouseInputButton.SelectedIndex = 0;
+            }
+
+            item.MouseInputStr = item.MouseInput.ToString();
+        }
+
+        private void MouseInputButton_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+
+            if( item.MouseInput == null ) item.MouseInput = new MouseInput();
+
+            item.MouseInput.MouseInputButton = (Shortcut.MouseInputButton)MouseInputButton.SelectedIndex;
+            item.MouseInputStr = item.MouseInput.ToString();
+
+            // 重複の削除
+            foreach( var li in GetCurrentShortcutListView().Items )
+            {
+                ShortcutListViewItem si = li as ShortcutListViewItem;
+                if(si != null && si.MouseInput != null && si.CommandID != item.CommandID )
+                {
+                    if( si.MouseInput.Equals(item.MouseInput) )
                     {
-                        si.KeyInput = null;
-                        si.KeyStr = "";
-                        var km = defaultKeymap.FirstOrDefault(k => k.CommandID == si.CommandID);
-                        if(km != null )
-                        {
-                            si.KeyInput = km.KeyInput;
-                            si.KeyStr = km.KeyInput.ToString();
-                        }
+                        si.MouseInput = null;
+                        si.MouseInputStr = "";
                     }
                 }
-            };
-
-            makeAllItemsInListViewDefault( GetCurrentShortcutListView() );
+            }
         }
+
+        private void MouseInputMapClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+
+            item.MouseInput = null;
+            item.MouseInputStr = "";
+            ClearMouseInputControl();
+        }
+
 
 
         // 履歴設定
@@ -486,6 +698,24 @@ namespace C_SlideShow
             addToKeymapList.Invoke(ShortcutListView_Normal);
             addToKeymapList.Invoke(ShortcutListView_Expand);
             setting.ShortcutSetting.KeyMap = keymapList;
+
+            // ショートカット設定 マウス入力
+            List<MouseInputMap> mouseInputMapList = new List<MouseInputMap>();
+            Action<ListView> addToMouseInputMapList = (ListView listView) =>
+            {
+                foreach(var item in listView.Items )
+                {
+                    ShortcutListViewItem si = item as ShortcutListViewItem;
+                    if(si != null && si.MouseInput != null && si.MouseInput.MouseInputButton != Shortcut.MouseInputButton.None)
+                    {
+                        mouseInputMapList.Add( new MouseInputMap(si.MouseInput, si.CommandID) );
+                    }
+                }
+            };
+            addToMouseInputMapList.Invoke(ShortcutListView_ALL);
+            addToMouseInputMapList.Invoke(ShortcutListView_Normal);
+            addToMouseInputMapList.Invoke(ShortcutListView_Expand);
+            setting.ShortcutSetting.MouseInputMap = mouseInputMapList;
 
             // 履歴設定
             setting.EnabledItemsInHistory.ArchiverPath =  (bool)EnabledItemsInHistory_ArchiverPath.IsChecked ;

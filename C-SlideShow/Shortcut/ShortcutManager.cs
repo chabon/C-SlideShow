@@ -207,17 +207,17 @@ namespace C_SlideShow.Shortcut
 
             if( (Win32.GetAsyncKeyState(Win32.VK_RBUTTON) & 0x8000) != 0 ) // マウス右ボタン
             {
-                hold |= MouseInputHold.R_Button;
+                hold |= MouseInputHold.R_Click;
             }
 
             if( (Win32.GetAsyncKeyState(Win32.VK_LBUTTON) & 0x8000) != 0 ) // マウス左ボタン
             {
-                hold |= MouseInputHold.L_Button;
+                hold |= MouseInputHold.L_Click;
             }
 
             if( (Win32.GetAsyncKeyState(Win32.VK_MBUTTON) & 0x8000) != 0 ) // マウス中央ボタン
             {
-                hold |= MouseInputHold.M_Button;
+                hold |= MouseInputHold.M_Click;
             }
 
             if( (Keyboard.Modifiers & ModifierKeys.Control) != 0) // Ctrlキー
@@ -341,12 +341,12 @@ namespace C_SlideShow.Shortcut
             if(e.ChangedButton == MouseButton.Left )
             {
                 mouseInputButton = MouseInputButton.L_DoubleClick;
-                mouseInputHold = (mouseInputHold & ~MouseInputHold.L_Button);
+                mouseInputHold = (mouseInputHold & ~MouseInputHold.L_Click);
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
                 mouseInputButton = MouseInputButton.R_DoubleClick;
-                mouseInputHold = (mouseInputHold & ~MouseInputHold.R_Button);
+                mouseInputHold = (mouseInputHold & ~MouseInputHold.R_Click);
             }
 
             MouseInput mouseInput = new MouseInput(mouseInputHold, mouseInputButton);

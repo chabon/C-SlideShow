@@ -157,7 +157,7 @@ namespace C_SlideShow
 
             // debug
 #if DEBUG
-            Setting.ShortcutSetting = new ShortcutSetting();
+            //Setting.ShortcutSetting = new ShortcutSetting();
 #endif
 
             // init

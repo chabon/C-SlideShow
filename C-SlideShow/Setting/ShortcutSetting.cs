@@ -23,6 +23,7 @@ namespace C_SlideShow
         public List<KeyMap> KeyMap = new List<KeyMap>();
 
         // マウス入力Map (マウス入力 - コマンドID)
+        [DataMember]
         public List<MouseInputMap> MouseInputMap = new List<MouseInputMap>();
 
 		// マウスジェスチャーMap (ジェスチャー -> コマンドIDを取得)
@@ -82,13 +83,13 @@ namespace C_SlideShow
             List<MouseInputMap> defaultMouseInputMap = new List<MouseInputMap>();
 
             // 全般
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Button, MouseInputButton.WheelUp),      CommandID.WindowSizeUp             )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Button, MouseInputButton.WheelDown),    CommandID.WindowSizeDown           )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Click, MouseInputButton.WheelUp),      CommandID.WindowSizeUp             )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Click, MouseInputButton.WheelDown),    CommandID.WindowSizeDown           )  );
 
             // 通常時
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.R_Click),          CommandID.ZoomImageUnderCursor     )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelUp),          CommandID.SlideToBackward          )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelDown),        CommandID.SlideToForward           )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.R_Click),          CommandID.ZoomImageUnderCursor    )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelUp),          CommandID.SlideToBackward         )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelDown),        CommandID.SlideToForward          )  );
 
             // 画像拡大時
             defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelUp),          CommandID.ZoomInImage             )  );
