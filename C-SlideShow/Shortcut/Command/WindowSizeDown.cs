@@ -35,6 +35,8 @@ namespace C_SlideShow.Shortcut.Command
             mw.Width = mw.Width * 0.9;
             mw.Height = mw.Height * 0.9;
             mw.UpdateWindowSize();
+
+            //mw.NotificationBlock.Show("ウインドウサイズを小さく", CommonControl.NotificationPriority.Highest, CommonControl.NotificationTime.Short);
         }
 
         public string GetDetail()

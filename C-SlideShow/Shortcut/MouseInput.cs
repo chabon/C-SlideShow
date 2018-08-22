@@ -39,10 +39,10 @@ namespace C_SlideShow.Shortcut
     public class MouseInput : IEquatable<MouseInput>
     {
         [DataMember]
-        public MouseInputHold   MouseInputHold   { get; set; } = MouseInputHold.None;
+        public MouseInputHold   MouseInputHold   { get; set; }
 
         [DataMember]
-        public MouseInputButton MouseInputButton { get; set; } = MouseInputButton.None;
+        public MouseInputButton MouseInputButton { get; set; }
 
         public MouseInput()
         {

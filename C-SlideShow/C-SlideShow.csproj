@@ -73,6 +73,9 @@
     <Compile Include="CommonControl\HotkeyControl.xaml.cs">
       <DependentUpon>HotkeyControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CommonControl\NotificationBlock.xaml.cs">
+      <DependentUpon>NotificationBlock.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Setting\AppSetting.cs" />
     <Compile Include="Archiver\ArchiverBase.cs" />
     <Compile Include="Archiver\FolderArchiver.cs" />
@@ -168,6 +171,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CommonControl\HotkeyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CommonControl\NotificationBlock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

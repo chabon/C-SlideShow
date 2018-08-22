@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:C_SlideShow"
+        xmlns:cc="clr-namespace:C_SlideShow.CommonControl"
         mc:Ignorable="d"
         Title="C-SlideShow"
         Background="Transparent"
@@ -363,6 +364,9 @@
                 BorderBrush="Gray"
                 >
         </Border>
+
+        <!-- 通知ブロック -->
+        <cc:NotificationBlock x:Name="NotificationBlock" Visibility="Collapsed"></cc:NotificationBlock>
 
         <!-- 読み込み中メッセージ -->
         <Grid x:Name="WaitingMessageBase"
