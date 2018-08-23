@@ -10,7 +10,7 @@
     <Grid>
         <Border x:Name="BaseBorder" Background="White" Opacity="0.8" 
                 BorderBrush="Gray" BorderThickness="0,1,0,1">
-            <Label x:Name="MessageLabel" FontSize="16" Margin="5,0">null</Label>
+            <Label x:Name="MessageLabel" FontSize="16" FontWeight="Bold" Margin="5,0" FontFamily="Meiryo">null</Label>
         </Border>
     </Grid>
 </UserControl>

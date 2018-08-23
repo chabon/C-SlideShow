@@ -85,6 +85,7 @@
     <Compile Include="Archiver\RarArchiver.cs" />
     <Compile Include="Archiver\SharpCompressArchiver.cs" />
     <Compile Include="Archiver\ZipArchiver.cs" />
+    <Compile Include="Setting\MouseGestureMap.cs" />
     <Compile Include="Setting\MouseInputMap.cs" />
     <Compile Include="Setting\KeyMap.cs" />
     <Compile Include="Setting\ShortcutSetting.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="ListExtension.cs" />
     <Compile Include="Shortcut\KeyInput.cs" />
     <Compile Include="Shortcut\Command\ZoomInImage.cs" />
+    <Compile Include="Shortcut\MouseGesture.cs" />
     <Compile Include="Shortcut\MouseInput.cs" />
     <Compile Include="Shortcut\Scene.cs" />
     <Compile Include="Shortcut\ShortcutManager.cs" />

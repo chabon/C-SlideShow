@@ -26,9 +26,9 @@ namespace C_SlideShow
         [DataMember]
         public List<MouseInputMap> MouseInputMap = new List<MouseInputMap>();
 
-		// マウスジェスチャーMap (ジェスチャー -> コマンドIDを取得)
-        //[DataMember]
-        //public Dictionary<string, Commands> GestureMap = new Dictionary<string, Commands>();
+        // マウスジェスチャーMap (ジェスチャー - コマンドIDを取得)
+        [DataMember]
+        public List<MouseGestureMap> MouseGestureMap = new List<MouseGestureMap>();
 	
         // タッチ入力Map (タッチ入力 - コマンドID)
 
@@ -37,6 +37,7 @@ namespace C_SlideShow
         {
             initKeyMap();
             initMouseInputMap();
+            initMouseGestureMap();
         }
 
         private void initKeyMap()
@@ -49,6 +50,12 @@ namespace C_SlideShow
         {
             MouseInputMap.Clear();
             MouseInputMap = CreateDefaultMouseInputMap();
+        } 
+
+        private void initMouseGestureMap()
+        {
+            MouseGestureMap.Clear();
+            MouseGestureMap = CreateDefaultMouseGestureMap();
         } 
 
         public static List<KeyMap> CreateDefaultKeyMap()
@@ -103,6 +110,22 @@ namespace C_SlideShow
 
 
             return defaultMouseInputMap;
+
+        }
+
+        public static List<MouseGestureMap> CreateDefaultMouseGestureMap()
+        {
+            List<MouseGestureMap> defaultMouseGestureMap = new List<MouseGestureMap>();
+
+            // 全般
+            defaultMouseGestureMap.Add(new MouseGestureMap("←", CommandID.WindowSizeUp));
+
+            // 通常時
+            defaultMouseGestureMap.Add(new MouseGestureMap("→", CommandID.SlideToRight));
+
+            // 画像拡大時
+
+            return defaultMouseGestureMap;
 
         }
     }

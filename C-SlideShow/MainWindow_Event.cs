@@ -134,6 +134,7 @@ namespace C_SlideShow
 
             this.Closing += (s, e) =>
             {
+                ShortcutManager.UnhookWindowsHook();
                 if( ignoreClosingEvent ) return;
                 SaveHistoryItem();
                 Setting.SettingDialogTabIndex = settingDialog.MainTabControl.SelectedIndex;
