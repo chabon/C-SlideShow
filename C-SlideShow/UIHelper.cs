@@ -81,8 +81,8 @@ namespace C_SlideShow
             }
 
             // マウスボタンが押されているか(リサイズ中かどうか)チェック
-            short stateL = Win32.GetAsyncKeyState(Win32.VK_LBUTTON);
-            short stateR = Win32.GetAsyncKeyState(Win32.VK_RBUTTON);
+            short stateL = Win32.GetKeyState(Win32.VK_LBUTTON);
+            short stateR = Win32.GetKeyState(Win32.VK_RBUTTON);
             if ((stateL & 0x8000) != 0 || (stateR & 0x8000) != 0)
             {
                 return;

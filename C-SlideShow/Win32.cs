@@ -38,8 +38,7 @@ namespace C_SlideShow
         public const int VK_RBUTTON = 0x02;
         public const int VK_MBUTTON = 0x04;
         [DllImport("user32")] 
-        public static extern short GetAsyncKeyState(int vKey);
-
+        public static extern short GetKeyState(int vKey);
 
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(POINT Point);

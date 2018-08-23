@@ -258,17 +258,17 @@ namespace C_SlideShow.Shortcut
         {
             MouseInputHold hold = MouseInputHold.None;
 
-            if( (Win32.GetAsyncKeyState(Win32.VK_RBUTTON) & 0x8000) != 0 ) // マウス右ボタン
+            if( (Win32.GetKeyState(Win32.VK_RBUTTON) & 0x8000) != 0 ) // マウス右ボタン
             {
                 hold |= MouseInputHold.R_Click;
             }
 
-            if( (Win32.GetAsyncKeyState(Win32.VK_LBUTTON) & 0x8000) != 0 ) // マウス左ボタン
+            if( (Win32.GetKeyState(Win32.VK_LBUTTON) & 0x8000) != 0 ) // マウス左ボタン
             {
                 hold |= MouseInputHold.L_Click;
             }
 
-            if( (Win32.GetAsyncKeyState(Win32.VK_MBUTTON) & 0x8000) != 0 ) // マウス中央ボタン
+            if( (Win32.GetKeyState(Win32.VK_MBUTTON) & 0x8000) != 0 ) // マウス中央ボタン
             {
                 hold |= MouseInputHold.M_Click;
             }
