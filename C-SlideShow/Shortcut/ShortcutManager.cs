@@ -58,14 +58,14 @@ namespace C_SlideShow.Shortcut
         private void InitEventHandler()
         {
             // キー
-            MainWindow.Current.PreviewKeyDown += this.MainWindow_PreviewKeyDown;
+            MainWindow.Current.KeyDown += this.MainWindow_KeyDown;
 
             // マウスインプット マウスジェスチャー
             MainWindow.Current.MouseWheel       += this.MainWindow_MouseWheel;
-            MainWindow.Current.PreviewMouseDown += this.MainWindow_PreviewMouseDown;
-            MainWindow.Current.PreviewMouseMove += this.MainWindow_PreviewMouseMove;
-            MainWindow.Current.PreviewMouseUp   += this.MainWindow_PreviewMouseUp;
-            MainWindow.Current.PreviewMouseDoubleClick   += this.MainWindow_PreviewMouseDoubleClick;
+            MainWindow.Current.MouseDown += this.MainWindow_MouseDown;
+            MainWindow.Current.MouseMove += this.MainWindow_MouseMove;
+            MainWindow.Current.MouseUp   += this.MainWindow_MouseUp;
+            MainWindow.Current.MouseDoubleClick   += this.MainWindow_MouseDoubleClick;
 
             // 左クリック後ドラッグでウインドウドラッグ可能に
             MainWindow.Current.MouseLeftButtonDown += (sender, e) =>
@@ -306,7 +306,7 @@ namespace C_SlideShow.Shortcut
         //       EventHandler (キー)
         /* ---------------------------------------------------- */
         // キー押下イベント
-        private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             // キー情報取得
             ModifierKeys modKeys = Keyboard.Modifiers;
@@ -341,7 +341,7 @@ namespace C_SlideShow.Shortcut
         }
 
         // マウスボタン押下
-        private void MainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             MouseButtonHoldState mouseButtonHoldState = null;
 
@@ -377,12 +377,12 @@ namespace C_SlideShow.Shortcut
         }
 
         // マウスを動かしている時
-        private void MainWindow_PreviewMouseMove(object sender, MouseEventArgs e)
+        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
         }
 
         // マウスボタン離した時
-        private void MainWindow_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        private void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
         {
             // マウスインプット
             MouseButtonHoldState mouseButtonHoldState = new MouseButtonHoldState();;
@@ -421,7 +421,7 @@ namespace C_SlideShow.Shortcut
         }
 
         // ダブルクリック
-        private void MainWindow_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void MainWindow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             MouseInputButton mouseInputButton = MouseInputButton.None;
             MouseInputHold mouseInputHold     = GetMouseInputHold();
