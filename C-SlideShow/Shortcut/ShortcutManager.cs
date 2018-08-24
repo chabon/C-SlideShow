@@ -67,11 +67,16 @@ namespace C_SlideShow.Shortcut
             MainWindow.Current.PreviewMouseUp   += this.MainWindow_PreviewMouseUp;
             MainWindow.Current.PreviewMouseDoubleClick   += this.MainWindow_PreviewMouseDoubleClick;
 
-            // ウインドウ全体でドラッグ可能に
+            // 左クリック後ドラッグでウインドウドラッグ可能に
             MainWindow.Current.MouseLeftButtonDown += (sender, e) =>
             {
-                if( MainWindow.Current.Setting.TempProfile.IsFullScreenMode.Value ) return;
                 MainWindow.Current.DragMove();
+            };
+
+            MainWindow.Current.LocationChanged += (sender, e) =>
+            {
+                // ドラッグ移動したら、左クリックコマンドは防止させる
+                mouseLButtonHoldState.CommandExecuted = true;
             };
         }
 
@@ -338,40 +343,48 @@ namespace C_SlideShow.Shortcut
         // マウスボタン押下
         private void MainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            MouseButtonHoldState mouseButtonHoldState = null;
+
             if(e.ChangedButton == MouseButton.Left )
             {
-                mouseLButtonHoldState.IsPressed = true;
-                mouseLButtonHoldState.CommandExecuted = false;
+                mouseButtonHoldState = mouseLButtonHoldState;
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
-                mouseRButtonHoldState.IsPressed = true;
-                mouseRButtonHoldState.CommandExecuted = false;
+                mouseButtonHoldState = mouseRButtonHoldState;
 
-                // マウスジェスチャ スタート
+            }
+            else if(e.ChangedButton == MouseButton.Middle )
+            {
+                mouseButtonHoldState = mouseMButtonHoldState;
+            }
+
+            if(mouseButtonHoldState != null )
+            {
+                mouseButtonHoldState.IsPressed = true;
+                mouseButtonHoldState.CommandExecuted = false;
+            }
+
+            // マウスジェスチャ スタート
+            if(e.ChangedButton == MouseButton.Right )
+            {
                 if(shortcutSetting.MouseGestureMap.Count > 0 )
                 {
                     if( mouseGesture == null ) InitMouseGesture();
                     mouseGesture.Start();
                 }
             }
-            else if(e.ChangedButton == MouseButton.Middle )
-            {
-                mouseMButtonHoldState.IsPressed = true;
-                mouseMButtonHoldState.CommandExecuted = false;
-            }
         }
 
         // マウスを動かしている時
         private void MainWindow_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-
         }
 
         // マウスボタン離した時
         private void MainWindow_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            // マウスボタン 押下状態を更新
+            // マウスインプット
             MouseButtonHoldState mouseButtonHoldState = new MouseButtonHoldState();;
             MouseInputButton mouseInputButton = MouseInputButton.None;
 
@@ -391,11 +404,10 @@ namespace C_SlideShow.Shortcut
                 mouseInputButton = MouseInputButton.M_Click;
             }
 
-            // マウスインプット 入力終了
+
             if( mouseButtonHoldState.CommandExecuted )
             {
                 e.Handled = true;
-                return;
             }
             else if(mouseButtonHoldState.IsPressed)
             {
