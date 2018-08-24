@@ -61,16 +61,20 @@ namespace C_SlideShow.Shortcut
             MainWindow.Current.KeyDown += this.MainWindow_KeyDown;
 
             // マウスインプット マウスジェスチャー
-            MainWindow.Current.MouseWheel       += this.MainWindow_MouseWheel;
-            MainWindow.Current.MouseDown += this.MainWindow_MouseDown;
-            MainWindow.Current.MouseMove += this.MainWindow_MouseMove;
-            MainWindow.Current.MouseUp   += this.MainWindow_MouseUp;
+            MainWindow.Current.MouseWheel    += this.MainWindow_MouseWheel;
+            MainWindow.Current.MouseDown     += this.MainWindow_MouseDown;
+            MainWindow.Current.MouseMove     += this.MainWindow_MouseMove;
+            MainWindow.Current.MouseUp       += this.MainWindow_MouseUp;
             MainWindow.Current.MouseDoubleClick   += this.MainWindow_MouseDoubleClick;
 
-            // 左クリック後ドラッグでウインドウドラッグ可能に
+            // 左クリックでウインドウドラッグ可能に
             MainWindow.Current.MouseLeftButtonDown += (sender, e) =>
             {
-                MainWindow.Current.DragMove();
+                // 左クリックのみが押下されてる場合に限る
+                if( GetMouseInputHold() == MouseInputHold.L_Click )
+                {
+                    MainWindow.Current.DragMove();
+                }
             };
 
             MainWindow.Current.LocationChanged += (sender, e) =>
