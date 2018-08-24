@@ -70,10 +70,14 @@ namespace C_SlideShow.Shortcut
             // 左クリックでウインドウドラッグ可能に
             MainWindow.Current.MouseLeftButtonDown += (sender, e) =>
             {
+                Debug.WriteLine("mouse left button down");
+
                 // 左クリックのみが押下されてる場合に限る
                 if( GetMouseInputHold() == MouseInputHold.L_Click )
                 {
+                    this.MainWindow_MouseDown(sender, e);
                     MainWindow.Current.DragMove();
+                    e.Handled = true; // Drag後呼ばれるMouseDownイベントを防止
                 }
             };
 
@@ -296,7 +300,7 @@ namespace C_SlideShow.Shortcut
                 hold |= MouseInputHold.Alt;
             }
 
-            Debug.WriteLine( "MouseInputHold: " + hold.ToString() );
+            //Debug.WriteLine( "MouseInputHold: " + hold.ToString() );
             return hold;
         }
 
@@ -352,6 +356,7 @@ namespace C_SlideShow.Shortcut
             if(e.ChangedButton == MouseButton.Left )
             {
                 mouseButtonHoldState = mouseLButtonHoldState;
+                Debug.WriteLine("mouse down : L");
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
@@ -396,6 +401,7 @@ namespace C_SlideShow.Shortcut
             {
                 mouseButtonHoldState = mouseLButtonHoldState;
                 mouseInputButton = MouseInputButton.L_Click;
+                Debug.WriteLine("mouse up : L");
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
