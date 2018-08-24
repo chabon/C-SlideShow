@@ -118,10 +118,12 @@ namespace C_SlideShow
             List<MouseGestureMap> defaultMouseGestureMap = new List<MouseGestureMap>();
 
             // 全般
-            defaultMouseGestureMap.Add(new MouseGestureMap("←", CommandID.WindowSizeUp));
+            //defaultMouseGestureMap.Add(new MouseGestureMap("↑", CommandID.WindowSizeUp));
+            //defaultMouseGestureMap.Add(new MouseGestureMap("↓", CommandID.WindowSizeDown));
 
             // 通常時
-            defaultMouseGestureMap.Add(new MouseGestureMap("→", CommandID.SlideToRight));
+            //defaultMouseGestureMap.Add(new MouseGestureMap("→", CommandID.SlideToRight));
+            //defaultMouseGestureMap.Add(new MouseGestureMap("←", CommandID.SlideToLeft));
 
             // 画像拡大時
 

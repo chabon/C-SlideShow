@@ -6,20 +6,21 @@
         xmlns:local="clr-namespace:C_SlideShow"
         xmlns:cc="clr-namespace:C_SlideShow.CommonControl"
         mc:Ignorable="d"
-        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="500" Width="600">
+        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="500" Width="650">
     <Grid>
         <TabControl x:Name="MainTabControl" Margin="3,3,3,40">
             <!-- ショートカット -->
             <TabItem Header="ショートカット" Width="80">
                 <Grid>
                     <TabControl Margin="3,10,3,120" x:Name="ShortcutSettingTab" SelectionChanged="ShortcutSettingTab_SelectionChanged">
-                        <TabItem Header="全般" Width="70">
+                        <TabItem Header="いつでも" Width="70">
                             <ListView x:Name="ShortcutListView_ALL" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
-                                        <GridViewColumn Header="キー" Width="120" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
-                                        <GridViewColumn Header="マウス入力" Width="140" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
+                                        <GridViewColumn Header="キー入力" Width="130" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウス入力" Width="160" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウスジェスチャ" Width="100" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -29,8 +30,9 @@
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
-                                        <GridViewColumn Header="キー" Width="100" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
-                                        <GridViewColumn Header="マウス入力" Width="140" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
+                                        <GridViewColumn Header="キー入力" Width="130" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウス入力" Width="160" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウスジェスチャ" Width="100" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -40,8 +42,9 @@
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
-                                        <GridViewColumn Header="キー" Width="100" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
-                                        <GridViewColumn Header="マウス入力" Width="140" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
+                                        <GridViewColumn Header="キー入力" Width="130" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウス入力" Width="160" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウスジェスチャ" Width="100" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -49,7 +52,7 @@
                     </TabControl>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Left">
-                            <GroupBox  Header="キー" Height="85" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                            <GroupBox  Header="キー入力" Height="85" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                                 <StackPanel>
                                     <cc:HotkeyControl x:Name="HotkeyControl" Height="20" KeyAssigned="HotkeyControl_KeyAssigned" Margin="4"></cc:HotkeyControl>
                                     <Button x:Name="KeymapClearButton" Click="KeymapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
@@ -72,7 +75,7 @@
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="2">
-                                    <Label Width="50">ボタン</Label>
+                                    <Label Width="50">入力</Label>
                                     <ComboBox x:Name="MouseInputButton" Width="130" Height="20" SelectionChanged="MouseInputButton_SelectionChanged">
                                         <ComboBoxItem>なし</ComboBoxItem>
                                         <ComboBoxItem>左クリック</ComboBoxItem>
@@ -85,6 +88,16 @@
                                     </ComboBox>
                                 </StackPanel>
                                 <Button x:Name="MouseInputMapClearButton" Click="MouseInputMapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox  Header="マウスジェスチャ" Height="113" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                            <StackPanel>
+                                <cc:MouseGestureControl x:Name="MouseGestureControl" Height="20" GestureAssigned="MouseGestureControl_GestureAssigned" Margin="4"></cc:MouseGestureControl>
+                                <Button x:Name="MouseGestureClearButton" Click="MouseGestureClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label>判定距離</Label>
+                                    <cc:NumericUpDown x:Name="MouseGestureRange" ValueChanged="MouseGestureRange_ValueChanged" Width="60" MaxValue="9999" MinValue="1"></cc:NumericUpDown>
+                                </StackPanel>
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>

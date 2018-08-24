@@ -73,6 +73,9 @@
     <Compile Include="CommonControl\HotkeyControl.xaml.cs">
       <DependentUpon>HotkeyControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CommonControl\MouseGestureControl.xaml.cs">
+      <DependentUpon>MouseGestureControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CommonControl\NotificationBlock.xaml.cs">
       <DependentUpon>NotificationBlock.xaml</DependentUpon>
     </Compile>
@@ -174,6 +177,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CommonControl\HotkeyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CommonControl\MouseGestureControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

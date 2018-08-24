@@ -77,6 +77,19 @@ namespace C_SlideShow
                 }
             }
         }
+        private string mouseGestureStr;
+        public string MouseGestureStr
+        {
+            get { return mouseGestureStr; }
+            set
+            {
+                if(value != this.mouseGestureStr)
+                {
+                    this.mouseGestureStr = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public Shortcut.CommandID CommandID { get; set; }
         public KeyInput  KeyInput { get; set; }
         public MouseInput MouseInput { get; set; }
@@ -117,13 +130,15 @@ namespace C_SlideShow
             {
                 KeyMap km = setting.ShortcutSetting.KeyMap.FirstOrDefault(k => k.CommandID == command.ID);
                 MouseInputMap mm = setting.ShortcutSetting.MouseInputMap.FirstOrDefault(k => k.CommandID == command.ID);
+                MouseGestureMap gm = setting.ShortcutSetting.MouseGestureMap.FirstOrDefault(k => k.CommandID == command.ID);
 
                 Action<ListView> AddShortcutItemToListView = new Action<ListView>(listView => 
                 {
                     listView.Items.Add(  new ShortcutListViewItem {
                         CommandStr = command.GetDetail(), CommandID = command.ID,
                         KeyStr = km?.KeyInput.ToString(), KeyInput = km?.KeyInput.Clone(),
-                        MouseInputStr = mm?.MouseInput.ToString(), MouseInput = mm?.MouseInput.Clone()}  );
+                        MouseInputStr = mm?.MouseInput.ToString(), MouseInput = mm?.MouseInput.Clone(),
+                        MouseGestureStr = gm?.Gesture}  );
                 });
 
                 switch( command.Scene )
@@ -142,6 +157,8 @@ namespace C_SlideShow
                         break;
                 }
             }
+            MouseGestureRange.Value = setting.MouseGestureRange;
+
 
             // 履歴設定
             EnabledItemsInHistory_ArchiverPath.IsChecked = setting.EnabledItemsInHistory.ArchiverPath;
@@ -310,6 +327,8 @@ namespace C_SlideShow
                 MouseInputHold.IsEnabled = true;
                 MouseInputButton.IsEnabled = true;
                 MouseInputMapClearButton.IsEnabled = true;
+                MouseGestureControl.IsEnabled = true;
+                MouseGestureClearButton.IsEnabled = true;
             }
             else
             {
@@ -318,6 +337,8 @@ namespace C_SlideShow
                 MouseInputHold.IsEnabled = false;
                 MouseInputButton.IsEnabled = false;
                 MouseInputMapClearButton.IsEnabled = false;
+                MouseGestureControl.IsEnabled = false;
+                MouseGestureClearButton.IsEnabled = false;
             }
 
             // キー
@@ -339,12 +360,23 @@ namespace C_SlideShow
             {
                 ClearMouseInputControl();
             }
+
+            // マウスジェスチャ
+            if(item != null && item.MouseGestureStr != null)
+            {
+                MouseGestureControl.SetStroke(item.MouseGestureStr);
+            }
+            else
+            {
+                MouseGestureControl.Clear();
+            }
         }
 
         private void AllDefault_Shortcut_Click(object sender, RoutedEventArgs e)
         {
             var defaultKeymap = ShortcutSetting.CreateDefaultKeyMap();
             var defaultMouseInputmap = ShortcutSetting.CreateDefaultMouseInputMap();
+            var defaultMouseGesturemap = ShortcutSetting.CreateDefaultMouseGestureMap();
 
             Action<ListView> makeAllItemsInListViewDefault = (ListView listView) =>
             {
@@ -372,6 +404,14 @@ namespace C_SlideShow
                         {
                             si.MouseInput = mm.MouseInput;
                             si.MouseInputStr = mm.MouseInput.ToString();
+                        }
+
+                        // マウスジェスチャ
+                        si.MouseGestureStr = null;
+                        var mg = defaultMouseGesturemap.FirstOrDefault(k => k.CommandID == si.CommandID);
+                        if(mg != null )
+                        {
+                            si.MouseGestureStr = mg.Gesture;
                         }
                     }
                 }
@@ -514,6 +554,49 @@ namespace C_SlideShow
             ClearMouseInputControl();
         }
 
+        // ショートカット設定(マウスジェスチャ)
+        private void MouseGestureControl_GestureAssigned(object sender, EventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+            string stroke = MouseGestureControl.Stroke;
+
+            item.MouseGestureStr = stroke;
+
+            // 重複キーの削除
+            foreach( var li in GetCurrentShortcutListView().Items )
+            {
+                ShortcutListViewItem si = li as ShortcutListViewItem;
+                if(si != null && si.MouseGestureStr != null && si.CommandID != item.CommandID )
+                {
+                    if( si.MouseGestureStr == stroke )
+                    {
+                        si.MouseGestureStr = null;
+                    }
+                }
+            }
+
+        }
+
+        private void MouseGestureClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+
+            item.MouseGestureStr = null;
+            MouseGestureControl.Clear();
+        }
+
+        private void MouseGestureRange_ValueChanged(object sender, EventArgs e)
+        {
+            if( isInitializing ) return;
+
+            MouseGestureControl.Range = MouseGestureRange.Value;
+        }
 
 
         // 履歴設定
@@ -728,6 +811,27 @@ namespace C_SlideShow
             addToMouseInputMapList.Invoke(ShortcutListView_Normal);
             addToMouseInputMapList.Invoke(ShortcutListView_Expand);
             setting.ShortcutSetting.MouseInputMap = mouseInputMapList;
+
+            // ショートカット設定 マウスジェスチャ
+            List<MouseGestureMap> mouseGestureMapList = new List<MouseGestureMap>();
+            Action<ListView> addToMouseGestureMapList = (ListView listView) =>
+            {
+                foreach(var item in listView.Items )
+                {
+                    ShortcutListViewItem si = item as ShortcutListViewItem;
+                    if(si != null && si.MouseGestureStr != null && si.MouseGestureStr != "")
+                    {
+                        mouseGestureMapList.Add( new MouseGestureMap(string.Copy(si.MouseGestureStr), si.CommandID) );
+                    }
+                }
+            };
+            addToMouseGestureMapList.Invoke(ShortcutListView_ALL);
+            addToMouseGestureMapList.Invoke(ShortcutListView_Normal);
+            addToMouseGestureMapList.Invoke(ShortcutListView_Expand);
+            setting.ShortcutSetting.MouseGestureMap = mouseGestureMapList;
+
+            // ショートカット設定 マウスジェスチャ判定距離
+            setting.MouseGestureRange = MouseGestureRange.Value;
 
             // 履歴設定
             setting.EnabledItemsInHistory.ArchiverPath =  (bool)EnabledItemsInHistory_ArchiverPath.IsChecked ;

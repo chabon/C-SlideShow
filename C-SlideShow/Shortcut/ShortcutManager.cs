@@ -82,6 +82,7 @@ namespace C_SlideShow.Shortcut
             mouseGesture = new MouseGesture();
             mouseGesture.StrokeChanged += MouseGestureStrokeChanged;
             mouseGesture.GestureFinished += MouseGestureFinished;
+            mouseGesture.Range = MainWindow.Current.Setting.MouseGestureRange;
         }
 
         /* ---------------------------------------------------- */
@@ -370,6 +371,7 @@ namespace C_SlideShow.Shortcut
                 if(shortcutSetting.MouseGestureMap.Count > 0 )
                 {
                     if( mouseGesture == null ) InitMouseGesture();
+                    mouseGesture.Range = MainWindow.Current.Setting.MouseGestureRange;
                     mouseGesture.Start();
                 }
             }
@@ -453,7 +455,7 @@ namespace C_SlideShow.Shortcut
             ICommand cmd = GetCommandFromMouseGestureStroke(mouseGesture.Stroke);
             if(cmd != null )
             {
-                notification += "(" + cmd.GetDetail() + ")";
+                notification += " [" + cmd.GetDetail() + "]";
             }
             MainWindow.Current.NotificationBlock.Show(notification, NotificationPriority.Normal, NotificationTime.Eternally);
         }

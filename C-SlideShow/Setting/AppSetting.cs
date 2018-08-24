@@ -138,6 +138,8 @@ namespace C_SlideShow
         [DataMember]
         public ShortcutSetting ShortcutSetting { get; set; }
 
+        [DataMember]
+        public int MouseGestureRange { get; set; }
 
         // アスペクト比のリスト
         [DataMember]
@@ -187,6 +189,7 @@ namespace C_SlideShow
 
             // ショートカット
             ShortcutSetting = new ShortcutSetting();
+            MouseGestureRange = 15;
 
             // アスペクト比のリスト
             AspectRatioList = new List<Point> { new Point(4, 3), new Point(3, 4), new Point(16, 9), new Point(9, 16), new Point(3, 2), new Point(2, 3), new Point(1, 1)};
