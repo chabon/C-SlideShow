@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:C_SlideShow.CommonControl"
              mc:Ignorable="d" 
-             Height="30"
+             Height="34"
              d:DesignHeight="30" d:DesignWidth="200">
     <Grid>
         <Border x:Name="BaseBorder" Background="White" Opacity="0.8" 

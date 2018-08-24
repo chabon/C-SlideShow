@@ -39,6 +39,11 @@ namespace C_SlideShow.Shortcut
         MouseButtonHoldState mouseRButtonHoldState = new MouseButtonHoldState();
         MouseButtonHoldState mouseMButtonHoldState = new MouseButtonHoldState();
 
+        //// ウインドウドラッグの準備
+        //bool mainWindowDragMoveReady = false;
+
+        // 左クリックでのウインドウドラッグを管理
+        WindowDragMove windowDragMove;
 
         /* ---------------------------------------------------- */
         //       Constructor
@@ -67,25 +72,9 @@ namespace C_SlideShow.Shortcut
             MainWindow.Current.MouseUp       += this.MainWindow_MouseUp;
             MainWindow.Current.MouseDoubleClick   += this.MainWindow_MouseDoubleClick;
 
-            // 左クリックでウインドウドラッグ可能に
-            MainWindow.Current.MouseLeftButtonDown += (sender, e) =>
-            {
-                Debug.WriteLine("mouse left button down");
-
-                // 左クリックのみが押下されてる場合に限る
-                if( GetMouseInputHold() == MouseInputHold.L_Click )
-                {
-                    this.MainWindow_MouseDown(sender, e);
-                    MainWindow.Current.DragMove();
-                    e.Handled = true; // Drag後呼ばれるMouseDownイベントを防止
-                }
-            };
-
-            MainWindow.Current.LocationChanged += (sender, e) =>
-            {
-                // ドラッグ移動したら、左クリックコマンドは防止させる
-                mouseLButtonHoldState.CommandExecuted = true;
-            };
+            // 左クリック後、ドラッグでウインドウドラッグ可能に
+            windowDragMove = new WindowDragMove(MainWindow.Current);
+            windowDragMove.DragMoved += (s, e) => { mouseLButtonHoldState.CommandExecuted = true; };
         }
 
         private void InitMouseGesture()
@@ -205,6 +194,7 @@ namespace C_SlideShow.Shortcut
         /// <returns>コマンドを実行したかどうか</returns>
         private bool DispatchMouseInput(MouseInput mouseInput)
         {
+            Debug.WriteLine(mouseInput.ToString());
             Scene currentScene = GetCurrentScene();
 
             foreach(MouseInputMap mouseInputMap in shortcutSetting.MouseInputMap )
@@ -351,12 +341,12 @@ namespace C_SlideShow.Shortcut
         // マウスボタン押下
         private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            Debug.WriteLine("mouse down : " + e.ChangedButton.ToString());
             MouseButtonHoldState mouseButtonHoldState = null;
 
             if(e.ChangedButton == MouseButton.Left )
             {
                 mouseButtonHoldState = mouseLButtonHoldState;
-                Debug.WriteLine("mouse down : L");
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
@@ -397,11 +387,12 @@ namespace C_SlideShow.Shortcut
             MouseButtonHoldState mouseButtonHoldState = new MouseButtonHoldState();;
             MouseInputButton mouseInputButton = MouseInputButton.None;
 
+            Debug.WriteLine("mouse up : " + e.ChangedButton.ToString());
+
             if(e.ChangedButton == MouseButton.Left )
             {
                 mouseButtonHoldState = mouseLButtonHoldState;
                 mouseInputButton = MouseInputButton.L_Click;
-                Debug.WriteLine("mouse up : L");
             }
             else if(e.ChangedButton == MouseButton.Right )
             {

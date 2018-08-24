@@ -108,7 +108,7 @@ namespace C_SlideShow
             return pid;
         }
 
-        public static Point GetMousePosition()
+        public static Point GetCursorPos()
         {
             POINT w32Mouse = new POINT();
             GetCursorPos(ref w32Mouse);

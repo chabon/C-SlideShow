@@ -63,6 +63,7 @@
                                     <Label Width="50">ホールド</Label>
                                     <ComboBox x:Name="MouseInputHold" Width="130" Height="20" SelectionChanged="MouseInputHold_SelectionChanged">
                                         <ComboBoxItem Tag="None">なし</ComboBoxItem>
+                                        <ComboBoxItem Tag="L_Click">左クリック押しながら</ComboBoxItem>
                                         <ComboBoxItem Tag="R_Click">右クリック押しながら</ComboBoxItem>
                                         <ComboBoxItem Tag="M_Click">中クリック押しながら</ComboBoxItem>
                                         <ComboBoxItem Tag="Shift">Shiftキー押しながら</ComboBoxItem>

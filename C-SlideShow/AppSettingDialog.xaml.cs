@@ -215,6 +215,9 @@ namespace C_SlideShow
                 case Shortcut.MouseInputHold.None:
                     SelectComboBoxItemByTag(MouseInputHold, "None");
                     break;
+                case Shortcut.MouseInputHold.L_Click:
+                    SelectComboBoxItemByTag(MouseInputHold, "L_Click");
+                    break;
                 case Shortcut.MouseInputHold.R_Click:
                     SelectComboBoxItemByTag(MouseInputHold, "R_Click");
                     break;
@@ -269,6 +272,12 @@ namespace C_SlideShow
             }
 
             string tag = ( (ComboBoxItem)MouseInputHold.SelectedItem ).Tag.ToString();
+
+            if( tag == "L_Click" )
+            {
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.L_Click] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.L_DoubleClick] ).IsEnabled = false;
+            }
 
             if( tag == "R_Click" )
             {
@@ -434,6 +443,9 @@ namespace C_SlideShow
             {
                 case "None":
                     item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.None;
+                    break;
+                case "L_Click":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.L_Click;
                     break;
                 case "R_Click":
                     item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.R_Click;

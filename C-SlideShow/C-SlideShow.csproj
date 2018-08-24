@@ -162,6 +162,7 @@
     </Compile>
     <Compile Include="UserProfileInfo.cs" />
     <Compile Include="Util.cs" />
+    <Compile Include="WindowDragMove.cs" />
     <Compile Include="WpfTreeUtil.cs" />
     <Compile Include="Win32.cs" />
     <Page Include="CommonControl\ColorPickerButton.xaml">

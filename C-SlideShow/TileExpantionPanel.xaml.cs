@@ -42,8 +42,9 @@ namespace C_SlideShow
 
             this.FileInfoTextBlock.MouseLeftButtonDown += (s, e) =>
             {
-                MainWindow.Setting.ShowFileInfoInTileExpantionPanel = false;
-                UpdateFileInfoAreaVisiblity();
+                //MainWindow.Setting.ShowFileInfoInTileExpantionPanel = false;
+                //UpdateFileInfoAreaVisiblity();
+                //e.Handled = true;
             };
         }
 
