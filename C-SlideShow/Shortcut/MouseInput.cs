@@ -17,9 +17,11 @@ namespace C_SlideShow.Shortcut
         L_Button = 1,
         R_Button = 2,
         M_Button = 4,
-        Shift    = 8,
-        Ctrl     = 16, 
-        Alt      = 32, 
+        XButton1 = 8,   // 戻るボタン
+        XButton2 = 16,  // 進むボタン
+        Shift    = 32,
+        Ctrl     = 64, 
+        Alt      = 128, 
     }
 
     public enum MouseInputClick
@@ -30,6 +32,8 @@ namespace C_SlideShow.Shortcut
         M_Click,
         WheelUp,
         WheelDown, 
+        X1_Click,
+        X2_Click, 
         L_DoubleClick,
         R_DoubleClick,
     }
@@ -73,6 +77,14 @@ namespace C_SlideShow.Shortcut
             {
                 holdStr += "中ボタン + ";
             }
+            if(  ( (int)MouseInputHold & (int)MouseInputHold.XButton1 ) != 0  )
+            {
+                holdStr += "戻るボタン + ";
+            }
+            if(  ( (int)MouseInputHold & (int)MouseInputHold.XButton2 ) != 0  )
+            {
+                holdStr += "進むボタン + ";
+            }
             if(  ( (int)MouseInputHold & (int)MouseInputHold.Shift ) != 0  )
             {
                 holdStr += "Shift + ";
@@ -107,6 +119,12 @@ namespace C_SlideShow.Shortcut
                     break;
                 case MouseInputClick.WheelDown:
                     buttonStr = "Wheel Down";
+                    break;
+                case MouseInputClick.X1_Click:
+                    buttonStr = "戻るボタンクリック";
+                    break;
+                case MouseInputClick.X2_Click:
+                    buttonStr = "進むボタンクリック";
                     break;
                 case MouseInputClick.L_DoubleClick:
                     buttonStr = "左ダブルクリック";

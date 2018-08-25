@@ -69,6 +69,8 @@
                                         <ComboBoxItem Tag="L_Button">左ボタン押しながら</ComboBoxItem>
                                         <ComboBoxItem Tag="R_Button">右ボタン押しながら</ComboBoxItem>
                                         <ComboBoxItem Tag="M_Button">中ボタン押しながら</ComboBoxItem>
+                                        <ComboBoxItem Tag="X1_Button">戻るボタン押しながら</ComboBoxItem>
+                                        <ComboBoxItem Tag="X2_Button">進むボタン押しながら</ComboBoxItem>
                                         <ComboBoxItem Tag="Shift">Shiftキー押しながら</ComboBoxItem>
                                         <ComboBoxItem Tag="Ctrl">Ctrlキー押しながら</ComboBoxItem>
                                         <ComboBoxItem Tag="Alt">Altキー押しながら</ComboBoxItem>
@@ -83,6 +85,8 @@
                                         <ComboBoxItem>中クリック</ComboBoxItem>
                                         <ComboBoxItem>ホイールアップ</ComboBoxItem>
                                         <ComboBoxItem>ホイールダウン</ComboBoxItem>
+                                        <ComboBoxItem>戻るボタンクリック</ComboBoxItem>
+                                        <ComboBoxItem>進むボタンクリック</ComboBoxItem>
                                         <ComboBoxItem>左ダブルクリック</ComboBoxItem>
                                         <ComboBoxItem>右ダブルクリック</ComboBoxItem>
                                     </ComboBox>

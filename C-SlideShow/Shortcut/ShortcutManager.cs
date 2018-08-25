@@ -14,6 +14,11 @@ using C_SlideShow.CommonControl;
 
 namespace C_SlideShow.Shortcut
 {
+    /// <summary>
+    /// マウスボタンを押すときと離す時、どちらもウインドウ内でなければコマンドを発行しないこと
+    /// マウスボタンを押している最中に他のインプット方法によってコマンドが実行された場合、離した時の単クリックによるコマンドはキャンセルすること
+    /// の２つを管理するための値
+    /// </summary>
     public class MouseButtonHoldState
     {
         public bool IsPressed;
@@ -35,9 +40,11 @@ namespace C_SlideShow.Shortcut
         MouseGesture mouseGesture;
 
         // マウスボタンの状態
-        MouseButtonHoldState mouseLButtonHoldState = new MouseButtonHoldState();
-        MouseButtonHoldState mouseRButtonHoldState = new MouseButtonHoldState();
-        MouseButtonHoldState mouseMButtonHoldState = new MouseButtonHoldState();
+        MouseButtonHoldState mouseButtonHoldState_L  = new MouseButtonHoldState();
+        MouseButtonHoldState mouseButtonHoldState_R  = new MouseButtonHoldState();
+        MouseButtonHoldState mouseButtonHoldState_M  = new MouseButtonHoldState();
+        MouseButtonHoldState mouseButtonHoldState_X1 = new MouseButtonHoldState();
+        MouseButtonHoldState mouseButtonHoldState_X2 = new MouseButtonHoldState();
 
         //// ウインドウドラッグの準備
         //bool mainWindowDragMoveReady = false;
@@ -74,7 +81,7 @@ namespace C_SlideShow.Shortcut
 
             // 左クリック後、ドラッグでウインドウドラッグ可能に
             windowDragMove = new WindowDragMove(MainWindow.Current);
-            windowDragMove.DragMoved += (s, e) => { mouseLButtonHoldState.CommandExecuted = true; };
+            windowDragMove.DragMoved += (s, e) => { mouseButtonHoldState_L.CommandExecuted = true; };
         }
 
         private void InitMouseGesture()
@@ -207,9 +214,9 @@ namespace C_SlideShow.Shortcut
                     if( cmd.Scene == Scene.All || cmd.Scene == currentScene )
                     {
                         cmd.Execute();
-                        mouseLButtonHoldState.CommandExecuted = true;
-                        mouseRButtonHoldState.CommandExecuted = true;
-                        mouseMButtonHoldState.CommandExecuted = true;
+                        mouseButtonHoldState_L.CommandExecuted = true;
+                        mouseButtonHoldState_R.CommandExecuted = true;
+                        mouseButtonHoldState_M.CommandExecuted = true;
                         return true;
                     }
                 }
@@ -275,6 +282,16 @@ namespace C_SlideShow.Shortcut
             if( (Win32.GetKeyState(Win32.VK_MBUTTON) & 0x8000) != 0 ) // マウス中央ボタン
             {
                 hold |= MouseInputHold.M_Button;
+            }
+
+            if( (Win32.GetKeyState(Win32.VK_XBUTTON1) & 0x8000) != 0 ) // マウス戻るボタン
+            {
+                hold |= MouseInputHold.XButton1;
+            }
+
+            if( (Win32.GetKeyState(Win32.VK_XBUTTON2) & 0x8000) != 0 ) // マウス進むボタン
+            {
+                hold |= MouseInputHold.XButton2;
             }
 
             if( (Keyboard.Modifiers & ModifierKeys.Control) != 0) // Ctrlキー
@@ -345,19 +362,11 @@ namespace C_SlideShow.Shortcut
             Debug.WriteLine("mouse down : " + e.ChangedButton.ToString());
             MouseButtonHoldState mouseButtonHoldState = null;
 
-            if(e.ChangedButton == MouseButton.Left )
-            {
-                mouseButtonHoldState = mouseLButtonHoldState;
-            }
-            else if(e.ChangedButton == MouseButton.Right )
-            {
-                mouseButtonHoldState = mouseRButtonHoldState;
-
-            }
-            else if(e.ChangedButton == MouseButton.Middle )
-            {
-                mouseButtonHoldState = mouseMButtonHoldState;
-            }
+            if(e.ChangedButton == MouseButton.Left )          mouseButtonHoldState = mouseButtonHoldState_L;
+            else if(e.ChangedButton == MouseButton.Right )    mouseButtonHoldState = mouseButtonHoldState_R;
+            else if(e.ChangedButton == MouseButton.Middle )   mouseButtonHoldState = mouseButtonHoldState_M;
+            else if(e.ChangedButton == MouseButton.XButton1 ) mouseButtonHoldState = mouseButtonHoldState_X1;
+            else if(e.ChangedButton == MouseButton.XButton2 ) mouseButtonHoldState = mouseButtonHoldState_X2;
 
             if(mouseButtonHoldState != null )
             {
@@ -393,18 +402,28 @@ namespace C_SlideShow.Shortcut
 
             if(e.ChangedButton == MouseButton.Left )
             {
-                mouseButtonHoldState = mouseLButtonHoldState;
+                mouseButtonHoldState = mouseButtonHoldState_L;
                 mouseInputClick = MouseInputClick.L_Click;
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
-                mouseButtonHoldState = mouseRButtonHoldState;
+                mouseButtonHoldState = mouseButtonHoldState_R;
                 mouseInputClick = MouseInputClick.R_Click;
             }
             else if(e.ChangedButton == MouseButton.Middle )
             {
-                mouseButtonHoldState = mouseMButtonHoldState;
+                mouseButtonHoldState = mouseButtonHoldState_M;
                 mouseInputClick = MouseInputClick.M_Click;
+            }
+            else if(e.ChangedButton == MouseButton.XButton1 )
+            {
+                mouseButtonHoldState = mouseButtonHoldState_X1;
+                mouseInputClick = MouseInputClick.X1_Click;
+            }
+            else if(e.ChangedButton == MouseButton.XButton2 )
+            {
+                mouseButtonHoldState = mouseButtonHoldState_X2;
+                mouseInputClick = MouseInputClick.X2_Click;
             }
 
 
@@ -448,7 +467,7 @@ namespace C_SlideShow.Shortcut
         // マウスジェスチャ ストローク更新時
         private void MouseGestureStrokeChanged(object sender, EventArgs e)
         {
-            mouseRButtonHoldState.CommandExecuted = true;
+            mouseButtonHoldState_R.CommandExecuted = true;
 
             // 現在のストロークと、一致するコマンドを通知ブロックに表示
             string notification = mouseGesture.Stroke;

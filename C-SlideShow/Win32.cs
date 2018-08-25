@@ -34,9 +34,11 @@ namespace C_SlideShow
         internal static extern bool GetCursorPos(ref POINT pt);
 
 
-        public const int VK_LBUTTON = 0x01;
-        public const int VK_RBUTTON = 0x02;
-        public const int VK_MBUTTON = 0x04;
+        public const int VK_LBUTTON  = 0x01;
+        public const int VK_RBUTTON  = 0x02;
+        public const int VK_MBUTTON  = 0x04;
+        public const int VK_XBUTTON1 = 0x05;
+        public const int VK_XBUTTON2 = 0x06;
         [DllImport("user32")] 
         public static extern short GetKeyState(int vKey);
 

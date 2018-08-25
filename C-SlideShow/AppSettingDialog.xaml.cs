@@ -241,6 +241,12 @@ namespace C_SlideShow
                 case Shortcut.MouseInputHold.M_Button:
                     SelectComboBoxItemByTag(MouseInputHold, "M_Button");
                     break;
+                case Shortcut.MouseInputHold.XButton1:
+                    SelectComboBoxItemByTag(MouseInputHold, "X1_Button");
+                    break;
+                case Shortcut.MouseInputHold.XButton2:
+                    SelectComboBoxItemByTag(MouseInputHold, "X2_Button");
+                    break;
                 case Shortcut.MouseInputHold.Shift:
                     SelectComboBoxItemByTag(MouseInputHold, "Shift");
                     break;
@@ -305,8 +311,18 @@ namespace C_SlideShow
             if( tag == "M_Button" )
             {
                 ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.M_Click] ).IsEnabled = false;
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.WheelUp] ).IsEnabled = false;
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.WheelDown] ).IsEnabled = false;
+                //( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.WheelUp] ).IsEnabled = false;
+                //( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.WheelDown] ).IsEnabled = false;
+            }
+
+            if( tag == "X1_Button" )
+            {
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.X1_Click] ).IsEnabled = false;
+            }
+
+            if( tag == "X2_Button" )
+            {
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.X2_Click] ).IsEnabled = false;
             }
         }
 
@@ -492,6 +508,12 @@ namespace C_SlideShow
                     break;
                 case "M_Button":
                     item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.M_Button;
+                    break;
+                case "X1_Button":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.XButton1;
+                    break;
+                case "X2_Button":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.XButton2;
                     break;
                 case "Shift":
                     item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.Shift;
