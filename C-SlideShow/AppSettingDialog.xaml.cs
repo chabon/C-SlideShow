@@ -232,14 +232,14 @@ namespace C_SlideShow
                 case Shortcut.MouseInputHold.None:
                     SelectComboBoxItemByTag(MouseInputHold, "None");
                     break;
-                case Shortcut.MouseInputHold.L_Click:
-                    SelectComboBoxItemByTag(MouseInputHold, "L_Click");
+                case Shortcut.MouseInputHold.L_Button:
+                    SelectComboBoxItemByTag(MouseInputHold, "L_Button");
                     break;
-                case Shortcut.MouseInputHold.R_Click:
-                    SelectComboBoxItemByTag(MouseInputHold, "R_Click");
+                case Shortcut.MouseInputHold.R_Button:
+                    SelectComboBoxItemByTag(MouseInputHold, "R_Button");
                     break;
-                case Shortcut.MouseInputHold.M_Click:
-                    SelectComboBoxItemByTag(MouseInputHold, "M_Click");
+                case Shortcut.MouseInputHold.M_Button:
+                    SelectComboBoxItemByTag(MouseInputHold, "M_Button");
                     break;
                 case Shortcut.MouseInputHold.Shift:
                     SelectComboBoxItemByTag(MouseInputHold, "Shift");
@@ -290,23 +290,23 @@ namespace C_SlideShow
 
             string tag = ( (ComboBoxItem)MouseInputHold.SelectedItem ).Tag.ToString();
 
-            if( tag == "L_Click" )
+            if( tag == "L_Button" )
             {
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.L_Click] ).IsEnabled = false;
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.L_DoubleClick] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.L_Click] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.L_DoubleClick] ).IsEnabled = false;
             }
 
-            if( tag == "R_Click" )
+            if( tag == "R_Button" )
             {
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.R_Click] ).IsEnabled = false;
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.R_DoubleClick] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.R_Click] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.R_DoubleClick] ).IsEnabled = false;
             }
 
-            if( tag == "M_Click" )
+            if( tag == "M_Button" )
             {
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.M_Click] ).IsEnabled = false;
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.WheelUp] ).IsEnabled = false;
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputButton.WheelDown] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.M_Click] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.WheelUp] ).IsEnabled = false;
+                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.WheelDown] ).IsEnabled = false;
             }
         }
 
@@ -484,14 +484,14 @@ namespace C_SlideShow
                 case "None":
                     item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.None;
                     break;
-                case "L_Click":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.L_Click;
+                case "L_Button":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.L_Button;
                     break;
-                case "R_Click":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.R_Click;
+                case "R_Button":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.R_Button;
                     break;
-                case "M_Click":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.M_Click;
+                case "M_Button":
+                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.M_Button;
                     break;
                 case "Shift":
                     item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.Shift;
@@ -524,7 +524,7 @@ namespace C_SlideShow
 
             if( item.MouseInput == null ) item.MouseInput = new MouseInput();
 
-            item.MouseInput.MouseInputButton = (Shortcut.MouseInputButton)MouseInputButton.SelectedIndex;
+            item.MouseInput.MouseInputButton = (Shortcut.MouseInputClick)MouseInputButton.SelectedIndex;
             item.MouseInputStr = item.MouseInput.ToString();
 
             // 重複の削除
@@ -801,7 +801,7 @@ namespace C_SlideShow
                 foreach(var item in listView.Items )
                 {
                     ShortcutListViewItem si = item as ShortcutListViewItem;
-                    if(si != null && si.MouseInput != null && si.MouseInput.MouseInputButton != Shortcut.MouseInputButton.None)
+                    if(si != null && si.MouseInput != null && si.MouseInput.MouseInputButton != Shortcut.MouseInputClick.None)
                     {
                         mouseInputMapList.Add( new MouseInputMap(si.MouseInput, si.CommandID) );
                     }

@@ -90,18 +90,20 @@ namespace C_SlideShow
             List<MouseInputMap> defaultMouseInputMap = new List<MouseInputMap>();
 
             // 全般
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Click, MouseInputButton.WheelUp),      CommandID.WindowSizeUp             )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Click, MouseInputButton.WheelDown),    CommandID.WindowSizeDown           )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Button, MouseInputClick.WheelUp),     CommandID.WindowSizeUp              )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.R_Button, MouseInputClick.WheelDown),   CommandID.WindowSizeDown            )  );
 
             // 通常時
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.R_Click),          CommandID.ZoomImageUnderCursor    )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelUp),          CommandID.SlideToBackward         )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelDown),        CommandID.SlideToForward          )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputClick.R_Click),         CommandID.ZoomImageUnderCursor      )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputClick.WheelUp),         CommandID.SlideToBackward           )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputClick.WheelDown),       CommandID.SlideToForward            )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.Shift, MouseInputClick.WheelUp),        CommandID.SlideToBackwardByOneImage )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.Shift, MouseInputClick.WheelDown),      CommandID.SlideToForwardByOneImage  )  );
 
             // 画像拡大時
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelUp),          CommandID.ZoomInImage             )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.WheelDown),        CommandID.ZoomOutImage            )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputButton.R_Click),          CommandID.ExitZoom                )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputClick.WheelUp),         CommandID.ZoomInImage               )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputClick.WheelDown),       CommandID.ZoomOutImage              )  );
+            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputHold.None, MouseInputClick.R_Click),         CommandID.ExitZoom                  )  );
 
             // test
             //defaultMouseInputMap.Add(new MouseInputMap(new MouseInput(MouseInputHold.Shift, MouseInputButton.L_Click), CommandID.OpenFolder));

@@ -107,8 +107,8 @@ namespace C_SlideShow.Shortcut
             commands.Add( new SlideToForwardByOneImage() );
             commands.Add( new SlideToBackwardByOneImage() );
             commands.Add( new SlideToLeft() );
-            commands.Add( new SlideToTop() );
             commands.Add( new SlideToRight() );
+            commands.Add( new SlideToTop() );
             commands.Add( new SlideToBottom() );
             commands.Add( new ZoomImageUnderCursor() );
 
@@ -264,17 +264,17 @@ namespace C_SlideShow.Shortcut
 
             if( (Win32.GetKeyState(Win32.VK_RBUTTON) & 0x8000) != 0 ) // マウス右ボタン
             {
-                hold |= MouseInputHold.R_Click;
+                hold |= MouseInputHold.R_Button;
             }
 
             if( (Win32.GetKeyState(Win32.VK_LBUTTON) & 0x8000) != 0 ) // マウス左ボタン
             {
-                hold |= MouseInputHold.L_Click;
+                hold |= MouseInputHold.L_Button;
             }
 
             if( (Win32.GetKeyState(Win32.VK_MBUTTON) & 0x8000) != 0 ) // マウス中央ボタン
             {
-                hold |= MouseInputHold.M_Click;
+                hold |= MouseInputHold.M_Button;
             }
 
             if( (Keyboard.Modifiers & ModifierKeys.Control) != 0) // Ctrlキー
@@ -328,11 +328,11 @@ namespace C_SlideShow.Shortcut
             MouseInput mouseInput;
             if(e.Delta > 0 ) // wheel up
             {
-                mouseInput = new MouseInput(GetMouseInputHold(), MouseInputButton.WheelUp);
+                mouseInput = new MouseInput(GetMouseInputHold(), MouseInputClick.WheelUp);
             }
             else // wheel down
             {
-                mouseInput = new MouseInput(GetMouseInputHold(), MouseInputButton.WheelDown);
+                mouseInput = new MouseInput(GetMouseInputHold(), MouseInputClick.WheelDown);
             }
 
             // 送信
@@ -387,24 +387,24 @@ namespace C_SlideShow.Shortcut
         {
             // マウスインプット
             MouseButtonHoldState mouseButtonHoldState = new MouseButtonHoldState();;
-            MouseInputButton mouseInputButton = MouseInputButton.None;
+            MouseInputClick mouseInputClick = MouseInputClick.None;
 
             Debug.WriteLine("mouse up : " + e.ChangedButton.ToString());
 
             if(e.ChangedButton == MouseButton.Left )
             {
                 mouseButtonHoldState = mouseLButtonHoldState;
-                mouseInputButton = MouseInputButton.L_Click;
+                mouseInputClick = MouseInputClick.L_Click;
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
                 mouseButtonHoldState = mouseRButtonHoldState;
-                mouseInputButton = MouseInputButton.R_Click;
+                mouseInputClick = MouseInputClick.R_Click;
             }
             else if(e.ChangedButton == MouseButton.Middle )
             {
                 mouseButtonHoldState = mouseMButtonHoldState;
-                mouseInputButton = MouseInputButton.M_Click;
+                mouseInputClick = MouseInputClick.M_Click;
             }
 
 
@@ -414,7 +414,7 @@ namespace C_SlideShow.Shortcut
             }
             else if(mouseButtonHoldState.IsPressed)
             {
-                MouseInput mouseInput = new MouseInput(GetMouseInputHold(), mouseInputButton);
+                MouseInput mouseInput = new MouseInput(GetMouseInputHold(), mouseInputClick);
                 if( DispatchMouseInput(mouseInput) ) e.Handled = true;
             }
 
@@ -426,21 +426,21 @@ namespace C_SlideShow.Shortcut
         // ダブルクリック
         private void MainWindow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            MouseInputButton mouseInputButton = MouseInputButton.None;
+            MouseInputClick mouseInputClick = MouseInputClick.None;
             MouseInputHold mouseInputHold     = GetMouseInputHold();
 
             if(e.ChangedButton == MouseButton.Left )
             {
-                mouseInputButton = MouseInputButton.L_DoubleClick;
-                mouseInputHold = (mouseInputHold & ~MouseInputHold.L_Click);
+                mouseInputClick = MouseInputClick.L_DoubleClick;
+                mouseInputHold = (mouseInputHold & ~MouseInputHold.L_Button);
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
-                mouseInputButton = MouseInputButton.R_DoubleClick;
-                mouseInputHold = (mouseInputHold & ~MouseInputHold.R_Click);
+                mouseInputClick = MouseInputClick.R_DoubleClick;
+                mouseInputHold = (mouseInputHold & ~MouseInputHold.R_Button);
             }
 
-            MouseInput mouseInput = new MouseInput(mouseInputHold, mouseInputButton);
+            MouseInput mouseInput = new MouseInput(mouseInputHold, mouseInputClick);
             if( DispatchMouseInput(mouseInput) ) e.Handled = true;
         }
 
