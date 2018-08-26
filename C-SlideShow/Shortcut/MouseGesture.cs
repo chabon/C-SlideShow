@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Windows.Interop;
 using System.Diagnostics;
+using System.Windows.Input;
 
 
 namespace C_SlideShow.Shortcut
@@ -93,6 +94,21 @@ namespace C_SlideShow.Shortcut
 		/// </summary>
 		private Point oldPos;
 
+        /// <summary>
+        /// 始動ボタン
+        /// </summary>
+        private MouseButton startingButton;
+        public MouseButton StartingButton { get { return startingButton; } }
+
+        /// <summary>
+        /// 左クリックによるスタートを許可するか
+        /// </summary>
+        public bool AllowLButtonStart { get; set; }
+
+        /// <summary>
+        /// 始動ボタンリリース時のウインドウズメッセージ
+        /// </summary>
+        private int WMessageButtonUp;
 
         /// <summary>
         /// フックチェーンにインストールするフックプロシージャのイベント
@@ -120,6 +136,7 @@ namespace C_SlideShow.Shortcut
 		public MouseGesture()
 		{
 			enable = false;
+            AllowLButtonStart = false;
             stroke = "";
 			directionInfo = new DirectionInfo[4];
 			for(int i=0; i<4; i++)
@@ -133,12 +150,34 @@ namespace C_SlideShow.Shortcut
 		/// <summary>
 		/// マウスジェスチャの開始
 		/// </summary>
-		public void Start()
+		public void Start(MouseButton startingButton)
 		{
+            if( startingButton == MouseButton.Left && !AllowLButtonStart ) return;
+
 			enable = true;
             stroke = "";
 			ResetDirection();
 			oldPos = GetCursorPos();
+            this.startingButton = startingButton;
+            switch( startingButton )
+            {
+                case MouseButton.Left:
+                    WMessageButtonUp = WM_LBUTTONUP;
+                    break;
+                case MouseButton.Right:
+                    WMessageButtonUp = WM_RBUTTONUP;
+                    break;
+                case MouseButton.Middle:
+                    WMessageButtonUp = WM_MBUTTONUP;
+                    break;
+                case MouseButton.XButton1:
+                case MouseButton.XButton2:
+                    WMessageButtonUp = WM_XBUTTONUP;
+                    break;
+                default:
+                    enable = false;
+                    return;
+            }
         }
 
 
@@ -285,13 +324,13 @@ namespace C_SlideShow.Shortcut
         {
             if(enable)
             {
-                if ( (int)wParam == 0x0205 ) // WM_RBUTTONUP
+                if ( (int)wParam == WMessageButtonUp )
                 {
-                    Debug.WriteLine(string.Format("Mouse R Button up"));
+                    Debug.WriteLine(  string.Format( "Mouse Button up : " + WMessageButtonUp.ToString() )  );
                     End();
                 }
 
-                else if( (int)wParam == 0x0200 ) // WM_MOUSEMOVE
+                else if( (int)wParam == WM_MOUSEMOVE ) // WM_MOUSEMOVE
                 {
                     //MSLLHOOKSTRUCT MouseHookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
                     //Debug.WriteLine(string.Format("Mouse Position : {0:d}, {1:d}", MouseHookStruct.pt.X, MouseHookStruct.pt.Y));
@@ -310,6 +349,14 @@ namespace C_SlideShow.Shortcut
         /* ---------------------------------------------------- */
         //     Win32 API
         /* ---------------------------------------------------- */
+        // Message
+        public const int WM_LBUTTONUP  = 0x0202;
+        public const int WM_RBUTTONUP  = 0x0205;
+        public const int WM_MBUTTONUP  = 0x0208;
+        public const int WM_XBUTTONUP  = 0x020C;
+
+        public const int WM_MOUSEMOVE  = 0x0200;
+
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
         {

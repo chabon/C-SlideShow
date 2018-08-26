@@ -15,21 +15,21 @@ namespace C_SlideShow
     public class MouseGestureMap
     {
         [DataMember]
-        public string Gesture { get; set; }
+        public MouseGestureInput GestureInput { get; set; }
 
         [DataMember]
         public CommandID CommandID { get; set; }
 
 
-        public MouseGestureMap(string gesture, CommandID commandId)
+        public MouseGestureMap(MouseGestureInput gestureInput, CommandID commandId)
         {
-            Gesture = gesture;
+            GestureInput = gestureInput;
             CommandID = commandId;
         }
 
         public MouseGestureMap Clone()
         {
-            return new MouseGestureMap(this.Gesture, this.CommandID);
+            return new MouseGestureMap(this.GestureInput, this.CommandID);
         }
     }
 }

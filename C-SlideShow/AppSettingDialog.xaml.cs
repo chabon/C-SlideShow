@@ -93,6 +93,7 @@ namespace C_SlideShow
         public Shortcut.CommandID CommandID { get; set; }
         public KeyInput  KeyInput { get; set; }
         public MouseInput MouseInput { get; set; }
+        public MouseGestureInput MouseGestureInput { get; set; }
     }
 
     /// <summary>
@@ -100,10 +101,16 @@ namespace C_SlideShow
     /// </summary>
     public partial class AppSettingDialog : Window
     {
-
+        /* ---------------------------------------------------- */
+        //     フィールド
+        /* ---------------------------------------------------- */
         bool isInitializing = false;
+        bool isSettingToComboBox = false;  // コード中でComboBoxのSelectedItemが変更された時のイベントを防止するため
         AppSetting setting;
 
+        /* ---------------------------------------------------- */
+        //     コンストラクタ
+        /* ---------------------------------------------------- */
         public AppSettingDialog()
         {
             InitializeComponent();
@@ -120,6 +127,10 @@ namespace C_SlideShow
             };
         }
 
+        /* ---------------------------------------------------- */
+        //     メソッド
+        /* ---------------------------------------------------- */
+        // 共通
         public void Initialize()
         {
             isInitializing = true;
@@ -138,7 +149,7 @@ namespace C_SlideShow
                         CommandStr = command.GetDetail(), CommandID = command.ID,
                         KeyStr = km?.KeyInput.ToString(), KeyInput = km?.KeyInput.Clone(),
                         MouseInputStr = mm?.MouseInput.ToString(), MouseInput = mm?.MouseInput.Clone(),
-                        MouseGestureStr = gm?.Gesture}  );
+                        MouseGestureStr = gm?.GestureInput.ToString(), MouseGestureInput = gm?.GestureInput.Clone()}  );
                 });
 
                 switch( command.Scene )
@@ -205,12 +216,46 @@ namespace C_SlideShow
             isInitializing = false;
         }
 
+        private void SelectComboBoxItemByTag(ComboBox comboBox, string tag)
+        {
+            isSettingToComboBox = true;
+            ComboBoxItem tagMatchedItem = null;
+            foreach(ComboBoxItem item in comboBox.Items )
+            {
+                if( item.Tag.ToString() == tag )
+                {
+                    tagMatchedItem = item;
+                    break;
+                }
+            }
+
+            if(tagMatchedItem != null )
+            {
+                comboBox.SelectedItem = tagMatchedItem;
+            }
+            isSettingToComboBox = false;
+        }
+
+        private ComboBoxItem GetComboBoxItemByTag(ComboBox comboBox, string tag)
+        {
+            foreach(ComboBoxItem item in comboBox.Items )
+            {
+                if( item.Tag.ToString() == tag )
+                {
+                    return item;
+                }
+            }
+            return null;
+        }
+
+        // 履歴設定
         private void CorrectNumofHistory()
         {
             if( NumofHistory.Value < NumofHistoryInMenu.Value ) NumofHistoryInMenu.Value = NumofHistory.Value;
             if( NumofHistoryInMenu.Value < NumofHistoryInMainMenu.Value ) NumofHistoryInMainMenu.Value = NumofHistoryInMenu.Value;
         }
 
+        // ショートカット 共通
         private ListView GetCurrentShortcutListView()
         {
             switch(ShortcutSettingTab.SelectedIndex)
@@ -225,8 +270,10 @@ namespace C_SlideShow
             }
         }
 
+        // マウスインプット
         private void SetMouseInputToControl(MouseInput mouseInput)
         {
+            isSettingToComboBox = true;
             switch( mouseInput.MouseInputHold )
             {
                 case Shortcut.MouseInputHold.None:
@@ -258,41 +305,25 @@ namespace C_SlideShow
                     break;
             }
 
-            UpdateMouseInputButtonItems();
             MouseInputButton.SelectedIndex = (int)mouseInput.MouseInputButton;
-        }
+            UpdateMouseInputButtonItemsIsEnabled();
 
-        private void SelectComboBoxItemByTag(ComboBox comboBox, string tag)
-        {
-            ComboBoxItem tagMatchedItem = null;
-            foreach(ComboBoxItem item in comboBox.Items )
-            {
-                if( item.Tag.ToString() == tag )
-                {
-                    tagMatchedItem = item;
-                    break;
-                }
-            }
-
-            if(tagMatchedItem != null )
-            {
-                comboBox.SelectedItem = tagMatchedItem;
-            }
+            isSettingToComboBox = false;
         }
 
         private void ClearMouseInputControl()
         {
+            isSettingToComboBox = true;
             MouseInputHold.SelectedIndex = 0;
-            UpdateMouseInputButtonItems();
+            UpdateMouseInputButtonItemsIsEnabled();
             MouseInputButton.SelectedIndex = 0;
+            isSettingToComboBox = false;
         }
 
-        private void UpdateMouseInputButtonItems()
+        private void UpdateMouseInputButtonItemsIsEnabled()
         {
-            foreach(ComboBoxItem item in MouseInputButton.Items )
-            {
-                item.IsEnabled = true;
-            }
+            // ホールドによる入力の有効・無効
+            foreach(ComboBoxItem i1 in MouseInputButton.Items ) { i1.IsEnabled = true; }
 
             string tag = ( (ComboBoxItem)MouseInputHold.SelectedItem ).Tag.ToString();
 
@@ -311,8 +342,6 @@ namespace C_SlideShow
             if( tag == "M_Button" )
             {
                 ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.M_Click] ).IsEnabled = false;
-                //( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.WheelUp] ).IsEnabled = false;
-                //( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.WheelDown] ).IsEnabled = false;
             }
 
             if( tag == "X1_Button" )
@@ -324,6 +353,93 @@ namespace C_SlideShow
             {
                 ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.X2_Click] ).IsEnabled = false;
             }
+
+            // 入力（クリック）によるホールドの有効・無効
+            foreach(ComboBoxItem i2 in MouseInputHold.Items ) { i2.IsEnabled = true; }
+
+            var inputClick = (Shortcut.MouseInputClick)MouseInputButton.SelectedIndex;
+            ComboBoxItem item;
+            switch( inputClick )
+            {
+                case MouseInputClick.L_Click:
+                case MouseInputClick.L_DoubleClick:
+                    item = GetComboBoxItemByTag(MouseInputHold, "L_Button");
+                    break;
+                case MouseInputClick.R_Click:
+                case MouseInputClick.R_DoubleClick:
+                    item = GetComboBoxItemByTag(MouseInputHold, "R_Button");
+                    break;
+                case MouseInputClick.M_Click:
+                    item = GetComboBoxItemByTag(MouseInputHold, "M_Button");
+                    break;
+                case MouseInputClick.X1_Click:
+                    item = GetComboBoxItemByTag(MouseInputHold, "X1_Button");
+                    break;
+                case MouseInputClick.X2_Click:
+                    item = GetComboBoxItemByTag(MouseInputHold, "X2_Button");
+                    break;
+                default:
+                    item = null;
+                    break;
+            }
+            if( item != null ) item.IsEnabled = false;
+        }
+
+        private void DoubleCheck_MouseInput(MouseInput mouseInput, ShortcutListViewItem own)
+        {
+            foreach( var li in GetCurrentShortcutListView().Items )
+            {
+                ShortcutListViewItem si = li as ShortcutListViewItem;
+                if(si != null && si.MouseInput != null && si != own )
+                {
+                    if( si.MouseInput.Equals(mouseInput) )
+                    {
+                        si.MouseInput = null;
+                        si.MouseInputStr = "";
+                    }
+                }
+            }
+        }
+
+        // マウスジェスチャ
+        private void SetMouseGestureInputToControl(MouseGestureInput gestureInput)
+        {
+            MouseGestureControl.SetValue(gestureInput.Stroke, gestureInput.StartingButton);
+            isSettingToComboBox = true;
+            switch(gestureInput.StartingButton)
+            {
+                default:
+                case MouseButton.Right:
+                    SelectComboBoxItemByTag( MauseGestureStartingButton, "R_Button" );
+                    break;
+                case MouseButton.Middle:
+                    SelectComboBoxItemByTag( MauseGestureStartingButton, "M_Button" );
+                    break;
+                case MouseButton.XButton1:
+                    SelectComboBoxItemByTag( MauseGestureStartingButton, "X1_Button" );
+                    break;
+                case MouseButton.XButton2:
+                    SelectComboBoxItemByTag( MauseGestureStartingButton, "X2_Button" );
+                    break;
+            }
+            isSettingToComboBox = false;
+        }
+
+        private void DoubleCheck_MouseGestureInput(MouseGestureInput gestureInput, ShortcutListViewItem own)
+        {
+            foreach( var li in GetCurrentShortcutListView().Items )
+            {
+                ShortcutListViewItem si = li as ShortcutListViewItem;
+                if(si != null && si.MouseGestureInput != null && si != own )
+                {
+                    if( si.MouseGestureInput.Equals(gestureInput) )
+                    {
+                        si.MouseGestureInput = null;
+                        si.MouseGestureStr = null;
+                    }
+                }
+            }
+
         }
 
         /* ---------------------------------------------------- */
@@ -344,6 +460,7 @@ namespace C_SlideShow
                 MouseInputButton.IsEnabled = true;
                 MouseInputMapClearButton.IsEnabled = true;
                 MouseGestureControl.IsEnabled = true;
+                MauseGestureStartingButton.IsEnabled = true;
                 MouseGestureClearButton.IsEnabled = true;
             }
             else
@@ -354,6 +471,7 @@ namespace C_SlideShow
                 MouseInputButton.IsEnabled = false;
                 MouseInputMapClearButton.IsEnabled = false;
                 MouseGestureControl.IsEnabled = false;
+                MauseGestureStartingButton.IsEnabled = false;
                 MouseGestureClearButton.IsEnabled = false;
             }
 
@@ -378,13 +496,14 @@ namespace C_SlideShow
             }
 
             // マウスジェスチャ
-            if(item != null && item.MouseGestureStr != null)
+            if(item != null && item.MouseGestureInput != null)
             {
-                MouseGestureControl.SetStroke(item.MouseGestureStr);
+                SetMouseGestureInputToControl(item.MouseGestureInput);
             }
             else
             {
                 MouseGestureControl.Clear();
+                MauseGestureStartingButton.SelectedIndex = 0;
             }
         }
 
@@ -423,11 +542,13 @@ namespace C_SlideShow
                         }
 
                         // マウスジェスチャ
+                        si.MouseGestureInput = null;
                         si.MouseGestureStr = null;
                         var mg = defaultMouseGesturemap.FirstOrDefault(k => k.CommandID == si.CommandID);
                         if(mg != null )
                         {
-                            si.MouseGestureStr = mg.Gesture;
+                            si.MouseGestureInput = mg.GestureInput;
+                            si.MouseGestureStr = mg.GestureInput.ToString();
                         }
                     }
                 }
@@ -488,6 +609,7 @@ namespace C_SlideShow
         private void MouseInputHold_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if( isInitializing ) return;
+            if( isSettingToComboBox ) return;
 
             ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
             if( item == null ) return;
@@ -525,21 +647,18 @@ namespace C_SlideShow
                     item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.Alt;
                     break;
             }
-
-            UpdateMouseInputButtonItems();
-
-            // ホールドとボタンが同時指定になることを防止
-            if( ( (ComboBoxItem)MouseInputButton.SelectedItem ).IsEnabled == false)
-            {
-                MouseInputButton.SelectedIndex = 0;
-            }
-
             item.MouseInputStr = item.MouseInput.ToString();
+
+            UpdateMouseInputButtonItemsIsEnabled();
+
+            // 重複の削除
+            DoubleCheck_MouseInput(item.MouseInput, item);
         }
 
         private void MouseInputButton_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if( isInitializing ) return;
+            if( isSettingToComboBox ) return;
 
             ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
             if( item == null ) return;
@@ -549,19 +668,10 @@ namespace C_SlideShow
             item.MouseInput.MouseInputButton = (Shortcut.MouseInputClick)MouseInputButton.SelectedIndex;
             item.MouseInputStr = item.MouseInput.ToString();
 
+            UpdateMouseInputButtonItemsIsEnabled();
+
             // 重複の削除
-            foreach( var li in GetCurrentShortcutListView().Items )
-            {
-                ShortcutListViewItem si = li as ShortcutListViewItem;
-                if(si != null && si.MouseInput != null && si.CommandID != item.CommandID )
-                {
-                    if( si.MouseInput.Equals(item.MouseInput) )
-                    {
-                        si.MouseInput = null;
-                        si.MouseInputStr = "";
-                    }
-                }
-            }
+            DoubleCheck_MouseInput(item.MouseInput, item);
         }
 
         private void MouseInputMapClearButton_Click(object sender, RoutedEventArgs e)
@@ -583,23 +693,18 @@ namespace C_SlideShow
 
             ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
             if( item == null ) return;
-            string stroke = MouseGestureControl.Stroke;
 
-            item.MouseGestureStr = stroke;
-
-            // 重複キーの削除
-            foreach( var li in GetCurrentShortcutListView().Items )
+            MouseGestureInput gestureInput = new MouseGestureInput(MouseGestureControl.StartingButton, MouseGestureControl.Stroke);
+            if( gestureInput.Stroke.Length > 0 )
             {
-                ShortcutListViewItem si = li as ShortcutListViewItem;
-                if(si != null && si.MouseGestureStr != null && si.CommandID != item.CommandID )
-                {
-                    if( si.MouseGestureStr == stroke )
-                    {
-                        si.MouseGestureStr = null;
-                    }
-                }
+                SetMouseGestureInputToControl(gestureInput);
+                item.MouseGestureInput = gestureInput;
+                item.MouseGestureStr = gestureInput.ToString();
             }
+            else { return; }
 
+            // 重複の削除
+            DoubleCheck_MouseGestureInput(gestureInput, item);
         }
 
         private void MouseGestureClearButton_Click(object sender, RoutedEventArgs e)
@@ -609,8 +714,10 @@ namespace C_SlideShow
             ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
             if( item == null ) return;
 
+            item.MouseGestureInput = null;
             item.MouseGestureStr = null;
             MouseGestureControl.Clear();
+            MauseGestureStartingButton.SelectedIndex = 0;
         }
 
         private void MouseGestureRange_ValueChanged(object sender, EventArgs e)
@@ -620,6 +727,37 @@ namespace C_SlideShow
             MouseGestureControl.Range = MouseGestureRange.Value;
         }
 
+        private void MauseGestureStartingButton_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+            if( isSettingToComboBox ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null || item.MouseGestureInput == null) return;
+
+            string tag = ( (ComboBoxItem)MauseGestureStartingButton.SelectedItem ).Tag.ToString();
+            switch( tag )
+            {
+                case "R_Button":
+                    item.MouseGestureInput.StartingButton = MouseButton.Right;
+                    break;
+                case "M_Button":
+                    item.MouseGestureInput.StartingButton = MouseButton.Middle;
+                    break;
+                case "X1_Button":
+                    item.MouseGestureInput.StartingButton = MouseButton.XButton1;
+                    break;
+                case "X2_Button":
+                    item.MouseGestureInput.StartingButton = MouseButton.XButton2;
+                    break;
+            }
+            item.MouseGestureStr = item.MouseGestureInput.ToString();
+
+            MouseGestureControl.SetValue(item.MouseGestureInput.Stroke, item.MouseGestureInput.StartingButton);
+
+            // 重複の削除
+            DoubleCheck_MouseGestureInput(item.MouseGestureInput, item);
+        }
 
         // 履歴設定
         private void NumofHistory_ValueChanged(object sender, EventArgs e)
@@ -841,9 +979,9 @@ namespace C_SlideShow
                 foreach(var item in listView.Items )
                 {
                     ShortcutListViewItem si = item as ShortcutListViewItem;
-                    if(si != null && si.MouseGestureStr != null && si.MouseGestureStr != "")
+                    if(si != null && si.MouseGestureInput != null)
                     {
-                        mouseGestureMapList.Add( new MouseGestureMap(string.Copy(si.MouseGestureStr), si.CommandID) );
+                        mouseGestureMapList.Add( new MouseGestureMap(si.MouseGestureInput, si.CommandID) );
                     }
                 }
             };
@@ -897,6 +1035,7 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
 
 
 

@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:C_SlideShow"
         xmlns:cc="clr-namespace:C_SlideShow.CommonControl"
         mc:Ignorable="d"
-        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="500" Width="650">
+        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="520" Width="650">
     <Grid>
         <TabControl x:Name="MainTabControl" Margin="3,3,3,40">
             <!-- ショートカット -->
             <TabItem Header="ショートカット" Width="80">
                 <Grid>
-                    <TabControl Margin="3,10,3,120" x:Name="ShortcutSettingTab" SelectionChanged="ShortcutSettingTab_SelectionChanged">
+                    <TabControl Margin="3,10,3,135" x:Name="ShortcutSettingTab" SelectionChanged="ShortcutSettingTab_SelectionChanged">
                         <TabItem Header="いつでも" Width="70">
                             <ListView x:Name="ShortcutListView_ALL" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
@@ -52,7 +52,7 @@
                     </TabControl>
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Left">
-                            <GroupBox  Header="キー入力" Height="85" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                            <GroupBox  Header="キー入力" Height="100" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                                 <StackPanel>
                                     <cc:HotkeyControl x:Name="HotkeyControl" Height="20" KeyAssigned="HotkeyControl_KeyAssigned" Margin="4"></cc:HotkeyControl>
                                     <Button x:Name="KeymapClearButton" Click="KeymapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
@@ -60,7 +60,7 @@
                             </GroupBox>
                             <Button x:Name="AllDefault_Shortcut" Click="AllDefault_Shortcut_Click" Margin="4" Width="100" HorizontalAlignment="Left">すべてデフォルト</Button>
                         </StackPanel>
-                        <GroupBox  Header="マウス入力" Height="113" Width="200" Margin="4,4,4,4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                        <GroupBox  Header="マウス入力" Height="128" Width="200" Margin="4,4,4,4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="2">
                                     <Label Width="50">ホールド</Label>
@@ -94,12 +94,21 @@
                                 <Button x:Name="MouseInputMapClearButton" Click="MouseInputMapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox  Header="マウスジェスチャ" Height="113" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                        <GroupBox  Header="マウスジェスチャ" Height="128" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                             <StackPanel>
                                 <cc:MouseGestureControl x:Name="MouseGestureControl" Height="20" GestureAssigned="MouseGestureControl_GestureAssigned" Margin="4"></cc:MouseGestureControl>
+                                <StackPanel Orientation="Horizontal">
+                                    <Label Width="70">始動ボタン</Label>
+                                    <ComboBox x:Name="MauseGestureStartingButton" SelectionChanged="MauseGestureStartingButton_SelectionChanged" Width="113" Height="20">
+                                        <ComboBoxItem Tag="R_Button">右ボタン (R)</ComboBoxItem>
+                                        <ComboBoxItem Tag="M_Button">中ボタン (M)</ComboBoxItem>
+                                        <ComboBoxItem Tag="X1_Button">戻るボタン (X1)</ComboBoxItem>
+                                        <ComboBoxItem Tag="X2_Button">進むボタン (X2)</ComboBoxItem>
+                                    </ComboBox>
+                                </StackPanel>
                                 <Button x:Name="MouseGestureClearButton" Click="MouseGestureClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
                                 <StackPanel Orientation="Horizontal">
-                                    <Label>判定距離</Label>
+                                    <Label Width="70">判定距離</Label>
                                     <cc:NumericUpDown x:Name="MouseGestureRange" ValueChanged="MouseGestureRange_ValueChanged" Width="60" MaxValue="9999" MinValue="1"></cc:NumericUpDown>
                                 </StackPanel>
                             </StackPanel>

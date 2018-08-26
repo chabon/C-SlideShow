@@ -187,7 +187,7 @@ namespace C_SlideShow.Shortcut
                     if( cmd == null ) continue;
                     if( cmd.Scene == Scene.All || cmd.Scene == currentScene )
                     {
-                        cmd.Execute();
+                        if( cmd.CanExecute() ) cmd.Execute();
                         return true;
                     }
                 }
@@ -213,7 +213,7 @@ namespace C_SlideShow.Shortcut
                     if( cmd == null ) continue;
                     if( cmd.Scene == Scene.All || cmd.Scene == currentScene )
                     {
-                        cmd.Execute();
+                        if( cmd.CanExecute() ) cmd.Execute();
                         mouseButtonHoldState_L.CommandExecuted = true;
                         mouseButtonHoldState_R.CommandExecuted = true;
                         mouseButtonHoldState_M.CommandExecuted = true;
@@ -229,13 +229,13 @@ namespace C_SlideShow.Shortcut
         /// </summary>
         /// <param name="stroke"></param>
         /// <returns>コマンド</returns>
-        private ICommand GetCommandFromMouseGestureStroke(string stroke)
+        private ICommand GetCommandFromMouseGestureInput(MouseGestureInput gestureInput)
         {
             Scene currentScene = GetCurrentScene();
 
             foreach(MouseGestureMap mouseGestureMap in shortcutSetting.MouseGestureMap )
             {
-                if(mouseGestureMap.Gesture == stroke )
+                if(mouseGestureMap.GestureInput.Equals(gestureInput) )
                 {
                     ICommand cmd = GetCommand(mouseGestureMap.CommandID);
                     if( cmd == null ) continue;
@@ -253,12 +253,12 @@ namespace C_SlideShow.Shortcut
         /// </summary>
         /// <param name="stroke"></param>
         /// <returns>コマンドを実行したかどうか</returns>
-        private bool DispatchMouseGestureStroke(string stroke)
+        private bool DispatchMouseGestureInput(MouseGestureInput gestureInput)
         {
-            ICommand cmd = GetCommandFromMouseGestureStroke(stroke);
+            ICommand cmd = GetCommandFromMouseGestureInput(gestureInput);
             if( cmd != null )
             {
-                cmd.Execute();
+                if( cmd.CanExecute() ) cmd.Execute();
                 return true;
             }
 
@@ -375,13 +375,14 @@ namespace C_SlideShow.Shortcut
             }
 
             // マウスジェスチャ スタート
-            if(e.ChangedButton == MouseButton.Right )
+            if(shortcutSetting.MouseGestureMap.Count > 0 )
             {
-                if(shortcutSetting.MouseGestureMap.Count > 0 )
+                MouseGestureMap map = shortcutSetting.MouseGestureMap.FirstOrDefault( m => m.GestureInput?.StartingButton == e.ChangedButton );
+                if(map != null )
                 {
                     if( mouseGesture == null ) InitMouseGesture();
                     mouseGesture.Range = MainWindow.Current.Setting.MouseGestureRange;
-                    mouseGesture.Start();
+                    mouseGesture.Start(e.ChangedButton);
                 }
             }
         }
@@ -470,8 +471,9 @@ namespace C_SlideShow.Shortcut
             mouseButtonHoldState_R.CommandExecuted = true;
 
             // 現在のストロークと、一致するコマンドを通知ブロックに表示
-            string notification = mouseGesture.Stroke;
-            ICommand cmd = GetCommandFromMouseGestureStroke(mouseGesture.Stroke);
+            MouseGestureInput gestureInput = new MouseGestureInput(mouseGesture.StartingButton, mouseGesture.Stroke);
+            string notification = gestureInput.ToString();
+            ICommand cmd = GetCommandFromMouseGestureInput(gestureInput);
             if(cmd != null )
             {
                 notification += " [" + cmd.GetDetail() + "]";
@@ -482,13 +484,13 @@ namespace C_SlideShow.Shortcut
         // マウスジェスチャ 完了時
         private void MouseGestureFinished(object sender, EventArgs e)
         {
-            string stroke = mouseGesture.Stroke;
+            MouseGestureInput gestureInput = new MouseGestureInput(mouseGesture.StartingButton, mouseGesture.Stroke);
 
             // ストロークがあった場合、コマンド発送
-            if( stroke.Length > 0 )
+            if( gestureInput.Stroke.Length > 0 )
             {
                 MainWindow.Current.NotificationBlock.Hide();
-                DispatchMouseGestureStroke(stroke);
+                DispatchMouseGestureInput(gestureInput);
                 return;
             }
         }

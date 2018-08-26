@@ -27,7 +27,10 @@ namespace C_SlideShow.CommonControl
         /* ---------------------------------------------------- */
         //     プロパティ
         /* ---------------------------------------------------- */
-        public string Stroke { get; set; }
+        public string Stroke { get; set; } = "";
+        public MouseButton StartingButton { get; set; }
+        public bool ShowStartingButtonText { get; set; } = true;
+        public bool AllowLButtonStart { get; set; } = false;
         public new bool IsEnabled
         {
             set
@@ -68,30 +71,31 @@ namespace C_SlideShow.CommonControl
         /* ---------------------------------------------------- */
         //     メソッド
         /* ---------------------------------------------------- */
-        public void SetStroke(string stroke)
+        public void SetValue(string stroke, MouseButton startingButton)
         {
             this.Stroke = stroke;
-            this.StrokeText.Text = stroke;
-            Ready();
+            this.StartingButton = startingButton;
+            UpdateStrokeText();
         }
 
         public void Clear()
         {
             this.Stroke = "";
             this.StrokeText.Text = "";
-            Ready();
+            if( mouseGesture != null ) mouseGesture.End();
+            this.MainBorder.Background = new SolidColorBrush(Colors.White);
         }
 
         public void StartAcceptingInput()
         {
             this.MainBorder.Background = new SolidColorBrush(Colors.LightGreen);
-            this.StrokeText.Text = "右ドラッグしてジェスチャを登録";
+            this.StrokeText.Text = "ボタン押下後、ドラッグして入力";
 
             // 親ウインドウ取得
             if(parentWindow == null )
             {
                 parentWindow = Window.GetWindow(this);
-                parentWindow.MouseRightButtonDown += ParentWindow_MouseRightButtonDown;
+                parentWindow.MouseDown += ParentWindow_MouseDown;
                 parentWindow.Closing += (s, e) => {
                     if( mouseGesture != null ) mouseGesture.UnHook();
                 };
@@ -102,13 +106,43 @@ namespace C_SlideShow.CommonControl
         {
             if( mouseGesture != null ) mouseGesture.End();
             this.MainBorder.Background = new SolidColorBrush(Colors.White);
-            this.StrokeText.Text = Stroke;
+            UpdateStrokeText();
+        }
+
+        public string GetStartingButtonText()
+        {
+            switch(StartingButton)
+            {
+                case MouseButton.Left:
+                    return "L";
+                case MouseButton.Right:
+                    return "R";
+                case MouseButton.Middle:
+                    return "M";
+                case MouseButton.XButton1:
+                    return "X1";
+                case MouseButton.XButton2:
+                    return "X2";
+            }
+            return "";
+        }
+
+        private void UpdateStrokeText()
+        {
+            if( ShowStartingButtonText)
+            {
+                this.StrokeText.Text = "(" + GetStartingButtonText() + ") " + Stroke;
+            }
+            else
+            {
+                this.StrokeText.Text = Stroke;
+            }
         }
 
         /* ---------------------------------------------------- */
         //     イベント
         /* ---------------------------------------------------- */
-        private void ParentWindow_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private void ParentWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if(mouseGesture == null )
             {
@@ -117,18 +151,28 @@ namespace C_SlideShow.CommonControl
                 mouseGesture.GestureFinished += MouseGesture_GestureFinished;
             }
 
-            if(MainBorder.IsFocused) mouseGesture.Start();
+            if( MainBorder.IsFocused )
+            {
+                if( !AllowLButtonStart && e.ChangedButton == MouseButton.Left ) return;
+
+                if( AllowLButtonStart ) mouseGesture.AllowLButtonStart = true;
+                mouseGesture.Start(e.ChangedButton);
+                this.StartingButton = e.ChangedButton;
+                this.Stroke = "";
+                UpdateStrokeText();
+            }
         }
 
         private void MouseGesture_StrokeChanged(object sender, EventArgs e)
         {
             this.Stroke = mouseGesture.Stroke;
-            this.StrokeText.Text = mouseGesture.Stroke;
+            UpdateStrokeText();
         }
 
         private void MouseGesture_GestureFinished(object sender, EventArgs e)
         {
             this.Stroke = mouseGesture.Stroke;
+            UpdateStrokeText();
             this.GestureAssigned?.Invoke( this, new EventArgs() );
         }
 
