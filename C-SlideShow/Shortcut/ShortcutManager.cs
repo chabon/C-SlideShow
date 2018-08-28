@@ -395,8 +395,8 @@ namespace C_SlideShow.Shortcut
         // マウスボタン離した時
         private void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            // マウスインプット
-            MouseButtonHoldState mouseButtonHoldState = new MouseButtonHoldState();;
+            // マウスクリックの取得
+            MouseButtonHoldState mouseButtonHoldState = null;
             MouseInputClick mouseInputClick = MouseInputClick.None;
 
             Debug.WriteLine("mouse up : " + e.ChangedButton.ToString());
@@ -427,7 +427,15 @@ namespace C_SlideShow.Shortcut
                 mouseInputClick = MouseInputClick.X2_Click;
             }
 
+            // 取得失敗
+            if( mouseButtonHoldState == null) return;
+            if(mouseInputClick == MouseInputClick.None )
+            {
+                mouseButtonHoldState.IsPressed = false;
+                return;
+            }
 
+            // 既に他の入力でコマンド実行済み
             if( mouseButtonHoldState.CommandExecuted )
             {
                 e.Handled = true;
@@ -468,7 +476,24 @@ namespace C_SlideShow.Shortcut
         // マウスジェスチャ ストローク更新時
         private void MouseGestureStrokeChanged(object sender, EventArgs e)
         {
-            mouseButtonHoldState_R.CommandExecuted = true;
+            switch( mouseGesture.StartingButton )
+            {
+                case MouseButton.Left:
+                    mouseButtonHoldState_L.CommandExecuted = true;
+                    break;
+                case MouseButton.Right:
+                    mouseButtonHoldState_R.CommandExecuted = true;
+                    break;
+                case MouseButton.Middle:
+                    mouseButtonHoldState_M.CommandExecuted = true;
+                    break;
+                case MouseButton.XButton1:
+                    mouseButtonHoldState_X1.CommandExecuted = true;
+                    break;
+                case MouseButton.XButton2:
+                    mouseButtonHoldState_X2.CommandExecuted = true;
+                    break;
+            }
 
             // 現在のストロークと、一致するコマンドを通知ブロックに表示
             MouseGestureInput gestureInput = new MouseGestureInput(mouseGesture.StartingButton, mouseGesture.Stroke);
