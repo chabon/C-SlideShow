@@ -84,6 +84,11 @@ namespace C_SlideShow.Shortcut
         private string stroke;
 		public string Stroke { get { return stroke; } }
 
+        /// <summary>
+        /// ストロークが入力され始めたかどうか
+        /// </summary>
+        public bool StrokeStarted { get; set; }
+
 		/// <summary>
 		/// 四方向それぞれについての情報(要素の大きさは４)
 		/// </summary>
@@ -137,6 +142,7 @@ namespace C_SlideShow.Shortcut
 		{
 			enable = false;
             AllowLButtonStart = false;
+            StrokeStarted = false;
             stroke = "";
 			directionInfo = new DirectionInfo[4];
 			for(int i=0; i<4; i++)
@@ -153,6 +159,7 @@ namespace C_SlideShow.Shortcut
 		public void Start(MouseButton startingButton)
 		{
             if( startingButton == MouseButton.Left && !AllowLButtonStart ) return;
+            if( StrokeStarted ) return;
 
 			enable = true;
             stroke = "";
@@ -187,6 +194,8 @@ namespace C_SlideShow.Shortcut
         /// <returns>終了時のジェスチャのストローク</returns>
 		public string End()
 		{
+            StrokeStarted = false;
+
 			if(enable)
 			{
 				enable = false;
@@ -257,6 +266,7 @@ namespace C_SlideShow.Shortcut
 						directionInfo[(int)arrow].Enable = false;
 					
 						stroke += ArrowToString(arrow);
+                        StrokeStarted = true;
                         Debug.WriteLine("MouseGesture Stroke: " + stroke);
                         StrokeChanged?.Invoke( this, new EventArgs() );
 					}
@@ -326,7 +336,7 @@ namespace C_SlideShow.Shortcut
             {
                 if ( (int)wParam == WMessageButtonUp )
                 {
-                    Debug.WriteLine(  string.Format( "Mouse Button up : " + WMessageButtonUp.ToString() )  );
+                    Debug.WriteLine(  string.Format( "Mouse Button up in HookProc: " + WMessageButtonUp.ToString() )  );
                     End();
                 }
 
