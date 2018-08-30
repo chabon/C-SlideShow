@@ -139,18 +139,34 @@ namespace C_SlideShow
             // ショートカット
             foreach( Shortcut.ICommand command in MainWindow.Current.ShortcutManager.GetCommandList() )
             {
-                KeyMap km = setting.ShortcutSetting.KeyMap.FirstOrDefault(k => k.CommandID == command.ID);
-                MouseInputMap mm = setting.ShortcutSetting.MouseInputMap.FirstOrDefault(k => k.CommandID == command.ID);
-                MouseGestureMap gm = setting.ShortcutSetting.MouseGestureMap.FirstOrDefault(k => k.CommandID == command.ID);
+                List<KeyMap>          kml = setting.ShortcutSetting.KeyMap.Where(k => k.CommandID == command.ID).ToList();
+                List<MouseInputMap>   mml = setting.ShortcutSetting.MouseInputMap.Where(k => k.CommandID == command.ID).ToList();
+                List<MouseGestureMap> gml = setting.ShortcutSetting.MouseGestureMap.Where(k => k.CommandID == command.ID).ToList();
 
-                Action<ListView> AddShortcutItemToListView = new Action<ListView>(listView => 
+                int maxMapCount = 1;
+                if( maxMapCount < kml.Count ) maxMapCount = kml.Count;
+                if( maxMapCount < mml.Count ) maxMapCount = mml.Count;
+                if( maxMapCount < gml.Count ) maxMapCount = gml.Count;
+
+                Action<ListView> AddShortcutItemToListView = (listView) => 
                 {
-                    listView.Items.Add(  new ShortcutListViewItem {
-                        CommandStr = command.GetDetail(), CommandID = command.ID,
-                        KeyStr = km?.KeyInput.ToString(), KeyInput = km?.KeyInput.Clone(),
-                        MouseInputStr = mm?.MouseInput.ToString(), MouseInput = mm?.MouseInput.Clone(),
-                        MouseGestureStr = gm?.GestureInput.ToString(), MouseGestureInput = gm?.GestureInput.Clone()}  );
-                });
+                    for(int i = 0; i< maxMapCount; i++ )
+                    {
+                        KeyMap km = null;
+                        MouseInputMap mm = null;
+                        MouseGestureMap gm = null;
+
+                        if( i < kml.Count ) km = kml[i];
+                        if( i < mml.Count ) mm = mml[i];
+                        if( i < gml.Count ) gm = gml[i];
+
+                        listView.Items.Add(  new ShortcutListViewItem {
+                            CommandStr      = command.GetDetail(),         CommandID         = command.ID,
+                            KeyStr          = km?.KeyInput.ToString(),     KeyInput          = km?.KeyInput.Clone(),
+                            MouseInputStr   = mm?.MouseInput.ToString(),   MouseInput        = mm?.MouseInput.Clone(),
+                            MouseGestureStr = gm?.GestureInput.ToString(), MouseGestureInput = gm?.GestureInput.Clone()}  );
+                    }
+                };
 
                 switch( command.Scene )
                 {
@@ -374,7 +390,8 @@ namespace C_SlideShow
         {
             if( isInitializing ) return;
 
-            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            ListView currentListView = GetCurrentShortcutListView();
+            ShortcutListViewItem item = currentListView.SelectedItem as ShortcutListViewItem;
 
             if( item != null )
             {
@@ -405,6 +422,30 @@ namespace C_SlideShow
                 KeyInputModifire_Shift.IsEnabled = false;
                 KeyInputModifire_Ctrl.IsEnabled  = false;
                 KeyInputModifire_Alt.IsEnabled = false;
+            }
+
+            // 詳細ボタン
+            if(item != null )
+            {
+                CopySelectedCommand.IsEnabled = true;
+
+                int cnt = 0;
+                foreach(object i in currentListView.Items )
+                {
+                    ShortcutListViewItem si = i as ShortcutListViewItem;
+                    if(i != null )
+                    {
+                        if( si.CommandID == item.CommandID ) cnt++;
+                    }
+                }
+
+                if( cnt >= 2 ) DeleteSelectedCommand.IsEnabled = true;
+                else DeleteSelectedCommand.IsEnabled = false;
+            }
+            else
+            {
+                CopySelectedCommand.IsEnabled = false;
+                DeleteSelectedCommand.IsEnabled = false;
             }
 
             // キー
@@ -440,52 +481,38 @@ namespace C_SlideShow
 
         private void AllDefault_Shortcut_Click(object sender, RoutedEventArgs e)
         {
-            var defaultKeymap = ShortcutSetting.CreateDefaultKeyMap();
-            var defaultMouseInputmap = ShortcutSetting.CreateDefaultMouseInputMap();
-            var defaultMouseGesturemap = ShortcutSetting.CreateDefaultMouseGestureMap();
+            List<KeyMap> defaultKeymap = ShortcutSetting.CreateDefaultKeyMap();
+            List<MouseInputMap> defaultMouseInputmap = ShortcutSetting.CreateDefaultMouseInputMap();
+            List<MouseGestureMap> defaultMouseGesturemap = ShortcutSetting.CreateDefaultMouseGestureMap();
 
-            Action<ListView> makeAllItemsInListViewDefault = (ListView listView) =>
+            // シーン(現在のタブ)取得
+            Shortcut.Scene scene;
+            ListView currentListView = GetCurrentShortcutListView();
+            if( currentListView == ShortcutListView_ALL ) scene = Shortcut.Scene.All;
+            else if( currentListView == ShortcutListView_Normal ) scene = Shortcut.Scene.Nomal;
+            else if( currentListView == ShortcutListView_Expand ) scene = Shortcut.Scene.Expand;
+            else return;
+
+            // リストクリア
+            currentListView.Items.Clear();
+
+            // リストに追加
+            foreach( Shortcut.ICommand command in MainWindow.Current.ShortcutManager.GetCommandList() )
             {
-                foreach( var li in listView.Items )
+                if(command.Scene == scene )
                 {
-                    ShortcutListViewItem si = li as ShortcutListViewItem;
+                    KeyMap          km = defaultKeymap.FirstOrDefault(m => m.CommandID == command.ID);
+                    MouseInputMap   mm = defaultMouseInputmap.FirstOrDefault(m => m.CommandID == command.ID);
+                    MouseGestureMap gm = defaultMouseGesturemap.FirstOrDefault(m => m.CommandID == command.ID);
 
-                    if(si != null)
-                    {
-                        // キー
-                        si.KeyInput = null;
-                        si.KeyStr = "";
-                        var km = defaultKeymap.FirstOrDefault(k => k.CommandID == si.CommandID);
-                        if(km != null )
-                        {
-                            si.KeyInput = km.KeyInput;
-                            si.KeyStr = km.KeyInput.ToString();
-                        }
-
-                        // マウス入力
-                        si.MouseInput = null;
-                        si.MouseInputStr = "";
-                        var mm = defaultMouseInputmap.FirstOrDefault(k => k.CommandID == si.CommandID);
-                        if(mm != null )
-                        {
-                            si.MouseInput = mm.MouseInput;
-                            si.MouseInputStr = mm.MouseInput.ToString();
-                        }
-
-                        // マウスジェスチャ
-                        si.MouseGestureInput = null;
-                        si.MouseGestureStr = null;
-                        var mg = defaultMouseGesturemap.FirstOrDefault(k => k.CommandID == si.CommandID);
-                        if(mg != null )
-                        {
-                            si.MouseGestureInput = mg.GestureInput;
-                            si.MouseGestureStr = mg.GestureInput.ToString();
-                        }
-                    }
+                    currentListView.Items.Add(  new ShortcutListViewItem {
+                        CommandStr      = command.GetDetail(),         CommandID         = command.ID,
+                        KeyStr          = km?.KeyInput.ToString(),     KeyInput          = km?.KeyInput.Clone(),
+                        MouseInputStr   = mm?.MouseInput.ToString(),   MouseInput        = mm?.MouseInput.Clone(),
+                        MouseGestureStr = gm?.GestureInput.ToString(), MouseGestureInput = gm?.GestureInput.Clone()}  );
                 }
-            };
+            }
 
-            makeAllItemsInListViewDefault( GetCurrentShortcutListView() );
             ShortcutListView_SelectionChanged(this, null);
         }
 
@@ -495,6 +522,37 @@ namespace C_SlideShow
             ShortcutListView_SelectionChanged(this, null);
         }
 
+       private void CopySelectedCommand_Click(object sender, RoutedEventArgs e)
+        {
+            ListView currentShortcutList = GetCurrentShortcutListView();
+            ShortcutListViewItem item = currentShortcutList.SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+
+            // 複製
+            ShortcutListViewItem copyItem = new ShortcutListViewItem
+            {
+                CommandStr = item.CommandStr,
+                CommandID = item.CommandID,
+            };
+
+            // リストに挿入
+            int index = currentShortcutList.SelectedIndex;
+            currentShortcutList.Items.Insert(index + 1, copyItem);
+        }
+
+        private void DeleteSelectedCommand_Click(object sender, RoutedEventArgs e)
+        {
+            ListView currentShortcutList = GetCurrentShortcutListView();
+            ShortcutListViewItem item = currentShortcutList.SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+
+            currentShortcutList.Items.Remove(item);
+        }
+
+        private void Shortcut_DetailButton_Click(object sender, RoutedEventArgs e)
+        {
+            Shortcut_DetailButton.ContextMenu.IsOpen = true;
+        }
 
         // ショートカット設定 (キー)
         private void HotkeyControl_KeyAssigned(object sender, EventArgs e)
@@ -930,6 +988,8 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
+
 
 
 

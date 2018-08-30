@@ -26,7 +26,7 @@
                             </ListView>
                         </TabItem>
                         <TabItem Header="通常時" Width="70">
-                            <ListView x:Name="ShortcutListView_Normal" SelectionChanged="ShortcutListView_SelectionChanged" >
+                            <ListView x:Name="ShortcutListView_Normal" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
@@ -38,7 +38,7 @@
                             </ListView>
                         </TabItem>
                         <TabItem Header="拡大時" Width="70">
-                            <ListView x:Name="ShortcutListView_Expand" SelectionChanged="ShortcutListView_SelectionChanged" >
+                            <ListView x:Name="ShortcutListView_Expand" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
@@ -50,6 +50,16 @@
                             </ListView>
                         </TabItem>
                     </TabControl>
+
+                    <Button x:Name="Shortcut_DetailButton" Click="Shortcut_DetailButton_Click" Content="..." ContextMenuService.IsEnabled="False" Width="25" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="8">
+                        <Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem x:Name="CopySelectedCommand"  Click="CopySelectedCommand_Click" Header="選択中のコマンドを複製"></MenuItem>
+                                <MenuItem x:Name="DeleteSelectedCommand" Click="DeleteSelectedCommand_Click" IsEnabled="False" Header="選択中のコマンドを削除"></MenuItem>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
+
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                             <GroupBox  Header="キー入力" Height="100" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
