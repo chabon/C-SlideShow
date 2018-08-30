@@ -19,7 +19,7 @@ namespace C_SlideShow.Shortcut
     /// マウスボタンを押している最中に他のインプット方法によってコマンドが実行された場合、離した時の単クリックによるコマンドはキャンセルすること
     /// の２つを管理するための値
     /// </summary>
-    public class MouseButtonHoldState
+    public class MouseButtonClickState
     {
         public bool IsPressed;
         public bool CommandExecuted;
@@ -38,13 +38,14 @@ namespace C_SlideShow.Shortcut
 
         // マウスジェスチャー管理
         MouseGesture mouseGesture;
+        string strokeOfLastExecutedCommand;
 
         // マウスボタンの状態
-        MouseButtonHoldState mouseButtonHoldState_L  = new MouseButtonHoldState();
-        MouseButtonHoldState mouseButtonHoldState_R  = new MouseButtonHoldState();
-        MouseButtonHoldState mouseButtonHoldState_M  = new MouseButtonHoldState();
-        MouseButtonHoldState mouseButtonHoldState_X1 = new MouseButtonHoldState();
-        MouseButtonHoldState mouseButtonHoldState_X2 = new MouseButtonHoldState();
+        MouseButtonClickState mouseButtonClickState_L  = new MouseButtonClickState();
+        MouseButtonClickState mouseButtonClickState_R  = new MouseButtonClickState();
+        MouseButtonClickState mouseButtonClickState_M  = new MouseButtonClickState();
+        MouseButtonClickState mouseButtonClickState_X1 = new MouseButtonClickState();
+        MouseButtonClickState mouseButtonClickState_X2 = new MouseButtonClickState();
 
         //// ウインドウドラッグの準備
         //bool mainWindowDragMoveReady = false;
@@ -81,15 +82,17 @@ namespace C_SlideShow.Shortcut
 
             // 左クリック後、ドラッグでウインドウドラッグ可能に
             windowDragMove = new WindowDragMove(MainWindow.Current);
-            windowDragMove.DragMoved += (s, e) => { mouseButtonHoldState_L.CommandExecuted = true; };
+            windowDragMove.DragMoved += (s, e) => { mouseButtonClickState_L.CommandExecuted = true; };
         }
 
         private void InitMouseGesture()
         {
             mouseGesture = new MouseGesture();
-            mouseGesture.StrokeChanged += MouseGestureStrokeChanged;
+            mouseGesture.StrokeChanged   += MouseGestureStrokeChanged;
             mouseGesture.GestureFinished += MouseGestureFinished;
+            mouseGesture.HoldClick     += MouseGestureHoldClick;
             mouseGesture.Range = MainWindow.Current.Setting.MouseGestureRange;
+            strokeOfLastExecutedCommand = "";
         }
 
         /* ---------------------------------------------------- */
@@ -214,9 +217,9 @@ namespace C_SlideShow.Shortcut
                     if( cmd.Scene == Scene.All || cmd.Scene == currentScene )
                     {
                         if( cmd.CanExecute() ) cmd.Execute();
-                        mouseButtonHoldState_L.CommandExecuted = true;
-                        mouseButtonHoldState_R.CommandExecuted = true;
-                        mouseButtonHoldState_M.CommandExecuted = true;
+                        mouseButtonClickState_L.CommandExecuted = true;
+                        mouseButtonClickState_R.CommandExecuted = true;
+                        mouseButtonClickState_M.CommandExecuted = true;
                         return true;
                     }
                 }
@@ -265,53 +268,6 @@ namespace C_SlideShow.Shortcut
             return false;
         }
 
-        private MouseInputHold GetMouseInputHold()
-        {
-            MouseInputHold hold = MouseInputHold.None;
-
-            if( (Win32.GetKeyState(Win32.VK_RBUTTON) & 0x8000) != 0 ) // マウス右ボタン
-            {
-                hold |= MouseInputHold.R_Button;
-            }
-
-            if( (Win32.GetKeyState(Win32.VK_LBUTTON) & 0x8000) != 0 ) // マウス左ボタン
-            {
-                hold |= MouseInputHold.L_Button;
-            }
-
-            if( (Win32.GetKeyState(Win32.VK_MBUTTON) & 0x8000) != 0 ) // マウス中央ボタン
-            {
-                hold |= MouseInputHold.M_Button;
-            }
-
-            if( (Win32.GetKeyState(Win32.VK_XBUTTON1) & 0x8000) != 0 ) // マウス戻るボタン
-            {
-                hold |= MouseInputHold.XButton1;
-            }
-
-            if( (Win32.GetKeyState(Win32.VK_XBUTTON2) & 0x8000) != 0 ) // マウス進むボタン
-            {
-                hold |= MouseInputHold.XButton2;
-            }
-
-            if( (Keyboard.Modifiers & ModifierKeys.Control) != 0) // Ctrlキー
-            {
-                hold |= MouseInputHold.Ctrl;
-            }
-
-            if( (Keyboard.Modifiers & ModifierKeys.Shift) != 0) // Shiftキー
-            {
-                hold |= MouseInputHold.Shift;
-            }
-            if( (Keyboard.Modifiers & ModifierKeys.Alt) != 0) // Altキー
-            {
-                hold |= MouseInputHold.Alt;
-            }
-
-            //Debug.WriteLine( "MouseInputHold: " + hold.ToString() );
-            return hold;
-        }
-
         // マウスジェスチャー用のフックを解除
         public void UnhookWindowsHook()
         {
@@ -342,14 +298,18 @@ namespace C_SlideShow.Shortcut
         // マウスホイール
         private void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            // マウスジェスチャ入力中
+            if( mouseGesture != null && mouseGesture.IsActive ) return;
+
+            // 
             MouseInput mouseInput;
             if(e.Delta > 0 ) // wheel up
             {
-                mouseInput = new MouseInput(GetMouseInputHold(), MouseInputClick.WheelUp);
+                mouseInput = new MouseInput(MouseInputButton.WheelUp, Keyboard.Modifiers);
             }
             else // wheel down
             {
-                mouseInput = new MouseInput(GetMouseInputHold(), MouseInputClick.WheelDown);
+                mouseInput = new MouseInput(MouseInputButton.WheelDown, Keyboard.Modifiers);
             }
 
             // 送信
@@ -359,14 +319,17 @@ namespace C_SlideShow.Shortcut
         // マウスボタン押下
         private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Debug.WriteLine("mouse down : " + e.ChangedButton.ToString());
-            MouseButtonHoldState mouseButtonHoldState = null;
+            // マウスジェスチャ入力中
+            if( mouseGesture != null && mouseGesture.IsActive ) return;
 
-            if(e.ChangedButton == MouseButton.Left )          mouseButtonHoldState = mouseButtonHoldState_L;
-            else if(e.ChangedButton == MouseButton.Right )    mouseButtonHoldState = mouseButtonHoldState_R;
-            else if(e.ChangedButton == MouseButton.Middle )   mouseButtonHoldState = mouseButtonHoldState_M;
-            else if(e.ChangedButton == MouseButton.XButton1 ) mouseButtonHoldState = mouseButtonHoldState_X1;
-            else if(e.ChangedButton == MouseButton.XButton2 ) mouseButtonHoldState = mouseButtonHoldState_X2;
+            Debug.WriteLine("mouse down : " + e.ChangedButton.ToString());
+            MouseButtonClickState mouseButtonHoldState = null;
+
+            if(e.ChangedButton == MouseButton.Left )          mouseButtonHoldState = mouseButtonClickState_L;
+            else if(e.ChangedButton == MouseButton.Right )    mouseButtonHoldState = mouseButtonClickState_R;
+            else if(e.ChangedButton == MouseButton.Middle )   mouseButtonHoldState = mouseButtonClickState_M;
+            else if(e.ChangedButton == MouseButton.XButton1 ) mouseButtonHoldState = mouseButtonClickState_X1;
+            else if(e.ChangedButton == MouseButton.XButton2 ) mouseButtonHoldState = mouseButtonClickState_X2;
 
             if(mouseButtonHoldState != null )
             {
@@ -381,8 +344,14 @@ namespace C_SlideShow.Shortcut
                 if(map != null )
                 {
                     if( mouseGesture == null ) InitMouseGesture();
-                    mouseGesture.Range = MainWindow.Current.Setting.MouseGestureRange;
-                    mouseGesture.Start(e.ChangedButton);
+                    if( !mouseGesture.IsActive )
+                    {
+                        mouseGesture.Range = MainWindow.Current.Setting.MouseGestureRange;
+                        if( e.ChangedButton == MouseButton.Left ) mouseGesture.EnableDragGesture = false; // 左ボタンのドラッグは無効に(ウインドウ移動に使われているので)
+                        else mouseGesture.EnableDragGesture = true;
+                        strokeOfLastExecutedCommand = "";
+                        mouseGesture.Start(e.ChangedButton);
+                    }
                 }
             }
         }
@@ -395,80 +364,85 @@ namespace C_SlideShow.Shortcut
         // マウスボタン離した時
         private void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            // マウスジェスチャ入力中
+            if( mouseGesture != null && mouseGesture.IsActive ) return;
+
             // マウスクリックの取得
-            MouseButtonHoldState mouseButtonHoldState = null;
-            MouseInputClick mouseInputClick = MouseInputClick.None;
+            MouseButtonClickState mouseButtonClickState = null;
+            MouseInputButton mouseInputButton = MouseInputButton.None;
+
+            // test
+            //mouseButtonHoldState.IsPressed = false;
+            //return;
 
             Debug.WriteLine("mouse up : " + e.ChangedButton.ToString());
 
             if(e.ChangedButton == MouseButton.Left )
             {
-                mouseButtonHoldState = mouseButtonHoldState_L;
-                mouseInputClick = MouseInputClick.L_Click;
+                mouseButtonClickState = mouseButtonClickState_L;
+                mouseInputButton = MouseInputButton.L_Click;
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
-                mouseButtonHoldState = mouseButtonHoldState_R;
-                mouseInputClick = MouseInputClick.R_Click;
+                mouseButtonClickState = mouseButtonClickState_R;
+                mouseInputButton = MouseInputButton.R_Click;
             }
             else if(e.ChangedButton == MouseButton.Middle )
             {
-                mouseButtonHoldState = mouseButtonHoldState_M;
-                mouseInputClick = MouseInputClick.M_Click;
+                mouseButtonClickState = mouseButtonClickState_M;
+                mouseInputButton = MouseInputButton.M_Click;
             }
             else if(e.ChangedButton == MouseButton.XButton1 )
             {
-                mouseButtonHoldState = mouseButtonHoldState_X1;
-                mouseInputClick = MouseInputClick.X1_Click;
+                mouseButtonClickState = mouseButtonClickState_X1;
+                mouseInputButton = MouseInputButton.X1_Click;
             }
             else if(e.ChangedButton == MouseButton.XButton2 )
             {
-                mouseButtonHoldState = mouseButtonHoldState_X2;
-                mouseInputClick = MouseInputClick.X2_Click;
+                mouseButtonClickState = mouseButtonClickState_X2;
+                mouseInputButton = MouseInputButton.X2_Click;
             }
 
             // 取得失敗
-            if( mouseButtonHoldState == null) return;
-            if(mouseInputClick == MouseInputClick.None )
-            {
-                mouseButtonHoldState.IsPressed = false;
-                return;
-            }
+            if( mouseButtonClickState == null) return;
+            if( mouseInputButton == MouseInputButton.None ) return;
 
             // 既に他の入力でコマンド実行済み
-            if( mouseButtonHoldState.CommandExecuted )
+            if( mouseButtonClickState.CommandExecuted )
             {
                 e.Handled = true;
             }
-            else if(mouseButtonHoldState.IsPressed)
+
+            // マウスクリックコマンド実行
+            else if(mouseButtonClickState.IsPressed)
             {
-                MouseInput mouseInput = new MouseInput(GetMouseInputHold(), mouseInputClick);
+                MouseInput mouseInput = new MouseInput(mouseInputButton, Keyboard.Modifiers);
                 if( DispatchMouseInput(mouseInput) ) e.Handled = true;
             }
 
             // 押下状態更新
-            mouseButtonHoldState.IsPressed = false;
-
+            mouseButtonClickState.IsPressed = false;
         }
 
         // ダブルクリック
         private void MainWindow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            MouseInputClick mouseInputClick = MouseInputClick.None;
-            MouseInputHold mouseInputHold     = GetMouseInputHold();
+            // マウスジェスチャ入力中
+            if( mouseGesture != null && mouseGesture.IsActive ) return;
+
+            //
+            MouseInputButton mouseInputButton = MouseInputButton.None;
 
             if(e.ChangedButton == MouseButton.Left )
             {
-                mouseInputClick = MouseInputClick.L_DoubleClick;
-                mouseInputHold = (mouseInputHold & ~MouseInputHold.L_Button);
+                mouseInputButton = MouseInputButton.L_DoubleClick;
             }
             else if(e.ChangedButton == MouseButton.Right )
             {
-                mouseInputClick = MouseInputClick.R_DoubleClick;
-                mouseInputHold = (mouseInputHold & ~MouseInputHold.R_Button);
+                mouseInputButton = MouseInputButton.R_DoubleClick;
             }
 
-            MouseInput mouseInput = new MouseInput(mouseInputHold, mouseInputClick);
+            MouseInput mouseInput = new MouseInput(mouseInputButton, Keyboard.Modifiers);
             if( DispatchMouseInput(mouseInput) ) e.Handled = true;
         }
 
@@ -479,19 +453,19 @@ namespace C_SlideShow.Shortcut
             switch( mouseGesture.StartingButton )
             {
                 case MouseButton.Left:
-                    mouseButtonHoldState_L.CommandExecuted = true;
+                    mouseButtonClickState_L.CommandExecuted = true;
                     break;
                 case MouseButton.Right:
-                    mouseButtonHoldState_R.CommandExecuted = true;
+                    mouseButtonClickState_R.CommandExecuted = true;
                     break;
                 case MouseButton.Middle:
-                    mouseButtonHoldState_M.CommandExecuted = true;
+                    mouseButtonClickState_M.CommandExecuted = true;
                     break;
                 case MouseButton.XButton1:
-                    mouseButtonHoldState_X1.CommandExecuted = true;
+                    mouseButtonClickState_X1.CommandExecuted = true;
                     break;
                 case MouseButton.XButton2:
-                    mouseButtonHoldState_X2.CommandExecuted = true;
+                    mouseButtonClickState_X2.CommandExecuted = true;
                     break;
             }
 
@@ -501,20 +475,44 @@ namespace C_SlideShow.Shortcut
             ICommand cmd = GetCommandFromMouseGestureInput(gestureInput);
             if(cmd != null )
             {
-                notification += " [" + cmd.GetDetail() + "]";
+                // マウスホイールの場合は、即HoldClickイベントでコマンドが実行されるので、通知表示しない
+                if( gestureInput.Stroke.EndsWith("[WU]") || gestureInput.Stroke.EndsWith("[WD]") ) return;
+
+                notification += "  [" + cmd.GetDetail() + "]";
             }
             MainWindow.Current.NotificationBlock.Show(notification, NotificationPriority.Normal, NotificationTime.Eternally);
+        }
+
+        // マウスジェスチャ ホールドクリック時
+        private void MouseGestureHoldClick(object sender, EventArgs e)
+        {
+            MouseGestureInput gestureInput = new MouseGestureInput(mouseGesture.StartingButton, mouseGesture.Stroke);
+
+            if( gestureInput.Stroke.Length > 0 )
+            {
+                if( DispatchMouseGestureInput(gestureInput) )
+                {
+                    //      コマンドが実行された場合
+                    MainWindow.Current.NotificationBlock.Hide();
+
+                    // 現在のストロークから、最後のクリックストロークを削除(ボタンをホールドしたまま、別のボタンのコマンドも押せるように)
+                    mouseGesture.RemoveLastClickStroke();
+
+                    // 削除後のストロークを保持。マウスジェスチャ完了時に被るならば、コマンド発行させない
+                    strokeOfLastExecutedCommand = mouseGesture.Stroke;
+                }
+                return;
+            }
         }
 
         // マウスジェスチャ 完了時
         private void MouseGestureFinished(object sender, EventArgs e)
         {
             MouseGestureInput gestureInput = new MouseGestureInput(mouseGesture.StartingButton, mouseGesture.Stroke);
+            MainWindow.Current.NotificationBlock.Hide();
 
-            // ストロークがあった場合、コマンド発送
-            if( gestureInput.Stroke.Length > 0 )
+            if( gestureInput.Stroke.Length > 0 && gestureInput.Stroke != strokeOfLastExecutedCommand)
             {
-                MainWindow.Current.NotificationBlock.Hide();
                 DispatchMouseGestureInput(gestureInput);
                 return;
             }

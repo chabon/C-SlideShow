@@ -65,29 +65,24 @@ namespace C_SlideShow.Shortcut
 		/// <summary>
 		/// マウスジェスチャの有効無効
 		/// </summary>
-		private bool enable;
-        public bool Enable { get { return enable; } }
+		private bool isActive;
+        public bool IsActive { get { return isActive; } }
 		
 		/// <summary>
 		/// 判定距離
 		/// </summary>
-		private int range;
-		public int Range
-		{
-			get { return range; }
-			set { range = value; }
-		}
+        public int Range { get; set; }
+
+        /// <summary>
+        /// ドラッグによるジェスチャを有効
+        /// </summary>
+        public bool EnableDragGesture { get; set; }
 
         /// <summary>
         /// ジェスチャのストローク
         /// </summary>
         private string stroke;
 		public string Stroke { get { return stroke; } }
-
-        /// <summary>
-        /// ストロークが入力され始めたかどうか
-        /// </summary>
-        public bool StrokeStarted { get; set; }
 
 		/// <summary>
 		/// 四方向それぞれについての情報(要素の大きさは４)
@@ -106,14 +101,14 @@ namespace C_SlideShow.Shortcut
         public MouseButton StartingButton { get { return startingButton; } }
 
         /// <summary>
-        /// 左クリックによるスタートを許可するか
-        /// </summary>
-        public bool AllowLButtonStart { get; set; }
-
-        /// <summary>
         /// 始動ボタンリリース時のウインドウズメッセージ
         /// </summary>
-        private int WMessageButtonUp;
+        private int WMessageStartingButtonUp;
+
+        /// <summary>
+        /// ジェスチャ中のクリックをジェスチャとみなすかどうか
+        /// </summary>
+        public bool AllowHoldClick { get; set; }
 
         /// <summary>
         /// フックチェーンにインストールするフックプロシージャのイベント
@@ -131,6 +126,11 @@ namespace C_SlideShow.Shortcut
         public event EventHandler StrokeChanged;
 
         /// <summary>
+        /// ホールドクリック(ジェスチャー開始後のクリック)イベント
+        /// </summary>
+        public event EventHandler HoldClick;
+
+        /// <summary>
         /// ジェスチャ完了イベント
         /// </summary>
         public event EventHandler GestureFinished;
@@ -140,16 +140,16 @@ namespace C_SlideShow.Shortcut
         /// </summary>
 		public MouseGesture()
 		{
-			enable = false;
-            AllowLButtonStart = false;
-            StrokeStarted = false;
+			isActive = false;
+            EnableDragGesture = true;
+            AllowHoldClick = true;
             stroke = "";
 			directionInfo = new DirectionInfo[4];
 			for(int i=0; i<4; i++)
 			{
 				directionInfo[i] =new DirectionInfo();
 			}
-			range = 15;
+			Range = 15;
             SetHook();
 		}
 
@@ -158,33 +158,32 @@ namespace C_SlideShow.Shortcut
 		/// </summary>
 		public void Start(MouseButton startingButton)
 		{
-            if( startingButton == MouseButton.Left && !AllowLButtonStart ) return;
-            if( StrokeStarted ) return;
-
-			enable = true;
+			isActive = true;
             stroke = "";
 			ResetDirection();
 			oldPos = GetCursorPos();
             this.startingButton = startingButton;
+
             switch( startingButton )
             {
                 case MouseButton.Left:
-                    WMessageButtonUp = WM_LBUTTONUP;
+                    WMessageStartingButtonUp = WM_LBUTTONUP;
                     break;
                 case MouseButton.Right:
-                    WMessageButtonUp = WM_RBUTTONUP;
+                    WMessageStartingButtonUp = WM_RBUTTONUP;
                     break;
                 case MouseButton.Middle:
-                    WMessageButtonUp = WM_MBUTTONUP;
+                    WMessageStartingButtonUp = WM_MBUTTONUP;
                     break;
                 case MouseButton.XButton1:
                 case MouseButton.XButton2:
-                    WMessageButtonUp = WM_XBUTTONUP;
+                    WMessageStartingButtonUp = WM_XBUTTONUP;
                     break;
                 default:
-                    enable = false;
+                    isActive = false;
                     return;
             }
+            Debug.WriteLine("mouse gesture start");
         }
 
 
@@ -194,11 +193,10 @@ namespace C_SlideShow.Shortcut
         /// <returns>終了時のジェスチャのストローク</returns>
 		public string End()
 		{
-            StrokeStarted = false;
-
-			if(enable)
+			if(isActive)
 			{
-				enable = false;
+				isActive = false;
+                Debug.WriteLine("mouse gesture end");
                 GestureFinished?.Invoke( this, new EventArgs() );
                 return stroke;
 			}
@@ -212,7 +210,7 @@ namespace C_SlideShow.Shortcut
 		public void Test()
 		{	
 			//有効なときだけ判定する。
-			if(enable)
+			if(isActive)
 			{
 				double ox = oldPos.X, oy = oldPos.Y;
 				Arrow arrow = Arrow.None;
@@ -258,7 +256,7 @@ namespace C_SlideShow.Shortcut
 				//移動を検知したとき
 				if(arrow != Arrow.None)
 				{
-					if(directionInfo[(int)arrow].Enable && directionInfo[(int)arrow].Length > range)
+					if(directionInfo[(int)arrow].Enable && directionInfo[(int)arrow].Length > Range)
 					{
 						ResetDirection();
 			
@@ -266,7 +264,6 @@ namespace C_SlideShow.Shortcut
 						directionInfo[(int)arrow].Enable = false;
 					
 						stroke += ArrowToString(arrow);
-                        StrokeStarted = true;
                         Debug.WriteLine("MouseGesture Stroke: " + stroke);
                         StrokeChanged?.Invoke( this, new EventArgs() );
 					}
@@ -306,6 +303,15 @@ namespace C_SlideShow.Shortcut
 				directionInfo[i].Reset();
 			}
 		}
+
+        /// <summary>
+        /// ストロークの最後がクリックならば削除する
+        /// </summary>
+        public void RemoveLastClickStroke()
+        {
+            System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex(@"\[.{1,2}\]$");
+            stroke = reg.Replace(stroke, "");
+        }
 		　 
         /// <summary>
         /// スクリーン上でのMouseMoveイベント、MouseRButtonUpイベント取得のためのグローバルフック
@@ -332,24 +338,154 @@ namespace C_SlideShow.Shortcut
 
         private IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if(enable)
+            if(isActive)
             {
-                if ( (int)wParam == WMessageButtonUp )
+                Debug.WriteLine( "WMessage in HookProc  wParam:" + ( (int)wParam ).ToString() + "  lParam:" + ( (int)lParam ).ToString()  );
+
+                // マウス移動時は、軌道のチェック
+                if( (int)wParam == WM_MOUSEMOVE ) // WM_MOUSEMOVE
                 {
-                    Debug.WriteLine(  string.Format( "Mouse Button up in HookProc: " + WMessageButtonUp.ToString() )  );
+                    if(EnableDragGesture) this.Test();
+                }
+
+                // 始動ボタンが離されたらジェスチャ終了
+                else if ( IsWMParamMatchesStartingButtonUp(wParam, lParam) )
+                {
                     End();
                 }
 
-                else if( (int)wParam == WM_MOUSEMOVE ) // WM_MOUSEMOVE
+                else if( AllowHoldClick )
                 {
-                    //MSLLHOOKSTRUCT MouseHookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
-                    //Debug.WriteLine(string.Format("Mouse Position : {0:d}, {1:d}", MouseHookStruct.pt.X, MouseHookStruct.pt.Y));
-                    this.Test();
+                    // クリックストローク取得 (Mouse Button Down Message)
+                    string cs = GetClickStroke(wParam, lParam);
+                    if( cs.Length > 0 && !stroke.EndsWith(cs) ) // 2重押下の防止
+                    {
+                        stroke = stroke + cs;
+                        ResetDirection();
+                        StrokeChanged?.Invoke( this, new EventArgs() );
+                    }
+
+                    // ホールドクリック実行 (Mouse Button Up Message, Wheel Up Down Message)
+                    if(cs.Length == 0 && (int)wParam != WMessageStartingButtonUp)
+                    {
+                        TryHoldClick(wParam, lParam);
+                    }
                 }
             }
 
             return CallNextHookEx(hHook, nCode, wParam, lParam);
         }
+
+        private bool IsWMParamMatchesStartingButtonUp(IntPtr wParam, IntPtr lParam)
+        {
+            if( (int)wParam == WMessageStartingButtonUp )
+            {
+                if( (int)wParam == WM_XBUTTONUP )
+                {
+                    MSLLHOOKSTRUCT mouseHookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+                    if(mouseHookStruct.mouseData >> 16 == 1 ) // X1(戻るボタン)
+                    {
+                        Debug.WriteLine("Mouse XButton1 (戻るボタン) Up");
+                        if( startingButton == MouseButton.XButton1 ) return true;
+                    }
+                    else  // X2(進むボタン)
+                    {
+                        Debug.WriteLine("Mouse XButton2 (進むボタン) Up");
+                        if( startingButton == MouseButton.XButton2 ) return true;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private string GetClickStroke(IntPtr wParam, IntPtr lParam)
+        {
+            string clickStroke = "";
+            MSLLHOOKSTRUCT mouseHookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+
+            switch( (int)wParam )
+            {
+                case WM_LBUTTONDOWN:
+                    clickStroke =  "[L]";
+                    break;
+                case WM_RBUTTONDOWN:
+                    clickStroke = "[R]";
+                    break;
+                case WM_MBUTTONDOWN:
+                    clickStroke = "[M]";
+                    break;
+                case WM_XBUTTONDOWN:
+                    if(mouseHookStruct.mouseData >> 16 == 1 ) // X1(戻るボタン)
+                    {
+                        clickStroke = "[X1]";
+                    }
+                    else  // X2(進むボタン)
+                    {
+                        clickStroke = "[X2]";
+                    }
+                    break;
+            }
+
+            return clickStroke;
+        }
+
+        private void TryHoldClick(IntPtr wParam, IntPtr lParam)
+        {
+            MSLLHOOKSTRUCT mouseHookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+            string strEnd;
+
+            switch( (int)wParam )
+            {
+                case WM_LBUTTONUP:
+                    strEnd = "[L]";
+                    break;
+                case WM_RBUTTONUP:
+                    strEnd = "[R]";
+                    break;
+                case WM_MBUTTONUP:
+                    strEnd = "[M]";
+                    break;
+                case WM_XBUTTONUP:
+                    if(mouseHookStruct.mouseData >> 16 == 1 ) // X1(戻るボタン)
+                    {
+                        strEnd = "[X1]";
+                    }
+                    else  // X2(進むボタン)
+                    {
+                        strEnd = "[X2]";
+                    }
+                    break;
+                case WM_MOUSEWHEEL:
+                    if( (short)((mouseHookStruct.mouseData >> 16) & 0xffff) > 0 ) // Wheel Up
+                    {
+                        if( !stroke.EndsWith("[WU]") )
+                        {
+                            stroke = stroke + "[WU]";
+                            StrokeChanged?.Invoke( this, new EventArgs() );
+                        }
+                        strEnd = "[WU]";
+                    }
+                    else  // Wheel Down
+                    {
+                        if( !stroke.EndsWith("[WD]") )
+                        {
+                            stroke = stroke + "[WD]";
+                            StrokeChanged?.Invoke( this, new EventArgs() );
+                        }
+                        strEnd = "[WD]";
+                    }
+                    break;
+                default:
+                    return;
+            }
+
+            if( stroke.EndsWith(strEnd) ) HoldClick?.Invoke( this, new EventArgs() );
+        }
+
 
         public void UnHook()
         {
@@ -360,12 +496,21 @@ namespace C_SlideShow.Shortcut
         //     Win32 API
         /* ---------------------------------------------------- */
         // Message
-        public const int WM_LBUTTONUP  = 0x0202;
-        public const int WM_RBUTTONUP  = 0x0205;
-        public const int WM_MBUTTONUP  = 0x0208;
-        public const int WM_XBUTTONUP  = 0x020C;
+        public const int WM_LBUTTONDOWN  = 0x0201;  // 513
+        public const int WM_RBUTTONDOWN  = 0x0204;  // 516
+        public const int WM_MBUTTONDOWN  = 0x0207;  // 519
+        public const int WM_XBUTTONDOWN  = 0x020B;  // 523
+
+        public const int WM_LBUTTONUP  = 0x0202;    // 514
+        public const int WM_RBUTTONUP  = 0x0205;    // 517
+        public const int WM_MBUTTONUP  = 0x0208;    // 520
+        public const int WM_XBUTTONUP  = 0x020C;    // 524
+
+        public const int WM_MOUSEWHEEL = 0x020A;    // 522
+        
 
         public const int WM_MOUSEMOVE  = 0x0200;
+
 
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT

@@ -21,7 +21,7 @@ namespace C_SlideShow.CommonControl
     public partial class MouseGestureControl : UserControl
     {
         private bool isEnabled;
-        public Window parentWindow;
+        private Window parentWindow;
         private Shortcut.MouseGesture mouseGesture;
 
         /* ---------------------------------------------------- */
@@ -30,7 +30,10 @@ namespace C_SlideShow.CommonControl
         public string Stroke { get; set; } = "";
         public MouseButton StartingButton { get; set; }
         public bool ShowStartingButtonText { get; set; } = true;
-        public bool AllowLButtonStart { get; set; } = false;
+        public string OperationDesc { get; set; } = "任意のボタンを押下しながら\nドラッグ or クリック or ホイール";
+        public bool AllowLButtonStart { get; set; } = true;
+        public bool AllowLButtonDrag { get; set; } = true;
+        public bool AllowHoldClick { get; set; } = true; // ジェスチャ中のクリックをジェスチャとみなすかどうか
         public new bool IsEnabled
         {
             set
@@ -57,6 +60,7 @@ namespace C_SlideShow.CommonControl
             }
         }
 
+        public event EventHandler MainBorderLostFocus;
         public event EventHandler GestureAssigned;
 
 
@@ -89,7 +93,8 @@ namespace C_SlideShow.CommonControl
         public void StartAcceptingInput()
         {
             this.MainBorder.Background = new SolidColorBrush(Colors.LightGreen);
-            this.StrokeText.Text = "ボタン押下後、ドラッグして入力";
+            //this.StrokeText.Text = "ボタン押下後、ドラッグして入力";
+            this.StrokeText.Text = OperationDesc;
 
             // 親ウインドウ取得
             if(parentWindow == null )
@@ -106,7 +111,10 @@ namespace C_SlideShow.CommonControl
         {
             if( mouseGesture != null ) mouseGesture.End();
             this.MainBorder.Background = new SolidColorBrush(Colors.White);
-            UpdateStrokeText();
+            if( Stroke.Length > 0 )
+                UpdateStrokeText();
+            else
+                this.StrokeText.Text = "";
         }
 
         public string GetStartingButtonText()
@@ -129,6 +137,14 @@ namespace C_SlideShow.CommonControl
 
         private void UpdateStrokeText()
         {
+            // 左クリックのみしか押して無い場合は更新せず、操作説明の表示
+            if( StartingButton == MouseButton.Left && Stroke == "" )
+            {
+                this.StrokeText.Text = OperationDesc;
+                return;
+            }
+
+            // 更新
             if( ShowStartingButtonText)
             {
                 this.StrokeText.Text = "(" + GetStartingButtonText() + ") " + Stroke;
@@ -144,22 +160,27 @@ namespace C_SlideShow.CommonControl
         /* ---------------------------------------------------- */
         private void ParentWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(mouseGesture == null )
-            {
-                mouseGesture = new Shortcut.MouseGesture();
-                mouseGesture.StrokeChanged += MouseGesture_StrokeChanged;
-                mouseGesture.GestureFinished += MouseGesture_GestureFinished;
-            }
-
             if( MainBorder.IsFocused )
             {
-                if( !AllowLButtonStart && e.ChangedButton == MouseButton.Left ) return;
+                if(mouseGesture == null )
+                {
+                    mouseGesture = new Shortcut.MouseGesture();
+                    mouseGesture.StrokeChanged += MouseGesture_StrokeChanged;
+                    mouseGesture.GestureFinished += MouseGesture_GestureFinished;
+                }
 
-                if( AllowLButtonStart ) mouseGesture.AllowLButtonStart = true;
-                mouseGesture.Start(e.ChangedButton);
-                this.StartingButton = e.ChangedButton;
-                this.Stroke = "";
+                if( !AllowLButtonStart && e.ChangedButton == MouseButton.Left ) return;
+                if( mouseGesture.IsActive ) return; // 既にジェスチャ入力中
+
+                // ジェスチャー準備
+                StartingButton = e.ChangedButton;
+                Stroke = "";
                 UpdateStrokeText();
+
+                // ジェスチャー開始
+                if( !AllowLButtonDrag && e.ChangedButton == MouseButton.Left ) mouseGesture.EnableDragGesture = false;
+                else mouseGesture.EnableDragGesture = true;
+                mouseGesture.Start(e.ChangedButton);
             }
         }
 
@@ -193,6 +214,7 @@ namespace C_SlideShow.CommonControl
         private void MainBorder_LostFocus(object sender, RoutedEventArgs e)
         {
             Ready();
+            MainBorderLostFocus?.Invoke(this, new EventArgs());
         }
 
     }

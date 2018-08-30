@@ -11,20 +11,7 @@ using System.Windows.Input;
 
 namespace C_SlideShow.Shortcut
 {
-    public enum MouseInputHold
-    {
-        None     = 0,
-        L_Button = 1,
-        R_Button = 2,
-        M_Button = 4,
-        XButton1 = 8,   // 戻るボタン
-        XButton2 = 16,  // 進むボタン
-        Shift    = 32,
-        Ctrl     = 64, 
-        Alt      = 128, 
-    }
-
-    public enum MouseInputClick
+    public enum MouseInputButton
     {
         None,
         L_Click,
@@ -43,57 +30,37 @@ namespace C_SlideShow.Shortcut
     public class MouseInput : IEquatable<MouseInput>
     {
         [DataMember]
-        public MouseInputHold   MouseInputHold   { get; set; }
+        public MouseInputButton MouseInputButton { get; set; }
 
         [DataMember]
-        public MouseInputClick MouseInputButton { get; set; }
+		public ModifierKeys ModifierKeys;
 
         public MouseInput()
         {
-            MouseInputHold = MouseInputHold.None;
-            MouseInputButton = MouseInputClick.None;
+            MouseInputButton = MouseInputButton.None;
+            ModifierKeys = ModifierKeys.None;
         }
 
-        public MouseInput(MouseInputHold hold, MouseInputClick btn)
+        public MouseInput(MouseInputButton btn, ModifierKeys modifierKeys)
         {
-            MouseInputHold = hold;
             MouseInputButton = btn;
+            ModifierKeys = modifierKeys;
         }
 
         public override string ToString()
         {
             string holdStr = "";
 
-            // ホールドボタン
-            if(  ( (int)MouseInputHold & (int)MouseInputHold.L_Button ) != 0  )
-            {
-                holdStr += "左ボタン + ";
-            }
-            if(  ( (int)MouseInputHold & (int)MouseInputHold.R_Button ) != 0  )
-            {
-                holdStr += "右ボタン + ";
-            }
-            if(  ( (int)MouseInputHold & (int)MouseInputHold.M_Button ) != 0  )
-            {
-                holdStr += "中ボタン + ";
-            }
-            if(  ( (int)MouseInputHold & (int)MouseInputHold.XButton1 ) != 0  )
-            {
-                holdStr += "戻るボタン + ";
-            }
-            if(  ( (int)MouseInputHold & (int)MouseInputHold.XButton2 ) != 0  )
-            {
-                holdStr += "進むボタン + ";
-            }
-            if(  ( (int)MouseInputHold & (int)MouseInputHold.Shift ) != 0  )
+            // 修飾キー
+            if(  ( (int)ModifierKeys & (int)ModifierKeys.Shift ) != 0  )
             {
                 holdStr += "Shift + ";
             }
-            if(  ( (int)MouseInputHold & (int)MouseInputHold.Ctrl ) != 0  )
+            if(  ( (int)ModifierKeys & (int)ModifierKeys.Control ) != 0  )
             {
                 holdStr += "Ctrl + ";
             }
-            if(  ( (int)MouseInputHold & (int)MouseInputHold.Alt ) != 0  )
+            if(  ( (int)ModifierKeys & (int)ModifierKeys.Alt ) != 0  )
             {
                 holdStr += "Alt + ";
             }
@@ -103,33 +70,33 @@ namespace C_SlideShow.Shortcut
 
             switch( MouseInputButton )
             {
-                case MouseInputClick.None:
+                case MouseInputButton.None:
                     return "";
-                case MouseInputClick.L_Click:
+                case MouseInputButton.L_Click:
                     buttonStr = "左クリック";
                     break;
-                case MouseInputClick.R_Click:
+                case MouseInputButton.R_Click:
                     buttonStr = "右クリック";
                     break;
-                case MouseInputClick.M_Click:
+                case MouseInputButton.M_Click:
                     buttonStr = "中クリック";
                     break;
-                case MouseInputClick.WheelUp:
+                case MouseInputButton.WheelUp:
                     buttonStr = "Wheel Up";
                     break;
-                case MouseInputClick.WheelDown:
+                case MouseInputButton.WheelDown:
                     buttonStr = "Wheel Down";
                     break;
-                case MouseInputClick.X1_Click:
-                    buttonStr = "戻るボタンクリック";
+                case MouseInputButton.X1_Click:
+                    buttonStr = "戻るボタン";
                     break;
-                case MouseInputClick.X2_Click:
-                    buttonStr = "進むボタンクリック";
+                case MouseInputButton.X2_Click:
+                    buttonStr = "進むボタン";
                     break;
-                case MouseInputClick.L_DoubleClick:
+                case MouseInputButton.L_DoubleClick:
                     buttonStr = "左ダブルクリック";
                     break;
-                case MouseInputClick.R_DoubleClick:
+                case MouseInputButton.R_DoubleClick:
                     buttonStr = "右ダブルクリック";
                     break;
             }
@@ -139,7 +106,7 @@ namespace C_SlideShow.Shortcut
 
         public MouseInput Clone()
         {
-            return new MouseInput(this.MouseInputHold, this.MouseInputButton);
+            return new MouseInput(this.MouseInputButton, this.ModifierKeys);
         }
 
         /// <summary>
@@ -147,7 +114,7 @@ namespace C_SlideShow.Shortcut
         /// </summary>
         public bool Equals(MouseInput other)
 		{
-            if( MouseInputHold == other.MouseInputHold && MouseInputButton == other.MouseInputButton )
+            if( MouseInputButton == other.MouseInputButton && ModifierKeys == other.ModifierKeys)
                 return true;
             else
                 return false;
@@ -167,7 +134,7 @@ namespace C_SlideShow.Shortcut
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return ( (int)MouseInputHold | (int)MouseInputButton);
+			return ( (int)MouseInputButton | (int)ModifierKeys);
 		}
     }
 }

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:C_SlideShow.CommonControl"
              mc:Ignorable="d" 
-             d:DesignHeight="24" d:DesignWidth="120">
+             d:DesignHeight="38" d:DesignWidth="120">
     <Grid>
         <Border Name="MainBorder"
                 Cursor="IBeam"
@@ -17,7 +17,7 @@
                 Background="White"
                 BorderThickness="1"
                 BorderBrush="Gray">
-            <TextBlock Name="StrokeText" HorizontalAlignment="Center"></TextBlock>
+            <TextBlock Name="StrokeText" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
         </Border>
             
     </Grid>

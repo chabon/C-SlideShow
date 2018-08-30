@@ -273,116 +273,23 @@ namespace C_SlideShow
         // マウスインプット
         private void SetMouseInputToControl(MouseInput mouseInput)
         {
-            isSettingToComboBox = true;
-            switch( mouseInput.MouseInputHold )
-            {
-                case Shortcut.MouseInputHold.None:
-                    SelectComboBoxItemByTag(MouseInputHold, "None");
-                    break;
-                case Shortcut.MouseInputHold.L_Button:
-                    SelectComboBoxItemByTag(MouseInputHold, "L_Button");
-                    break;
-                case Shortcut.MouseInputHold.R_Button:
-                    SelectComboBoxItemByTag(MouseInputHold, "R_Button");
-                    break;
-                case Shortcut.MouseInputHold.M_Button:
-                    SelectComboBoxItemByTag(MouseInputHold, "M_Button");
-                    break;
-                case Shortcut.MouseInputHold.XButton1:
-                    SelectComboBoxItemByTag(MouseInputHold, "X1_Button");
-                    break;
-                case Shortcut.MouseInputHold.XButton2:
-                    SelectComboBoxItemByTag(MouseInputHold, "X2_Button");
-                    break;
-                case Shortcut.MouseInputHold.Shift:
-                    SelectComboBoxItemByTag(MouseInputHold, "Shift");
-                    break;
-                case Shortcut.MouseInputHold.Ctrl:
-                    SelectComboBoxItemByTag(MouseInputHold, "Ctrl");
-                    break;
-                case Shortcut.MouseInputHold.Alt:
-                    SelectComboBoxItemByTag(MouseInputHold, "Alt");
-                    break;
-            }
+            MouseInputModifire_Shift.IsChecked = (  ( (int)mouseInput.ModifierKeys & (int)ModifierKeys.Shift    ) != 0  ) ? true : false;
+            MouseInputModifire_Ctrl.IsChecked  = (  ( (int)mouseInput.ModifierKeys & (int)ModifierKeys.Control  ) != 0  ) ? true : false;
+            MouseInputModifire_Alt.IsChecked   = (  ( (int)mouseInput.ModifierKeys & (int)ModifierKeys.Alt      ) != 0  ) ? true : false;
 
             MouseInputButton.SelectedIndex = (int)mouseInput.MouseInputButton;
-            UpdateMouseInputButtonItemsIsEnabled();
-
-            isSettingToComboBox = false;
         }
 
         private void ClearMouseInputControl()
         {
             isSettingToComboBox = true;
-            MouseInputHold.SelectedIndex = 0;
-            UpdateMouseInputButtonItemsIsEnabled();
+
             MouseInputButton.SelectedIndex = 0;
+            MouseInputModifire_Shift.IsChecked = false;
+            MouseInputModifire_Ctrl.IsChecked  = false;
+            MouseInputModifire_Alt.IsChecked   = false; 
+
             isSettingToComboBox = false;
-        }
-
-        private void UpdateMouseInputButtonItemsIsEnabled()
-        {
-            // ホールドによる入力の有効・無効
-            foreach(ComboBoxItem i1 in MouseInputButton.Items ) { i1.IsEnabled = true; }
-
-            string tag = ( (ComboBoxItem)MouseInputHold.SelectedItem ).Tag.ToString();
-
-            if( tag == "L_Button" )
-            {
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.L_Click] ).IsEnabled = false;
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.L_DoubleClick] ).IsEnabled = false;
-            }
-
-            if( tag == "R_Button" )
-            {
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.R_Click] ).IsEnabled = false;
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.R_DoubleClick] ).IsEnabled = false;
-            }
-
-            if( tag == "M_Button" )
-            {
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.M_Click] ).IsEnabled = false;
-            }
-
-            if( tag == "X1_Button" )
-            {
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.X1_Click] ).IsEnabled = false;
-            }
-
-            if( tag == "X2_Button" )
-            {
-                ( (ComboBoxItem)MouseInputButton.Items[(int)Shortcut.MouseInputClick.X2_Click] ).IsEnabled = false;
-            }
-
-            // 入力（クリック）によるホールドの有効・無効
-            foreach(ComboBoxItem i2 in MouseInputHold.Items ) { i2.IsEnabled = true; }
-
-            var inputClick = (Shortcut.MouseInputClick)MouseInputButton.SelectedIndex;
-            ComboBoxItem item;
-            switch( inputClick )
-            {
-                case MouseInputClick.L_Click:
-                case MouseInputClick.L_DoubleClick:
-                    item = GetComboBoxItemByTag(MouseInputHold, "L_Button");
-                    break;
-                case MouseInputClick.R_Click:
-                case MouseInputClick.R_DoubleClick:
-                    item = GetComboBoxItemByTag(MouseInputHold, "R_Button");
-                    break;
-                case MouseInputClick.M_Click:
-                    item = GetComboBoxItemByTag(MouseInputHold, "M_Button");
-                    break;
-                case MouseInputClick.X1_Click:
-                    item = GetComboBoxItemByTag(MouseInputHold, "X1_Button");
-                    break;
-                case MouseInputClick.X2_Click:
-                    item = GetComboBoxItemByTag(MouseInputHold, "X2_Button");
-                    break;
-                default:
-                    item = null;
-                    break;
-            }
-            if( item != null ) item.IsEnabled = false;
         }
 
         private void DoubleCheck_MouseInput(MouseInput mouseInput, ShortcutListViewItem own)
@@ -405,24 +312,6 @@ namespace C_SlideShow
         private void SetMouseGestureInputToControl(MouseGestureInput gestureInput)
         {
             MouseGestureControl.SetValue(gestureInput.Stroke, gestureInput.StartingButton);
-            isSettingToComboBox = true;
-            switch(gestureInput.StartingButton)
-            {
-                default:
-                case MouseButton.Right:
-                    SelectComboBoxItemByTag( MauseGestureStartingButton, "R_Button" );
-                    break;
-                case MouseButton.Middle:
-                    SelectComboBoxItemByTag( MauseGestureStartingButton, "M_Button" );
-                    break;
-                case MouseButton.XButton1:
-                    SelectComboBoxItemByTag( MauseGestureStartingButton, "X1_Button" );
-                    break;
-                case MouseButton.XButton2:
-                    SelectComboBoxItemByTag( MauseGestureStartingButton, "X2_Button" );
-                    break;
-            }
-            isSettingToComboBox = false;
         }
 
         private void DoubleCheck_MouseGestureInput(MouseGestureInput gestureInput, ShortcutListViewItem own)
@@ -456,23 +345,25 @@ namespace C_SlideShow
             {
                 HotkeyControl.IsEnabled = true;
                 KeymapClearButton.IsEnabled = true;
-                MouseInputHold.IsEnabled = true;
                 MouseInputButton.IsEnabled = true;
                 MouseInputMapClearButton.IsEnabled = true;
                 MouseGestureControl.IsEnabled = true;
-                MauseGestureStartingButton.IsEnabled = true;
                 MouseGestureClearButton.IsEnabled = true;
+                MouseInputModifire_Shift.IsEnabled = true;
+                MouseInputModifire_Ctrl.IsEnabled = true;
+                MouseInputModifire_Alt.IsEnabled = true;
             }
             else
             {
                 HotkeyControl.IsEnabled = false;
                 KeymapClearButton.IsEnabled = false;
-                MouseInputHold.IsEnabled = false;
                 MouseInputButton.IsEnabled = false;
                 MouseInputMapClearButton.IsEnabled = false;
                 MouseGestureControl.IsEnabled = false;
-                MauseGestureStartingButton.IsEnabled = false;
                 MouseGestureClearButton.IsEnabled = false;
+                MouseInputModifire_Shift.IsEnabled = false;
+                MouseInputModifire_Ctrl.IsEnabled  = false;
+                MouseInputModifire_Alt.IsEnabled = false;
             }
 
             // キー
@@ -503,7 +394,6 @@ namespace C_SlideShow
             else
             {
                 MouseGestureControl.Clear();
-                MauseGestureStartingButton.SelectedIndex = 0;
             }
         }
 
@@ -606,55 +496,6 @@ namespace C_SlideShow
 
 
         // ショートカット設定 (マウス入力)
-        private void MouseInputHold_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if( isInitializing ) return;
-            if( isSettingToComboBox ) return;
-
-            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
-            if( item == null ) return;
-
-            if( item.MouseInput == null ) item.MouseInput = new MouseInput();
-
-            string tag = ( (ComboBoxItem)MouseInputHold.SelectedItem ).Tag.ToString();
-            switch( tag )
-            {
-                case "None":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.None;
-                    break;
-                case "L_Button":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.L_Button;
-                    break;
-                case "R_Button":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.R_Button;
-                    break;
-                case "M_Button":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.M_Button;
-                    break;
-                case "X1_Button":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.XButton1;
-                    break;
-                case "X2_Button":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.XButton2;
-                    break;
-                case "Shift":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.Shift;
-                    break;
-                case "Ctrl":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.Ctrl;
-                    break;
-                case "Alt":
-                    item.MouseInput.MouseInputHold = Shortcut.MouseInputHold.Alt;
-                    break;
-            }
-            item.MouseInputStr = item.MouseInput.ToString();
-
-            UpdateMouseInputButtonItemsIsEnabled();
-
-            // 重複の削除
-            DoubleCheck_MouseInput(item.MouseInput, item);
-        }
-
         private void MouseInputButton_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if( isInitializing ) return;
@@ -665,10 +506,29 @@ namespace C_SlideShow
 
             if( item.MouseInput == null ) item.MouseInput = new MouseInput();
 
-            item.MouseInput.MouseInputButton = (Shortcut.MouseInputClick)MouseInputButton.SelectedIndex;
+            item.MouseInput.MouseInputButton = (Shortcut.MouseInputButton)MouseInputButton.SelectedIndex;
             item.MouseInputStr = item.MouseInput.ToString();
 
-            UpdateMouseInputButtonItemsIsEnabled();
+            // 重複の削除
+            DoubleCheck_MouseInput(item.MouseInput, item);
+        }
+
+        private void MouseInputModifire_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+
+            if( item.MouseInput == null ) item.MouseInput = new MouseInput();
+
+            ModifierKeys modifierKeys = ModifierKeys.None;
+            if( (bool)MouseInputModifire_Shift.IsChecked ) modifierKeys |= ModifierKeys.Shift;
+            if( (bool)MouseInputModifire_Ctrl.IsChecked  ) modifierKeys |= ModifierKeys.Control;
+            if( (bool)MouseInputModifire_Alt.IsChecked   ) modifierKeys |= ModifierKeys.Alt;
+
+            item.MouseInput.ModifierKeys = modifierKeys;
+            item.MouseInputStr = item.MouseInput.ToString();
 
             // 重複の削除
             DoubleCheck_MouseInput(item.MouseInput, item);
@@ -707,6 +567,17 @@ namespace C_SlideShow
             DoubleCheck_MouseGestureInput(gestureInput, item);
         }
 
+        private void MouseGestureControl_MainBorderLostFocus(object sender, EventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+            if( item.MouseGestureInput == null ) return;
+
+            MouseGestureControl.SetValue(item.MouseGestureInput.Stroke, item.MouseGestureInput.StartingButton);
+        }
+
         private void MouseGestureClearButton_Click(object sender, RoutedEventArgs e)
         {
             if( isInitializing ) return;
@@ -717,7 +588,6 @@ namespace C_SlideShow
             item.MouseGestureInput = null;
             item.MouseGestureStr = null;
             MouseGestureControl.Clear();
-            MauseGestureStartingButton.SelectedIndex = 0;
         }
 
         private void MouseGestureRange_ValueChanged(object sender, EventArgs e)
@@ -727,36 +597,9 @@ namespace C_SlideShow
             MouseGestureControl.Range = MouseGestureRange.Value;
         }
 
-        private void MauseGestureStartingButton_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MouseGestureHelpButton_Click(object sender, RoutedEventArgs e)
         {
-            if( isInitializing ) return;
-            if( isSettingToComboBox ) return;
-
-            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
-            if( item == null || item.MouseGestureInput == null) return;
-
-            string tag = ( (ComboBoxItem)MauseGestureStartingButton.SelectedItem ).Tag.ToString();
-            switch( tag )
-            {
-                case "R_Button":
-                    item.MouseGestureInput.StartingButton = MouseButton.Right;
-                    break;
-                case "M_Button":
-                    item.MouseGestureInput.StartingButton = MouseButton.Middle;
-                    break;
-                case "X1_Button":
-                    item.MouseGestureInput.StartingButton = MouseButton.XButton1;
-                    break;
-                case "X2_Button":
-                    item.MouseGestureInput.StartingButton = MouseButton.XButton2;
-                    break;
-            }
-            item.MouseGestureStr = item.MouseGestureInput.ToString();
-
-            MouseGestureControl.SetValue(item.MouseGestureInput.Stroke, item.MouseGestureInput.StartingButton);
-
-            // 重複の削除
-            DoubleCheck_MouseGestureInput(item.MouseGestureInput, item);
+            MouseGestureHelpButton.ContextMenu.IsOpen = true;
         }
 
         // 履歴設定
@@ -961,7 +804,7 @@ namespace C_SlideShow
                 foreach(var item in listView.Items )
                 {
                     ShortcutListViewItem si = item as ShortcutListViewItem;
-                    if(si != null && si.MouseInput != null && si.MouseInput.MouseInputButton != Shortcut.MouseInputClick.None)
+                    if(si != null && si.MouseInput != null && si.MouseInput.MouseInputButton != Shortcut.MouseInputButton.None)
                     {
                         mouseInputMapList.Add( new MouseInputMap(si.MouseInput, si.CommandID) );
                     }
@@ -1035,6 +878,8 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
+
 
 
 
