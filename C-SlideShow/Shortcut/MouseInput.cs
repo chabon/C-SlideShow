@@ -52,20 +52,20 @@ namespace C_SlideShow.Shortcut
             string holdStr = "";
 
             // 修飾キー
-            if(  ( (int)ModifierKeys & (int)ModifierKeys.Shift ) != 0  )
-            {
-                holdStr += "Shift + ";
-            }
             if(  ( (int)ModifierKeys & (int)ModifierKeys.Control ) != 0  )
             {
                 holdStr += "Ctrl + ";
+            }
+            if(  ( (int)ModifierKeys & (int)ModifierKeys.Shift ) != 0  )
+            {
+                holdStr += "Shift + ";
             }
             if(  ( (int)ModifierKeys & (int)ModifierKeys.Alt ) != 0  )
             {
                 holdStr += "Alt + ";
             }
 
-            // キー
+            // マウスボタン
             string buttonStr = "";
 
             switch( MouseInputButton )

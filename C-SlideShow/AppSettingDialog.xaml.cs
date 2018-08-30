@@ -270,6 +270,41 @@ namespace C_SlideShow
             }
         }
 
+        // キー
+        private void SetKeyInputToControl(KeyInput keyInput)
+        {
+            HotkeyControl.SetKey( keyInput.Modifiers, keyInput.Key );
+
+            KeyInputModifire_Shift.IsChecked = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Shift    ) != 0  ) ? true : false;
+            KeyInputModifire_Ctrl.IsChecked  = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Control  ) != 0  ) ? true : false;
+            KeyInputModifire_Alt.IsChecked   = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Alt      ) != 0  ) ? true : false;
+        }
+
+        private void ClearKeyInputControl()
+        {
+            HotkeyControl.Clear();
+
+            KeyInputModifire_Shift.IsChecked = false;
+            KeyInputModifire_Ctrl.IsChecked  = false;
+            KeyInputModifire_Alt.IsChecked   = false; 
+        }
+
+        private void DoubleCheck_Key(KeyInput keyInput, ShortcutListViewItem own)
+        {
+            foreach( var li in GetCurrentShortcutListView().Items )
+            {
+                ShortcutListViewItem si = li as ShortcutListViewItem;
+                if(si != null && si.KeyInput != null && si != own )
+                {
+                    if( si.KeyInput.Equals(keyInput) )
+                    {
+                        si.KeyInput = null;
+                        si.KeyStr = "";
+                    }
+                }
+            }
+        }
+
         // マウスインプット
         private void SetMouseInputToControl(MouseInput mouseInput)
         {
@@ -352,6 +387,9 @@ namespace C_SlideShow
                 MouseInputModifire_Shift.IsEnabled = true;
                 MouseInputModifire_Ctrl.IsEnabled = true;
                 MouseInputModifire_Alt.IsEnabled = true;
+                KeyInputModifire_Shift.IsEnabled = true;
+                KeyInputModifire_Ctrl.IsEnabled = true;
+                KeyInputModifire_Alt.IsEnabled = true;
             }
             else
             {
@@ -364,16 +402,19 @@ namespace C_SlideShow
                 MouseInputModifire_Shift.IsEnabled = false;
                 MouseInputModifire_Ctrl.IsEnabled  = false;
                 MouseInputModifire_Alt.IsEnabled = false;
+                KeyInputModifire_Shift.IsEnabled = false;
+                KeyInputModifire_Ctrl.IsEnabled  = false;
+                KeyInputModifire_Alt.IsEnabled = false;
             }
 
             // キー
             if(item != null && item.KeyInput != null)
             {
-                HotkeyControl.SetKey( item.KeyInput.Modifiers, item.KeyInput.Key );
+                SetKeyInputToControl(item.KeyInput);
             }
             else
             {
-                HotkeyControl.Clear();
+                ClearKeyInputControl();
             }
 
             // マウス入力
@@ -466,20 +507,10 @@ namespace C_SlideShow
 
             item.KeyInput = ki;
             item.KeyStr = ki.ToString();
+            SetKeyInputToControl(item.KeyInput);
 
             // 重複キーの削除
-            foreach( var li in GetCurrentShortcutListView().Items )
-            {
-                ShortcutListViewItem si = li as ShortcutListViewItem;
-                if(si != null && si.KeyInput != null && si.CommandID != item.CommandID )
-                {
-                    if( si.KeyInput.Equals(ki) )
-                    {
-                        si.KeyInput = null;
-                        si.KeyStr = "";
-                    }
-                }
-            }
+            DoubleCheck_Key(ki, item);
         }
 
         private void KeymapClearButton_Click(object sender, RoutedEventArgs e)
@@ -494,6 +525,27 @@ namespace C_SlideShow
             HotkeyControl.Clear();
         }
 
+        private void KeyInputModifier_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
+            if( item == null ) return;
+
+            if( item.KeyInput == null ) return;
+
+            ModifierKeys modifierKeys = ModifierKeys.None;
+            if( (bool)KeyInputModifire_Shift.IsChecked ) modifierKeys |= ModifierKeys.Shift;
+            if( (bool)KeyInputModifire_Ctrl.IsChecked  ) modifierKeys |= ModifierKeys.Control;
+            if( (bool)KeyInputModifire_Alt.IsChecked   ) modifierKeys |= ModifierKeys.Alt;
+
+            item.KeyInput.Modifiers = modifierKeys;
+            item.KeyStr = item.KeyInput.ToString();
+            SetKeyInputToControl(item.KeyInput);
+
+            // 重複の削除
+            DoubleCheck_Key(item.KeyInput, item);
+        }
 
         // ショートカット設定 (マウス入力)
         private void MouseInputButton_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -513,7 +565,7 @@ namespace C_SlideShow
             DoubleCheck_MouseInput(item.MouseInput, item);
         }
 
-        private void MouseInputModifire_Click(object sender, RoutedEventArgs e)
+        private void MouseInputModifier_Click(object sender, RoutedEventArgs e)
         {
             if( isInitializing ) return;
 
@@ -878,6 +930,7 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
 
 
 

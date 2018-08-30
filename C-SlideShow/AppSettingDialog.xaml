@@ -19,8 +19,8 @@
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
                                         <GridViewColumn Header="キー入力" Width="130" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
-                                        <GridViewColumn Header="マウス入力" Width="160" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
-                                        <GridViewColumn Header="マウスジェスチャ" Width="100" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウス入力" Width="130" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウスジェスチャ" Width="130" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -31,8 +31,8 @@
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
                                         <GridViewColumn Header="キー入力" Width="130" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
-                                        <GridViewColumn Header="マウス入力" Width="160" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
-                                        <GridViewColumn Header="マウスジェスチャ" Width="100" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウス入力" Width="130" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウスジェスチャ" Width="130" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -43,8 +43,8 @@
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
                                         <GridViewColumn Header="キー入力" Width="130" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
-                                        <GridViewColumn Header="マウス入力" Width="160" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
-                                        <GridViewColumn Header="マウスジェスチャ" Width="100" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウス入力" Width="130" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
+                                        <GridViewColumn Header="マウスジェスチャ" Width="130" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -55,6 +55,11 @@
                             <GroupBox  Header="キー入力" Height="100" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                                 <StackPanel>
                                     <cc:HotkeyControl x:Name="HotkeyControl" Height="20" KeyAssigned="HotkeyControl_KeyAssigned" Margin="4"></cc:HotkeyControl>
+                                    <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
+                                        <CheckBox x:Name="KeyInputModifire_Ctrl"  Click="KeyInputModifier_Click" Width="54">Ctrl</CheckBox>
+                                        <CheckBox x:Name="KeyInputModifire_Shift" Click="KeyInputModifier_Click" Width="54">Shift</CheckBox>
+                                        <CheckBox x:Name="KeyInputModifire_Alt"   Click="KeyInputModifier_Click" Width="40">Alt</CheckBox>
+                                    </StackPanel>
                                     <Button x:Name="KeymapClearButton" Click="KeymapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
                                 </StackPanel>
                             </GroupBox>
@@ -78,9 +83,9 @@
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
-                                    <CheckBox x:Name="MouseInputModifire_Shift" Click="MouseInputModifire_Click" Width="54">Shift</CheckBox>
-                                    <CheckBox x:Name="MouseInputModifire_Ctrl"  Click="MouseInputModifire_Click" Width="54">Ctrl</CheckBox>
-                                    <CheckBox x:Name="MouseInputModifire_Alt"   Click="MouseInputModifire_Click" Width="40">Alt</CheckBox>
+                                    <CheckBox x:Name="MouseInputModifire_Ctrl"  Click="MouseInputModifier_Click" Width="54">Ctrl</CheckBox>
+                                    <CheckBox x:Name="MouseInputModifire_Shift" Click="MouseInputModifier_Click" Width="54">Shift</CheckBox>
+                                    <CheckBox x:Name="MouseInputModifire_Alt"   Click="MouseInputModifier_Click" Width="40">Alt</CheckBox>
                                 </StackPanel>
                                 <Button x:Name="MouseInputMapClearButton" Click="MouseInputMapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
                             </StackPanel>

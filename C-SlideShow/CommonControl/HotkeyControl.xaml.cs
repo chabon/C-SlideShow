@@ -65,7 +65,6 @@ namespace C_SlideShow.CommonControl
             this.Modifiers = modifers;
             this.Key = key;
             this.KeyText.Text = GetKeyString();
-            Ready();
         }
 
         public void Clear()
