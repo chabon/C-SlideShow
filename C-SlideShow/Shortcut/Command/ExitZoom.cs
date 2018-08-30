@@ -23,14 +23,7 @@ namespace C_SlideShow.Shortcut.Command
         
         public bool CanExecute()
         {
-            if( MainWindow.Current.TileExpantionPanel.IsShowing )
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return true;
         }
 
         public void Execute()

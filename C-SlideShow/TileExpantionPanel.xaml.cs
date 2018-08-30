@@ -34,6 +34,7 @@ namespace C_SlideShow
         public ImageFileManager ImageFileManager { private get; set; }
         public bool ExpandedDuringPlay { get; set; } = false;
         public bool IsShowing { get; private set; } = false;
+        public bool IsAnimationCompleted { get; private set; } = true;
 
 
         public TileExpantionPanel()
@@ -162,14 +163,20 @@ namespace C_SlideShow
 
                 // ファイル情報表示
                 UpdateFileInfoAreaVisiblity();
+
+                IsAnimationCompleted = true;
             };
 
             // アニメーションを開始
+            IsAnimationCompleted = false;
             storyboard.Begin();
         }
 
         public void Hide()
         {
+            // まだ表示されていない
+            if( !IsShowing || !IsAnimationCompleted ) return;
+
             // ファイル情報を隠す
             this.FileInfoGrid.Visibility = Visibility.Hidden;
             IsShowing = false;
@@ -239,6 +246,7 @@ namespace C_SlideShow
                 //Margin = new Thickness(Margin.Left, Margin.Top, 0, 0);
                 this.Visibility = Visibility.Hidden;
                 if( ExpandedDuringPlay ) MainWindow.StartSlideShow();
+                IsAnimationCompleted = true;
             };
 
             // コンテナを表示
@@ -248,6 +256,7 @@ namespace C_SlideShow
 
             // アニメーションを開始
             storyboard.Begin();
+            IsAnimationCompleted = false;
         }
 
 
