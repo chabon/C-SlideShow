@@ -196,7 +196,7 @@ namespace C_SlideShow.Shortcut
 			if(isActive)
 			{
 				isActive = false;
-                Debug.WriteLine("mouse gesture end");
+                Debug.WriteLine("mouse gesture end  stroke:" + this.stroke);
                 GestureFinished?.Invoke( this, new EventArgs() );
                 return stroke;
 			}
@@ -385,17 +385,18 @@ namespace C_SlideShow.Shortcut
                     MSLLHOOKSTRUCT mouseHookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
                     if(mouseHookStruct.mouseData >> 16 == 1 ) // X1(戻るボタン)
                     {
-                        Debug.WriteLine("Mouse XButton1 (戻るボタン) Up");
+                        Debug.WriteLine("Starting Button Up: Mouse XButton1 (戻るボタン)");
                         if( startingButton == MouseButton.XButton1 ) return true;
                     }
                     else  // X2(進むボタン)
                     {
-                        Debug.WriteLine("Mouse XButton2 (進むボタン) Up");
+                        Debug.WriteLine("Starting Button Up: Mouse XButton2 (進むボタン) Up");
                         if( startingButton == MouseButton.XButton2 ) return true;
                     }
                 }
                 else
                 {
+                    Debug.WriteLine( "Starting Button Up: " + WMessageStartingButtonUp.ToString() );
                     return true;
                 }
             }

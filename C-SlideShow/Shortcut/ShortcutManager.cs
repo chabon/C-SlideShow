@@ -76,7 +76,6 @@ namespace C_SlideShow.Shortcut
             // マウスインプット マウスジェスチャー
             MainWindow.Current.MouseWheel    += this.MainWindow_MouseWheel;
             MainWindow.Current.MouseDown     += this.MainWindow_MouseDown;
-            MainWindow.Current.MouseMove     += this.MainWindow_MouseMove;
             MainWindow.Current.MouseUp       += this.MainWindow_MouseUp;
             MainWindow.Current.MouseDoubleClick   += this.MainWindow_MouseDoubleClick;
 
@@ -356,11 +355,6 @@ namespace C_SlideShow.Shortcut
             }
         }
 
-        // マウスを動かしている時
-        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
-        {
-        }
-
         // マウスボタン離した時
         private void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -490,9 +484,11 @@ namespace C_SlideShow.Shortcut
 
             if( gestureInput.Stroke.Length > 0 )
             {
-                if( DispatchMouseGestureInput(gestureInput) )
+                ICommand cmd = GetCommandFromMouseGestureInput(gestureInput);
+                if( cmd != null )
                 {
-                    //      コマンドが実行された場合
+                    //      コマンドがマッチした場合
+
                     MainWindow.Current.NotificationBlock.Hide();
 
                     // 現在のストロークから、最後のクリックストロークを削除(ボタンをホールドしたまま、別のボタンのコマンドも押せるように)
@@ -500,6 +496,10 @@ namespace C_SlideShow.Shortcut
 
                     // 削除後のストロークを保持。マウスジェスチャ完了時に被るならば、コマンド発行させない
                     strokeOfLastExecutedCommand = mouseGesture.Stroke;
+                    Debug.WriteLine("strokeOfLastExecutedCommand: " + mouseGesture.Stroke );
+
+                    // コマンド実行
+                    if( cmd.CanExecute() ) cmd.Execute();
                 }
                 return;
             }

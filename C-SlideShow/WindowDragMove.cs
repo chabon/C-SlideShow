@@ -70,18 +70,26 @@ namespace C_SlideShow
         {
             if( bDragStart )
             {
-                if( (int)wParam == Win32.WM_MOUSEMOVE )
+                if( targetWindow.IsActive )
                 {
-                    Point ptCurrent = Win32.GetCursorPos();
-                    Point ptDiff    = new Point(ptCurrent.X - ptDragStart.X, ptCurrent.Y - ptDragStart.Y);
+                    if( (int)wParam == Win32.WM_MOUSEMOVE )
+                    {
+                        Point ptCurrent = Win32.GetCursorPos();
+                        Point ptDiff    = new Point(ptCurrent.X - ptDragStart.X, ptCurrent.Y - ptDragStart.Y);
 
-                    if( ptMaxDiff.X < Math.Abs(ptDiff.X) ) ptMaxDiff.X = Math.Abs(ptDiff.X);
-                    if( ptMaxDiff.Y < Math.Abs(ptDiff.Y) ) ptMaxDiff.Y = Math.Abs(ptDiff.Y);
+                        if( ptMaxDiff.X < Math.Abs(ptDiff.X) ) ptMaxDiff.X = Math.Abs(ptDiff.X);
+                        if( ptMaxDiff.Y < Math.Abs(ptDiff.Y) ) ptMaxDiff.Y = Math.Abs(ptDiff.Y);
 
-                    targetWindow.Left = ptWindowPrev.X + ptDiff.X;
-                    targetWindow.Top  = ptWindowPrev.Y + ptDiff.Y;
+                        targetWindow.Left = ptWindowPrev.X + ptDiff.X;
+                        targetWindow.Top  = ptWindowPrev.Y + ptDiff.Y;
+                    }
+                    else
+                    {
+                        bDragStart = false;
+                    }
                 }
-                else if( (int)wParam == Win32.WM_LBUTTONUP )
+
+                if( (int)wParam == Win32.WM_LBUTTONUP )
                 {
                     if( ptMaxDiff.X > thresholdOfMaxDiff || ptMaxDiff.Y > thresholdOfMaxDiff )
                     {
