@@ -39,6 +39,8 @@ namespace C_SlideShow
 
         private void TargetWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if( MainWindow.Current.Setting.TempProfile.IsFullScreenMode.Value ) return;
+
             ptDragStart  = Win32.GetCursorPos();
             ptWindowPrev = new Point(targetWindow.Left, targetWindow.Top);
             ptMaxDiff    = new Point(0, 0);
