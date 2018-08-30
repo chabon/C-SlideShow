@@ -49,16 +49,19 @@ namespace C_SlideShow
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
 
         private const int GW_HWNDNEXT = 2;
+
         [DllImport("user32")]
         private extern static int GetParent(int hwnd);
+
         [DllImport("user32")]
         private extern static int GetWindow(int hwnd, int wCmd);
+
         [DllImport("user32")]
-        private extern static int FindWindow(
-            String lpClassName, String lpWindowName);
+        private extern static int FindWindow( String lpClassName, String lpWindowName);
+
         [DllImport("user32")]
-        private extern static int GetWindowThreadProcessId(
-            int hwnd, out int lpdwprocessid);
+        private extern static int GetWindowThreadProcessId( int hwnd, out int lpdwprocessid);
+
         [DllImport("user32")]
         private extern static int IsWindowVisible(int hwnd);
 
@@ -90,7 +93,7 @@ namespace C_SlideShow
         public const uint SWP_NOACTIVATE    = 0x0010;
 
         [DllImport("user32.dll")]
-        public static extern bool PostMessage(IntPtr hWnd, Int32 Msg, IntPtr wParam, IntPtr lParam);
+        public static extern bool PostMessage(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll")]
         public static extern bool InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
@@ -98,6 +101,57 @@ namespace C_SlideShow
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode)]
         public static extern int StrCmpLogicalW(string psz1, string psz2);
 
+
+        public const int WM_MOUSEMOVE  = 0x0200;
+        public const int HC_ACTION = 0;
+
+        public const int WM_LBUTTONUP  = 0x0202;    // 514
+        public const int WM_RBUTTONUP  = 0x0205;    // 517
+        public const int WM_MBUTTONUP  = 0x0208;    // 520
+        public const int WM_XBUTTONUP  = 0x020C;    // 524
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetWindowsHookEx(int idHook, HOOKPROC lpfn, IntPtr hMod, IntPtr dwThreadId);
+        public delegate IntPtr HOOKPROC(int nCode, IntPtr wParam, IntPtr lParam);
+
+        public enum HookType : int
+        {
+             WH_MSGFILTER = -1,
+             WH_JOURNALRECORD = 0,
+             WH_JOURNALPLAYBACK = 1,
+             WH_KEYBOARD = 2,
+             WH_GETMESSAGE = 3,
+             WH_CALLWNDPROC = 4,
+             WH_CBT = 5,
+             WH_SYSMSGFILTER = 6,
+             WH_MOUSE = 7,
+             WH_HARDWARE = 8,
+             WH_DEBUG = 9,
+             WH_SHELL = 10,
+             WH_FOREGROUNDIDLE = 11,
+             WH_CALLWNDPROCRET = 12,
+             WH_KEYBOARD_LL = 13,
+             WH_MOUSE_LL = 14,
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MSLLHOOKSTRUCT
+        {
+             public POINT pt;
+             public int mouseData;
+             public int flags;
+             public int time;
+             public UIntPtr dwExtraInfo;
+        }
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CallNextHookEx(IntPtr hHook, int nCode, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern bool UnhookWindowsHookEx(IntPtr hHook);
+
+        [DllImport("kernel32.dll", EntryPoint = "GetModuleHandleW", SetLastError = true)]
+        public static extern IntPtr GetModuleHandle(string moduleName);
 
         /* ---------------------------------------------------- */
         //     Wrapper

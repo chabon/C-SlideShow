@@ -343,7 +343,7 @@ namespace C_SlideShow.Shortcut
                 Debug.WriteLine( "WMessage in HookProc  wParam:" + ( (int)wParam ).ToString() + "  lParam:" + ( (int)lParam ).ToString()  );
 
                 // マウス移動時は、軌道のチェック
-                if( (int)wParam == WM_MOUSEMOVE ) // WM_MOUSEMOVE
+                if( (int)wParam == WM_MOUSEMOVE )
                 {
                     if(EnableDragGesture) this.Test();
                 }
