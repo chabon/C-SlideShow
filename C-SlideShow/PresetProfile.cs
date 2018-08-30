@@ -27,6 +27,7 @@ namespace C_SlideShow
                 if(member != null) member.IsEnabled = true;
             }
             Default.Path.IsEnabled = false;
+            Default.WindowPos.IsEnabled = false;
 
             // 書籍用(左綴じ)
             BookBoundOnLeftSide = new Profile();
@@ -34,12 +35,15 @@ namespace C_SlideShow
             BookBoundOnLeftSide.AspectRatio.IsEnabled = true;
             BookBoundOnLeftSide.NonFixAspectRatio.IsEnabled = true;
             BookBoundOnLeftSide.SlideDirection.IsEnabled = true;
+            BookBoundOnLeftSide.UseDefaultTileOrigin.IsEnabled = true;
 
             BookBoundOnLeftSide.Name = "書籍用(左綴じ)";
             BookBoundOnLeftSide.NumofMatrix.Value = new int[] { 2, 1 };
             BookBoundOnLeftSide.AspectRatio.Value = new int[] { 2, 3 };
             BookBoundOnLeftSide.NonFixAspectRatio.Value = true;
             BookBoundOnLeftSide.SlideDirection.Value = SlideDirection.Left;
+            BookBoundOnLeftSide.UseDefaultTileOrigin.Value = true;
+
 
             // 書籍用(右綴じ)
             BookBoundOnRightSide = new Profile();
@@ -47,12 +51,14 @@ namespace C_SlideShow
             BookBoundOnRightSide.AspectRatio.IsEnabled = true;
             BookBoundOnRightSide.NonFixAspectRatio.IsEnabled = true;
             BookBoundOnRightSide.SlideDirection.IsEnabled = true;
+            BookBoundOnRightSide.UseDefaultTileOrigin.IsEnabled = true;
 
             BookBoundOnRightSide.Name = "書籍用(右綴じ)";
             BookBoundOnRightSide.NumofMatrix.Value = new int[] { 2, 1 };
             BookBoundOnRightSide.AspectRatio.Value = new int[] { 2, 3 };
             BookBoundOnRightSide.NonFixAspectRatio.Value = true;
             BookBoundOnRightSide.SlideDirection.Value = SlideDirection.Right;
+            BookBoundOnRightSide.UseDefaultTileOrigin.Value = true;
 
             // リスト
             Items.Add(Default);

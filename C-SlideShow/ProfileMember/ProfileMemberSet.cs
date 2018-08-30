@@ -377,7 +377,7 @@ namespace C_SlideShow.ProfileMember
 
         public override string TooltipStr
         {
-            get { return "画像の配置方法: " + (this.Value ? "スライド方法から自動で決定する" : "指定する"); }
+            get { return "画像の配置方法: " + (this.Value ? "スライド方向から自動で決定する" : "指定する"); }
         }
     }
 
