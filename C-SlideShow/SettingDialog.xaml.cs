@@ -71,9 +71,6 @@ namespace C_SlideShow
             // ウインドウ枠の色
             ResizeGripColor.PickedColor = pf.ResizeGripColor.Value;
             
-            // シークバーの色
-            SeekbarColor.PickedColor = pf.SeekbarColor.Value;
-
             // グリッド線の幅
             TilePadding.Text = pf.TilePadding.Value.ToString();
 
@@ -281,15 +278,6 @@ namespace C_SlideShow
 
             Setting.TempProfile.GridLineColor.Value = GridLineColor.PickedColor;
             mainWindow.UpdateGridLine();
-        }
-
-        // シークバーの色
-        private void SeekbarColor_ColorPicked(object sender, RoutedEventArgs e)
-        {
-            if (isInitializing) return;
-
-            Setting.TempProfile.SeekbarColor.Value = SeekbarColor.PickedColor;
-            mainWindow.UpdateUI();
         }
 
         // 最前面表示

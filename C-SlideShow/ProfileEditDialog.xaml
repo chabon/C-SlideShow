@@ -352,12 +352,6 @@
                             <CheckBox x:Name="PfCheckBox_GridLineColor" Style="{StaticResource ProfileCheckboxStyle}">グリッド線の色</CheckBox>
                             <cc:ColorPickerButton x:Name="GridLineColor" Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
                         </StackPanel>
-                        <Line Style="{StaticResource SeparateLine}"></Line>
-                        <!-- シークバーの色 -->
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox x:Name="PfCheckBox_SeekbarColor" Style="{StaticResource ProfileCheckboxStyle}">シークバーの色</CheckBox>
-                            <cc:ColorPickerButton x:Name="SeekbarColor" Style="{StaticResource ColorPickerButtonStyle}"></cc:ColorPickerButton>
-                        </StackPanel>
                     </StackPanel>
                 </GroupBox>
 

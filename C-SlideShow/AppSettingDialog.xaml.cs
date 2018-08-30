@@ -227,6 +227,7 @@ namespace C_SlideShow
             // 詳細
             ShowMenuItem_AdditionalRead.IsChecked = setting.ShowMenuItem_AdditionalRead;
             SerachAllDirectoriesInFolderReading.IsChecked = setting.SerachAllDirectoriesInFolderReading;
+            SeekbarColor.PickedColor = setting.SeekbarColor;
 
 
             isInitializing = false;
@@ -979,7 +980,8 @@ namespace C_SlideShow
             // 詳細
             setting.ShowMenuItem_AdditionalRead = (bool)ShowMenuItem_AdditionalRead.IsChecked ;
             setting.SerachAllDirectoriesInFolderReading = (bool)SerachAllDirectoriesInFolderReading.IsChecked;
-
+            setting.SeekbarColor = SeekbarColor.PickedColor;
+            MainWindow.Current.UpdateUI();
 
             this.Close();
         }
@@ -988,6 +990,7 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
 
 
 

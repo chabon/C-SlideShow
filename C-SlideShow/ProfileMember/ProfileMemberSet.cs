@@ -609,22 +609,6 @@ namespace C_SlideShow.ProfileMember
         }
     }
 
-    public class SeekbarColor : ProfileMemberBase
-    {
-        public SeekbarColor()
-        {
-            this.Value = Colors.Black;
-            IsEnabled  = false;
-        }
-
-        public new Color Value { get; set; }
-
-        public override string TooltipStr
-        {
-            get { return "シークバーの色: " + this.Value.ToString().Remove(1,2); }
-        }
-    }
-
     /* ---------------------------------------------------- */
     //     ダイアログにはない設定
     /* ---------------------------------------------------- */

@@ -189,7 +189,6 @@ namespace C_SlideShow
                 if( pf.ResizeGripColor.IsEnabled ) PfCheckBox_ResizeGripColor.IsChecked = true;
                 if( pf.TilePadding.IsEnabled ) PfCheckBox_TilePadding.IsChecked = true;
                 if( pf.GridLineColor.IsEnabled ) PfCheckBox_GridLineColor.IsChecked = true;
-                if( pf.SeekbarColor.IsEnabled ) PfCheckBox_SeekbarColor.IsChecked = true;
             }
         }
 
@@ -394,9 +393,6 @@ namespace C_SlideShow
 
             // グリッド線の色
             GridLineColor.PickedColor = pf.GridLineColor.Value;
-
-            // シークバーの色
-            SeekbarColor.PickedColor = pf.SeekbarColor.Value;
 
             /* ---------------------------------------------------- */
             // プロファイル名
@@ -780,14 +776,6 @@ namespace C_SlideShow
                 pf.GridLineColor.IsEnabled = true;
                 pf.GridLineColor.Value = GridLineColor.PickedColor;
             }
-
-            // シークバーの色
-            if( (bool)PfCheckBox_SeekbarColor.IsChecked )
-            {
-                pf.SeekbarColor.IsEnabled = true;
-                pf.SeekbarColor.Value = SeekbarColor.PickedColor;
-            }
-
 
             return pf;
             // End of method

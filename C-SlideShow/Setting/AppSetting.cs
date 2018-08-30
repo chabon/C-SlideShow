@@ -158,6 +158,8 @@ namespace C_SlideShow
         [DataMember]
         public bool SerachAllDirectoriesInFolderReading { get; set; }
 
+        [DataMember]
+        public Color SeekbarColor { get; set; }
 
         public AppSetting()
         {
@@ -201,6 +203,7 @@ namespace C_SlideShow
             // 詳細
             ShowMenuItem_AdditionalRead = true;
             SerachAllDirectoriesInFolderReading = true;
+            SeekbarColor = Colors.Black;
         }
 
 

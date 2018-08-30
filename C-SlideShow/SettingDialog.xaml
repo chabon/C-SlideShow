@@ -206,10 +206,6 @@
                         <cc:ColorPickerButton Margin="8,0" x:Name="GridLineColor" ColorPicked="GridLineColor_ColorPicked"></cc:ColorPickerButton>
                     </StackPanel>
 
-                    <StackPanel Margin="0,4" Orientation="Horizontal">
-                        <TextBlock Width="90">シークバーの色</TextBlock>
-                        <cc:ColorPickerButton Margin="8,0" x:Name="SeekbarColor" ColorPicked="SeekbarColor_ColorPicked"></cc:ColorPickerButton>
-                    </StackPanel>
                 </StackPanel>
             </TabItem>
 

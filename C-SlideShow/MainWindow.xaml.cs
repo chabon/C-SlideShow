@@ -835,7 +835,7 @@ namespace C_SlideShow
             this.MainContent.Margin = new Thickness(pf.ResizeGripThickness.Value);
             this.ResizeGrip.BorderThickness = new Thickness(pf.ResizeGripThickness.Value);
             this.ResizeGrip.BorderBrush = new SolidColorBrush(pf.ResizeGripColor.Value);
-            this.Seekbar.Foreground = new SolidColorBrush(pf.SeekbarColor.Value);
+            this.Seekbar.Foreground = new SolidColorBrush(Setting.SeekbarColor);
 
             UpdateMainWindowView();
         }

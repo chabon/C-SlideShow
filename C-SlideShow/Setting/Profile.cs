@@ -175,9 +175,6 @@ namespace C_SlideShow
         [DataMember]
         public ProfileMember.GridLineColor GridLineColor { get; set; } = new ProfileMember.GridLineColor();
 
-        [DataMember]
-        public ProfileMember.SeekbarColor SeekbarColor { get; set; } = new ProfileMember.SeekbarColor();
-
 
 
         public Profile()
@@ -244,7 +241,6 @@ namespace C_SlideShow
             if( pf.ResizeGripColor.IsEnabled )      ResizeGripColor.Value = pf.ResizeGripColor.Value;
             if( pf.TilePadding.IsEnabled )          TilePadding.Value = pf.TilePadding.Value;
             if( pf.GridLineColor.IsEnabled )        GridLineColor.Value = pf.GridLineColor.Value;
-            if( pf.SeekbarColor.IsEnabled )         SeekbarColor.Value = pf.SeekbarColor.Value;
 
             // ダイアログにはない設定
             if( pf.WindowPos.IsEnabled )        WindowPos.Value = new Point(pf.WindowPos.Value.X, pf.WindowPos.Y);
@@ -325,7 +321,6 @@ namespace C_SlideShow
             newProfile.ResizeGripColor.Value = this.ResizeGripColor.Value;
             newProfile.TilePadding.Value = this.TilePadding.Value;
             newProfile.GridLineColor.Value = this.GridLineColor.Value;
-            newProfile.SeekbarColor.Value = this.SeekbarColor.Value;
 
             // ダイアログにはない設定
             newProfile.WindowPos.Value = new Point(this.WindowPos.Value.X, this.WindowPos.Y);

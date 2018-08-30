@@ -227,6 +227,10 @@
                 <StackPanel Margin="10">
                     <CheckBox x:Name="ShowMenuItem_AdditionalRead">「フォルダを追加読み込み」「ファイルを追加読み込み」を読み込みメニューに表示する</CheckBox>
                     <CheckBox Margin="0,5" x:Name="SerachAllDirectoriesInFolderReading">フォルダ読み込み時、サブディレクトリ以下のファイルも読み込む</CheckBox>
+                    <StackPanel Margin="0,4" Orientation="Horizontal">
+                        <TextBlock>シークバーの色</TextBlock>
+                        <cc:ColorPickerButton Margin="8,0" x:Name="SeekbarColor"></cc:ColorPickerButton>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
 
