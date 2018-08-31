@@ -46,6 +46,8 @@ namespace C_SlideShow
                 item.Content = upi.Profile.Name;
                 ProfileListBox.Items.Add(item);
             }
+
+            UpdateNumberingItemTextAll();
         }
 
         private void UpdateListBoxItem(int index)
@@ -57,7 +59,7 @@ namespace C_SlideShow
 
             newItem.ToolTip = upi.Profile.CreateProfileToolTip();
             ToolTipService.SetShowDuration(newItem, 1000000);
-            newItem.Content = upi.Profile.Name;
+            newItem.Content = CreateNumberingItemText(index + 1, upi.Profile.Name);
             ProfileListBox.Items[index] = newItem;
         }
 
@@ -69,6 +71,25 @@ namespace C_SlideShow
             ToolTipService.SetShowDuration(newItem, 1000000);
             newItem.Content = newUpi.Profile.Name;
             ProfileListBox.Items.Insert(index, newItem);
+
+            UpdateNumberingItemTextAll();
+        }
+
+        private void UpdateNumberingItemTextAll()
+        {
+            for(int i=0; i < setting.UserProfileList.Count; i++ )
+            {
+                if( i < ProfileListBox.Items.Count )
+                {
+                    ListBoxItem item = (ListBoxItem)ProfileListBox.Items[i];
+                    item.Content = CreateNumberingItemText(i+1, setting.UserProfileList[i].Profile.Name);
+                }
+            } 
+        }
+
+        private string CreateNumberingItemText(int number, string profileName)
+        {
+                return string.Format("{0:00}", number) + ": " + profileName;
         }
 
         /* ---------------------------------------------------- */
@@ -126,6 +147,8 @@ namespace C_SlideShow
                     ProfileListBox.SelectedIndex = index;
                 else if (ProfileListBox.Items.Count > 0)
                     ProfileListBox.SelectedIndex = ProfileListBox.Items.Count - 1;
+
+                UpdateNumberingItemTextAll();
             }
         }
 
@@ -143,6 +166,8 @@ namespace C_SlideShow
             ProfileListBox.Items.Insert(index - 1, lbi);
 
             ProfileListBox.SelectedIndex = index - 1;
+
+            UpdateNumberingItemTextAll();
         }
 
         private void ProfileList_Down_Click(object sender, RoutedEventArgs e)
@@ -159,9 +184,11 @@ namespace C_SlideShow
             ProfileListBox.Items.Insert(index + 1, lbi);
 
             ProfileListBox.SelectedIndex = index + 1;
+
+            UpdateNumberingItemTextAll();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

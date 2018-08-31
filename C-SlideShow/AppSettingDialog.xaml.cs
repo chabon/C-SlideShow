@@ -142,6 +142,8 @@ namespace C_SlideShow
             foreach(CommandMap commandMap in setting.ShortcutSetting.CommandMap )
             {
                 Shortcut.ICommand cmd = MainWindow.Current.ShortcutManager.GetCommand(commandMap.CommandID);
+                if( cmd == null ) continue;
+
                 ListView targetListView;
                 switch( cmd.Scene )
                 {

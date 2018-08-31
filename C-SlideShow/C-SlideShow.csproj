@@ -91,6 +91,8 @@
     <Compile Include="Setting\CommandMap.cs" />
     <Compile Include="Setting\ShortcutSetting.cs" />
     <Compile Include="Shortcut\CommandID.cs" />
+    <Compile Include="Shortcut\Command\LoadProfileFromName.cs" />
+    <Compile Include="Shortcut\Command\LoadProfileFromNum.cs" />
     <Compile Include="Shortcut\Command\SlideToBottom.cs" />
     <Compile Include="Shortcut\Command\SlideToTop.cs" />
     <Compile Include="Shortcut\Command\SlideToRight.cs" />

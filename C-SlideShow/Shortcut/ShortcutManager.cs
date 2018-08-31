@@ -109,6 +109,8 @@ namespace C_SlideShow.Shortcut
             commands.Add( new OpenAdditionalFile() );
             commands.Add( new WindowSizeUp() );
             commands.Add( new WindowSizeDown() );
+            commands.Add( new LoadProfileFromNum() );
+            commands.Add( new LoadProfileFromName() );
 
             // 通常時
             commands.Add( new SlideToForward() );

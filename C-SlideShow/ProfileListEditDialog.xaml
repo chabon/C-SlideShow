@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:C_SlideShow"
         xmlns:cc="clr-namespace:C_SlideShow.CommonControl"
         mc:Ignorable="d"
-        Title="プロファイルリストの編集" Height="450" Width="320">
+        Title="プロファイルリストの編集" Height="455" Width="320">
     <Grid>
         <ListBox x:Name="ProfileListBox" Margin="10,10,100,60" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></ListBox>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
@@ -20,7 +20,7 @@
             </StackPanel>
         </StackPanel>
 
-        <CheckBox VerticalAlignment="Bottom" HorizontalAlignment="Left" x:Name="UsePresetProfile" Click="UsePresetProfile_Click" Margin="10,30">プリセットのプロファイルを表示する</CheckBox>
-        <Button Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20,10" Click="Button_Click">閉じる</Button>
+        <CheckBox VerticalAlignment="Bottom" HorizontalAlignment="Left" x:Name="UsePresetProfile" Click="UsePresetProfile_Click" Margin="10,35">プリセットのプロファイルをメニューに表示する</CheckBox>
+        <Button x:Name="CloseButton" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20,10" Click="CloseButton_Click">閉じる</Button>
     </Grid>
 </Window>

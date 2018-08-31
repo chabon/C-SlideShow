@@ -22,6 +22,7 @@ using System.IO;
 
 using C_SlideShow.Archiver;
 using C_SlideShow.Shortcut;
+using C_SlideShow.CommonControl;
 
 using Forms = System.Windows.Forms;
 
@@ -262,7 +263,7 @@ namespace C_SlideShow
             this.TileExpantionPanel.ImageFileManager = imageFileManager;
         }
 
-        private void LoadUserProfile(Profile userProfile)
+        public void LoadUserProfile(Profile userProfile)
         {
             // 統合前のTempProfileの設定値
             bool before_IsFullScreenMode = Setting.TempProfile.IsFullScreenMode.Value;
@@ -341,8 +342,14 @@ namespace C_SlideShow
                 }
             }
 
+            // 拡大中だったら、閉じる
+            if( TileExpantionPanel.IsShowing ) TileExpantionPanel.Hide();
+
             // 自動再生
             if( tp.SlideShowAutoStart.Value ) StartSlideShow();
+
+            // 読み込み完了メッセージ
+            NotificationBlock.Show("プロファイルのロード完了: " + userProfile.Name, NotificationPriority.Normal, NotificationTime.Short);
         }
 
 

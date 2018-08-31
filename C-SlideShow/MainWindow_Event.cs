@@ -189,24 +189,6 @@ namespace C_SlideShow
                 OnSeekbarValueChanged(value);
             };
 
-            // キーイベント（暫定的に）
-            this.PreviewKeyDown += (s, e) =>
-            {
-#if DEBUG
-                // debug
-                Profile pf = Setting.TempProfile;
-
-                if(e.Key == Key.T )
-                {
-                    ShortcutManager.ExecuteCommand(CommandID.ZoomImageUnderCursor);
-                }
-                if(e.Key == Key.A )
-                {
-                }
-#endif
-            };
-
-
             // end of method
         }
 
@@ -555,23 +537,28 @@ namespace C_SlideShow
         {
             // Xmlからプロファイルをロード
             string xmlDir = Directory.GetParent( System.Reflection.Assembly.GetExecutingAssembly().Location ).FullName + "\\Profile";
-            if( Setting.UserProfileList.All( pl => pl.Profile == null) && Directory.Exists(xmlDir) )
+            if( Directory.Exists(xmlDir) )
             {
                 string[] xmls = Directory.GetFiles(xmlDir);
                 foreach(string xml in xmls )
                 {
                     if( System.IO.Path.GetExtension(xml) == ".xml" )
                     {
-                        // ロード
-                        Profile pf = UserProfileInfo.LoadProfileFromXmlFile(xml);
-
                         // UserProfileListにあるなら、メンバとしてプロファイルを追加、ないなら新たにUserProfileInfoを作成して追加
                         string relativePath = xml.Replace(xmlDir + "\\", "");
                         UserProfileInfo upi = Setting.UserProfileList.FirstOrDefault(pl => pl.RelativePath == relativePath);
-                        if( upi != null ) upi.Profile = pf;
+                        if( upi != null )
+                        {
+                            if(upi.Profile == null )
+                            {
+                                Profile pf = UserProfileInfo.LoadProfileFromXmlFile(xml);
+                                upi.Profile = pf;
+                            }
+                        }
                         else
                         {
                             UserProfileInfo newUpi = new UserProfileInfo(relativePath);
+                            Profile pf = UserProfileInfo.LoadProfileFromXmlFile(xml);
                             newUpi.Profile = pf;
                             Setting.UserProfileList.Add(newUpi);
                         }
@@ -614,15 +601,17 @@ namespace C_SlideShow
             if(Setting.UserProfileList.Count > 0) MenuItem_Profile.Items.Add( new Separator() );
 
             // プロファイル追加
+            int num = 1;
             foreach(UserProfileInfo upi in Setting.UserProfileList )
             {
                 MenuItem mi = new MenuItem();
-                mi.Header = upi.Profile.Name.Replace("_", "__");
+                mi.Header = string.Format( "{0:00}", num ) + ": " + upi.Profile.Name.Replace("_", "__");
                 mi.ToolTip = upi.Profile.CreateProfileToolTip();
                 ToolTipService.SetShowDuration(mi, 1000000);
                 mi.Click += (se, ev) => { LoadUserProfile(upi.Profile); };
                 mi.ContextMenu = CreateProfileContextMenu(upi);
                 MenuItem_Profile.Items.Add(mi);
+                num++;
             }
 
             // リストを編集... を追加
