@@ -113,12 +113,12 @@ namespace C_SlideShow.Shortcut
             // 通常時
             commands.Add( new SlideToForward() );
             commands.Add( new SlideToBackward() );
-            commands.Add( new SlideToForwardByOneImage() );
-            commands.Add( new SlideToBackwardByOneImage() );
             commands.Add( new SlideToLeft() );
             commands.Add( new SlideToRight() );
             commands.Add( new SlideToTop() );
             commands.Add( new SlideToBottom() );
+            commands.Add( new SlideToForwardByOneImage() );
+            commands.Add( new SlideToBackwardByOneImage() );
             commands.Add( new ZoomImageUnderCursor() );
 
             // 画像拡大時
@@ -128,7 +128,7 @@ namespace C_SlideShow.Shortcut
         }
         
         // IDからコマンド取得
-        private ICommand GetCommand(CommandID id)
+        public ICommand GetCommand(CommandID id)
         {
             if( commands == null ) CreateCommands();
 
@@ -142,7 +142,19 @@ namespace C_SlideShow.Shortcut
             return null;
         }
 
-        // コマンドIDから実行
+        // コマンド実行
+        public void ExecuteCommand(ICommand command, int value, string strValue)
+        {
+            if( command != null )
+            {
+                if( command.EnableValue ) command.Value = value;
+                if( command.EnableStrValue ) command.StrValue = strValue;
+
+                if( command.CanExecute() ) command.Execute();
+            }
+        }
+
+        // コマンドIDから実行(値は0と空文字で固定)
         public void ExecuteCommand(CommandID id)
         {
             if( commands == null ) CreateCommands();
@@ -150,7 +162,7 @@ namespace C_SlideShow.Shortcut
             ICommand command = GetCommand(id);
             if( command != null )
             {
-                if( command.CanExecute() ) command.Execute();
+                ExecuteCommand(command, 0, "");
             }
         }
 
@@ -181,15 +193,17 @@ namespace C_SlideShow.Shortcut
             // ディクショナリから検索して、キーマップ、シーンが共に引っかかればコマンド実行
             Scene currentScene = GetCurrentScene();
 
-            foreach(KeyMap keyMap in shortcutSetting.KeyMap )
+            foreach(CommandMap commandMap in shortcutSetting.CommandMap )
             {
-                if(keyMap.KeyInput.Equals( keyInput ) )
+                if( commandMap.KeyInput == null ) continue;
+                
+                if( commandMap.KeyInput.Equals( keyInput ) )
                 {
-                    ICommand cmd = GetCommand(keyMap.CommandID);
+                    ICommand cmd = GetCommand(commandMap.CommandID);
                     if( cmd == null ) continue;
                     if( cmd.Scene == Scene.All || cmd.Scene == currentScene )
                     {
-                        if( cmd.CanExecute() ) cmd.Execute();
+                        ExecuteCommand(cmd, commandMap.CommandValue, commandMap.CommandStrValue);
                         return true;
                     }
                 }
@@ -207,15 +221,17 @@ namespace C_SlideShow.Shortcut
             Debug.WriteLine(mouseInput.ToString());
             Scene currentScene = GetCurrentScene();
 
-            foreach(MouseInputMap mouseInputMap in shortcutSetting.MouseInputMap )
+            foreach(CommandMap commandMap in shortcutSetting.CommandMap )
             {
-                if(mouseInputMap.MouseInput.Equals( mouseInput ) )
+                if( commandMap.MouseInput == null ) continue;
+
+                if( commandMap.MouseInput.Equals( mouseInput ) )
                 {
-                    ICommand cmd = GetCommand(mouseInputMap.CommandID);
+                    ICommand cmd = GetCommand(commandMap.CommandID);
                     if( cmd == null ) continue;
                     if( cmd.Scene == Scene.All || cmd.Scene == currentScene )
                     {
-                        if( cmd.CanExecute() ) cmd.Execute();
+                        ExecuteCommand(cmd, commandMap.CommandValue, commandMap.CommandStrValue);
                         mouseButtonClickState_L.CommandExecuted = true;
                         mouseButtonClickState_R.CommandExecuted = true;
                         mouseButtonClickState_M.CommandExecuted = true;
@@ -231,22 +247,27 @@ namespace C_SlideShow.Shortcut
         /// </summary>
         /// <param name="stroke"></param>
         /// <returns>コマンド</returns>
-        private ICommand GetCommandFromMouseGestureInput(MouseGestureInput gestureInput)
+        private ICommand GetCommandFromMouseGestureInput(MouseGestureInput gestureInput, out CommandMap _commandMap)
         {
             Scene currentScene = GetCurrentScene();
 
-            foreach(MouseGestureMap mouseGestureMap in shortcutSetting.MouseGestureMap )
+            foreach(CommandMap commandMap in shortcutSetting.CommandMap )
             {
-                if(mouseGestureMap.GestureInput.Equals(gestureInput) )
+                if( commandMap.MouseGestureInput == null ) continue;
+
+                if( commandMap.MouseGestureInput.Equals(gestureInput) )
                 {
-                    ICommand cmd = GetCommand(mouseGestureMap.CommandID);
+                    ICommand cmd = GetCommand(commandMap.CommandID);
                     if( cmd == null ) continue;
                     if( cmd.Scene == Scene.All || cmd.Scene == currentScene )
                     {
+                        _commandMap = commandMap;
                         return cmd;
                     }
                 }
             }
+
+            _commandMap = null;
             return null;
         }
 
@@ -257,10 +278,11 @@ namespace C_SlideShow.Shortcut
         /// <returns>コマンドを実行したかどうか</returns>
         private bool DispatchMouseGestureInput(MouseGestureInput gestureInput)
         {
-            ICommand cmd = GetCommandFromMouseGestureInput(gestureInput);
+            CommandMap commandMap;
+            ICommand cmd = GetCommandFromMouseGestureInput(gestureInput, out commandMap);
             if( cmd != null )
             {
-                if( cmd.CanExecute() ) cmd.Execute();
+                ExecuteCommand(cmd, commandMap.CommandValue, commandMap.CommandStrValue);
                 return true;
             }
 
@@ -337,9 +359,9 @@ namespace C_SlideShow.Shortcut
             }
 
             // マウスジェスチャ スタート
-            if(shortcutSetting.MouseGestureMap.Count > 0 )
+            if( shortcutSetting.CommandMap.Any( c => c.MouseGestureInput != null) )
             {
-                MouseGestureMap map = shortcutSetting.MouseGestureMap.FirstOrDefault( m => m.GestureInput?.StartingButton == e.ChangedButton );
+                CommandMap map = shortcutSetting.CommandMap.FirstOrDefault( c => c.MouseGestureInput?.StartingButton == e.ChangedButton );
                 if(map != null )
                 {
                     if( mouseGesture == null ) InitMouseGesture();
@@ -466,11 +488,15 @@ namespace C_SlideShow.Shortcut
             // 現在のストロークと、一致するコマンドを通知ブロックに表示
             MouseGestureInput gestureInput = new MouseGestureInput(mouseGesture.StartingButton, mouseGesture.Stroke);
             string notification = gestureInput.ToString();
-            ICommand cmd = GetCommandFromMouseGestureInput(gestureInput);
+            CommandMap commandMap;
+            ICommand cmd = GetCommandFromMouseGestureInput(gestureInput, out commandMap);
             if(cmd != null )
             {
                 // マウスホイールの場合は、即HoldClickイベントでコマンドが実行されるので、通知表示しない
                 if( gestureInput.Stroke.EndsWith("[WU]") || gestureInput.Stroke.EndsWith("[WD]") ) return;
+
+                if( cmd.EnableValue ) cmd.Value = commandMap.CommandValue;
+                if( cmd.EnableStrValue ) cmd.StrValue = commandMap.CommandStrValue;
 
                 notification += "  [" + cmd.GetDetail() + "]";
             }
@@ -484,8 +510,9 @@ namespace C_SlideShow.Shortcut
 
             if( gestureInput.Stroke.Length > 0 )
             {
-                ICommand cmd = GetCommandFromMouseGestureInput(gestureInput);
-                if( cmd != null )
+                CommandMap commandMap;
+                ICommand cmd = GetCommandFromMouseGestureInput(gestureInput, out commandMap);
+                if( cmd != null && commandMap != null)
                 {
                     //      コマンドがマッチした場合
 
@@ -499,7 +526,7 @@ namespace C_SlideShow.Shortcut
                     Debug.WriteLine("strokeOfLastExecutedCommand: " + mouseGesture.Stroke );
 
                     // コマンド実行
-                    if( cmd.CanExecute() ) cmd.Execute();
+                    ExecuteCommand(cmd, commandMap.CommandValue, commandMap.CommandStrValue);
                 }
                 return;
             }

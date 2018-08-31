@@ -15,6 +15,11 @@ namespace C_SlideShow.Shortcut.Command
         public Scene     Scene   { set; get; }
         public string    Message { get; }
 
+        public int       Value           { get; set; }
+        public string    StrValue        { get; set; }
+        public bool      EnableValue     { get; } = true;
+        public bool      EnableStrValue  { get; } = false;
+
         public ZoomOutImage()
         {
             ID    = CommandID.ZoomOutImage;
@@ -23,7 +28,7 @@ namespace C_SlideShow.Shortcut.Command
         
         public bool CanExecute()
         {
-            if( MainWindow.Current.TileExpantionPanel.IsShowing )
+            if( MainWindow.Current.TileExpantionPanel.IsShowing && MainWindow.Current.TileExpantionPanel.IsAnimationCompleted )
             {
                 return true;
             }
@@ -35,14 +40,16 @@ namespace C_SlideShow.Shortcut.Command
 
         public void Execute()
         {
-            MainWindow.Current.TileExpantionPanel.ZoomOut();
+            double param = Value / 100.0;
+            if( param < 0 ) param = 0;
+            MainWindow.Current.TileExpantionPanel.ZoomOut(param);
 
             return;
         }
 
         public string GetDetail()
         {
-            return "画像の拡大率をダウン";
+            return "画像の拡大率を" + Value.ToString() + "%ダウン";
         }
     }
 }

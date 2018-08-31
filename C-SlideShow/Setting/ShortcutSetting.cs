@@ -18,108 +18,51 @@ namespace C_SlideShow
     [DataContract(Name = "ShortcutSetting")]
     public class ShortcutSetting
     {
-        // キー入力Map (キー入力 - コマンドID)
+        // コマンドMap
         [DataMember]
-        public List<KeyMap> KeyMap = new List<KeyMap>();
-
-        // マウス入力Map (マウス入力 - コマンドID)
-        [DataMember]
-        public List<MouseInputMap> MouseInputMap = new List<MouseInputMap>();
-
-        // マウスジェスチャーMap (ジェスチャー - コマンドIDを取得)
-        [DataMember]
-        public List<MouseGestureMap> MouseGestureMap = new List<MouseGestureMap>();
-	
-        // タッチ入力Map (タッチ入力 - コマンドID)
-
+        public List<CommandMap> CommandMap = new List<CommandMap>();
 
         public ShortcutSetting()
         {
-            initKeyMap();
-            initMouseInputMap();
-            initMouseGestureMap();
+            initCommandMap();
         }
 
-        private void initKeyMap()
+        private void initCommandMap()
         {
-            KeyMap.Clear();
-            KeyMap = CreateDefaultKeyMap();
+            CommandMap.Clear();
+            CommandMap = CreateDefaultCommandMap();
         }
 
-        private void initMouseInputMap()
+        public static List<CommandMap> CreateDefaultCommandMap()
         {
-            MouseInputMap.Clear();
-            MouseInputMap = CreateDefaultMouseInputMap();
-        } 
-
-        private void initMouseGestureMap()
-        {
-            MouseGestureMap.Clear();
-            MouseGestureMap = CreateDefaultMouseGestureMap();
-        } 
-
-        public static List<KeyMap> CreateDefaultKeyMap()
-        {
-            List<KeyMap> defaultKeyMap = new List<KeyMap>();
+            List<CommandMap> defaultCommandMap = new List<CommandMap>();
 
             // 全般
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.Control,                      Key.F),        CommandID.OpenFolder                 )  );
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.Control | ModifierKeys.Shift, Key.F),        CommandID.OpenAdditionalFolder       )  );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenFolder, 0, null,           new KeyInput(ModifierKeys.Control, Key.F), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenAdditionalFolder, 0, null, new KeyInput(ModifierKeys.Control | ModifierKeys.Shift, Key.F), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenFile, 0, null,             null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenAdditionalFile, 0, null,   null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.WindowSizeUp, 10, null,        null, null, new MouseGestureInput(MouseButton.Right, "[WU]")) );
+            defaultCommandMap.Add( new CommandMap(CommandID.WindowSizeDown, 10, null,      null, null, new MouseGestureInput(MouseButton.Right, "[WD]")) );
 
             // 通常時
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.None,                         Key.F),        CommandID.SlideToForward             )  );
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.None,                         Key.B),        CommandID.SlideToBackward            )  );
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.Shift,                        Key.F),        CommandID.SlideToForwardByOneImage   )  );
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.Shift,                        Key.B),        CommandID.SlideToBackwardByOneImage  )  );
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.None,                         Key.Left),     CommandID.SlideToLeft                )  );
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.None,                         Key.Up),       CommandID.SlideToTop                 )  );
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.None,                         Key.Right),    CommandID.SlideToRight               )  );
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.None,                         Key.Down),     CommandID.SlideToBottom              )  );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToForward, 0, null,             new KeyInput(ModifierKeys.None, Key.F), new MouseInput(MouseInputButton.WheelDown, ModifierKeys.None), null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToBackward, 0, null,            new KeyInput(ModifierKeys.None, Key.B), new MouseInput(MouseInputButton.WheelUp, ModifierKeys.None), null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToLeft, 0, null,                new KeyInput(ModifierKeys.None, Key.Left), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToTop, 0, null,                 new KeyInput(ModifierKeys.None, Key.Up), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToRight, 0, null,               new KeyInput(ModifierKeys.None, Key.Right), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToBottom, 0, null,              new KeyInput(ModifierKeys.None, Key.Down), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToForwardByOneImage, 0, null,   new KeyInput(ModifierKeys.Shift, Key.F), new MouseInput(MouseInputButton.WheelDown, ModifierKeys.Shift), null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToBackwardByOneImage, 0, null,  new KeyInput(ModifierKeys.Shift, Key.B), new MouseInput(MouseInputButton.WheelUp, ModifierKeys.Shift), null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ZoomImageUnderCursor, 0, null,       null, new MouseInput(MouseInputButton.R_Click, ModifierKeys.None), null) );
 
             // 画像拡大時
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.None,                         Key.Up),       CommandID.ZoomInImage                )  );
-            defaultKeyMap.Add(  new KeyMap( new KeyInput(ModifierKeys.None,                         Key.Down),     CommandID.ZoomOutImage               )  );
+            defaultCommandMap.Add( new CommandMap(CommandID.ZoomInImage, 50, null,              new KeyInput(ModifierKeys.None, Key.Up), new MouseInput(MouseInputButton.WheelUp, ModifierKeys.None), null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ZoomOutImage, 50, null,             new KeyInput(ModifierKeys.None, Key.Down), new MouseInput(MouseInputButton.WheelDown, ModifierKeys.None), null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ExitZoom, 0, null,                  null, new MouseInput(MouseInputButton.R_Click, ModifierKeys.None), null) );
 
 
-
-            return defaultKeyMap;
-        }
-
-        public static List<MouseInputMap> CreateDefaultMouseInputMap()
-        {
-            List<MouseInputMap> defaultMouseInputMap = new List<MouseInputMap>();
-
-            // 全般
-
-            // 通常時
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputButton.R_Click, ModifierKeys.None),         CommandID.ZoomImageUnderCursor      )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputButton.WheelUp, ModifierKeys.None),         CommandID.SlideToBackward           )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputButton.WheelDown, ModifierKeys.None),       CommandID.SlideToForward            )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputButton.WheelUp, ModifierKeys.Shift),        CommandID.SlideToBackwardByOneImage )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputButton.WheelDown, ModifierKeys.Shift),      CommandID.SlideToForwardByOneImage  )  );
-
-            // 画像拡大時
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputButton.WheelUp, ModifierKeys.None),         CommandID.ZoomInImage               )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputButton.WheelDown, ModifierKeys.None),       CommandID.ZoomOutImage              )  );
-            defaultMouseInputMap.Add(  new MouseInputMap( new MouseInput(MouseInputButton.R_Click, ModifierKeys.None),         CommandID.ExitZoom                  )  );
-
-            return defaultMouseInputMap;
-        }
-
-        public static List<MouseGestureMap> CreateDefaultMouseGestureMap()
-        {
-            List<MouseGestureMap> defaultMouseGestureMap = new List<MouseGestureMap>();
-
-            // 全般
-            defaultMouseGestureMap.Add(new MouseGestureMap(new MouseGestureInput(MouseButton.Right, "[WU]"), CommandID.WindowSizeUp));
-            defaultMouseGestureMap.Add(new MouseGestureMap(new MouseGestureInput(MouseButton.Right, "[WD]"), CommandID.WindowSizeDown));
-
-            // 通常時
-
-            // 画像拡大時
-
-            return defaultMouseGestureMap;
-
+            return defaultCommandMap;
         }
     }
 }

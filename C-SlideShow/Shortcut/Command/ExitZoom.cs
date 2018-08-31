@@ -15,6 +15,11 @@ namespace C_SlideShow.Shortcut.Command
         public Scene     Scene   { set; get; }
         public string    Message { get; }
 
+        public int       Value           { get; set; }
+        public string    StrValue        { get; set; }
+        public bool      EnableValue     { get; } = false;
+        public bool      EnableStrValue  { get; } = false;
+
         public ExitZoom()
         {
             ID    = CommandID.ExitZoom;
@@ -23,7 +28,15 @@ namespace C_SlideShow.Shortcut.Command
         
         public bool CanExecute()
         {
-            return true;
+            if( MainWindow.Current.TileExpantionPanel.IsShowing && 
+                MainWindow.Current.TileExpantionPanel.IsAnimationCompleted )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Execute()

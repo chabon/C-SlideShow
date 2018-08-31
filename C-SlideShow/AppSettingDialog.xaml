@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:C_SlideShow"
         xmlns:cc="clr-namespace:C_SlideShow.CommonControl"
         mc:Ignorable="d"
-        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="520" Width="650">
+        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="520" Width="660" MinWidth="400" MinHeight="350">
     <Grid>
         <TabControl x:Name="MainTabControl" Margin="3,3,3,40">
             <!-- ショートカット -->
@@ -14,7 +14,7 @@
                 <Grid>
                     <TabControl Margin="3,10,3,135" x:Name="ShortcutSettingTab" SelectionChanged="ShortcutSettingTab_SelectionChanged">
                         <TabItem Header="いつでも" Width="70">
-                            <ListView x:Name="ShortcutListView_ALL" SelectionChanged="ShortcutListView_SelectionChanged">
+                            <ListView x:Name="ShortcutListView_ALL" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
@@ -26,7 +26,7 @@
                             </ListView>
                         </TabItem>
                         <TabItem Header="通常時" Width="70">
-                            <ListView x:Name="ShortcutListView_Normal" SelectionChanged="ShortcutListView_SelectionChanged">
+                            <ListView x:Name="ShortcutListView_Normal" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
@@ -38,7 +38,7 @@
                             </ListView>
                         </TabItem>
                         <TabItem Header="拡大時" Width="70">
-                            <ListView x:Name="ShortcutListView_Expand" SelectionChanged="ShortcutListView_SelectionChanged">
+                            <ListView x:Name="ShortcutListView_Expand" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
@@ -51,7 +51,7 @@
                         </TabItem>
                     </TabControl>
 
-                    <Button x:Name="Shortcut_DetailButton" Click="Shortcut_DetailButton_Click" Content="..." ContextMenuService.IsEnabled="False" Width="25" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="8">
+                    <Button x:Name="Shortcut_DetailButton" Click="Shortcut_DetailButton_Click" Content="..." ContextMenuService.IsEnabled="False" Width="25" Height="20" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="8,7">
                         <Button.ContextMenu>
                             <ContextMenu>
                                 <MenuItem x:Name="CopySelectedCommand"  Click="CopySelectedCommand_Click" Header="選択中のコマンドを複製"></MenuItem>
@@ -59,6 +59,10 @@
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
+                    <StackPanel Margin="0,4,50,0" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
+                        <Label x:Name="CommandValueLabel" Visibility="Collapsed">コマンドの値</Label>
+                        <TextBox x:Name="CommandValue" Visibility="Collapsed" TextChanged="CommandValue_TextChanged" Width="100" Height="20"></TextBox>
+                    </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Left">

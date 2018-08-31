@@ -15,6 +15,12 @@ namespace C_SlideShow.Shortcut.Command
         public Scene     Scene   { set; get; }
         public string    Message { get; }
 
+        public int       Value           { get; set; } = 10;
+        public string    StrValue        { get; set; }
+        public bool      EnableValue     { get; } = true;
+        public bool      EnableStrValue  { get; } = false;
+
+
         public WindowSizeUp()
         {
             ID    = CommandID.WindowSizeUp;
@@ -32,14 +38,18 @@ namespace C_SlideShow.Shortcut.Command
 
             if( mw.Setting.TempProfile.IsFullScreenMode.Value ) return;
 
-            mw.Width = mw.Width * 1.1;
-            mw.Height = mw.Height * 1.1;
+            double param = Value / 100.0;
+            if( param < 0 ) param = 0;
+            else if( param > 10 ) param = 10;
+
+            mw.Width = mw.Width * (1.0 + param);
+            mw.Height = mw.Height * (1.0 + param);
             mw.UpdateWindowSize();
         }
 
         public string GetDetail()
         {
-            return "ウインドウサイズを大きく";
+            return "ウインドウサイズを" + Value.ToString() + "%大きく";
         }
     }
 }

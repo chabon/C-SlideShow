@@ -15,6 +15,11 @@ namespace C_SlideShow.Shortcut
         Scene Scene { get; set; }       // シーン
         string Message { get; }
 
+        int       Value           { get; set; }
+        string    StrValue        { get; set; }
+        bool      EnableValue     { get; }
+        bool      EnableStrValue  { get; }
+
         /// <summary>
         /// コマンドが実行可能かどうか
         /// </summary>

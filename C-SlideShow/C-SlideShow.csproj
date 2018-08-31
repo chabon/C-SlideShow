@@ -88,9 +88,7 @@
     <Compile Include="Archiver\RarArchiver.cs" />
     <Compile Include="Archiver\SharpCompressArchiver.cs" />
     <Compile Include="Archiver\ZipArchiver.cs" />
-    <Compile Include="Setting\MouseGestureMap.cs" />
-    <Compile Include="Setting\MouseInputMap.cs" />
-    <Compile Include="Setting\KeyMap.cs" />
+    <Compile Include="Setting\CommandMap.cs" />
     <Compile Include="Setting\ShortcutSetting.cs" />
     <Compile Include="Shortcut\CommandID.cs" />
     <Compile Include="Shortcut\Command\SlideToBottom.cs" />

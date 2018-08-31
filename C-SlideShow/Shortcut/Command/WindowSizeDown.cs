@@ -15,6 +15,11 @@ namespace C_SlideShow.Shortcut.Command
         public Scene     Scene   { set; get; }
         public string    Message { get; }
 
+        public int       Value           { get; set; } = 10;
+        public string    StrValue        { get; set; }
+        public bool      EnableValue     { get; } = true;
+        public bool      EnableStrValue  { get; } = false;
+
         public WindowSizeDown()
         {
             ID    = CommandID.WindowSizeDown;
@@ -32,8 +37,12 @@ namespace C_SlideShow.Shortcut.Command
 
             if( mw.Setting.TempProfile.IsFullScreenMode.Value ) return;
 
-            mw.Width = mw.Width * 0.9;
-            mw.Height = mw.Height * 0.9;
+            double param = Value / 100.0;
+            if( param < 0 ) param = 0;
+            else if( param > 0.9 ) param = 0.9;
+
+            mw.Width = mw.Width * (1.0 - param);
+            mw.Height = mw.Height * (1.0 - param);
             mw.UpdateWindowSize();
 
             //mw.NotificationBlock.Show("ウインドウサイズを小さく", CommonControl.NotificationPriority.Highest, CommonControl.NotificationTime.Short);
@@ -41,7 +50,7 @@ namespace C_SlideShow.Shortcut.Command
 
         public string GetDetail()
         {
-            return "ウインドウサイズを小さく";
+            return "ウインドウサイズを" + Value.ToString() + "%小さく";
         }
     }
 }

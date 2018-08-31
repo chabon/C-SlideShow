@@ -508,14 +508,14 @@ namespace C_SlideShow
             Debug.WriteLine("--------------------------------------------------------------------------------------------------------");
         }
 
-        public void ZoomIn()
+        public void ZoomIn(double param)
         {
-            Zoom(0.5);
+            Zoom(param);
         }
 
-        public void ZoomOut()
+        public void ZoomOut(double param)
         {
-            Zoom(-0.5);
+            Zoom(- param);
         }
 
         public void ZoomReset()
