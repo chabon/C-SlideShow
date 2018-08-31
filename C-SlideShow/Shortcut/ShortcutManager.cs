@@ -389,10 +389,6 @@ namespace C_SlideShow.Shortcut
             MouseButtonClickState mouseButtonClickState = null;
             MouseInputButton mouseInputButton = MouseInputButton.None;
 
-            // test
-            //mouseButtonHoldState.IsPressed = false;
-            //return;
-
             Debug.WriteLine("mouse up : " + e.ChangedButton.ToString());
 
             if(e.ChangedButton == MouseButton.Left )
@@ -428,7 +424,7 @@ namespace C_SlideShow.Shortcut
             // 既に他の入力でコマンド実行済み
             if( mouseButtonClickState.CommandExecuted )
             {
-                e.Handled = true;
+                //e.Handled = true;
             }
 
             // マウスクリックコマンド実行
