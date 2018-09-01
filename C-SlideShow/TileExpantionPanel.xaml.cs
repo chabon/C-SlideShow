@@ -554,15 +554,12 @@ namespace C_SlideShow
 
             ImageFileInfo fi = targetTile.ImageFileInfo;
 
-            // ファイル(書庫内ファイルは現在不可)
-            if( fi.Archiver.CanReadFile )
-            {
-                MenuItem mi_file = new MenuItem();
-                mi_file.Header = Path.GetFileName("ファイル");
-                mi_file.ToolTip = Path.GetFileName("コピー後、エクスプローラーで貼り付けが出来ます");
-                mi_file.Click += (s, ev) => { targetTile.CopyFile(); };
-                MenuItem_Copy.Items.Add(mi_file);
-            }
+            // ファイル
+            MenuItem mi_file = new MenuItem();
+            mi_file.Header = Path.GetFileName("ファイル");
+            mi_file.ToolTip = Path.GetFileName("コピー後、エクスプローラーで貼り付けが出来ます");
+            mi_file.Click += (s, ev) => { targetTile.CopyFile(); };
+            MenuItem_Copy.Items.Add(mi_file);
 
             // 画像データ
             MenuItem mi_image = new MenuItem();
@@ -590,7 +587,7 @@ namespace C_SlideShow
 
         }
 
-        // 外部プログラムで画像を開く(書庫内ファイルは現在不可)
+        // 外部プログラムで画像を開く
         private void Toolbar_OpenByExternalApp_Click(object sender, RoutedEventArgs e)
         {
             targetTile.OpenByExternalApp(0);

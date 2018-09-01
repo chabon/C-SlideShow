@@ -13,6 +13,9 @@ namespace C_SlideShow
     /// </summary>
     public partial class App : Application
     {
+        // 一時ファイルのリスト
+        public static List<string> TempFilePathList;
+
         private void Application_Startup(object sender, StartupEventArgs e)
         {
 
@@ -28,6 +31,19 @@ namespace C_SlideShow
             }
 
             mainWindow.Show();
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            if(TempFilePathList != null )
+            {
+                foreach(string tempFilePath in TempFilePathList )
+                {
+                    try { System.IO.File.Delete(tempFilePath); }
+                    catch { }
+                }
+            }
+
         }
     }
 }

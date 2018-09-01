@@ -65,19 +65,34 @@ namespace C_SlideShow
             Process.Start("explorer.exe", "/select,\"" + filePath + "\"");
         }
 
-        // ファイルをコピー(書庫内ファイルは現在不可)
+        // ファイルをコピー
         public void CopyFile()
         {
+            string notificationFileName;
+            string srcFilePath;
+
             if( ImageFileInfo.Archiver.CanReadFile )
             {
-                System.Collections.Specialized.StringCollection files = new System.Collections.Specialized.StringCollection();
-                files.Add(ImageFileInfo.FilePath);
-                Clipboard.SetFileDropList(files);
-
-                string fileName = System.IO.Path.GetFileName(ImageFileInfo.FilePath);
-                MainWindow.Current.NotificationBlock.Show("クリップボードにファイルをコピーしました: " + fileName,
-                    CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
+                srcFilePath = ImageFileInfo.FilePath;
+                notificationFileName = System.IO.Path.GetFileName(ImageFileInfo.FilePath);
             }
+            else
+            {
+                // 書庫内ファイルの場合
+                if(ImageFileInfo.TempFilePath == null) ImageFileInfo.WriteToTempFolder();
+
+                srcFilePath = ImageFileInfo.TempFilePath;
+                notificationFileName = ImageFileInfo.TempDirName + "\\" + System.IO.Path.GetFileName(ImageFileInfo.TempFilePath);
+            }
+
+            // コピー
+            System.Collections.Specialized.StringCollection files = new System.Collections.Specialized.StringCollection();
+            files.Add(srcFilePath);
+            Clipboard.SetFileDropList(files);
+
+            // 通知
+            MainWindow.Current.NotificationBlock.Show("クリップボードにファイルをコピーしました: " + notificationFileName,
+                CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
         }
 
         // 画像データをコピー
@@ -105,7 +120,7 @@ namespace C_SlideShow
             }
             Clipboard.SetText(filePath);
 
-            MainWindow.Current.NotificationBlock.Show("クリップボードにファイルパスをコピーしました: " + ImageFileInfo.FilePath,
+            MainWindow.Current.NotificationBlock.Show("クリップボードにファイルパスをコピーしました: " + filePath,
                 CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
         }
 
@@ -119,12 +134,27 @@ namespace C_SlideShow
                 CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
         }
 
-        // 外部プログラムで画像を開く(書庫内ファイルは現在不可)
+        // 外部プログラムで画像を開く
         public void OpenByExternalApp(int number)
         {
+            // ファイルパスの決定
+            string filePath;
             if( ImageFileInfo.Archiver.CanReadFile )
             {
-                ExternalAppInfo exAppInfo = MainWindow.Current.Setting.ExternalAppInfoList[0];
+                filePath = ImageFileInfo.FilePath;
+            }
+            else
+            {
+                // 書庫内ファイルなら一時展開
+                if( ImageFileInfo.TempFilePath == null ) ImageFileInfo.WriteToTempFolder();
+                filePath = ImageFileInfo.TempFilePath;
+            }
+
+            // 外部プログラム呼び出し
+            var exAppInfoList = MainWindow.Current.Setting.ExternalAppInfoList;
+            if( exAppInfoList != null &&  exAppInfoList.Count > number)
+            {
+                ExternalAppInfo exAppInfo = MainWindow.Current.Setting.ExternalAppInfoList[number];
                 string filePathFormat = "$FilePath$";
 
                 string arg = exAppInfo.Arg;
@@ -133,13 +163,13 @@ namespace C_SlideShow
                 if(exAppInfo.Path != "" )
                 {
                     // プログラムの指定あり
-                    try { Process.Start( exAppInfo.Path, arg.Replace(filePathFormat, ImageFileInfo.FilePath) ); }
+                    try { Process.Start( exAppInfo.Path, arg.Replace(filePathFormat, filePath) ); }
                     catch { }
                 }
                 else
                 {
                     // プログラムの指定がなければ、拡張子で関連付けられているプログラムで開く
-                    try { Process.Start( "\"" +  ImageFileInfo.FilePath +"\"" ); }
+                    try { Process.Start( "\"" +  filePath +"\"" ); }
                     catch { }
                 }
             }

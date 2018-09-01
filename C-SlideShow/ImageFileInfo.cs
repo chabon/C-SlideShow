@@ -25,6 +25,8 @@ namespace C_SlideShow
         public Size             PixelSize = Size.Empty;    // ピクセルサイズ
         public ExifInfo         ExifInfo = ExifInfo.Empty; // Exif情報
         public bool             IsDummy = false;           // 穴埋め用のダミー
+        public string           TempFilePath = null;       // 一時展開ファイルフルパス
+        public const string     TempDirName = "temp";      // 一時展開フォルダ名
 
         public ImageFileInfo()
         {
@@ -34,6 +36,36 @@ namespace C_SlideShow
         public ImageFileInfo(string _filePath)
         {
             this.FilePath = _filePath;
+        }
+
+        /// <summary>
+        /// アーカイブ中のファイルを一時フォルダに展開する
+        /// </summary>
+        public void WriteToTempFolder()
+        {
+            if( TempFilePath != null || Archiver == null) return;
+
+            // 一時ファイル名
+            string ext = System.IO.Path.GetExtension(FilePath);
+            string tempFileName = System.IO.Path.GetRandomFileName();
+            if(ext != null && ext != string.Empty )
+            {
+                tempFileName = System.IO.Path.ChangeExtension(tempFileName, ext);
+            }
+
+            // 一時ファイルのディレクトリパス(なければ作成)
+            string tempDir = Directory.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location).FullName + "\\" + TempDirName;
+            if( !Directory.Exists(tempDir) ) Directory.CreateDirectory(tempDir);
+
+            // 一時ファイルフルパス
+            TempFilePath = tempDir + "\\" + tempFileName;
+
+            // 出力
+            Archiver.WriteAsFile(FilePath, TempFilePath);
+
+            // リストに追加(アプリケーション終了時に削除)
+            if( App.TempFilePathList == null ) App.TempFilePathList = new List<string>();
+            App.TempFilePathList.Add(TempFilePath);
         }
 
         /// <summary>

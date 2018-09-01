@@ -33,6 +33,20 @@ namespace C_SlideShow.Archiver
             return Stream.Null;
         }
 
+        public virtual void WriteAsFile(string path, string outputPath)
+        {
+            Stream st = OpenStream(path);
+            FileStream fs = new FileStream(outputPath, FileMode.Create);
+
+            int b;
+            while( ( b = st.ReadByte() ) != -1 )
+            {
+                fs.WriteByte( (Byte)b );
+            }
+
+            fs.Close();
+        }
+
         public virtual List<ImageFileInfo> LoadImageFileInfoList()
         {
             return new List<ImageFileInfo>();
