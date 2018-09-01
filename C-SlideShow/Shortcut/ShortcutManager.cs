@@ -109,6 +109,7 @@ namespace C_SlideShow.Shortcut
             commands.Add( new OpenAdditionalFile() );
             commands.Add( new WindowSizeUp() );
             commands.Add( new WindowSizeDown() );
+            commands.Add( new ShowContextMenu() );
             commands.Add( new LoadProfileFromNum() );
             commands.Add( new LoadProfileFromName() );
 
@@ -122,6 +123,8 @@ namespace C_SlideShow.Shortcut
             commands.Add( new SlideToForwardByOneImage() );
             commands.Add( new SlideToBackwardByOneImage() );
             commands.Add( new ZoomImageUnderCursor() );
+            commands.Add( new ShiftForward() );
+            commands.Add( new ShiftBackward() );
 
             // 画像拡大時
             commands.Add( new ZoomInImage() );
@@ -153,6 +156,18 @@ namespace C_SlideShow.Shortcut
                 if( command.EnableStrValue ) command.StrValue = strValue;
 
                 if( command.CanExecute() ) command.Execute();
+            }
+        }
+
+        // コマンドIDから実行
+        public void ExecuteCommand(CommandID id, int value, string strValue)
+        {
+            if( commands == null ) CreateCommands();
+
+            ICommand command = GetCommand(id);
+            if( command != null )
+            {
+                ExecuteCommand(command, value, strValue);
             }
         }
 

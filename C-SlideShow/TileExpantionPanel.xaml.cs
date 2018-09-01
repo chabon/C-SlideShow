@@ -35,6 +35,7 @@ namespace C_SlideShow
         public bool ExpandedDuringPlay { get; set; } = false;
         public bool IsShowing { get; private set; } = false;
         public bool IsAnimationCompleted { get; private set; } = true;
+        public Tile TargetTile { get { return targetTile; } }
 
 
         public TileExpantionPanel()
@@ -543,20 +544,7 @@ namespace C_SlideShow
         // エクスプローラーで開く
         private void Toolbar_OpenExplorer_Click(object sender, RoutedEventArgs e)
         {
-            string folderDirPath;
-            string filePath;
-            if( targetTile.ImageFileInfo.Archiver.CanReadFile )
-            {
-                folderDirPath = Directory.GetParent(targetTile.ImageFileInfo.FilePath).FullName;
-                filePath = targetTile.ImageFileInfo.FilePath;
-            }
-            else
-            {
-                folderDirPath = Directory.GetParent(targetTile.ImageFileInfo.Archiver.ArchiverPath).FullName;
-                filePath = targetTile.ImageFileInfo.Archiver.ArchiverPath;
-            }
-            Process.Start("explorer.exe", "/select,\"" + filePath + "\"");
-            //Process.Start(folderDirPath);
+            targetTile.OpenExplorer();
         }
 
         // クリップボードへコピー
@@ -572,11 +560,7 @@ namespace C_SlideShow
                 MenuItem mi_file = new MenuItem();
                 mi_file.Header = Path.GetFileName("ファイル");
                 mi_file.ToolTip = Path.GetFileName("コピー後、エクスプローラーで貼り付けが出来ます");
-                mi_file.Click += (s, ev) => {
-                    System.Collections.Specialized.StringCollection files = new System.Collections.Specialized.StringCollection();
-                    files.Add(fi.FilePath);
-                    Clipboard.SetFileDropList(files);
-                };
+                mi_file.Click += (s, ev) => { targetTile.CopyFile(); };
                 MenuItem_Copy.Items.Add(mi_file);
             }
 
@@ -584,10 +568,7 @@ namespace C_SlideShow
             MenuItem mi_image = new MenuItem();
             mi_image.Header = Path.GetFileName("画像データ");
             mi_image.ToolTip = Path.GetFileName("コピー後、ペイント等の画像編集ソフトへ貼り付けが出来ます");
-            mi_image.Click += (s, ev) => {
-                BitmapSource source = ImageFileManager.LoadBitmap( fi, new Size(0, 0) );
-                Clipboard.SetImage(source);
-            };
+            mi_image.Click += (s, ev) => { targetTile.CopyImageData(); };
             MenuItem_Copy.Items.Add(mi_image);
 
             // ファイルパス
@@ -597,14 +578,14 @@ namespace C_SlideShow
             MenuItem mi_filePath = new MenuItem();
             mi_filePath.Header = Path.GetFileName("ファイルパス");
             mi_filePath.ToolTip = filePath;
-            mi_filePath.Click += (s, ev) => { Clipboard.SetText(filePath); };
+            mi_filePath.Click += (s, ev) => { targetTile.CopyFilePath(); };
             MenuItem_Copy.Items.Add(mi_filePath);
 
             // ファイル名
             MenuItem mi_fileName = new MenuItem();
             mi_fileName.Header = "ファイル名";
             mi_fileName.ToolTip = Path.GetFileName( fi.FilePath );
-            mi_fileName.Click += (s, ev) => { Clipboard.SetText( Path.GetFileName(fi.FilePath) ); };
+            mi_fileName.Click += (s, ev) => { targetTile.CopyFileName(); };
             MenuItem_Copy.Items.Add(mi_fileName);
 
         }
@@ -612,28 +593,7 @@ namespace C_SlideShow
         // 外部プログラムで画像を開く(書庫内ファイルは現在不可)
         private void Toolbar_OpenByExternalApp_Click(object sender, RoutedEventArgs e)
         {
-            ImageFileInfo fi = targetTile.ImageFileInfo;
-            if( fi.Archiver.CanReadFile )
-            {
-                ExternalAppInfo exAppInfo = MainWindow.Setting.ExternalAppInfoList[0];
-                string filePathFormat = "$FilePath$";
-
-                string arg = exAppInfo.Arg;
-                if( arg == "" ) arg = "\"" + filePathFormat + "\"";
-
-                if(exAppInfo.Path != "" )
-                {
-                    // プログラムの指定あり
-                    try { Process.Start( exAppInfo.Path, arg.Replace(filePathFormat, fi.FilePath) ); }
-                    catch { }
-                }
-                else
-                {
-                    // プログラムの指定がなければ、拡張子で関連付けられているプログラムで開く
-                    try { Process.Start( "\"" +  fi.FilePath +"\"" ); }
-                    catch { }
-                }
-            }
+            targetTile.OpenByExternalApp(0);
         }
 
 

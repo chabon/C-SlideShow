@@ -17,6 +17,7 @@ namespace C_SlideShow.Shortcut
         OpenAdditionalFile,             // ファイル追加読み込み
         WindowSizeUp,                   // ウインドウサイズを[ ]%大きく
         WindowSizeDown,                 // ウインドウサイズを[ ]%小さく
+        ShowContextMenu,                // コンテキストメニューを表示
         LoadProfileFromNum,             // プロファイル番号[ ](ProfileName)をロード
         LoadProfileFromName,            // プロファイル名「[ ]」をロード
 
@@ -30,6 +31,8 @@ namespace C_SlideShow.Shortcut
         SlideToRight,                   // 右方向にスライド
         SlideToBottom,                  // 下方向にスライド
         ZoomImageUnderCursor,           // カーソル下の画像を全体に拡大
+        ShiftForward,                   // 画像[]枚分ずらし進める
+        ShiftBackward,                  // 画像[]枚分ずらし戻す
 
         // 画像拡大時
         ZoomInImage,                    // 画像の拡大率を[ ]%アップ

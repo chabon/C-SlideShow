@@ -45,35 +45,14 @@ namespace C_SlideShow.Shortcut.Command
             mw = MainWindow.Current;
             if( mw.TileExpantionPanel.IsShowing ) return;
 
-            // MainWindow上の座標取得
-            Point p = Mouse.GetPosition(mw);
+            Tile targetTile = mw.GetTileUnderCursor();
 
-            // カーソル下のオブジェクトを取得
-            //VisualTreeHelper.HitTest(mw, null, new HitTestResultCallback(OnHitTestResultCallback), new PointHitTestParameters(p));
-            IInputElement ie = mw.InputHitTest(p);
-            DependencyObject source = ie as DependencyObject;
-            if( source == null ) return;
-
-            // クリックされたTileContainer
-            TileContainer tc = WpfTreeUtil.FindAncestor<TileContainer>(source);
-            if( tc == null ) return;
-
-            // クリックされたBorder
-            Border border;
-            if( source is Border ) border = source as Border;
-            else
+            if(targetTile != null )
             {
-                border = WpfTreeUtil.FindAncestor<Border>(source);
+                // 表示
+                Debug.WriteLine(targetTile.ToString());
+                mw.TileExpantionPanel.Show(targetTile);
             }
-            if( border == null ) return;
-
-            // 紐づけられているTileオブジェクトを特定
-            Tile targetTile = tc.Tiles.FirstOrDefault(t => t.Border == border);
-            if( targetTile == null ) return;
-
-            Debug.WriteLine(targetTile.ToString());
-            // 表示
-            mw.TileExpantionPanel.Show(targetTile);
         }
 
         public string GetDetail()

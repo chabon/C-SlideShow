@@ -59,6 +59,7 @@ namespace C_SlideShow
         public static MainWindow Current { get; private set; }
         public AppSetting Setting { get; set; }
         public ShortcutManager ShortcutManager { get; set; }
+        public ImageFileManager ImageFileManager { get { return imageFileManager; } }
 
         public bool IsHorizontalSlide
         {
@@ -158,7 +159,7 @@ namespace C_SlideShow
 
             // debug
 #if DEBUG
-            //Setting.ShortcutSetting = new ShortcutSetting();
+            Setting.ShortcutSetting = new ShortcutSetting();
 #endif
 
             // init
@@ -349,7 +350,7 @@ namespace C_SlideShow
             if( tp.SlideShowAutoStart.Value ) StartSlideShow();
 
             // 読み込み完了メッセージ
-            NotificationBlock.Show("プロファイルのロード完了: " + userProfile.Name, NotificationPriority.Normal, NotificationTime.Short);
+            NotificationBlock.Show("プロファイルのロード完了: " + userProfile.Name, NotificationPriority.High, NotificationTime.Short);
         }
 
 
@@ -1159,6 +1160,40 @@ namespace C_SlideShow
             }
 
             return containersInCurrentOrder;
+        }
+
+        public Tile GetTileUnderCursor()
+        {
+            // MainWindow上の座標取得
+            Point p = Mouse.GetPosition(this);
+
+            // カーソル下のオブジェクトを取得
+            //VisualTreeHelper.HitTest(mw, null, new HitTestResultCallback(OnHitTestResultCallback), new PointHitTestParameters(p));
+            IInputElement ie = this.InputHitTest(p);
+            DependencyObject source = ie as DependencyObject;
+            if( source == null ) return null;
+
+            // 拡大時は1つしか候補が無い
+            if( TileExpantionPanel.IsShowing ) return TileExpantionPanel.TargetTile;
+
+            // クリックされたTileContainer
+            TileContainer tc = WpfTreeUtil.FindAncestor<TileContainer>(source);
+            if( tc == null ) return null;
+
+            // クリックされたBorder
+            Border border;
+            if( source is Border ) border = source as Border;
+            else
+            {
+                border = WpfTreeUtil.FindAncestor<Border>(source);
+            }
+            if( border == null ) return null;
+
+            // 紐づけられているTileオブジェクトを特定
+            Tile targetTile = tc.Tiles.FirstOrDefault(t => t.Border == border);
+            if( targetTile == null ) return null;
+
+            return targetTile;
         }
 
         public void Reload(bool keepCurrentIdx)
