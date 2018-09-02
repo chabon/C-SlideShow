@@ -58,7 +58,23 @@
         <Rectangle x:Name="FullScreenBase_BottomRight" Fill="Black" Visibility="Hidden"
                    HorizontalAlignment="Right" VerticalAlignment="Bottom"></Rectangle>
 
+        <!-- タイル拡大パネル -->
+        <local:TileExpantionPanel 
+            x:Name="TileExpantionPanel"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Visibility="Hidden"
+            >
+        </local:TileExpantionPanel>
 
+
+        <!-- リサイズ枠 -->
+        <Border x:Name="ResizeGrip"
+                Visibility="Visible"
+                BorderThickness="5"
+                BorderBrush="Gray"
+                >
+        </Border>
 
         <!-- ツールバー -->
         <Border Margin="10,10,10,0" 
@@ -313,15 +329,6 @@
         </Border>
 
 
-        <!-- タイル拡大パネル -->
-        <local:TileExpantionPanel 
-            x:Name="TileExpantionPanel"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Visibility="Hidden"
-            >
-        </local:TileExpantionPanel>
-
         <!-- システムボタン -->
         <StackPanel x:Name="SystemButtonWrapper" Orientation="Horizontal" 
                     HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -356,13 +363,6 @@
             </Button>
         </StackPanel>
 
-        <!-- リサイズ枠 -->
-        <Border x:Name="ResizeGrip"
-                Visibility="Visible"
-                BorderThickness="5"
-                BorderBrush="Gray"
-                >
-        </Border>
 
         <!-- 通知ブロック -->
         <cc:NotificationBlock x:Name="NotificationBlock" Visibility="Collapsed"></cc:NotificationBlock>
