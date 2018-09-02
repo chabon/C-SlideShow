@@ -118,7 +118,7 @@ namespace C_SlideShow.Shortcut
         /// <summary>
         /// フックハンドル
         /// </summary>
-        private IntPtr hHook;
+        private IntPtr hHook = IntPtr.Zero;
 
         /// <summary>
         /// ジェスチャストローク更新時イベント
@@ -150,7 +150,9 @@ namespace C_SlideShow.Shortcut
 				directionInfo[i] =new DirectionInfo();
 			}
 			Range = 15;
-            SetHook();
+
+            // フックプロシージャ
+            hookCallback += HookProc;
 		}
 
 		/// <summary>
@@ -158,6 +160,12 @@ namespace C_SlideShow.Shortcut
 		/// </summary>
 		public void Start(MouseButton startingButton)
 		{
+            if(hHook != IntPtr.Zero)
+            {
+                UnHook();
+                return;
+            }
+
 			isActive = true;
             stroke = "";
 			ResetDirection();
@@ -183,6 +191,8 @@ namespace C_SlideShow.Shortcut
                     isActive = false;
                     return;
             }
+
+            SetHook();
             Debug.WriteLine("mouse gesture start");
         }
 
@@ -193,6 +203,8 @@ namespace C_SlideShow.Shortcut
         /// <returns>終了時のジェスチャのストローク</returns>
 		public string End()
 		{
+            UnHook();
+
 			if(isActive)
 			{
 				isActive = false;
@@ -321,7 +333,6 @@ namespace C_SlideShow.Shortcut
         {
             IntPtr hmodule = GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
 
-            hookCallback += HookProc;
             hHook = SetWindowsHookEx((int)HookType.WH_MOUSE_LL, hookCallback, hmodule, IntPtr.Zero);
 
             if (hHook == null)
@@ -334,6 +345,12 @@ namespace C_SlideShow.Shortcut
                 //MessageBox.Show("SetWindowsHookEx 成功", "OK");
                 return 0;
             }
+        }
+
+        public void UnHook()
+        {
+            if(hHook != IntPtr.Zero) UnhookWindowsHookEx(hHook);
+            hHook = IntPtr.Zero;
         }
 
         private IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam)
@@ -488,10 +505,6 @@ namespace C_SlideShow.Shortcut
         }
 
 
-        public void UnHook()
-        {
-            UnhookWindowsHookEx(hHook);
-        }
 
         /* ---------------------------------------------------- */
         //     Win32 API

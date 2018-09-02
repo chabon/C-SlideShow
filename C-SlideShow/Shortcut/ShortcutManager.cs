@@ -81,7 +81,7 @@ namespace C_SlideShow.Shortcut
 
             // 左クリック後、ドラッグでウインドウドラッグ可能に
             windowDragMove = new WindowDragMove(MainWindow.Current);
-            windowDragMove.DragMoved += (s, e) => { mouseButtonClickState_L.CommandExecuted = true; };
+            windowDragMove.CanDragStart = () => { return !MainWindow.Current.Setting.TempProfile.IsFullScreenMode.Value; };
         }
 
         private void InitMouseGesture()

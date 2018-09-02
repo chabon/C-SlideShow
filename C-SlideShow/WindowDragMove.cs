@@ -17,11 +17,14 @@ namespace C_SlideShow
         private bool   bDragStart = false;
         private Point  ptDragStart;
         private Point  ptWindowPrev;
-        private IntPtr hHook;
+        private IntPtr hHook = IntPtr.Zero;
         private event Win32.HOOKPROC hookCallback;
 
         private Point  ptMaxDiff; // ドラッグ開始時からの最大移動量
         private const double thresholdOfMaxDiff = 0.5; // DragMovedイベントを発生させるしきい値
+
+        // プロパティ
+        public Func<bool> CanDragStart { private get; set; }
 
         // イベント
         public event EventHandler DragMoved;
@@ -30,33 +33,44 @@ namespace C_SlideShow
         public WindowDragMove(Window window)
         {
             targetWindow = window;
-
             targetWindow.MouseLeftButtonDown += TargetWindow_MouseLeftButtonDown;
-
-            SetHook();
-            window.Closing += (s, e) => { UnHook(); };
+            targetWindow.Closing += (s, e) => { UnHook(); };
+            hookCallback += HookProc;
         }
 
         private void TargetWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if( MainWindow.Current.Setting.TempProfile.IsFullScreenMode.Value ) return;
+            if( CanDragStart != null && !CanDragStart.Invoke() ) return;
 
-            ptDragStart  = Win32.GetCursorPos();
-            ptWindowPrev = new Point(targetWindow.Left, targetWindow.Top);
-            ptMaxDiff    = new Point(0, 0);
-            bDragStart   = true;
+            if(hHook == IntPtr.Zero )
+            {
+                ptDragStart  = Win32.GetCursorPos();
+                ptWindowPrev = new Point(targetWindow.Left, targetWindow.Top);
+                ptMaxDiff    = new Point(0, 0);
+                bDragStart   = true;
+                SetHook();
+            }
+            else
+            {
+                UnHook();
+            }
         }
 
         private void TargetWindow_MouseLeave(object sender, MouseEventArgs e)
         {
+            DragFinish();
+        }
+
+        private void DragFinish()
+        {
             bDragStart = false;
+            UnHook();
         }
 
         private int SetHook()
         {
             IntPtr hmodule = Win32.GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName);
 
-            hookCallback += HookProc;
             hHook = Win32.SetWindowsHookEx((int)Win32.HookType.WH_MOUSE_LL, hookCallback, hmodule, IntPtr.Zero);
 
             if (hHook == null) { return -1; }
@@ -65,7 +79,8 @@ namespace C_SlideShow
 
         public void UnHook()
         {
-            Win32.UnhookWindowsHookEx(hHook);
+            if(hHook != IntPtr.Zero) Win32.UnhookWindowsHookEx(hHook);
+            hHook = IntPtr.Zero;
         }
 
         private IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam)
@@ -85,10 +100,10 @@ namespace C_SlideShow
                         targetWindow.Left = ptWindowPrev.X + ptDiff.X;
                         targetWindow.Top  = ptWindowPrev.Y + ptDiff.Y;
                     }
-                    else
-                    {
-                        bDragStart = false;
-                    }
+                }
+                else
+                {
+                    DragFinish();
                 }
 
                 if( (int)wParam == Win32.WM_LBUTTONUP )
@@ -97,7 +112,7 @@ namespace C_SlideShow
                     {
                         DragMoved?.Invoke( this, new EventArgs() );
                     }
-                    bDragStart = false;
+                    DragFinish();
                 }
             }
 
