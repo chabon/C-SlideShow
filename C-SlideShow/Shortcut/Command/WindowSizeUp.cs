@@ -42,9 +42,18 @@ namespace C_SlideShow.Shortcut.Command
             if( param < 0 ) param = 0;
             else if( param > 10 ) param = 10;
 
+            mw.IgnoreResizeEvent = true;
             mw.Width = mw.Width * (1.0 + param);
             mw.Height = mw.Height * (1.0 + param);
-            mw.UpdateWindowSize();
+            mw.IgnoreResizeEvent = false;
+            mw.FitMainContentToWindow();
+
+            // 画像拡大パネルのサイズ更新、拡大中ならリセット
+            if( mw.TileExpantionPanel.IsShowing )
+            {
+                mw.TileExpantionPanel.ZoomReset();
+                mw.TileExpantionPanel.FitToMainWindow();
+            }
         }
 
         public string GetDetail()

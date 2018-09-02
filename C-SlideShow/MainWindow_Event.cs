@@ -61,8 +61,8 @@ namespace C_SlideShow
 
             this.SizeChanged += (s, e) =>
             {
-                //return;
-                if (ignoreResizeEvent) return;
+                // 以下の処理は、ウインドウ枠ドラッグでのサイズ変更時のみ有効
+                if (IgnoreResizeEvent) return;
 
                 // 画像拡大パネルのサイズ更新、拡大中ならリセット
                 if( TileExpantionPanel.IsShowing )

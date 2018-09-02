@@ -40,7 +40,6 @@ namespace C_SlideShow
         int intervalSlideTimerCount = 0;
         List<TileContainer> tileContainers = new List<TileContainer>();
         bool ignoreSliderValueChangeEvent = false; // SliderのValue変更時にイベントを飛ばさないフラグ
-        bool ignoreResizeEvent = false;
         bool ignoreClosingEvent = false;
         bool isSeekbarDragStarted = false;
         //Point aspectRatioInNonFixMode = new Point( 4, 3 );
@@ -115,7 +114,7 @@ namespace C_SlideShow
                     return false;
             }
         }
-
+        public bool IgnoreResizeEvent { get; set; } = false;
 
         public MainWindow() // 起動時
         {
@@ -153,7 +152,7 @@ namespace C_SlideShow
             Setting = setting;
             this.AllowsTransparency = (bool)Setting.TempProfile.AllowTransparency.Value;
 
-            ignoreResizeEvent = true;
+            IgnoreResizeEvent = true;
 
             InitializeComponent();
 
@@ -183,7 +182,7 @@ namespace C_SlideShow
             {
                 pf.IsFullScreenMode.Value = false;
                 ToggleFullScreen();
-                ignoreResizeEvent = true;
+                IgnoreResizeEvent = true;
             }
 
             // 画像情報の読み込みとソート
@@ -205,7 +204,7 @@ namespace C_SlideShow
             // ウインドウ描画完了後、リサイズイベントの許可
             this.ContentRendered += (s, e) =>
             {
-                ignoreResizeEvent = false;
+                IgnoreResizeEvent = false;
             };
 
             // 自動再生
@@ -787,8 +786,10 @@ namespace C_SlideShow
             double nextContentHeight = nextContentWidth * nextRate;
 
             // 枠を足して適用
+            IgnoreResizeEvent = true;
             Width = nextContentWidth + margin * 2;
             Height = nextContentHeight + margin * 2;
+            IgnoreResizeEvent = false;
         }
 
         public void UpdatePageInfo()
@@ -947,13 +948,13 @@ namespace C_SlideShow
                 // 解除
                 this.MainContent.Margin = new Thickness(Setting.TempProfile.ResizeGripThickness.Value);
                 this.ResizeGrip.Visibility = Visibility.Visible;
-                this.ignoreResizeEvent = true;
+                this.IgnoreResizeEvent = true;
                 this.Topmost = isTopmostBeforeFullScreen;
                 this.Left = windowRectBeforeFullScreen.Left;
                 this.Top = windowRectBeforeFullScreen.Top;
                 this.Width = windowRectBeforeFullScreen.Width;
                 this.Height = windowRectBeforeFullScreen.Height;
-                this.ignoreResizeEvent = false;
+                this.IgnoreResizeEvent = false;
                 Setting.TempProfile.IsFullScreenMode.Value = false;
                 FullScreenBase_TopLeft.Visibility = Visibility.Hidden;
                 FullScreenBase_BottomRight.Visibility = Visibility.Hidden;
@@ -976,13 +977,13 @@ namespace C_SlideShow
                 Rect rcMonitor = Win32.GetScreenRectFromRect(new Rect(Left, Top, Width, Height));
 
                 // サイズ変更
-                this.ignoreResizeEvent = true;
+                this.IgnoreResizeEvent = true;
                 this.Topmost = true;
                 this.Left = rcMonitor.Left;
                 this.Top = rcMonitor.Top;
                 this.Width = rcMonitor.Width;
                 this.Height = rcMonitor.Height;
-                this.ignoreResizeEvent = false;
+                this.IgnoreResizeEvent = false;
 
                 // 適切なコンテナの位置と、拡大率を指定する
                 UpdateFullScreenView();
