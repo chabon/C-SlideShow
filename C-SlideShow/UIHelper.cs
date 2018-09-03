@@ -60,16 +60,16 @@ namespace C_SlideShow
                 mainWindow.ToolbarWrapper.Margin = new Thickness(10, 10, 80, 0);
 
                 // ツールバー縮小
-                int p2 = 290;
-                if(mainWindow.Width < p2 )
-                {
-                    double scale = mainWindow.Width / ( p2 + 50 );
-                    this.mainWindow.ToolbarWrapper.LayoutTransform = new ScaleTransform(scale, scale);
-                }
-                else
-                {
-                    this.mainWindow.ToolbarWrapper.LayoutTransform = new ScaleTransform(1.0, 1.0);
-                }
+                //int p2 = 290;
+                //if(mainWindow.Width < p2 )
+                //{
+                //    double scale = mainWindow.Width / ( p2 + 50 );
+                //    this.mainWindow.ToolbarWrapper.LayoutTransform = new ScaleTransform(scale, scale);
+                //}
+                //else
+                //{
+                //    this.mainWindow.ToolbarWrapper.LayoutTransform = new ScaleTransform(1.0, 1.0);
+                //}
             }
             else
             {
