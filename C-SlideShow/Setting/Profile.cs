@@ -28,6 +28,11 @@ namespace C_SlideShow
         Horizontal, Vertical
     }
 
+    public enum TileImageStretch
+    {
+        Uniform, UniformToFill, Fill
+    }
+
     public enum SlidePlayMethod
     {
         Continuous, Interval
@@ -141,6 +146,8 @@ namespace C_SlideShow
         [DataMember]
         public ProfileMember.TileOrientation TileOrientation { get; set; } = new ProfileMember.TileOrientation();
 
+        [DataMember]
+        public ProfileMember.TileImageStretch TileImageStretch { get; set; } = new ProfileMember.TileImageStretch();
 
         // その他の設定_外観1
         [DataMember]
@@ -227,6 +234,7 @@ namespace C_SlideShow
             if( pf.UseDefaultTileOrigin.IsEnabled ) UseDefaultTileOrigin.Value = pf.UseDefaultTileOrigin.Value;
             if( pf.TileOrigin.IsEnabled )           TileOrigin.Value = pf.TileOrigin.Value;
             if( pf.TileOrientation.IsEnabled )      TileOrientation.Value = pf.TileOrientation.Value;
+            if( pf.TileImageStretch.IsEnabled )     TileImageStretch.Value = pf.TileImageStretch.Value;
 
             // その他の設定_外観1
             if( pf.AllowTransparency.IsEnabled )          AllowTransparency.Value = pf.AllowTransparency.Value;
@@ -307,6 +315,7 @@ namespace C_SlideShow
             newProfile.UseDefaultTileOrigin.Value = this.UseDefaultTileOrigin.Value;
             newProfile.TileOrigin.Value = this.TileOrigin.Value;
             newProfile.TileOrientation.Value = this.TileOrientation.Value;
+            newProfile.TileImageStretch.Value = this.TileImageStretch.Value;
 
             // その他の設定_外観1
             newProfile.AllowTransparency.Value = this.AllowTransparency.Value;

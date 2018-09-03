@@ -119,6 +119,8 @@ namespace C_SlideShow
             // 配置プレビュー
             UpdateTileArrangePreview();
 
+            // グリッド枠内への画像の収め方
+            TileImageStretch.SelectedIndex = (int)pf.TileImageStretch.Value;
 
             UpdateDlgShowing();
 
@@ -524,5 +526,13 @@ namespace C_SlideShow
             }
         }
 
+        // グリッド枠内への画像の収め方
+        private void TileImageStretch_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            Setting.TempProfile.TileImageStretch.Value = (TileImageStretch)TileImageStretch.SelectedIndex;
+            mainWindow.UpdateTileArrange();
+        }
     }
 }

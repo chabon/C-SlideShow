@@ -146,7 +146,7 @@ namespace C_SlideShow
         /// </summary>
         /// <param name="numofRow"></param>
         /// <param name="numofCol"></param>
-        public void InitGrid(int numofCol, int numofRow)
+        public void InitGrid(int numofCol, int numofRow, TileImageStretch tileImageStretch)
         {
             MainGrid.ColumnDefinitions.Clear();
             MainGrid.RowDefinitions.Clear();
@@ -167,6 +167,16 @@ namespace C_SlideShow
             for(int i=0; i < numofRow * numofCol; i++)
             {
                 Tile tile = new Tile();
+                if( tileImageStretch == TileImageStretch.UniformToFill )
+                {
+                    tile.Image.Stretch = Stretch.UniformToFill;
+                    tile.Image.HorizontalAlignment = HorizontalAlignment.Center;
+                    tile.Image.VerticalAlignment = VerticalAlignment.Center;
+                }
+                else if( tileImageStretch == TileImageStretch.Fill )
+                {
+                    tile.Image.Stretch = Stretch.Fill;
+                }
                 tile.ParentConteiner = this;
 
                 Tiles.Add(tile);

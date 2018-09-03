@@ -279,6 +279,16 @@
                                 <ComboBoxItem>縦</ComboBoxItem>
                             </ComboBox>
                         </StackPanel>
+                        <!-- グリッド枠内への画像の収め方 -->
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="PfCheckBox_TileImageStretch" Style="{StaticResource ProfileCheckboxStyle}">画像の収め方</CheckBox>
+                            <ComboBox x:Name="TileImageStretch" Style="{StaticResource ComboBoxStyle}" Width="180" SelectedIndex="0">
+                                <ComboBoxItem>枠内に収める</ComboBoxItem>
+                                <ComboBoxItem>枠内全体が埋まるように配置</ComboBoxItem>
+                                <ComboBoxItem>枠内全体に引き伸ばす</ComboBoxItem>
+                            </ComboBox>
+                            
+                        </StackPanel>
 
                     </StackPanel>
                 </GroupBox>

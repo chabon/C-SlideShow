@@ -432,6 +432,38 @@ namespace C_SlideShow.ProfileMember
         }
     }
 
+    public class TileImageStretch : ProfileMemberBase
+    {
+        public TileImageStretch()
+        {
+            this.Value = C_SlideShow.TileImageStretch.UniformToFill;
+            IsEnabled  = false;
+        }
+
+        public new C_SlideShow.TileImageStretch Value { get; set; }
+
+        public override string TooltipStr
+        {
+            get
+            {
+                string stretch = "";
+                switch( this.Value )
+                {
+                    case C_SlideShow.TileImageStretch.Uniform:
+                        stretch = "枠内に収める";
+                        break;
+                    case C_SlideShow.TileImageStretch.UniformToFill:
+                        stretch = "枠内全体が埋まるように配置";
+                        break;
+                    case C_SlideShow.TileImageStretch.Fill:
+                        stretch = "枠内全体に引き伸ばす";
+                        break;
+                }
+                return "グリッド枠内への画像の収め方: " + stretch;
+            }
+        }
+    }
+
     /* ---------------------------------------------------- */
     //    その他の設定_外観1
     /* ---------------------------------------------------- */

@@ -177,6 +177,7 @@ namespace C_SlideShow
                 if( pf.UseDefaultTileOrigin.IsEnabled ) PfCheckBox_UseDefaultTileOrigin.IsChecked = true;
                 if( pf.TileOrigin.IsEnabled ) PfCheckBox_TileOrigin.IsChecked = true;
                 if( pf.TileOrientation.IsEnabled ) PfCheckBox_TileOrientation.IsChecked = true;
+                if( pf.TileImageStretch.IsEnabled ) PfCheckBox_TileImageStretch.IsChecked = true;
                 // その他/外観1
                 if( pf.AllowTransparency.IsEnabled ) PfCheckBox_AllowTransparency.IsChecked = true;
                 if( pf.OverallOpacity.IsEnabled ) PfCheckBox_OverallOpacity.IsChecked = true;
@@ -355,6 +356,20 @@ namespace C_SlideShow
                     break;
                 case C_SlideShow.TileOrientation.Vertical:
                     TileOrientation.SelectedIndex = 1;
+                    break;
+            }
+
+            // グリッド枠内への画像の収め方
+            switch( pf.TileImageStretch.Value )
+            {
+                case C_SlideShow.TileImageStretch.Uniform:
+                    TileImageStretch.SelectedIndex = 0;
+                    break;
+                case C_SlideShow.TileImageStretch.UniformToFill:
+                    TileImageStretch.SelectedIndex = 1;
+                    break;
+                case C_SlideShow.TileImageStretch.Fill:
+                    TileImageStretch.SelectedIndex = 2;
                     break;
             }
 
@@ -695,6 +710,25 @@ namespace C_SlideShow
                 pf.TileOrientation.IsEnabled = true;
                 pf.TileOrientation.Value = TileOrientation.SelectedIndex == 0 ? C_SlideShow.TileOrientation.Horizontal : C_SlideShow.TileOrientation.Vertical;
             }
+
+            // 画像の収め方
+            if( (bool)PfCheckBox_TileImageStretch.IsChecked )
+            {
+                pf.TileImageStretch.IsEnabled = true;
+                switch( TileImageStretch.SelectedIndex )
+                {
+                    case 0:
+                        pf.TileImageStretch.Value = C_SlideShow.TileImageStretch.Uniform;
+                        break;
+                    case 1:
+                        pf.TileImageStretch.Value = C_SlideShow.TileImageStretch.UniformToFill;
+                        break;
+                    case 2:
+                        pf.TileImageStretch.Value = C_SlideShow.TileImageStretch.Fill;
+                        break;
+                }
+            }
+
 
             /* ---------------------------------------------------- */
             // その他/外観1

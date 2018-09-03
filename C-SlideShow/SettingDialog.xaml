@@ -71,9 +71,9 @@
                         <ComboBoxItem>スライド方向から自動で決定する</ComboBoxItem>
                         <ComboBoxItem>以下で指定する</ComboBoxItem>
                     </ComboBox>
-                    <StackPanel Orientation="Horizontal" Margin="0,10">
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,3">
                         <StackPanel>
-                            <StackPanel Orientation="Horizontal" Margin="0,15,0,8">
+                            <StackPanel Orientation="Horizontal" Margin="0,8,0,8">
                                 <Label Width="80">配置する起点</Label>
                                 <ComboBox Width="55" x:Name="TileOrigin" SelectionChanged="TileOrigin_SelectionChanged">
                                     <ComboBoxItem>左上</ComboBoxItem>
@@ -90,7 +90,7 @@
                                 </ComboBox>
                             </StackPanel>
                         </StackPanel>
-                        <Grid Margin="30,15" Width="60" Height="60">
+                        <Grid Margin="30,8" Width="60" Height="60">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"></RowDefinition>
                                 <RowDefinition Height="30"></RowDefinition>
@@ -113,6 +113,12 @@
                             </Border>
                         </Grid>
                     </StackPanel>
+                    <Label>グリッド枠内への画像の収め方</Label>
+                    <ComboBox x:Name="TileImageStretch" Width="170" SelectionChanged="TileImageStretch_SelectionChanged" HorizontalAlignment="Left">
+                        <ComboBoxItem>枠内に収める</ComboBoxItem>
+                        <ComboBoxItem>枠内全体が埋まるように配置</ComboBoxItem>
+                        <ComboBoxItem>枠内全体に引き伸ばす</ComboBoxItem>
+                    </ComboBox>
                 </StackPanel>
             </TabItem>
 

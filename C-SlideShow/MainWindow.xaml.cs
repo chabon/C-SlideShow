@@ -379,7 +379,7 @@ namespace C_SlideShow
             foreach(TileContainer tc in tileContainers)
             {
                 tc.InitSlideDerection(pf.SlideDirection.Value);
-                tc.InitGrid(mtx.Col, mtx.Row);
+                tc.InitGrid(mtx.Col, mtx.Row, pf.TileImageStretch.Value);
                 tc.InitGridLineColor(pf.GridLineColor.Value);
                 tc.InitSizeAndPos((int)ar.X, (int)ar.Y, pf.TilePadding.Value);
                 tc.InitWrapPoint();
