@@ -14,13 +14,13 @@ using System.Windows.Input;
 
 namespace C_SlideShow.Shortcut
 {
-	/// <summary>
-	/// マウスジェスチャ
+    /// <summary>
+    /// マウスジェスチャ
     /// @ref http://www.atelier-blue.com/memo/memo2006-5-4-2.htm
-	/// </summary>
-	public class MouseGesture
-	{
-		#region インラインクラス
+    /// </summary>
+    public class MouseGesture
+    {
+        #region インラインクラス
         /// 方向
         public enum Arrow
         {
@@ -31,46 +31,46 @@ namespace C_SlideShow.Shortcut
             Left    = 3,      // 左への移動
         }
 
-		/// <summary>
-		/// 一定の方向に関する情報を持つ
-		/// </summary>
-		public class DirectionInfo
-		{
-			/// <summary>
-			/// 有効無効
-			/// </summary>
-			public bool Enable;
-			
-			/// <summary>
-			/// 累計移動距離
-			/// </summary>
-			public double Length;
+        /// <summary>
+        /// 一定の方向に関する情報を持つ
+        /// </summary>
+        public class DirectionInfo
+        {
+            /// <summary>
+            /// 有効無効
+            /// </summary>
+            public bool Enable;
+            
+            /// <summary>
+            /// 累計移動距離
+            /// </summary>
+            public double Length;
 
-			/// <summary>
-			/// リセットします。
-			/// </summary>
-			public void Reset()
-			{
-				Enable = true;
-				Length = 0;
-			}
+            /// <summary>
+            /// リセットします。
+            /// </summary>
+            public void Reset()
+            {
+                Enable = true;
+                Length = 0;
+            }
 
-			public DirectionInfo()
-			{
-				Reset();
-			}
-		}	
-		#endregion
+            public DirectionInfo()
+            {
+                Reset();
+            }
+        }    
+        #endregion
 
-		/// <summary>
-		/// マウスジェスチャの有効無効
-		/// </summary>
-		private bool isActive;
+        /// <summary>
+        /// マウスジェスチャの有効無効
+        /// </summary>
+        private bool isActive;
         public bool IsActive { get { return isActive; } }
-		
-		/// <summary>
-		/// 判定距離
-		/// </summary>
+        
+        /// <summary>
+        /// 判定距離
+        /// </summary>
         public int Range { get; set; }
 
         /// <summary>
@@ -82,17 +82,17 @@ namespace C_SlideShow.Shortcut
         /// ジェスチャのストローク
         /// </summary>
         private string stroke;
-		public string Stroke { get { return stroke; } }
+        public string Stroke { get { return stroke; } }
 
-		/// <summary>
-		/// 四方向それぞれについての情報(要素の大きさは４)
-		/// </summary>
-		private DirectionInfo[] directionInfo;
-		
-		/// <summary>
-		/// 移動距離計算用の古い位置(スクリーン座標系)
-		/// </summary>
-		private Point oldPos;
+        /// <summary>
+        /// 四方向それぞれについての情報(要素の大きさは４)
+        /// </summary>
+        private DirectionInfo[] directionInfo;
+        
+        /// <summary>
+        /// 移動距離計算用の古い位置(スクリーン座標系)
+        /// </summary>
+        private Point oldPos;
 
         /// <summary>
         /// 始動ボタン
@@ -138,38 +138,38 @@ namespace C_SlideShow.Shortcut
         /// <summary>
         /// コンストラクタ
         /// </summary>
-		public MouseGesture()
-		{
-			isActive = false;
+        public MouseGesture()
+        {
+            isActive = false;
             EnableDragGesture = true;
             AllowHoldClick = true;
             stroke = "";
-			directionInfo = new DirectionInfo[4];
-			for(int i=0; i<4; i++)
-			{
-				directionInfo[i] =new DirectionInfo();
-			}
-			Range = 15;
+            directionInfo = new DirectionInfo[4];
+            for(int i=0; i<4; i++)
+            {
+                directionInfo[i] =new DirectionInfo();
+            }
+            Range = 15;
 
             // フックプロシージャ
             hookCallback += HookProc;
-		}
+        }
 
-		/// <summary>
-		/// マウスジェスチャの開始
-		/// </summary>
-		public void Start(MouseButton startingButton)
-		{
+        /// <summary>
+        /// マウスジェスチャの開始
+        /// </summary>
+        public void Start(MouseButton startingButton)
+        {
             if(hHook != IntPtr.Zero)
             {
                 UnHook();
                 return;
             }
 
-			isActive = true;
+            isActive = true;
             stroke = "";
-			ResetDirection();
-			oldPos = GetCursorPos();
+            ResetDirection();
+            oldPos = GetCursorPos();
             this.startingButton = startingButton;
 
             switch( startingButton )
@@ -198,90 +198,90 @@ namespace C_SlideShow.Shortcut
 
 
         /// <summary>
-		/// マウスジェスチャの終わり
+        /// マウスジェスチャの終わり
         /// </summary>
         /// <returns>終了時のジェスチャのストローク</returns>
-		public string End()
-		{
+        public string End()
+        {
             UnHook();
 
-			if(isActive)
-			{
-				isActive = false;
+            if(isActive)
+            {
+                isActive = false;
                 Debug.WriteLine("mouse gesture end  stroke:" + this.stroke);
                 GestureFinished?.Invoke( this, new EventArgs() );
                 return stroke;
-			}
+            }
 
             return "";
-		}
+        }
 
-		/// <summary>
-		/// マウスジェスチャの判定
-		/// </summary>
-		public void Test()
-		{	
-			//有効なときだけ判定する。
-			if(isActive)
-			{
-				double ox = oldPos.X, oy = oldPos.Y;
-				Arrow arrow = Arrow.None;
+        /// <summary>
+        /// マウスジェスチャの判定
+        /// </summary>
+        public void Test()
+        {    
+            //有効なときだけ判定する。
+            if(isActive)
+            {
+                double ox = oldPos.X, oy = oldPos.Y;
+                Arrow arrow = Arrow.None;
 
                 // 現在のカーソル位置(スクリーン座標系)を取得
                 Point pos = GetCursorPos();
 
-				// 情報を入れ替えておく
-				oldPos = pos;
-		
-				//移動量を判定して縦横どっちに動くかを判定
-				if(Math.Abs(ox - pos.X) > Math.Abs(oy - pos.Y))
-				{
-					if(ox > pos.X)
-					{
-						directionInfo[(int)Arrow.Left].Length += ox - pos.X;
-						directionInfo[(int)Arrow.Right].Length = 0;
-						arrow = Arrow.Left;
-					}
-					else if(pos.X >ox)
-					{
-						directionInfo[(int)Arrow.Right].Length += pos.X - ox;
-						directionInfo[(int)Arrow.Left].Length = 0;
-						arrow = Arrow.Right;
-					}
-				}
-				else
-				{
-					if(oy > pos.Y)
-					{
-						directionInfo[(int)Arrow.Up].Length += oy - pos.Y;
-						directionInfo[(int)Arrow.Down].Length = 0;
-						arrow = Arrow.Up;
-					}
-					else if(pos.Y >oy)
-					{
-						directionInfo[(int)Arrow.Down].Length += pos.Y - oy;
-						directionInfo[(int)Arrow.Up].Length = 0;
-						arrow = Arrow.Down;
-					}
-				}
-	
-				//移動を検知したとき
-				if(arrow != Arrow.None)
-				{
-					if(directionInfo[(int)arrow].Enable && directionInfo[(int)arrow].Length > Range)
-					{
-						ResetDirection();
-			
-						//同じ向きが２度入力されないようにする。
-						directionInfo[(int)arrow].Enable = false;
-					
-						stroke += ArrowToString(arrow);
+                // 情報を入れ替えておく
+                oldPos = pos;
+        
+                //移動量を判定して縦横どっちに動くかを判定
+                if(Math.Abs(ox - pos.X) > Math.Abs(oy - pos.Y))
+                {
+                    if(ox > pos.X)
+                    {
+                        directionInfo[(int)Arrow.Left].Length += ox - pos.X;
+                        directionInfo[(int)Arrow.Right].Length = 0;
+                        arrow = Arrow.Left;
+                    }
+                    else if(pos.X >ox)
+                    {
+                        directionInfo[(int)Arrow.Right].Length += pos.X - ox;
+                        directionInfo[(int)Arrow.Left].Length = 0;
+                        arrow = Arrow.Right;
+                    }
+                }
+                else
+                {
+                    if(oy > pos.Y)
+                    {
+                        directionInfo[(int)Arrow.Up].Length += oy - pos.Y;
+                        directionInfo[(int)Arrow.Down].Length = 0;
+                        arrow = Arrow.Up;
+                    }
+                    else if(pos.Y >oy)
+                    {
+                        directionInfo[(int)Arrow.Down].Length += pos.Y - oy;
+                        directionInfo[(int)Arrow.Up].Length = 0;
+                        arrow = Arrow.Down;
+                    }
+                }
+    
+                //移動を検知したとき
+                if(arrow != Arrow.None)
+                {
+                    if(directionInfo[(int)arrow].Enable && directionInfo[(int)arrow].Length > Range)
+                    {
+                        ResetDirection();
+            
+                        //同じ向きが２度入力されないようにする。
+                        directionInfo[(int)arrow].Enable = false;
+                    
+                        stroke += ArrowToString(arrow);
                         Debug.WriteLine("MouseGesture Stroke: " + stroke);
                         StrokeChanged?.Invoke( this, new EventArgs() );
-					}
-				}
-			}
-		}
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Arrow列挙体をストローク用のstringに変換
@@ -305,16 +305,16 @@ namespace C_SlideShow.Shortcut
             }
         }
 
-		/// <summary>
-		/// ４方向の情報をリセットする
-		/// </summary>
-		private void ResetDirection()
-		{
-			for(int i=0; i<4; i++)
-			{
-				directionInfo[i].Reset();
-			}
-		}
+        /// <summary>
+        /// ４方向の情報をリセットする
+        /// </summary>
+        private void ResetDirection()
+        {
+            for(int i=0; i<4; i++)
+            {
+                directionInfo[i].Reset();
+            }
+        }
 
         /// <summary>
         /// ストロークの最後がクリックならば削除する
@@ -324,7 +324,7 @@ namespace C_SlideShow.Shortcut
             System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex(@"\[.{1,2}\]$");
             stroke = reg.Replace(stroke, "");
         }
-		　 
+        　 
         /// <summary>
         /// スクリーン上でのMouseMoveイベント、MouseRButtonUpイベント取得のためのグローバルフック
         /// </summary>
@@ -591,6 +591,6 @@ namespace C_SlideShow.Shortcut
 
 
         // end of class
-	}
+    }
 
 }

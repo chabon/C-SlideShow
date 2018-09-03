@@ -33,7 +33,9 @@ namespace C_SlideShow.Shortcut
         public MouseInputButton MouseInputButton { get; set; }
 
         [DataMember]
-		public ModifierKeys ModifierKeys;
+        public ModifierKeys ModifierKeys;
+
+
 
         public MouseInput()
         {
@@ -113,28 +115,28 @@ namespace C_SlideShow.Shortcut
         /// Dictionary用比較処理
         /// </summary>
         public bool Equals(MouseInput other)
-		{
+        {
             if( MouseInputButton == other.MouseInputButton && ModifierKeys == other.ModifierKeys)
                 return true;
             else
                 return false;
-		}
+        }
 
-		/// <summary>
-		/// Dictionary用比較処理
-		/// </summary>
-		public override bool Equals(object obj)
-		{
-			if (obj.GetType() != this.GetType()) return false;
-			return this.Equals((MouseInput)obj);
-		}
+        /// <summary>
+        /// Dictionary用比較処理
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() != this.GetType()) return false;
+            return this.Equals((MouseInput)obj);
+        }
 
-		/// <summary>
-		/// Dictionary用比較処理
-		/// </summary>
-		public override int GetHashCode()
-		{
-			return ( (int)MouseInputButton | (int)ModifierKeys);
-		}
+        /// <summary>
+        /// Dictionary用比較処理
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return ( (int)MouseInputButton | (int)ModifierKeys);
+        }
     }
 }

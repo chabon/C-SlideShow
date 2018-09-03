@@ -24,8 +24,9 @@ namespace C_SlideShow.CommonControl
         /* ---------------------------------------------------- */
         //     プロパティ
         /* ---------------------------------------------------- */
-		public ModifierKeys Modifiers { get; set; }
-		public Key Key { get; set; }
+        public ModifierKeys Modifiers { get; set; }
+
+        public Key Key { get; set; }
         private bool isEnabled;
         public new bool IsEnabled
         {

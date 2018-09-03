@@ -17,8 +17,8 @@ namespace C_SlideShow.Shortcut
     public class MouseGestureInput : IEquatable<MouseGestureInput>
     {
         /// <summary>
-		/// 始動ボタン
-		/// </summary>
+        /// 始動ボタン
+        /// </summary>
         [DataMember]
         public MouseButton StartingButton;
 
