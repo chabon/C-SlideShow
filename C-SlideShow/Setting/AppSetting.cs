@@ -97,6 +97,9 @@ namespace C_SlideShow
         public int AppSettingDialogTabIndex { get; set; }
 
         [DataMember]
+        public int AppSettingDialog_ShortcutSettingTabIndex { get; set; }
+
+        [DataMember]
         public int MatrixSelecterMaxSize { get; set; }
 
         [DataMember]
@@ -112,6 +115,31 @@ namespace C_SlideShow
 
         [DataMember]
         public bool UsePresetProfile { get; set; }
+
+
+        // 起動時
+        [DataMember]
+        public bool StartUp_RestoreWindowSizeAndPos { get; set; }
+
+        [DataMember]
+        public bool StartUp_LoadLastFiles { get; set; }
+
+        [DataMember]
+        public bool StartUp_RestoreSlideShowPlaying { get; set; }
+
+        [DataMember]
+        public bool StartUp_RestoreLastPageIndex { get; set; }
+
+        // ショートカット
+        [DataMember]
+        public ShortcutSetting ShortcutSetting { get; set; }
+
+        [DataMember]
+        public int MouseGestureRange { get; set; }
+
+        // アスペクト比のリスト
+        [DataMember]
+        public List<Point> AspectRatioList { get; set; }
 
 
         // 履歴設定
@@ -132,18 +160,6 @@ namespace C_SlideShow
 
         [DataMember]
         public bool ApplyHistoryInfoInNewArchiverReading { get; set; }
-
-
-        // ショートカット
-        [DataMember]
-        public ShortcutSetting ShortcutSetting { get; set; }
-
-        [DataMember]
-        public int MouseGestureRange { get; set; }
-
-        // アスペクト比のリスト
-        [DataMember]
-        public List<Point> AspectRatioList { get; set; }
 
 
         // 外部連携
@@ -173,6 +189,7 @@ namespace C_SlideShow
             ShowFileInfoInTileExpantionPanel = false;
             SettingDialogTabIndex = 0;
             AppSettingDialogTabIndex = 0;
+            AppSettingDialog_ShortcutSettingTabIndex = 0;
             MatrixSelecterMaxSize = 6;
             FolderOpenDialogLastSelectedPath = null;
             FileOpenDialogLastSelectedPath = null;
@@ -181,6 +198,17 @@ namespace C_SlideShow
             UserProfileList = new List<UserProfileInfo>();
             UsePresetProfile = true;
 
+            // 起動時
+            StartUp_RestoreWindowSizeAndPos = true;
+            StartUp_LoadLastFiles = true;
+            StartUp_RestoreLastPageIndex = true;
+            StartUp_RestoreSlideShowPlaying = true;
+
+
+            // ショートカット
+            ShortcutSetting = new ShortcutSetting();
+            MouseGestureRange = 15;
+
             // 履歴設定
             History = new List<HistoryItem>();
             NumofHistory = 100;
@@ -188,10 +216,6 @@ namespace C_SlideShow
             NumofHistoryInMainMenu = 10;
             EnabledItemsInHistory = new EnabledItemsInHistory();
             ApplyHistoryInfoInNewArchiverReading = true;
-
-            // ショートカット
-            ShortcutSetting = new ShortcutSetting();
-            MouseGestureRange = 15;
 
             // アスペクト比のリスト
             AspectRatioList = new List<Point> { new Point(4, 3), new Point(3, 4), new Point(16, 9), new Point(9, 16), new Point(3, 2), new Point(2, 3), new Point(1, 1)};

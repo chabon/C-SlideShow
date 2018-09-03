@@ -9,6 +9,21 @@
         Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="520" Width="660" MinWidth="400" MinHeight="350">
     <Grid>
         <TabControl x:Name="MainTabControl" Margin="3,3,3,40">
+            <!-- 起動時設定 -->
+            <TabItem Header="起動時" Width="80">
+                <StackPanel>
+                    <GroupBox Header="起動時の設定" Margin="6" VerticalAlignment="Top">
+                        <StackPanel>
+                            <CheckBox x:Name="StartUp_RestoreWindowSizeAndPos" Margin="5">前回のウインドウサイズと位置を復元する</CheckBox>
+                            <CheckBox x:Name="StartUp_LoadLastFiles"  Margin="5">前回のフォルダ・ファイルを開く</CheckBox>
+                            <CheckBox x:Name="StartUp_RestoreLastPageIndex"  Margin="5">前回のページ番号を復元する</CheckBox>
+                            <CheckBox x:Name="StartUp_RestoreSlideShowPlaying" Margin="5">前回のスライドショー再生状態を復元する</CheckBox>
+                        </StackPanel>
+                    </GroupBox>
+                    <Button x:Name="AllDefault_StartUp" Click="AllDefault_StartUp_Click" Width="100" Margin="10,5" HorizontalAlignment="Left">すべてデフォルト</Button>
+                </StackPanel>
+            </TabItem>
+            
             <!-- ショートカット -->
             <TabItem Header="ショートカット" Width="80">
                 <Grid>

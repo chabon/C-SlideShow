@@ -279,7 +279,7 @@ namespace C_SlideShow
                 MenuItem_Load.Items.Add( new Separator() );
                 MenuItem m0 = new MenuItem();
                 m0.Header = "履歴設定...";
-                m0.Click += (s, ev) => ShowAppSettingDialog(0);
+                m0.Click += (s, ev) => ShowAppSettingDialog( (int)AppSettingDialogTabIndex.History );
                 MenuItem_Load.Items.Add(m0);
             };
             if( Setting.History.Count < 1 )

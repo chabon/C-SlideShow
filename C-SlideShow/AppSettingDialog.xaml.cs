@@ -23,11 +23,12 @@ namespace C_SlideShow
 {
     public enum AppSettingDialogTabIndex
     {
-        Shortcut    = 0,
-        History     = 1,
-        AspectRatio = 2,
-        ExternalApp = 3,
-        Detail      = 4
+        StartUp     = 0,
+        Shortcut    = 1,
+        History     = 2,
+        AspectRatio = 3,
+        ExternalApp = 4,
+        Detail      = 5
     }
 
     public class ShortcutListViewItem : INotifyPropertyChanged
@@ -120,6 +121,7 @@ namespace C_SlideShow
             this.Closing += (s, e) =>
             {
                 MainWindow.Current.Setting.AppSettingDialogTabIndex = MainTabControl.SelectedIndex;
+                MainWindow.Current.Setting.AppSettingDialog_ShortcutSettingTabIndex = ShortcutSettingTab.SelectedIndex;
 
                 // 履歴上限数を超えてたら削除
                 if(setting.History.Count > setting.NumofHistory )
@@ -137,6 +139,13 @@ namespace C_SlideShow
         {
             isInitializing = true;
             setting = MainWindow.Current.Setting;
+
+            // 起動時
+            StartUp_RestoreWindowSizeAndPos.IsChecked   = setting.StartUp_RestoreWindowSizeAndPos;
+            StartUp_LoadLastFiles.IsChecked             = setting.StartUp_LoadLastFiles;
+            StartUp_RestoreLastPageIndex.IsChecked      = setting.StartUp_RestoreLastPageIndex;
+            StartUp_RestoreSlideShowPlaying.IsChecked   = setting.StartUp_RestoreSlideShowPlaying;
+
 
             // ショートカット
             foreach(CommandMap commandMap in setting.ShortcutSetting.CommandMap )
@@ -373,6 +382,16 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         //     イベント
         /* ---------------------------------------------------- */
+
+        // 起動時設定
+        private void AllDefault_StartUp_Click(object sender, RoutedEventArgs e)
+        {
+            StartUp_RestoreWindowSizeAndPos.IsChecked = true;
+            StartUp_LoadLastFiles.IsChecked           = true;
+            StartUp_RestoreLastPageIndex.IsChecked    = true;
+            StartUp_RestoreSlideShowPlaying.IsChecked = true;
+        }
+
         // ショートカット設定 (共通)
         private void ShortcutListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -933,6 +952,12 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            // 起動時設定
+            setting.StartUp_RestoreWindowSizeAndPos = (bool)StartUp_RestoreWindowSizeAndPos.IsChecked; 
+            setting.StartUp_LoadLastFiles           = (bool)StartUp_LoadLastFiles.IsChecked; 
+            setting.StartUp_RestoreLastPageIndex    = (bool)StartUp_RestoreLastPageIndex.IsChecked; 
+            setting.StartUp_RestoreSlideShowPlaying = (bool)StartUp_RestoreSlideShowPlaying.IsChecked; 
+
             // ショートカット設定 コマンドマッピング
             List<CommandMap> commandMapList = new List<CommandMap>();
             Action<ListView> addToCommandMapList = (ListView listView) =>

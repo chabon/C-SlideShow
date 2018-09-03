@@ -1336,6 +1336,7 @@ namespace C_SlideShow
             // 値の代入
             appSettingDialog.Initialize();
             appSettingDialog.MainTabControl.SelectedIndex = tabIndex;
+            appSettingDialog.ShortcutSettingTab.SelectedIndex = Setting.AppSettingDialog_ShortcutSettingTabIndex;
 
             // 表示
             appSettingDialog.ShowDialog();

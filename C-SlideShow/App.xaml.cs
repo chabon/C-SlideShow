@@ -22,9 +22,21 @@ namespace C_SlideShow
 
             MainWindow mainWindow;
 
-            // load setting from xml
+            // xmlから設定をロード
             AppSetting setting = new AppSetting().loadFromXmlFile();
 
+            // 起動時設定の適用
+            Profile pf = setting.TempProfile;
+            if( !setting.StartUp_RestoreWindowSizeAndPos )
+            {
+                pf.WindowPos  = new ProfileMember.WindowPos();
+                pf.WindowSize = new ProfileMember.WindowSize();
+            }
+            if( !setting.StartUp_LoadLastFiles ) { pf.Path.Value.Clear(); }
+            if( !setting.StartUp_RestoreLastPageIndex ) { pf.LastPageIndex.Value = 0; }
+            if( !setting.StartUp_RestoreSlideShowPlaying ) { pf.SlideShowAutoStart.Value = false; }
+
+            // 引数チェック
             if(e.Args.Length > 0 )
             {
                 // 引数あり
