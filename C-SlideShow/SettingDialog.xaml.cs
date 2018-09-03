@@ -353,7 +353,9 @@ namespace C_SlideShow
                 TileOrigin.IsEnabled = false;
                 TileOrientation.IsEnabled = false;
 
+                isInitializing = true;
                 SetTileArrangeSettingBySlideDirection();
+                isInitializing = false;
                 mainWindow.UpdateTileArrange();
             }
             else
@@ -389,8 +391,6 @@ namespace C_SlideShow
         // スライド方向により、配置設定を決める
         private void SetTileArrangeSettingBySlideDirection()
         {
-            isInitializing = true;
-
             Profile pf = Setting.TempProfile;
 
             switch( pf.SlideDirection.Value )
@@ -420,7 +420,6 @@ namespace C_SlideShow
                     pf.TileOrientation.Value = C_SlideShow.TileOrientation.Horizontal;
                     break;
             }
-            isInitializing = false;
         }
 
         // 配置設定プレビュー
