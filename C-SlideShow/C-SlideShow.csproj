@@ -91,6 +91,7 @@
     <Compile Include="Setting\CommandMap.cs" />
     <Compile Include="Setting\ShortcutSetting.cs" />
     <Compile Include="Shortcut\CommandID.cs" />
+    <Compile Include="Shortcut\Command\ShowAppSettingDialog.cs" />
     <Compile Include="Shortcut\Command\ShiftBackward.cs" />
     <Compile Include="Shortcut\Command\ShiftForward.cs" />
     <Compile Include="Shortcut\Command\ShowContextMenu.cs" />

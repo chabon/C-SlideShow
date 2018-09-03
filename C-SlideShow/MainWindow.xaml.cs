@@ -40,7 +40,6 @@ namespace C_SlideShow
         int intervalSlideTimerCount = 0;
         List<TileContainer> tileContainers = new List<TileContainer>();
         bool ignoreSliderValueChangeEvent = false; // SliderのValue変更時にイベントを飛ばさないフラグ
-        bool ignoreClosingEvent = false;
         bool isSeekbarDragStarted = false;
         //Point aspectRatioInNonFixMode = new Point( 4, 3 );
 
@@ -48,17 +47,16 @@ namespace C_SlideShow
         Rect windowRectBeforeFullScreen = new Rect(50, 50, 400, 300);
         bool isTopmostBeforeFullScreen = false;
 
-        MatrixSelecter matrixSelecter;
-        SlideSettingDialog slideSettingDialog;
-        SettingDialog settingDialog;
-        ProfileEditDialog profileEditDialog;
-
-
         // property
         public static MainWindow Current { get; private set; }
         public AppSetting Setting { get; set; }
         public ShortcutManager ShortcutManager { get; set; }
         public ImageFileManager ImageFileManager { get { return imageFileManager; } }
+
+        public MatrixSelecter       MatrixSelecter { get; private set; }
+        public SlideSettingDialog   SlideSettingDialog { get; private set; }
+        public SettingDialog        SettingDialog { get; private set; }
+        public ProfileEditDialog    ProfileEditDialog { get; private set; }
 
         public bool IsHorizontalSlide
         {
@@ -116,35 +114,22 @@ namespace C_SlideShow
         }
         public bool IgnoreResizeEvent { get; set; } = false;
 
-        public MainWindow() // 起動時
+        // 起動時
+        public MainWindow(AppSetting setting)
         {
             Current = this;
-
-            // load setting from xml
-            AppSetting setting = new AppSetting().loadFromXmlFile();
-
             InitMainWindow(setting);
         }
 
-        public MainWindow(string[] args)  // 起動時(引数有り)
+        // 起動時(引数有り)
+        public MainWindow(AppSetting setting, string[] args)  
         {
             Current = this;
 
-            // load setting from xml
-            AppSetting setting = new AppSetting().loadFromXmlFile();
-
             setting.TempProfile.Path.Value.Clear();
-
             InitMainWindow(setting);
             DropNewFiles(args);
         }
-
-        public MainWindow(AppSetting setting)  // AllowTransparency の切替時に利用
-        {
-            Current = this;
-            InitMainWindow(setting);
-        }
-
 
 
         private void InitMainWindow(AppSetting setting)
@@ -225,25 +210,25 @@ namespace C_SlideShow
             }
 
             MenuItem_MatrixSelecter.ApplyTemplate();
-            matrixSelecter = MenuItem_MatrixSelecter.Template.FindName("MatrixSelecter", MenuItem_MatrixSelecter) as MatrixSelecter;
-            matrixSelecter.MaxSize = Setting.MatrixSelecterMaxSize;
-            matrixSelecter.Initialize();
+            MatrixSelecter = MenuItem_MatrixSelecter.Template.FindName("MatrixSelecter", MenuItem_MatrixSelecter) as MatrixSelecter;
+            MatrixSelecter.MaxSize = Setting.MatrixSelecterMaxSize;
+            MatrixSelecter.Initialize();
 
             // タイル拡大パネル
             TileExpantionPanel.MainWindow = this;
 
             // スライドの設定ダイアログ
             MenuItem_SlideSettingDialog.ApplyTemplate();
-            slideSettingDialog = MenuItem_SlideSettingDialog.Template.FindName("SlideSettingDialog", MenuItem_SlideSettingDialog) as SlideSettingDialog;
-            slideSettingDialog.mainWindow = this;
-            slideSettingDialog.Setting = this.Setting;
+            SlideSettingDialog = MenuItem_SlideSettingDialog.Template.FindName("SlideSettingDialog", MenuItem_SlideSettingDialog) as SlideSettingDialog;
+            SlideSettingDialog.mainWindow = this;
+            SlideSettingDialog.Setting = this.Setting;
 
             // その他の設定ダイアログ
             MenuItem_SettingDialog.ApplyTemplate();
-            settingDialog = MenuItem_SettingDialog.Template.FindName("SettingDialog", MenuItem_SettingDialog) as SettingDialog;
-            settingDialog.mainWindow = this;
-            settingDialog.Setting = this.Setting;
-            settingDialog.MainTabControl.SelectedIndex = Setting.SettingDialogTabIndex;
+            SettingDialog = MenuItem_SettingDialog.Template.FindName("SettingDialog", MenuItem_SettingDialog) as SettingDialog;
+            SettingDialog.mainWindow = this;
+            SettingDialog.Setting = this.Setting;
+            SettingDialog.MainTabControl.SelectedIndex = Setting.SettingDialogTabIndex;
 
             // タイマー
             intervalSlideTimer.Tick += intervalSlideTimer_Tick;
@@ -286,7 +271,6 @@ namespace C_SlideShow
             // 透過有効
             if( tp.AllowTransparency.Value != this.AllowsTransparency)
             {
-                this.ignoreClosingEvent = true;
                 MainWindow mw = new MainWindow(this.Setting);
                 mw.Show(); // InitMainWindow()でプロファイル適用
                 this.Close();
@@ -1057,7 +1041,6 @@ namespace C_SlideShow
             UpdateTempProfile();
             MainWindow mw = new MainWindow(this.Setting);
 
-            this.ignoreClosingEvent = true;
             mw.Show();
             this.Close();
         }
@@ -1116,10 +1099,11 @@ namespace C_SlideShow
             Setting.TempProfile.WindowSize.Value = new Size( rc.Width, rc.Height );
         }
 
-        private void UpdateTempProfile()
+        public void UpdateTempProfile()
         {
             SaveWindowRect();
             Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
+            Setting.SettingDialogTabIndex = SettingDialog.MainTabControl.SelectedIndex;
             if( IsPlaying ) Setting.TempProfile.SlideShowAutoStart.Value = true;
             else Setting.TempProfile.SlideShowAutoStart.Value = false;
         }
@@ -1302,13 +1286,13 @@ namespace C_SlideShow
 
         public void ShowProfileEditDialog(ProfileEditDialogMode mode, UserProfileInfo targetUseProfileInfo)
         {
-            if(profileEditDialog == null )
+            if(ProfileEditDialog == null )
             {
-                profileEditDialog = new ProfileEditDialog();
-                profileEditDialog.Owner = this;
+                ProfileEditDialog = new ProfileEditDialog();
+                ProfileEditDialog.Owner = this;
             }
-            profileEditDialog.Mode = mode;
-            profileEditDialog.UserProfileList = Setting.UserProfileList;
+            ProfileEditDialog.Mode = mode;
+            ProfileEditDialog.UserProfileList = Setting.UserProfileList;
 
             // 表示前にメインウインドウのウインドウ情報、ページ情報保存
             UpdateTempProfile();
@@ -1317,29 +1301,29 @@ namespace C_SlideShow
             string message = "";
             if(mode == ProfileEditDialogMode.New || targetUseProfileInfo == null)
             {
-                profileEditDialog.Title = "プロファイルの作成";
+                ProfileEditDialog.Title = "プロファイルの作成";
                 message = "現在の状態・設定をプロファイルとして保存することが出来ます。\r\nプロファイルに含める項目にチェックを入れて下さい。";
-                profileEditDialog.SetControlValue(Setting.TempProfile);
+                ProfileEditDialog.SetControlValue(Setting.TempProfile);
             }
             else if( mode == ProfileEditDialogMode.Edit )
             {
-                profileEditDialog.Title = "プロファイルの編集 (" + targetUseProfileInfo.Profile.Name + ")";
+                ProfileEditDialog.Title = "プロファイルの編集 (" + targetUseProfileInfo.Profile.Name + ")";
                 message = null;
-                profileEditDialog.EditingUserProfileInfo = targetUseProfileInfo;
+                ProfileEditDialog.EditingUserProfileInfo = targetUseProfileInfo;
 
                 // コントロールの値は、TempProfileに統合したものを表示
                 Profile pf = Setting.TempProfile.Clone().Marge(targetUseProfileInfo.Profile);
                 pf.Name = targetUseProfileInfo.Profile.Name;
-                profileEditDialog.SetControlValue(pf); 
+                ProfileEditDialog.SetControlValue(pf); 
             }
-            profileEditDialog.Label_Message.Content = message;
+            ProfileEditDialog.Label_Message.Content = message;
 
             // 初期位置は、メインウインドウの中心に
-            Util.SetWindowCenterOnWindow(this, profileEditDialog);
+            Util.SetWindowCenterOnWindow(this, ProfileEditDialog);
 
             // プロファイル編集ダイアログ表示
-            profileEditDialog.ShowDialog();
-            profileEditDialog.MainScrollViewer.ScrollToTop();
+            ProfileEditDialog.ShowDialog();
+            ProfileEditDialog.MainScrollViewer.ScrollToTop();
         }
 
         public void ShowAppSettingDialog(int tabIndex)

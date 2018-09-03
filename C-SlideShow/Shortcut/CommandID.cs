@@ -20,6 +20,7 @@ namespace C_SlideShow.Shortcut
         ShowContextMenu,                // コンテキストメニューを表示
         LoadProfileFromNum,             // プロファイル番号[ ](ProfileName)をロード
         LoadProfileFromName,            // プロファイル名「[ ]」をロード
+        ShowAppSettingDialog,           // アプリの設定ダイアログを表示
 
         // 通常時
         SlideToForward,                 // 前方向にスライド

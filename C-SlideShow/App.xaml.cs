@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
+
 namespace C_SlideShow
 {
     /// <summary>
@@ -21,13 +22,18 @@ namespace C_SlideShow
 
             MainWindow mainWindow;
 
+            // load setting from xml
+            AppSetting setting = new AppSetting().loadFromXmlFile();
+
             if(e.Args.Length > 0 )
             {
-                mainWindow = new MainWindow(e.Args);
+                // 引数あり
+                mainWindow = new MainWindow(setting, e.Args);
             }
             else
             {
-                mainWindow = new MainWindow();
+                // 引数なし
+                mainWindow = new MainWindow(setting);
             }
 
             mainWindow.Show();
@@ -35,6 +41,12 @@ namespace C_SlideShow
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
+            // 設定保存
+            C_SlideShow.MainWindow.Current.UpdateTempProfile();
+            C_SlideShow.MainWindow.Current.SaveHistoryItem();
+            C_SlideShow.MainWindow.Current.Setting.saveToXmlFile();
+
+            // 一時ファイルの削除
             if(TempFilePathList != null )
             {
                 foreach(string tempFilePath in TempFilePathList )

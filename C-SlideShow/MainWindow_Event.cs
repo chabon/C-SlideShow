@@ -39,17 +39,17 @@ namespace C_SlideShow
 
             MenuItem_Matrix.SubmenuOpened += (s, e) =>
             {
-                matrixSelecter.SetMatrix(Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row);
+                MatrixSelecter.SetMatrix(Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row);
             };
 
             MenuItem_SlideSetting.SubmenuOpened += (s, e) =>
             {
-                slideSettingDialog.ApplySettingToDlg();
+                SlideSettingDialog.ApplySettingToDlg();
             };
 
             MenuItem_Setting.SubmenuOpened += (s, e) =>
             {
-                settingDialog.ApplySettingToDlg();
+                SettingDialog.ApplySettingToDlg();
             };
 
 
@@ -135,11 +135,6 @@ namespace C_SlideShow
             this.Closing += (s, e) =>
             {
                 ShortcutManager.UnhookWindowsHook();
-                if( ignoreClosingEvent ) return;
-                SaveHistoryItem();
-                Setting.SettingDialogTabIndex = settingDialog.MainTabControl.SelectedIndex;
-                UpdateTempProfile();
-                Setting.saveToXmlFile();
             };
 
             this.PreviewDragOver += (s, e) =>
@@ -517,7 +512,7 @@ namespace C_SlideShow
 
         private void MatrixSelecter_MaxSizeChanged(object sender, EventArgs e)
         {
-            Setting.MatrixSelecterMaxSize = matrixSelecter.MaxSize;
+            Setting.MatrixSelecterMaxSize = MatrixSelecter.MaxSize;
         }
 
 

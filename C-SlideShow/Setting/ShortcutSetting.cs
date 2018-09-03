@@ -37,7 +37,7 @@ namespace C_SlideShow
         {
             List<CommandMap> defaultCommandMap = new List<CommandMap>();
 
-            // 全般
+            // いつでも
             defaultCommandMap.Add( new CommandMap(CommandID.OpenFolder,             0,  null,       new KeyInput(ModifierKeys.Control, Key.F), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.OpenAdditionalFolder,   0,  null,       new KeyInput(ModifierKeys.Control | ModifierKeys.Shift, Key.F), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.OpenFile,               0,  null,       null, null, null) );
@@ -49,6 +49,7 @@ namespace C_SlideShow
             defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromNum,     2,  null,       new KeyInput(ModifierKeys.Control, Key.D2), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromNum,     3,  null,       new KeyInput(ModifierKeys.Control, Key.D3), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromName,    0,  "new profile",   null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ShowAppSettingDialog,   0,  null,       null, null, null) );
 
             // 通常時
             defaultCommandMap.Add( new CommandMap(CommandID.SlideToForward,             0, null,  new KeyInput(ModifierKeys.None, Key.F), new MouseInput(MouseInputButton.WheelDown, ModifierKeys.None), null) );

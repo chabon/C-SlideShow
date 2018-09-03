@@ -56,11 +56,6 @@ namespace C_SlideShow
             }
         }
 
-        private void TargetWindow_MouseLeave(object sender, MouseEventArgs e)
-        {
-            DragFinish();
-        }
-
         private void DragFinish()
         {
             bDragStart = false;

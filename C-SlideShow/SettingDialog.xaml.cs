@@ -152,6 +152,7 @@ namespace C_SlideShow
                 Setting.TempProfile.AllowTransparency.Value = false;
 
             mainWindow.ApplyAllowTransparency();
+            MainWindow.Current.MenuItem_Setting.IsSubmenuOpen = true;
         }
 
         // 画像の不透明度
