@@ -21,7 +21,9 @@
                                   Margin="10,0" Width="145">
                             <ComboBoxItem>ファイル名(昇順)</ComboBoxItem>
                             <ComboBoxItem>ファイル名(降順)</ComboBoxItem>
-                            <ComboBoxItem>ファイル名 自然順(昇順)</ComboBoxItem>
+                            <ComboBoxItem>ファイル名 自然順(昇順)
+                                <ComboBoxItem.ToolTip>エクスプローラーのソートと同じく、数字部分を数値の大きさとして比較します</ComboBoxItem.ToolTip>
+                            </ComboBoxItem>
                             <ComboBoxItem>ファイル名 自然順(降順)</ComboBoxItem>
                             <ComboBoxItem>更新日時(新しい順)</ComboBoxItem>
                             <ComboBoxItem>更新日時(古い順)</ComboBoxItem>
