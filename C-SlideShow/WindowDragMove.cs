@@ -60,6 +60,10 @@ namespace C_SlideShow
         {
             bDragStart = false;
             UnHook();
+            if( ptMaxDiff.X > thresholdOfMaxDiff || ptMaxDiff.Y > thresholdOfMaxDiff )
+            {
+                DragMoved?.Invoke( this, new EventArgs() );
+            }
         }
 
         private int SetHook()
@@ -103,10 +107,6 @@ namespace C_SlideShow
 
                 if( (int)wParam == Win32.WM_LBUTTONUP )
                 {
-                    if( ptMaxDiff.X > thresholdOfMaxDiff || ptMaxDiff.Y > thresholdOfMaxDiff )
-                    {
-                        DragMoved?.Invoke( this, new EventArgs() );
-                    }
                     DragFinish();
                 }
             }
