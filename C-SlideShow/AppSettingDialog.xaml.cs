@@ -197,6 +197,7 @@ namespace C_SlideShow
             {
                 MainWindow.Current.Setting.AppSettingDialogTabIndex = MainTabControl.SelectedIndex;
                 MainWindow.Current.Setting.AppSettingDialog_ShortcutSettingTabIndex = ShortcutSettingTab.SelectedIndex;
+                MainWindow.Current.Setting.AppSettingDialogSize = new Size(this.Width, this.Height);
 
                 // 履歴上限数を超えてたら削除
                 if(setting.History.Count > setting.NumofHistory )

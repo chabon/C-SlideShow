@@ -1330,6 +1330,13 @@ namespace C_SlideShow
         {
             AppSettingDialog appSettingDialog = new AppSettingDialog();
 
+            // サイズ復元
+            if( !(Setting.AppSettingDialogSize == Size.Empty) )
+            {
+                appSettingDialog.Width  = Setting.AppSettingDialogSize.Width;
+                appSettingDialog.Height = Setting.AppSettingDialogSize.Height;
+            }
+
             // 表示位置はメインウインドウ中心に
             Util.SetWindowCenterOnWindow(this, appSettingDialog);
 

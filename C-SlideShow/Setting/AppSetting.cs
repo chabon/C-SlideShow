@@ -119,6 +119,9 @@ namespace C_SlideShow
         public int AppSettingDialog_ShortcutSettingTabIndex { get; set; }
 
         [DataMember]
+        public Size AppSettingDialogSize { get; set; }
+
+        [DataMember]
         public int MatrixSelecterMaxSize { get; set; }
 
         [DataMember]
@@ -209,6 +212,7 @@ namespace C_SlideShow
             SettingDialogTabIndex = 0;
             AppSettingDialogTabIndex = 0;
             AppSettingDialog_ShortcutSettingTabIndex = 0;
+            AppSettingDialogSize = Size.Empty;
             MatrixSelecterMaxSize = 6;
             FolderOpenDialogLastSelectedPath = null;
             FileOpenDialogLastSelectedPath = null;
