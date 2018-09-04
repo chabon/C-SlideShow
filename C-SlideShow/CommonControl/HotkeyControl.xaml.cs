@@ -153,16 +153,28 @@ namespace C_SlideShow.CommonControl
 
         private void MainBorder_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            Key inputKey;
+
+            // Ime有効な場合の対処
+            if (e.ImeProcessedKey != Key.None)
+            {
+                inputKey = e.ImeProcessedKey;
+            }
+            else
+            { 
+                inputKey = e.Key;
+            }
+
             // キー情報取得
             System.Diagnostics.Debug.WriteLine( e.Key.ToString() );
             this.Modifiers = Keyboard.Modifiers;
-            if(e.Key == Key.System)
+            if(inputKey == Key.System)
             {
                 this.Key = e.SystemKey;
             }
             else
             {
-                this.Key = e.Key;
+                this.Key = inputKey;
             }
             this.KeyText.Text = GetKeyString();
             e.Handled = true;
