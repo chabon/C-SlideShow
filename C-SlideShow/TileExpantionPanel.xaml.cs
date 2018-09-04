@@ -304,6 +304,9 @@ namespace C_SlideShow
 
         private void UpdateFileInfoText()
         {
+            // 初期化
+            FileInfoGrid.Width  = double.NaN;
+            FileInfoGrid.Height = double.NaN;
             string newText = "";
 
             try
@@ -331,13 +334,12 @@ namespace C_SlideShow
                 if( ifi.LastWriteTime == null ) // 更新日時情報がない場合取得
                     ifi.ReadLastWriteTime();
 
-                // (todo)撮影日時
-
-
                 newText += "ファイル名: " + Path.GetFileName(targetTile.ImageFileInfo.FilePath) + "\n";
                 newText += "画像サイズ: " + length / 1024 + "KB\n";
                 if(ifi.LastWriteTime != null)
                     newText += "更新日時: " + ifi.LastWriteTime.Value.DateTime + "\n";
+                if( ifi.ExifInfo.DateTaken != null )
+                    newText += "撮影日時: " + ifi.ExifInfo.DateTaken.Value.DateTime + "\n";
                 newText += "ピクセル数: " + ifi.PixelSize.Width + "x" + ifi.PixelSize.Height;
 #if DEBUG
                 sw.Stop();

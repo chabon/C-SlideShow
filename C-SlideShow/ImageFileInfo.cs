@@ -20,7 +20,6 @@ namespace C_SlideShow
         public ArchiverBase     Archiver;                  // 対応するアーカイバ
         public DateTimeOffset?  LastWriteTime = null;      // 更新日時
         public DateTimeOffset?  CreationTime = null;       // 作成日時
-        public DateTimeOffset?  ShootingTime = null;       // 撮影日時
         public long             Length = 0;                // ファイルサイズ(byte)
         public Size             PixelSize = Size.Empty;    // ピクセルサイズ
         public ExifInfo         ExifInfo = ExifInfo.Empty; // Exif情報
@@ -247,38 +246,67 @@ namespace C_SlideShow
 
             //Debug.WriteLine("Metadata: " + source.Metadata);
 
-            string query = "/app1/ifd/exif:{uint=274}";
-            if (!metaData.ContainsQuery(query)) {
-                return new ExifInfo();
+            ExifInfo exifInfo = new ExifInfo();
+
+            // 撮影日時(原画像データの生成日時)
+            try
+            {
+                exifInfo.DateTaken = DateTime.Parse(metaData.DateTaken);
+            }
+            catch { }
+
+            // カメラメーカー
+            exifInfo.CameraMaker = metaData.CameraManufacturer;
+
+            // カメラ
+            exifInfo.CameraModel = metaData.CameraModel;
+
+            // ソフトウェア
+            exifInfo.Software = metaData.ApplicationName;
+
+            // 回転情報
+            string query_orientation = "/app1/ifd/exif:{uint=274}";
+            if ( metaData.ContainsQuery(query_orientation) )
+            {
+                switch (  Convert.ToUInt32( metaData.GetQuery(query_orientation) )  ) {
+                    case 1:
+                        // 回転・反転なし
+                        break;
+                    case 3:
+                        // 180度回転
+                        exifInfo.Rotation = Rotation.Rotate180;
+                        break;
+                    case 6:
+                        // 時計回りに90度回転
+                        exifInfo.Rotation = Rotation.Rotate90;
+                        break;
+                    case 8:
+                        // 時計回りに270度回転
+                        exifInfo.Rotation = Rotation.Rotate270;
+                        break;
+                    case 2:
+                        // 水平方向に反転
+                        exifInfo.ScaleTransform = new ScaleTransform(-1, 1, 0, 0);
+                        break;
+                    case 4:
+                        // 垂直方向に反転
+                        exifInfo.ScaleTransform = new ScaleTransform(1, -1, 0, 0);
+                        break;
+                    case 5:
+                        // 時計回りに90度回転 + 水平方向に反転
+                        exifInfo.Rotation = Rotation.Rotate90;
+                        exifInfo.ScaleTransform = new ScaleTransform(-1, 1, 0, 0);
+                        break;
+                    case 7:
+                        // 時計回りに270度回転 + 水平方向に反転
+                        exifInfo.Rotation = Rotation.Rotate270;
+                        exifInfo.ScaleTransform = new ScaleTransform(-1, 1, 0, 0);
+                        break;
+                }
             }
 
-            switch (Convert.ToUInt32(metaData.GetQuery(query))) {
-                case 1:
-                    // 回転・反転なし
-                    return new ExifInfo();
-                case 3:
-                    // 180度回転
-                    return new ExifInfo(Rotation.Rotate180, null);
-                case 6:
-                    // 時計回りに90度回転
-                    return new ExifInfo(Rotation.Rotate90, null);
-                case 8:
-                    // 時計回りに270度回転
-                    return new ExifInfo(Rotation.Rotate270, null);
-                case 2:
-                    // 水平方向に反転
-                    return new ExifInfo(Rotation.Rotate0, new ScaleTransform(-1, 1, 0, 0));
-                case 4:
-                    // 垂直方向に反転
-                    return new ExifInfo(Rotation.Rotate0, new ScaleTransform(1, -1, 0, 0));
-                case 5:
-                    // 時計回りに90度回転 + 水平方向に反転
-                    return new ExifInfo(Rotation.Rotate90, new ScaleTransform(-1, 1, 0, 0));
-                case 7:
-                    // 時計回りに270度回転 + 水平方向に反転
-                    return new ExifInfo(Rotation.Rotate270, new ScaleTransform(-1, 1, 0, 0));
-            }
-            return new ExifInfo();
+
+            return exifInfo;
         }
 
         public void ReadLastWriteTime()
