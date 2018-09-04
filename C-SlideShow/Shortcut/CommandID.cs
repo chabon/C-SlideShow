@@ -27,12 +27,14 @@ namespace C_SlideShow.Shortcut
         // 通常時
         SlideToForward,                     // 前方向にスライド
         SlideToBackward,                    // 後方向にスライド
-        SlideToBackwardByOneImage,          // 後方向に画像1枚分だけスライド
-        SlideToForwardByOneImage,           // 前方向に画像1枚分だけスライド
         SlideToLeft,                        // 左方向にスライド
         SlideToTop,                         // 上方向にスライド
         SlideToRight,                       // 右方向にスライド
         SlideToBottom,                      // 下方向にスライド
+        SlideToCursorDirection,             // カーソルのある方向へスライド
+        SlideToCursorDirectionRev,          // カーソルのある方向の逆方向へスライド
+        SlideToBackwardByOneImage,          // 後方向に画像1枚分だけスライド
+        SlideToForwardByOneImage,           // 前方向に画像1枚分だけスライド
         ZoomImageUnderCursor,               // カーソル下の画像を全体に拡大
         ShiftForward,                       // 画像[]枚分ずらし進める
         ShiftBackward,                      // 画像[]枚分ずらし戻す

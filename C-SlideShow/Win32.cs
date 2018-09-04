@@ -171,6 +171,15 @@ namespace C_SlideShow
             return new Point(w32Mouse.X, w32Mouse.Y);
         }
 
+        public static Rect GetWindowRect(Window window)
+        {
+            IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(window).Handle;;
+            RECT rect;
+            GetWindowRect(hwnd, out rect);
+
+            return new Rect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+        }
+
         public static Point GetWindowPos(IntPtr hwnd)
         {
             RECT rect;

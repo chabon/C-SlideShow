@@ -60,6 +60,8 @@ namespace C_SlideShow
             defaultCommandMap.Add( new CommandMap(CommandID.SlideToTop,                 0, null,  new KeyInput(ModifierKeys.None, Key.Up), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.SlideToRight,               0, null,  new KeyInput(ModifierKeys.None, Key.Right), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.SlideToBottom,              0, null,  new KeyInput(ModifierKeys.None, Key.Down), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToCursorDirection,     0, null,  null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.SlideToCursorDirectionRev,  0, null,  null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.SlideToForwardByOneImage,   0, null,  new KeyInput(ModifierKeys.Shift, Key.F), new MouseInput(MouseInputButton.WheelDown, ModifierKeys.Shift), null) );
             defaultCommandMap.Add( new CommandMap(CommandID.SlideToBackwardByOneImage,  0, null,  new KeyInput(ModifierKeys.Shift, Key.B), new MouseInput(MouseInputButton.WheelUp, ModifierKeys.Shift), null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ZoomImageUnderCursor,       0, null,  null, new MouseInput(MouseInputButton.M_Click, ModifierKeys.None), null) );

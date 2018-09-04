@@ -123,6 +123,8 @@ namespace C_SlideShow.Shortcut
             commands.Add( new SlideToRight() );
             commands.Add( new SlideToTop() );
             commands.Add( new SlideToBottom() );
+            commands.Add( new SlideToCursorDirection() );
+            commands.Add( new SlideToCursorDirectionRev() );
             commands.Add( new SlideToForwardByOneImage() );
             commands.Add( new SlideToBackwardByOneImage() );
             commands.Add( new ZoomImageUnderCursor() );
