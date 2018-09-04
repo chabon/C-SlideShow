@@ -191,6 +191,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.BaseGridBackgroundColor.Value = BaseGridBackgroundColor.PickedColor;
             mainWindow.ApplyColorAndOpacitySetting();
+            mainWindow.MenuItem_Setting.IsSubmenuOpen = true;
         }
 
         // チェック柄の背景にする
@@ -213,6 +214,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.PairColorOfPlaidBackground.Value = PairColorOfPlaidBackground.PickedColor;
             mainWindow.ApplyColorAndOpacitySetting();
+            mainWindow.MenuItem_Setting.IsSubmenuOpen = true;
         }
 
         // ウインドウ枠の太さ
@@ -247,6 +249,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.ResizeGripColor.Value = ResizeGripColor.PickedColor;
             mainWindow.UpdateUI();
+            mainWindow.MenuItem_Setting.IsSubmenuOpen = true;
         }
 
         // グリッド線の幅
@@ -281,6 +284,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.GridLineColor.Value = GridLineColor.PickedColor;
             mainWindow.UpdateGridLine();
+            mainWindow.MenuItem_Setting.IsSubmenuOpen = true;
         }
 
         // 最前面表示
