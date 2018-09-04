@@ -71,6 +71,25 @@ namespace C_SlideShow
 
         [DataMember]
         public string Arg { get; set; } = "\"$FilePath$\"";
+
+        [DataMember]
+        public bool ShowContextMenu { get; set; } = true;
+
+        public string GetAppName()
+        {
+            if( Name != null && Name != "" )
+            {
+                return Name;
+            }
+            else if(Path != null && Path != "")
+            {
+                return System.IO.Path.GetFileName(Path);
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 
 
@@ -222,7 +241,9 @@ namespace C_SlideShow
 
             // 外部連携
             ExternalAppInfoList = new List<ExternalAppInfo>();
-            ExternalAppInfoList.Add( new ExternalAppInfo() );
+            var exAppInfo = new ExternalAppInfo();
+            exAppInfo.Name = "規定のプログラム"; 
+            ExternalAppInfoList.Add(exAppInfo);
 
             // 詳細
             ShowMenuItem_AdditionalRead = true;

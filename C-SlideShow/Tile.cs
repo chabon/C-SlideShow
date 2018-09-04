@@ -135,7 +135,7 @@ namespace C_SlideShow
         }
 
         // 外部プログラムで画像を開く
-        public void OpenByExternalApp(int number)
+        public void OpenByExternalApp(ExternalAppInfo exAppInfo)
         {
             // ファイルパスの決定
             string filePath;
@@ -151,16 +151,14 @@ namespace C_SlideShow
             }
 
             // 外部プログラム呼び出し
-            var exAppInfoList = MainWindow.Current.Setting.ExternalAppInfoList;
-            if( exAppInfoList != null &&  exAppInfoList.Count > number)
+            if( exAppInfo != null)
             {
-                ExternalAppInfo exAppInfo = MainWindow.Current.Setting.ExternalAppInfoList[number];
                 string filePathFormat = "$FilePath$";
 
                 string arg = exAppInfo.Arg;
                 if( arg == "" ) arg = "\"" + filePathFormat + "\"";
 
-                if(exAppInfo.Path != "" )
+                if(exAppInfo.Path != null && exAppInfo.Path != "" )
                 {
                     // プログラムの指定あり
                     try { Process.Start( exAppInfo.Path, arg.Replace(filePathFormat, filePath) ); }

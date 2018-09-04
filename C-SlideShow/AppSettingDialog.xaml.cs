@@ -99,6 +99,80 @@ namespace C_SlideShow
         public string CommandStrValue { get; set; }
     }
 
+    public class ExternalAppListViewItem :INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private string name;
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                if(value != this.name)
+                {
+                    this.name = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private string path;
+        public string Path
+        {
+            get { return path; }
+            set
+            {
+                if(value != this.path)
+                {
+                    this.path = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private string arg = "\"$FilePath$\"";
+        public string Arg
+        {
+            get { return arg; }
+            set
+            {
+                if(value != this.arg)
+                {
+                    this.arg = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private string showContextMenu = "○";
+        public string ShowContextMenu
+        {
+            get { return showContextMenu; }
+            set
+            {
+                if(value != this.showContextMenu)
+                {
+                    this.showContextMenu = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
+        public ExternalAppListViewItem Clone()
+        {
+            ExternalAppListViewItem newItem = new ExternalAppListViewItem();
+            newItem.Name = this.Name;
+            newItem.Path = this.Path;
+            newItem.Arg  = this.Arg;
+            newItem.showContextMenu = this.ShowContextMenu;
+
+            return newItem;
+        }
+    }
+
     /// <summary>
     /// AppSettingDialog.xaml の相互作用ロジック
     /// </summary>
@@ -109,6 +183,7 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         bool isInitializing = false;
         bool isSettingToComboBox = false;  // コード中でComboBoxのSelectedItemが変更された時のイベントを防止するため
+        bool isSettingToTextBox = false;
         AppSetting setting;
 
         /* ---------------------------------------------------- */
@@ -216,8 +291,16 @@ namespace C_SlideShow
 
 
             // 外部連携
-            ExternalAppPath.Text = setting.ExternalAppInfoList[0].Path;
-            ExternalAppArg.Text  = setting.ExternalAppInfoList[0].Arg;
+            foreach(ExternalAppInfo exAppInfo in setting.ExternalAppInfoList )
+            {
+                ExternalAppListView.Items.Add(new ExternalAppListViewItem
+                {
+                    Name            = exAppInfo.Name,
+                    Path            = exAppInfo.Path,
+                    Arg             = exAppInfo.Arg,
+                    ShowContextMenu = exAppInfo.ShowContextMenu ? "○" : "×"
+                });
+            };
 
 
             // 詳細
@@ -378,6 +461,14 @@ namespace C_SlideShow
             }
 
         }
+
+        // 外部連携
+        private ExternalAppListViewItem GetSelectedExternalAppListViewItem()
+        {
+            ExternalAppListViewItem item = ExternalAppListView.SelectedItem as ExternalAppListViewItem;
+            return item ?? item;
+        }
+
 
         /* ---------------------------------------------------- */
         //     イベント
@@ -580,7 +671,9 @@ namespace C_SlideShow
             ShortcutListViewItem item = currentShortcutList.SelectedItem as ShortcutListViewItem;
             if( item == null ) return;
 
+            int index = currentShortcutList.SelectedIndex;
             currentShortcutList.Items.Remove(item);
+            if( index < currentShortcutList.Items.Count ) currentShortcutList.SelectedIndex = index;
         }
 
         private void Shortcut_DetailButton_Click(object sender, RoutedEventArgs e)
@@ -928,6 +1021,142 @@ namespace C_SlideShow
 
 
         // 外部連携
+        private void ExternalAppListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ExternalAppListViewItem item = ExternalAppListView.SelectedItem as ExternalAppListViewItem;
+
+            if(item != null )
+            {
+                ExternalAppName.IsEnabled = true;
+                ExternalAppPath.IsEnabled = true;
+                ExternalAppPathBrowse.IsEnabled = true;
+                ExternalAppArg.IsEnabled = true;
+                ExternalApp_ShowContextMenu.IsEnabled = true;
+            }
+            else
+            {
+                ExternalAppName.IsEnabled = false;
+                ExternalAppPath.IsEnabled = false;
+                ExternalAppPathBrowse.IsEnabled = false;
+                ExternalAppArg.IsEnabled = false;
+                ExternalApp_ShowContextMenu.IsEnabled = false;
+            }
+
+            if(item != null )
+            {
+                isSettingToTextBox = true;
+                ExternalAppName.Text = item.Name;
+                ExternalAppPath.Text = item.Path;
+                ExternalAppArg.Text  = item.Arg;
+                ExternalApp_ShowContextMenu.IsChecked = item.ShowContextMenu == "○" ? true : false;
+                isSettingToTextBox = false;
+            }
+            else
+            {
+                ExternalAppName.Text = "";
+                ExternalAppPath.Text = "";
+                ExternalAppArg.Text  = "";
+                ExternalApp_ShowContextMenu.IsChecked = false;
+            }
+        }
+
+        private void ExternalApp_New_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            ExternalAppListViewItem item = new ExternalAppListViewItem();
+            ExternalAppListView.Items.Add(item);
+            ExternalAppListView.SelectedItem = item;
+        }
+
+        private void ExternalApp_Del_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            var item = GetSelectedExternalAppListViewItem();
+            if( item != null )
+            {
+                int index = ExternalAppListView.SelectedIndex;
+                ExternalAppListView.Items.Remove(item);
+                if(ExternalAppListView.Items.Count > index )
+                {
+                    ExternalAppListView.SelectedIndex = index;
+                }
+                else if(ExternalAppListView.Items.Count > 0 )
+                {
+                    ExternalAppListView.SelectedIndex = index - 1;
+                }
+            }
+
+        }
+
+        private void ExternalApp_Copy_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            var item = GetSelectedExternalAppListViewItem();
+            if(item != null )
+            {
+                ExternalAppListViewItem newItem = item.Clone();
+
+                int index = ExternalAppListView.SelectedIndex;
+                ExternalAppListView.Items.Insert(index, newItem);
+            }
+        }
+
+        private void ExternalApp_Up_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            var item = GetSelectedExternalAppListViewItem();
+            if( item != null )
+            {
+                int index = ExternalAppListView.SelectedIndex;
+                if( index <= 0 ) return;
+
+                ExternalAppListView.Items.Remove(item);
+                ExternalAppListView.Items.Insert(index - 1, item);
+                ExternalAppListView.SelectedIndex = index - 1;
+            }
+        }
+
+        private void ExternalApp_Down_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            var item = GetSelectedExternalAppListViewItem();
+            if( item != null )
+            {
+                int index = ExternalAppListView.SelectedIndex;
+                if( index >= ExternalAppListView.Items.Count - 1) return;
+
+                ExternalAppListView.Items.Remove(item);
+                ExternalAppListView.Items.Insert(index + 1, item);
+                ExternalAppListView.SelectedIndex = index + 1;
+            }
+        }
+
+
+        private void ExternalAppName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+            if( isSettingToTextBox ) return;
+
+            var item = GetSelectedExternalAppListViewItem();
+            if(item != null)  item.Name = ExternalAppName.Text;
+        }
+
+        private void ExternalAppPath_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if( isInitializing ) return;
+            if( isSettingToTextBox ) return;
+
+            var item = GetSelectedExternalAppListViewItem();
+            if(item != null)  item.Path = ExternalAppPath.Text;
+        }
+
         private void ExternalAppPathBrowse_Click(object sender, RoutedEventArgs e)
         {
             Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
@@ -941,10 +1170,24 @@ namespace C_SlideShow
             }
         }
 
-        private void ExternalAppDefault_Click(object sender, RoutedEventArgs e)
+        private void ExternalAppArg_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ExternalAppPath.Text = "";
-            ExternalAppArg.Text  = "\"$FilePath$\"";
+            if( isInitializing ) return;
+            if( isSettingToTextBox ) return;
+
+            var item = GetSelectedExternalAppListViewItem();
+            if(item != null)  item.Arg = ExternalAppArg.Text;
+        }
+
+        private void ExternalApp_ShowContextMenu_Click(object sender, RoutedEventArgs e)
+        {
+            if( isInitializing ) return;
+
+            var item = GetSelectedExternalAppListViewItem();
+            if(item != null )
+            {
+                item.ShowContextMenu = (bool)ExternalApp_ShowContextMenu.IsChecked ? "○" : "×";
+            }
         }
 
         /* ---------------------------------------------------- */
@@ -1014,8 +1257,21 @@ namespace C_SlideShow
             }
 
             // 外部連携
-            setting.ExternalAppInfoList[0].Path = ExternalAppPath.Text;
-            setting.ExternalAppInfoList[0].Arg  = ExternalAppArg.Text;
+            setting.ExternalAppInfoList.Clear();
+            foreach(var item in ExternalAppListView.Items )
+            {
+                ExternalAppListViewItem i = item as ExternalAppListViewItem;
+                if(i != null )
+                {
+                    ExternalAppInfo exAppInfo = new ExternalAppInfo();
+                    exAppInfo.Name = i.Name;
+                    exAppInfo.Path = i.Path;
+                    exAppInfo.Arg  = i.Arg;
+                    exAppInfo.ShowContextMenu = i.ShowContextMenu == "○" ? true : false;
+
+                    setting.ExternalAppInfoList.Add(exAppInfo);
+                }
+            }
 
             // 詳細
             setting.ShowMenuItem_AdditionalRead = (bool)ShowMenuItem_AdditionalRead.IsChecked ;
@@ -1030,6 +1286,7 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
 
 
 

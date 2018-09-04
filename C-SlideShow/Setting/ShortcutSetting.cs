@@ -38,18 +38,20 @@ namespace C_SlideShow
             List<CommandMap> defaultCommandMap = new List<CommandMap>();
 
             // いつでも
-            defaultCommandMap.Add( new CommandMap(CommandID.OpenFolder,             0,  null,       new KeyInput(ModifierKeys.Control, Key.F), null, null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.OpenAdditionalFolder,   0,  null,       new KeyInput(ModifierKeys.Control | ModifierKeys.Shift, Key.F), null, null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.OpenFile,               0,  null,       null, null, null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.OpenAdditionalFile,     0,  null,       null, null, null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.WindowSizeUp,           10, null,       null, null, new MouseGestureInput(MouseButton.Right, "[WU]")) );
-            defaultCommandMap.Add( new CommandMap(CommandID.WindowSizeDown,         10, null,       null, null, new MouseGestureInput(MouseButton.Right, "[WD]")) );
-            defaultCommandMap.Add( new CommandMap(CommandID.ShowContextMenu,        0,  null,       null, new MouseInput(MouseInputButton.R_Click, ModifierKeys.None), null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromNum,     1,  null,       new KeyInput(ModifierKeys.Control, Key.D1), null, null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromNum,     2,  null,       new KeyInput(ModifierKeys.Control, Key.D2), null, null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromNum,     3,  null,       new KeyInput(ModifierKeys.Control, Key.D3), null, null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromName,    0,  "new profile",   null, null, null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.ShowAppSettingDialog,   0,  null,       null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenFolder,                         0,  null,       new KeyInput(ModifierKeys.Control, Key.F), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenAdditionalFolder,               0,  null,       new KeyInput(ModifierKeys.Control | ModifierKeys.Shift, Key.F), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenFile,                           0,  null,       null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenAdditionalFile,                 0,  null,       null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.WindowSizeUp,                       10, null,       null, null, new MouseGestureInput(MouseButton.Right, "[WU]")) );
+            defaultCommandMap.Add( new CommandMap(CommandID.WindowSizeDown,                     10, null,       null, null, new MouseGestureInput(MouseButton.Right, "[WD]")) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ShowContextMenu,                    0,  null,       null, new MouseInput(MouseInputButton.R_Click, ModifierKeys.None), null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromNum,                 1,  null,       new KeyInput(ModifierKeys.Control, Key.D1), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromNum,                 2,  null,       new KeyInput(ModifierKeys.Control, Key.D2), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromNum,                 3,  null,       new KeyInput(ModifierKeys.Control, Key.D3), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.LoadProfileFromName,                0,  "未指定",   null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ShowAppSettingDialog,               0,  null,       null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenImageUnderCursorByDefaultApp,   0,  null,       null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenImageUnderCursorByExternalApp,  0,  "未指定",   null, null, null) );
 
             // 通常時
             defaultCommandMap.Add( new CommandMap(CommandID.SlideToForward,             0, null,  new KeyInput(ModifierKeys.None, Key.F), new MouseInput(MouseInputButton.WheelDown, ModifierKeys.None), null) );

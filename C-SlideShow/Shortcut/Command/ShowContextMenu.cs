@@ -95,7 +95,6 @@ namespace C_SlideShow.Shortcut.Command
                 contextMenu.Items.Add( CreateMenuItem("ファイル名をコピー",     (s, e) => { targetTile.CopyFileName(); }) );
                 contextMenu.Items.Add( new Separator() );
                 contextMenu.Items.Add( CreateMenuItem("エクスプローラーで開く", (s, e) => { targetTile.OpenExplorer(); }) );
-                contextMenu.Items.Add( CreateMenuItem("外部プログラムで開く",   (s, e) => { targetTile.OpenByExternalApp(0); }) );
             }
             else
             {
@@ -107,9 +106,19 @@ namespace C_SlideShow.Shortcut.Command
                 contextMenu.Items.Add( CreateMenuItem("ファイル名をコピー",     (s, e) => { targetTile.CopyFileName(); }) );
                 contextMenu.Items.Add( new Separator() );
                 contextMenu.Items.Add( CreateMenuItem("エクスプローラーで開く", (s, e) => { targetTile.OpenExplorer(); }) );
-                contextMenu.Items.Add( CreateMenuItem("外部プログラムで開く",   (s, e) => { targetTile.OpenByExternalApp(0); }) );
             }
 
+            foreach(var exAppInfo in MainWindow.Current.Setting.ExternalAppInfoList)
+            {
+                if( exAppInfo.ShowContextMenu )
+                {
+                    string name = exAppInfo.GetAppName();
+                    if(name != null)
+                    {
+                        contextMenu.Items.Add( CreateMenuItem( name + "で開く",   (s, e) => { targetTile.OpenByExternalApp(exAppInfo); }) );
+                    }
+                }
+            }
 
             // コンテキストメニュー表示
             contextMenu.IsOpen = true;

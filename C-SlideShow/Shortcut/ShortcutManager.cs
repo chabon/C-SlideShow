@@ -113,6 +113,8 @@ namespace C_SlideShow.Shortcut
             commands.Add( new LoadProfileFromNum() );
             commands.Add( new LoadProfileFromName() );
             commands.Add( new ShowAppSettingDialog() );
+            commands.Add( new OpenImageUnderCursorByDefaultApp() );
+            commands.Add( new OpenImageUnderCursorByExternalApp() );
 
             // 通常時
             commands.Add( new SlideToForward() );

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:C_SlideShow"
         xmlns:cc="clr-namespace:C_SlideShow.CommonControl"
         mc:Ignorable="d"
-        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="520" Width="660" MinWidth="400" MinHeight="350">
+        Title="アプリの設定 (ここの設定項目はプロファイルに含まれません)" Height="600" Width="760" MinWidth="400" MinHeight="350">
     <Grid>
         <TabControl x:Name="MainTabControl" Margin="3,3,3,40">
             <!-- 起動時設定 -->
@@ -32,7 +32,7 @@
                             <ListView x:Name="ShortcutListView_ALL" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
+                                        <GridViewColumn Header="コマンド" Width="300" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
                                         <GridViewColumn Header="キー入力" Width="130" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
                                         <GridViewColumn Header="マウス入力" Width="130" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
                                         <GridViewColumn Header="マウスジェスチャ" Width="130" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
@@ -44,7 +44,7 @@
                             <ListView x:Name="ShortcutListView_Normal" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
+                                        <GridViewColumn Header="コマンド" Width="300" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
                                         <GridViewColumn Header="キー入力" Width="130" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
                                         <GridViewColumn Header="マウス入力" Width="130" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
                                         <GridViewColumn Header="マウスジェスチャ" Width="130" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
@@ -56,7 +56,7 @@
                             <ListView x:Name="ShortcutListView_Expand" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged">
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="コマンド" Width="200" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
+                                        <GridViewColumn Header="コマンド" Width="300" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
                                         <GridViewColumn Header="キー入力" Width="130" DisplayMemberBinding="{Binding KeyStr}"></GridViewColumn>
                                         <GridViewColumn Header="マウス入力" Width="130" DisplayMemberBinding="{Binding MouseInputStr}"></GridViewColumn>
                                         <GridViewColumn Header="マウスジェスチャ" Width="130" DisplayMemberBinding="{Binding MouseGestureStr}"></GridViewColumn>
@@ -76,12 +76,12 @@
                     </Button>
                     <StackPanel Margin="0,4,50,0" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
                         <Label x:Name="CommandValueLabel" Visibility="Collapsed">コマンドの値</Label>
-                        <TextBox x:Name="CommandValue" Visibility="Collapsed" TextChanged="CommandValue_TextChanged" Width="100" Height="20"></TextBox>
+                        <TextBox x:Name="CommandValue" Visibility="Collapsed" TextChanged="CommandValue_TextChanged" Width="140" Height="20"></TextBox>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal">
                         <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Left">
-                            <GroupBox  Header="キー入力" Height="100" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                            <GroupBox  Header="キー入力" Height="100" Width="220" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                                 <StackPanel>
                                     <cc:HotkeyControl x:Name="HotkeyControl" Height="20" KeyAssigned="HotkeyControl_KeyAssigned" Margin="4"></cc:HotkeyControl>
                                     <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
@@ -94,11 +94,11 @@
                             </GroupBox>
                             <Button x:Name="AllDefault_Shortcut" Click="AllDefault_Shortcut_Click" Margin="4" Width="100" HorizontalAlignment="Left">すべてデフォルト</Button>
                         </StackPanel>
-                        <GroupBox  Header="マウス入力" Height="100" Width="200" Margin="4,4,4,32" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                        <GroupBox  Header="マウス入力" Height="100" Width="220" Margin="4,4,4,32" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="2">
                                     <Label Width="50">ボタン</Label>
-                                    <ComboBox x:Name="MouseInputButton" Width="130" Height="20" SelectionChanged="MouseInputButton_SelectionChanged">
+                                    <ComboBox x:Name="MouseInputButton" Width="150" Height="20" SelectionChanged="MouseInputButton_SelectionChanged">
                                         <ComboBoxItem>なし</ComboBoxItem>
                                         <ComboBoxItem>左クリック</ComboBoxItem>
                                         <ComboBoxItem>右クリック</ComboBoxItem>
@@ -119,7 +119,7 @@
                                 <Button x:Name="MouseInputMapClearButton" Click="MouseInputMapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
                             </StackPanel>
                         </GroupBox>
-                        <GroupBox  Header="マウスジェスチャ" Height="128" Width="200" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                        <GroupBox  Header="マウスジェスチャ" Height="128" Width="220" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                             <StackPanel>
                                 <cc:MouseGestureControl x:Name="MouseGestureControl" AllowLButtonDrag="False"
                                                         Height="40" GestureAssigned="MouseGestureControl_GestureAssigned" 
@@ -192,7 +192,7 @@
             </TabItem>
 
             <!-- アスペクト比 -->
-            <TabItem Header="アスペクト比" Width="80">
+            <TabItem Header="アスペクト比" Width="80" Height="22" Margin="0" VerticalAlignment="Top">
                 <StackPanel Margin="20,3">
                     <Label>アスペクト比リストの編集</Label>
                     <StackPanel Orientation="Horizontal" Margin="3,10">
@@ -208,10 +208,10 @@
                                     <cc:NumericUpDown Width="55" x:Name="AspectRatio_V" ValueChanged="AspectRatio_V_ValueChanged" Value="3"></cc:NumericUpDown>
                                 </StackPanel>
                             </StackPanel>
-                            <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_Up" Click="AspectRatioList_Up_Click">↑</Button>
-                            <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_Down" Click="AspectRatioList_Down_Click">↓</Button>
                             <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_New" Click="AspectRatioList_New_Click">新規作成</Button>
                             <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_Delete" Click="AspectRatioList_Delete_Click">削除</Button>
+                            <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_Up" Click="AspectRatioList_Up_Click">↑</Button>
+                            <Button Width="70" Margin="0,5" HorizontalAlignment="Left" x:Name="AspectRatioList_Down" Click="AspectRatioList_Down_Click">↓</Button>
                         </StackPanel>
                     </StackPanel>
                     <Button x:Name="AllDefault_AspectRatio" Click="AllDefault_AspectRatio_Click" Width="100" Margin="10,5" HorizontalAlignment="Left">すべてデフォルト</Button>
@@ -220,25 +220,55 @@
 
             <!-- 外部連携 -->
             <TabItem Header="外部連携" Width="80">
-                <StackPanel Margin="10">
-                    <GroupBox Header="外部プログラム">
+                <Grid Margin="10">
+                    <ListView Margin="0,0,0,200" x:Name="ExternalAppListView" SelectionChanged="ExternalAppListView_SelectionChanged">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="名前" Width="110" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
+                                <GridViewColumn Header="実行ファイルパス" Width="380" DisplayMemberBinding="{Binding Path}"></GridViewColumn>
+                                <GridViewColumn Header="引数" Width="130" DisplayMemberBinding="{Binding Arg}"></GridViewColumn>
+                                <GridViewColumn Header="表示" Width="40" DisplayMemberBinding="{Binding ShowContextMenu}"></GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+
+                    <Grid x:Name="ExternalAppDialogFooter" Height="200" VerticalAlignment="Bottom">
                         <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel.Resources>
+                                    <Style x:Key="ExternalApp_ButtonStyle" TargetType="Button">
+                                        <Setter Property="Margin" Value="3,10"></Setter>
+                                        <Setter Property="Width" Value="50"></Setter>
+                                    </Style>
+                                </StackPanel.Resources>
+                                    <Button x:Name="ExternalApp_New"  Click="ExternalApp_New_Click" Style="{StaticResource ExternalApp_ButtonStyle}">新規</Button>
+                                    <Button x:Name="ExternalApp_Del"  Click="ExternalApp_Del_Click" Style="{StaticResource ExternalApp_ButtonStyle}">削除</Button>
+                                    <Button x:Name="ExternalApp_Copy" Click="ExternalApp_Copy_Click" Style="{StaticResource ExternalApp_ButtonStyle}">コピー</Button>
+                                    <Button x:Name="ExternalApp_Up"   Click="ExternalApp_Up_Click" Style="{StaticResource ExternalApp_ButtonStyle}">↑</Button>
+                                    <Button x:Name="ExternalApp_Down" Click="ExternalApp_Down_Click" Style="{StaticResource ExternalApp_ButtonStyle}">↓</Button>
+                            </StackPanel>
                             <DockPanel Margin="3">
-                                <Label Width="40" DockPanel.Dock="Left">パス</Label>
+                                <Label Width="80" DockPanel.Dock="Left">名前(省略可)</Label>
+                                <TextBox Height="22" Margin="0,0,32,0" x:Name="ExternalAppName" TextChanged="ExternalAppName_TextChanged" Width="200" HorizontalAlignment="Left"></TextBox>
+                            </DockPanel>
+
+                            <DockPanel Margin="3">
+                                <Label Width="80" DockPanel.Dock="Left">パス</Label>
                                 <Grid>
-                                    <TextBox Height="22" Margin="0,0,32,0" x:Name="ExternalAppPath"
-                                             ToolTip="指定がなければ、拡張子で関連付けされたプログラムで開きます"></TextBox>
+                                    <TextBox Height="22" Margin="0,0,32,0" x:Name="ExternalAppPath" TextChanged="ExternalAppPath_TextChanged"
+                                             ToolTip="指定がなければ、拡張子で関連付けされた規定のプログラムで開きます"></TextBox>
                                     <Button x:Name="ExternalAppPathBrowse" Click="ExternalAppPathBrowse_Click" Width="30" HorizontalAlignment="Right" Height="22">参照</Button>
                                 </Grid>
                             </DockPanel>
                             <DockPanel Margin="3">
-                                <Label Width="40" DockPanel.Dock="Left">引数</Label>
-                                <TextBox x:Name="ExternalAppArg" Height="22" ToolTip="$FilePath$がファイルパスに変換されます"></TextBox>
+                                <Label Width="80" DockPanel.Dock="Left">引数</Label>
+                                <TextBox x:Name="ExternalAppArg" TextChanged="ExternalAppArg_TextChanged" Height="22" ToolTip="$FilePath$がファイルパスに変換されます"></TextBox>
                             </DockPanel>
-                            <Button x:Name="ExternalAppDefault" Click="ExternalAppDefault_Click" Width="50" HorizontalAlignment="Left" Margin="42,4,4,4">デフォルト</Button>
+                            <CheckBox x:Name="ExternalApp_ShowContextMenu" Click="ExternalApp_ShowContextMenu_Click" Margin="8,8">コンテキストメニューに表示する</CheckBox>
                         </StackPanel>
-                    </GroupBox>
-                </StackPanel>
+                    </Grid>
+                </Grid>
             </TabItem>
 
             <!-- 詳細 -->

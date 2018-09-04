@@ -95,6 +95,17 @@ namespace C_SlideShow
             // ファイル情報のテキストを更新
             UpdateFileInfoText();
 
+            // 外部プログラムで開くボタンのツールチップ
+            Toolbar_OpenByExternalApp.ToolTip = "規定のプログラムで画像を開く";
+            if(MainWindow.Setting.ExternalAppInfoList.Count > 0 )
+            {
+                string appName = MainWindow.Setting.ExternalAppInfoList[0].GetAppName();
+                if(appName != null )
+                {
+                    Toolbar_OpenByExternalApp.ToolTip = appName + "で画像を開く";
+                }
+            }
+
             // 現在のTileContainerの拡大率
             double containerScale = MainWindow.MainContent.LayoutTransform.Value.M11;
 
@@ -590,7 +601,14 @@ namespace C_SlideShow
         // 外部プログラムで画像を開く
         private void Toolbar_OpenByExternalApp_Click(object sender, RoutedEventArgs e)
         {
-            targetTile.OpenByExternalApp(0);
+            if(MainWindow.Setting.ExternalAppInfoList.Count > 0 )
+            {
+                targetTile.OpenByExternalApp(MainWindow.Setting.ExternalAppInfoList[0]);
+            }
+            else
+            {
+                targetTile.OpenByExternalApp( new ExternalAppInfo() );
+            }
         }
 
 
