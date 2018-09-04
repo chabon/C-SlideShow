@@ -308,6 +308,7 @@ namespace C_SlideShow
             ShowMenuItem_AdditionalRead.IsChecked = setting.ShowMenuItem_AdditionalRead;
             SerachAllDirectoriesInFolderReading.IsChecked = setting.SerachAllDirectoriesInFolderReading;
             SeekbarColor.PickedColor = setting.SeekbarColor;
+            SeekBarIsMoveToPointEnabled.SelectedIndex = setting.SeekBarIsMoveToPointEnabled ? 1 : 0;
 
 
             isInitializing = false;
@@ -1278,7 +1279,9 @@ namespace C_SlideShow
             setting.ShowMenuItem_AdditionalRead = (bool)ShowMenuItem_AdditionalRead.IsChecked ;
             setting.SerachAllDirectoriesInFolderReading = (bool)SerachAllDirectoriesInFolderReading.IsChecked;
             setting.SeekbarColor = SeekbarColor.PickedColor;
+            setting.SeekBarIsMoveToPointEnabled = SeekBarIsMoveToPointEnabled.SelectedIndex == 1 ? true : false;
             MainWindow.Current.UpdateUI();
+            MainWindow.Current.Seekbar.IsMoveToPointEnabled = setting.SeekBarIsMoveToPointEnabled;
 
             this.Close();
         }

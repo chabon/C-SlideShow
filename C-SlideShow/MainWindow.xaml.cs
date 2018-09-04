@@ -497,6 +497,9 @@ namespace C_SlideShow
 
         private void InitSeekbar()
         {
+            // クリックした時の挙動
+            //Seekbar.IsMoveToPointEnabled = true;
+
             int grids = Setting.TempProfile.NumofMatrix.Grid;
             Seekbar.Maximum = imageFileManager.GetLastNoDeviationIndex(grids) + 1; // 末尾がずれないように
             Seekbar.Minimum = 1;
@@ -829,6 +832,7 @@ namespace C_SlideShow
             this.ResizeGrip.BorderThickness = new Thickness(pf.ResizeGripThickness.Value);
             this.ResizeGrip.BorderBrush = new SolidColorBrush(pf.ResizeGripColor.Value);
             this.Seekbar.Foreground = new SolidColorBrush(Setting.SeekbarColor);
+            this.Seekbar.IsMoveToPointEnabled = Setting.SeekBarIsMoveToPointEnabled;
 
             UpdateMainWindowView();
         }

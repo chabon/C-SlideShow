@@ -199,6 +199,10 @@ namespace C_SlideShow
         [DataMember]
         public Color SeekbarColor { get; set; }
 
+        [DataMember]
+        public bool SeekBarIsMoveToPointEnabled { get; set; }
+
+
         public AppSetting()
         {
             // 初期化
@@ -253,6 +257,7 @@ namespace C_SlideShow
             ShowMenuItem_AdditionalRead = true;
             SerachAllDirectoriesInFolderReading = true;
             SeekbarColor = Colors.Black;
+            SeekBarIsMoveToPointEnabled = true;
         }
 
 

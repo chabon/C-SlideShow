@@ -168,21 +168,6 @@ namespace C_SlideShow
                 }
             };
 
-            this.Seekbar.ValueChanged += (s, e) =>
-            {
-                if (this.ignoreSliderValueChangeEvent) return;
-
-                int value = (int)Seekbar.Value;
-                //if (isHSeekbarDragStarted && BitmapPresenter.FileInfo.Count > 99)
-                if (isSeekbarDragStarted)
-                {
-                    PageInfoText.Text = String.Format("{0} / {1}",
-                        value, imageFileManager.NumofImageFile);
-                    return;
-                }
-                Debug.WriteLine("seek bar value: " + Seekbar.Value);
-                OnSeekbarValueChanged(value);
-            };
 
             // end of method
         }
@@ -211,6 +196,7 @@ namespace C_SlideShow
         }
 
 
+        // シークバー
         private void Seekbar_DragStarted(object sender, RoutedEventArgs e)
         {
             isSeekbarDragStarted = true;
@@ -228,6 +214,21 @@ namespace C_SlideShow
             ChangeCurrentImageIndex(index);
         }
 
+        private void Seekbar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (this.ignoreSliderValueChangeEvent) return;
+
+            int value = (int)Seekbar.Value;
+            //if (isHSeekbarDragStarted && BitmapPresenter.FileInfo.Count > 99)
+            if (isSeekbarDragStarted)
+            {
+                PageInfoText.Text = String.Format("{0} / {1}",
+                    value, imageFileManager.NumofImageFile);
+                return;
+            }
+            Debug.WriteLine("seek bar value: " + Seekbar.Value);
+            OnSeekbarValueChanged(value);
+        }
 
         // ツールバーボタン(読み込み)
         private void MenuItem_Load_SubmenuOpened(object sender, RoutedEventArgs e)
