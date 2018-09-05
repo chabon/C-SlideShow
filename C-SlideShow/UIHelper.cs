@@ -112,14 +112,20 @@ namespace C_SlideShow
             if (hwnd != hwndThis) return;
 
 
-            // カーソル停止をチェックして、カーソルを隠す
+            // 一定時間のカーソル停止を検知して、タイマーを止める。カーソルも隠す
             Point d = new Point(Math.Abs(pt.X - ptCursorPause.X), Math.Abs(pt.Y - ptCursorPause.Y));
             if ( !isCursorPaused && d.X == 0 && d.Y == 0)
             {
                 cursorPauseTime += 1;
                 if (cursorPauseTime > 15) // 1.5 sec
                 {
-                    mainWindow.Cursor = Cursors.None;
+                    if( mainWindow.Setting.MouseCursorAutoHide )
+                    {
+                        if( !pf.IsFullScreenMode.Value && mainWindow.Setting.MouseCursorAutoHideInFullScreenModeOnly)
+                            mainWindow.Cursor = null;
+                        else
+                            mainWindow.Cursor = Cursors.None;
+                    }
                     isCursorPaused = true;
                     this.uIVisibleTimer.Stop();
                     return;

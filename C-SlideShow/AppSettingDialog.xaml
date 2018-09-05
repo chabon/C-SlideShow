@@ -287,6 +287,11 @@
                             <ComboBoxItem>クリックした位置へ移動</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
+                    <CheckBox x:Name="MouseCursorAutoHide" Margin="5,8,0,5" Click="MouseCursorAutoHide_Click">マウスカーソルが一定時間静止したら自動で隠す</CheckBox>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Margin="15,-5,0,0">└ </Label>
+                        <CheckBox x:Name="MouseCursorAutoHideInFullScreenModeOnly" Margin="0">フルスクリーンモードの時のみ隠す</CheckBox>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
 

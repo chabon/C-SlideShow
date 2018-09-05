@@ -309,6 +309,10 @@ namespace C_SlideShow
             SerachAllDirectoriesInFolderReading.IsChecked = setting.SerachAllDirectoriesInFolderReading;
             SeekbarColor.PickedColor = setting.SeekbarColor;
             SeekBarIsMoveToPointEnabled.SelectedIndex = setting.SeekBarIsMoveToPointEnabled ? 1 : 0;
+            MouseCursorAutoHide.IsChecked = setting.MouseCursorAutoHide;
+            MouseCursorAutoHideInFullScreenModeOnly.IsChecked = setting.MouseCursorAutoHideInFullScreenModeOnly;
+            if( setting.MouseCursorAutoHide ) MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = true;
+            else MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = false;
 
 
             isInitializing = false;
@@ -1192,6 +1196,14 @@ namespace C_SlideShow
             }
         }
 
+        // 詳細
+        private void MouseCursorAutoHide_Click(object sender, RoutedEventArgs e)
+        {
+            if( (bool)MouseCursorAutoHide.IsChecked ) MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = true;
+            else MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = false;
+        }
+
+
         /* ---------------------------------------------------- */
         //     OK / キャンセル
         /* ---------------------------------------------------- */
@@ -1280,6 +1292,10 @@ namespace C_SlideShow
             setting.SerachAllDirectoriesInFolderReading = (bool)SerachAllDirectoriesInFolderReading.IsChecked;
             setting.SeekbarColor = SeekbarColor.PickedColor;
             setting.SeekBarIsMoveToPointEnabled = SeekBarIsMoveToPointEnabled.SelectedIndex == 1 ? true : false;
+            setting.MouseCursorAutoHide = (bool)MouseCursorAutoHide.IsChecked;
+            setting.MouseCursorAutoHideInFullScreenModeOnly = (bool)MouseCursorAutoHideInFullScreenModeOnly.IsChecked;
+
+            // メインウインドウ更新
             MainWindow.Current.UpdateUI();
             MainWindow.Current.Seekbar.IsMoveToPointEnabled = setting.SeekBarIsMoveToPointEnabled;
 
@@ -1290,6 +1306,7 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
 
 
 

@@ -202,6 +202,12 @@ namespace C_SlideShow
         [DataMember]
         public bool SeekBarIsMoveToPointEnabled { get; set; }
 
+        [DataMember]
+        public bool MouseCursorAutoHide { get; set; }
+
+        [DataMember]
+        public bool MouseCursorAutoHideInFullScreenModeOnly { get; set; }
+
 
         public AppSetting()
         {
@@ -258,6 +264,8 @@ namespace C_SlideShow
             SerachAllDirectoriesInFolderReading = true;
             SeekbarColor = Colors.Black;
             SeekBarIsMoveToPointEnabled = true;
+            MouseCursorAutoHide = true;
+            MouseCursorAutoHideInFullScreenModeOnly = false;
         }
 
 
