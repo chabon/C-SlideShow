@@ -295,10 +295,16 @@ namespace C_SlideShow.ProfileMember
                         method = "ファイル名 自然順(降順)";
                         break;
                     case C_SlideShow.FileSortMethod.LastWriteTime:
-                        method = "更新日時(昇順)";
+                        method = "更新日時(古い順)";
                         break;
                     case C_SlideShow.FileSortMethod.LastWriteTimeRev:
-                        method = "更新日時(降順)";
+                        method = "更新日時(新しい順)";
+                        break;
+                    case C_SlideShow.FileSortMethod.DateTaken:
+                        method = "撮影日時(古い順)";
+                        break;
+                    case C_SlideShow.FileSortMethod.DateTakenRev:
+                        method = "撮影日時(新しい順)";
                         break;
                     case C_SlideShow.FileSortMethod.Random:
                         method = "ランダム";

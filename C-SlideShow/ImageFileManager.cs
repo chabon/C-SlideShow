@@ -318,11 +318,25 @@ namespace C_SlideShow
                     break;
                 case FileSortMethod.LastWriteTime:
                     foreach( ImageFileInfo ifi in ImgFileInfo ) ifi.ReadLastWriteTime();
-                    ImgFileInfo = ImgFileInfo.OrderByDescending(f => f.LastWriteTime).ToList();
+                    ImgFileInfo = ImgFileInfo.OrderBy(f => f.LastWriteTime).ToList();
                     break;
                 case FileSortMethod.LastWriteTimeRev:
                     foreach( ImageFileInfo ifi in ImgFileInfo ) ifi.ReadLastWriteTime();
-                    ImgFileInfo = ImgFileInfo.OrderBy(f => f.LastWriteTime).ToList();
+                    ImgFileInfo = ImgFileInfo.OrderByDescending(f => f.LastWriteTime).ToList();
+                    break;
+                case FileSortMethod.DateTaken:
+                    foreach( ImageFileInfo ifi in ImgFileInfo ) ifi.ReadSlideViewInfo();
+                    ImgFileInfo = ImgFileInfo.OrderBy((f) => {
+                        if( f.ExifInfo == null || f.ExifInfo.DateTaken == null) return new DateTimeOffset();
+                        return f.ExifInfo.DateTaken;
+                    }).ToList();
+                    break;
+                case FileSortMethod.DateTakenRev:
+                    foreach( ImageFileInfo ifi in ImgFileInfo ) ifi.ReadSlideViewInfo();
+                    ImgFileInfo = ImgFileInfo.OrderByDescending((f) => {
+                        if( f.ExifInfo == null || f.ExifInfo.DateTaken == null) return new DateTimeOffset();
+                        return f.ExifInfo.DateTaken;
+                    }).ToList();
                     break;
                 case FileSortMethod.Random:
                     ImgFileInfo.Shuffle();

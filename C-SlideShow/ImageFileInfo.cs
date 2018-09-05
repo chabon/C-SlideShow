@@ -83,10 +83,16 @@ namespace C_SlideShow
                 // ストリーム取得エラー
                 if( st == Stream.Null ) return;
 
+                // メタデータ(Exif含む)取得
+                BitmapFrame bmf = BitmapFrame.Create(st);
+                var metaData = (bmf.Metadata) as BitmapMetadata;
+                //bmf.Freeze();
+
                 // ピクセルサイズ取得
+                st.Position = 0;
                 try
                 {
-                    PixelSize = ReadImagePixelSize(st);
+                    PixelSize = new Size(bmf.PixelWidth, bmf.PixelHeight);
                 }
                 catch
                 {
@@ -98,7 +104,7 @@ namespace C_SlideShow
                 st.Position = 0;
                 try
                 {
-                    ExifInfo = ReadExifInfo(st);
+                    ExifInfo = ReadExifInfoFromBitmapMetadata(metaData);
                 }
                 catch
                 {
@@ -106,6 +112,71 @@ namespace C_SlideShow
                     Debug.WriteLine("GetExifInfo() is failed");
                 }
             }
+        }
+
+        private ExifInfo ReadExifInfoFromBitmapMetadata(BitmapMetadata metaData)
+        {
+            // Exif情報作成
+            ExifInfo exifInfo = new ExifInfo();
+
+            // 撮影日時(原画像データの生成日時)
+            try { exifInfo.DateTaken = DateTime.Parse(metaData.DateTaken); }
+            catch { }
+
+            // カメラメーカー
+            try { exifInfo.CameraMaker = metaData.CameraManufacturer;
+            }catch { }
+
+            // カメラ
+            try { exifInfo.CameraModel = metaData.CameraModel; }
+            catch { }
+
+            // ソフトウェア
+            try { exifInfo.Software = metaData.ApplicationName; }
+            catch { }
+
+            // 回転情報
+            string query_orientation = "/app1/ifd/exif:{uint=274}";
+            if ( metaData.ContainsQuery(query_orientation) )
+            {
+                switch (  Convert.ToUInt32( metaData.GetQuery(query_orientation) )  ) {
+                    case 1:
+                        // 回転・反転なし
+                        break;
+                    case 3:
+                        // 180度回転
+                        exifInfo.Rotation = Rotation.Rotate180;
+                        break;
+                    case 6:
+                        // 時計回りに90度回転
+                        exifInfo.Rotation = Rotation.Rotate90;
+                        break;
+                    case 8:
+                        // 時計回りに270度回転
+                        exifInfo.Rotation = Rotation.Rotate270;
+                        break;
+                    case 2:
+                        // 水平方向に反転
+                        exifInfo.ScaleTransform = new ScaleTransform(-1, 1, 0, 0);
+                        break;
+                    case 4:
+                        // 垂直方向に反転
+                        exifInfo.ScaleTransform = new ScaleTransform(1, -1, 0, 0);
+                        break;
+                    case 5:
+                        // 時計回りに90度回転 + 水平方向に反転
+                        exifInfo.Rotation = Rotation.Rotate90;
+                        exifInfo.ScaleTransform = new ScaleTransform(-1, 1, 0, 0);
+                        break;
+                    case 7:
+                        // 時計回りに270度回転 + 水平方向に反転
+                        exifInfo.Rotation = Rotation.Rotate270;
+                        exifInfo.ScaleTransform = new ScaleTransform(-1, 1, 0, 0);
+                        break;
+                }
+            }
+
+            return exifInfo;
         }
 
         private Size ReadImagePixelSize(Stream st)
@@ -235,79 +306,6 @@ namespace C_SlideShow
             return new Size(width, height);
         }
 
-
-        private ExifInfo ReadExifInfo(Stream st)
-        {
-            // Exif(メタデータ)取得
-            BitmapFrame bmf = BitmapFrame.Create(st);
-            var metaData = (bmf.Metadata) as BitmapMetadata;
-            //bmf.Freeze();
-            st.Position = 0;
-
-            //Debug.WriteLine("Metadata: " + source.Metadata);
-
-            ExifInfo exifInfo = new ExifInfo();
-
-            // 撮影日時(原画像データの生成日時)
-            try
-            {
-                exifInfo.DateTaken = DateTime.Parse(metaData.DateTaken);
-            }
-            catch { }
-
-            // カメラメーカー
-            exifInfo.CameraMaker = metaData.CameraManufacturer;
-
-            // カメラ
-            exifInfo.CameraModel = metaData.CameraModel;
-
-            // ソフトウェア
-            exifInfo.Software = metaData.ApplicationName;
-
-            // 回転情報
-            string query_orientation = "/app1/ifd/exif:{uint=274}";
-            if ( metaData.ContainsQuery(query_orientation) )
-            {
-                switch (  Convert.ToUInt32( metaData.GetQuery(query_orientation) )  ) {
-                    case 1:
-                        // 回転・反転なし
-                        break;
-                    case 3:
-                        // 180度回転
-                        exifInfo.Rotation = Rotation.Rotate180;
-                        break;
-                    case 6:
-                        // 時計回りに90度回転
-                        exifInfo.Rotation = Rotation.Rotate90;
-                        break;
-                    case 8:
-                        // 時計回りに270度回転
-                        exifInfo.Rotation = Rotation.Rotate270;
-                        break;
-                    case 2:
-                        // 水平方向に反転
-                        exifInfo.ScaleTransform = new ScaleTransform(-1, 1, 0, 0);
-                        break;
-                    case 4:
-                        // 垂直方向に反転
-                        exifInfo.ScaleTransform = new ScaleTransform(1, -1, 0, 0);
-                        break;
-                    case 5:
-                        // 時計回りに90度回転 + 水平方向に反転
-                        exifInfo.Rotation = Rotation.Rotate90;
-                        exifInfo.ScaleTransform = new ScaleTransform(-1, 1, 0, 0);
-                        break;
-                    case 7:
-                        // 時計回りに270度回転 + 水平方向に反転
-                        exifInfo.Rotation = Rotation.Rotate270;
-                        exifInfo.ScaleTransform = new ScaleTransform(-1, 1, 0, 0);
-                        break;
-                }
-            }
-
-
-            return exifInfo;
-        }
 
         public void ReadLastWriteTime()
         {

@@ -311,11 +311,17 @@ namespace C_SlideShow
                 case C_SlideShow.FileSortMethod.LastWriteTimeRev:
                     FileSortMethod.SelectedIndex = 5;
                     break;
-                case C_SlideShow.FileSortMethod.Random:
+                case C_SlideShow.FileSortMethod.DateTaken:
                     FileSortMethod.SelectedIndex = 6;
                     break;
-                case C_SlideShow.FileSortMethod.None:
+                case C_SlideShow.FileSortMethod.DateTakenRev:
                     FileSortMethod.SelectedIndex = 7;
+                    break;
+                case C_SlideShow.FileSortMethod.Random:
+                    FileSortMethod.SelectedIndex = 8;
+                    break;
+                case C_SlideShow.FileSortMethod.None:
+                    FileSortMethod.SelectedIndex = 9;
                     break;
             }
 
@@ -651,9 +657,15 @@ namespace C_SlideShow
                         pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.LastWriteTimeRev;
                         break;
                     case 6:
-                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.Random;
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.DateTaken;
                         break;
                     case 7:
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.DateTakenRev;
+                        break;
+                    case 8:
+                        pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.Random;
+                        break;
+                    case 9:
                         pf.FileSortMethod.Value = C_SlideShow.FileSortMethod.None;
                         break;
                 }

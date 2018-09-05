@@ -40,8 +40,16 @@ namespace C_SlideShow
 
     public enum FileSortMethod
     {
-        FileName, FileNameRev, FileNameNatural, FileNameNaturalRev,
-        LastWriteTime, LastWriteTimeRev, Random, None
+        FileName,
+        FileNameRev,
+        FileNameNatural,
+        FileNameNaturalRev,
+        LastWriteTime,
+        LastWriteTimeRev,
+        DateTaken,
+        DateTakenRev,
+        Random,
+        None
     }
 
     public enum ProfileType

@@ -223,8 +223,10 @@
                                 <ComboBoxItem>ファイル名(降順)</ComboBoxItem>
                                 <ComboBoxItem>ファイル名 自然順(昇順)</ComboBoxItem>
                                 <ComboBoxItem>ファイル名 自然順(降順)</ComboBoxItem>
-                                <ComboBoxItem>更新日時(新しい順)</ComboBoxItem>
                                 <ComboBoxItem>更新日時(古い順)</ComboBoxItem>
+                                <ComboBoxItem>更新日時(新しい順)</ComboBoxItem>
+                                <ComboBoxItem>撮影日時(古い順)</ComboBoxItem>
+                                <ComboBoxItem>撮影日時(新しい順)</ComboBoxItem>
                                 <ComboBoxItem>ランダム</ComboBoxItem>
                                 <ComboBoxItem> 指定しない
                                     <ComboBoxItem.ToolTip>ファイルを読み込んだ順で並べます</ComboBoxItem.ToolTip>
