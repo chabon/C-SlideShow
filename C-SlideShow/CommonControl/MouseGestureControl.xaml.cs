@@ -70,6 +70,16 @@ namespace C_SlideShow.CommonControl
         public MouseGestureControl()
         {
             InitializeComponent();
+
+            this.MouseDown += (s, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("MouseGestureControl_MouseDown");
+            };
+
+            this.MouseUp += (s, e) =>
+            {
+                System.Diagnostics.Debug.WriteLine("MouseGestureControl_MouseUp");
+            };
         }
 
         /* ---------------------------------------------------- */
@@ -104,6 +114,7 @@ namespace C_SlideShow.CommonControl
                 parentWindow.Closing += (s, e) => {
                     if( mouseGesture != null ) mouseGesture.UnHook();
                 };
+
             }
         }
 
@@ -204,10 +215,17 @@ namespace C_SlideShow.CommonControl
 
         private void MainBorder_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+
+        }
+
+        private void MainBorder_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("MainBorder_MouseDown");
         }
 
         private void MainBorder_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("MainBorder_PreviewMouseDown");
             Keyboard.Focus(sender as Border);
         }
 

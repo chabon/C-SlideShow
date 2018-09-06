@@ -355,7 +355,7 @@ namespace C_SlideShow.Shortcut
 
         private IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if(isActive)
+            if(isActive && nCode >= HC_ACTION)
             {
                 Debug.WriteLine( "WMessage in HookProc  wParam:" + ( (int)wParam ).ToString() + "  lParam:" + ( (int)lParam ).ToString()  );
 
@@ -524,6 +524,8 @@ namespace C_SlideShow.Shortcut
         
 
         public const int WM_MOUSEMOVE  = 0x0200;
+
+        private static readonly IntPtr LRESULTCancel = new IntPtr(1);
 
 
         [StructLayout(LayoutKind.Sequential)]

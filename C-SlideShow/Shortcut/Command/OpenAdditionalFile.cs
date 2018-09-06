@@ -39,20 +39,27 @@ namespace C_SlideShow.Shortcut.Command
         {
             MainWindow mw = MainWindow.Current;
 
-            Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
-            ofd.Title = "追加するファイルを選択してください";
-            ofd.Multiselect = true;
-            if( mw.Setting.FileOpenDialogLastSelectedPath != null && File.Exists(mw.Setting.FileOpenDialogLastSelectedPath) )
-                ofd.InitialDirectory = Directory.GetParent( mw.Setting.FileOpenDialogLastSelectedPath ).FullName;
-
-            if (ofd.ShowDialog() == Forms.DialogResult.OK)
+            System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
+            timer.Tick += (s, e) =>
             {
-                if(ofd.FileNames.Length > 0) mw.Setting.FileOpenDialogLastSelectedPath = ofd.FileNames[0];
-                mw.ReadFilesAndInitMainContent(ofd.FileNames, true,  0);
+                timer.Stop();
 
-                // 拡大中なら解除
-                if( mw.TileExpantionPanel.IsShowing ) mw.TileExpantionPanel.Hide();
-            }
+                Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
+                ofd.Title = "追加するファイルを選択してください";
+                ofd.Multiselect = true;
+                if( mw.Setting.FileOpenDialogLastSelectedPath != null && File.Exists(mw.Setting.FileOpenDialogLastSelectedPath) )
+                    ofd.InitialDirectory = Directory.GetParent( mw.Setting.FileOpenDialogLastSelectedPath ).FullName;
+
+                if (ofd.ShowDialog() == Forms.DialogResult.OK)
+                {
+                    if(ofd.FileNames.Length > 0) mw.Setting.FileOpenDialogLastSelectedPath = ofd.FileNames[0];
+                    mw.ReadFilesAndInitMainContent(ofd.FileNames, true,  0);
+
+                    // 拡大中なら解除
+                    if( mw.TileExpantionPanel.IsShowing ) mw.TileExpantionPanel.Hide();
+                }
+            };
+            timer.Start();
         }
 
         public string GetDetail()

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
+
 
 namespace C_SlideShow.Shortcut.Command
 {
@@ -33,7 +35,14 @@ namespace C_SlideShow.Shortcut.Command
 
         public void Execute()
         {
-            MainWindow.Current.ShowAppSettingDialog(MainWindow.Current.Setting.AppSettingDialogTabIndex);
+            // 遅延実行(マウスジェスチャー完了時、MouseUpイベントをダイアログに送られないようにするため)
+            DispatcherTimer timer = new DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
+            timer.Tick += (s, e) =>
+            {
+                timer.Stop();
+                MainWindow.Current.ShowAppSettingDialog(MainWindow.Current.Setting.AppSettingDialogTabIndex);
+            };
+            timer.Start();
             return;
         }
 

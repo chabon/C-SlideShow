@@ -13,6 +13,7 @@
                 GotFocus="MainBorder_GotFocus"
                 LostFocus="MainBorder_LostFocus"
                 PreviewMouseDown="MainBorder_PreviewMouseDown"
+                MouseDown="MainBorder_MouseDown"
                 PreviewKeyDown="MainBorder_PreviewKeyDown"
                 Background="White"
                 BorderThickness="1"

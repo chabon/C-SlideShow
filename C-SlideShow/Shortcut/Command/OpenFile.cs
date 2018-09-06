@@ -39,22 +39,28 @@ namespace C_SlideShow.Shortcut.Command
         {
             MainWindow mw = MainWindow.Current;
 
-            Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
-            ofd.Title = "ファイルを選択してください";
-            ofd.Multiselect = true;
-            if( mw.Setting.FileOpenDialogLastSelectedPath != null && File.Exists(mw.Setting.FileOpenDialogLastSelectedPath) )
-                ofd.InitialDirectory = Directory.GetParent( mw.Setting.FileOpenDialogLastSelectedPath ).FullName;
-
-            if (ofd.ShowDialog() == Forms.DialogResult.OK)
+            System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
+            timer.Tick += (s, e) =>
             {
-                if(ofd.FileNames.Length > 0) mw.Setting.FileOpenDialogLastSelectedPath = ofd.FileNames[0];
-                mw.SaveHistoryItem();
+                timer.Stop();
+                Forms.OpenFileDialog ofd = new Forms.OpenFileDialog();
+                ofd.Title = "ファイルを選択してください";
+                ofd.Multiselect = true;
+                if( mw.Setting.FileOpenDialogLastSelectedPath != null && File.Exists(mw.Setting.FileOpenDialogLastSelectedPath) )
+                    ofd.InitialDirectory = Directory.GetParent( mw.Setting.FileOpenDialogLastSelectedPath ).FullName;
 
-                mw.DropNewFiles(ofd.FileNames);
+                if (ofd.ShowDialog() == Forms.DialogResult.OK)
+                {
+                    if(ofd.FileNames.Length > 0) mw.Setting.FileOpenDialogLastSelectedPath = ofd.FileNames[0];
+                    mw.SaveHistoryItem();
 
-                // 拡大中なら解除
-                if( mw.TileExpantionPanel.IsShowing ) mw.TileExpantionPanel.Hide();
-            }
+                    mw.DropNewFiles(ofd.FileNames);
+
+                    // 拡大中なら解除
+                    if( mw.TileExpantionPanel.IsShowing ) mw.TileExpantionPanel.Hide();
+                }
+            };
+            timer.Start();
         }
 
         public string GetDetail()
