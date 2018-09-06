@@ -470,6 +470,10 @@ namespace C_SlideShow
 
         public void DropNewFiles(string[] pathes)
         {
+            // 拡大中なら解除
+            if( TileExpantionPanel.IsShowing ) TileExpantionPanel.Hide();
+
+            // 読み込み
             if( Setting.EnabledItemsInHistory.ArchiverPath && pathes.Length == 1 &&
                 Setting.History.Any( hi => hi.ArchiverPath == pathes[0]) && Setting.ApplyHistoryInfoInNewArchiverReading)
             {
