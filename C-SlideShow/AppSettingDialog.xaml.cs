@@ -1205,6 +1205,19 @@ namespace C_SlideShow
             else MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = false;
         }
 
+        private void AllDefault_Detail_Click(object sender, RoutedEventArgs e)
+        {
+            ShowMenuItem_AdditionalRead.IsChecked = true;
+            SerachAllDirectoriesInFolderReading.IsChecked = true;
+            SeekbarColor.PickedColor = Colors.Black;
+            SeekBarIsMoveToPointEnabled.SelectedIndex = 1;
+            MouseCursorAutoHide.IsChecked = true;
+            MouseCursorAutoHideInFullScreenModeOnly.IsChecked = false;
+            MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = true;
+            CorrectPageIndexInOperationSlideCrrosOverTheOrigin.IsChecked = true;
+            OperationSlideDuration.Value = 300;
+        }
+
 
         /* ---------------------------------------------------- */
         //     OK / キャンセル

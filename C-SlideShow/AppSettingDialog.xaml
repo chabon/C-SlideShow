@@ -297,6 +297,7 @@
                         <Label>操作によるスライド時にかける時間(ms)</Label>
                         <cc:NumericUpDown x:Name="OperationSlideDuration" Width="70" MinValue="1" MaxValue="10000"></cc:NumericUpDown>
                     </StackPanel>
+                    <Button x:Name="AllDefault_Detail" Width="100" Margin="8,20" Click="AllDefault_Detail_Click" HorizontalAlignment="Left">すべてデフォルト</Button>
                 </StackPanel>
             </TabItem>
 
