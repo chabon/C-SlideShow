@@ -208,6 +208,9 @@ namespace C_SlideShow
         [DataMember]
         public bool MouseCursorAutoHideInFullScreenModeOnly { get; set; }
 
+        [DataMember]
+        public bool CorrectPageIndexInOperationSlideCrrosOverTheOrigin { get; set; }
+
 
         public AppSetting()
         {
@@ -266,6 +269,7 @@ namespace C_SlideShow
             SeekBarIsMoveToPointEnabled = true;
             MouseCursorAutoHide = true;
             MouseCursorAutoHideInFullScreenModeOnly = false;
+            CorrectPageIndexInOperationSlideCrrosOverTheOrigin = true;
         }
 
 

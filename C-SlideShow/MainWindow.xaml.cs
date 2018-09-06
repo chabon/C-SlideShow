@@ -608,26 +608,6 @@ namespace C_SlideShow
             // まだ自動再生中なら、止める
             if (tileContainers.Any(c => c.IsContinuousSliding)) StopSlideShow();
 
-            // 最初と最後の切り替えは、index 0 を通すように(画像１枚毎のスライドの時はしない)
-            int grids = Setting.TempProfile.NumofMatrix.Grid;
-            int idx = imageFileManager.ActualCurrentIndex;
-            if (isPlayback)
-            {
-                if (!slideByOneImage && 0 < idx && idx < grids)
-                {
-                    ChangeCurrentImageIndex(0);
-                    return;
-                }
-            }
-            else
-            {
-                if(!slideByOneImage && imageFileManager.GetLastNoDeviationIndex(grids) < idx)
-                {
-                    ChangeCurrentImageIndex(0);
-                    return;
-                }
-            }
-
             // コンテナがずれているかどうか
             bool isNoDeviation = tileContainers.All(c =>
             {
@@ -636,13 +616,37 @@ namespace C_SlideShow
                 else return false;
             });
 
+            // 最初の画像(原点)をまたぐかどうか
+            bool isCrossOverOrigin = false;
+            int grids = Setting.TempProfile.NumofMatrix.Grid;
+            int idx = imageFileManager.ActualCurrentIndex;
+            if(Setting.CorrectPageIndexInOperationSlideCrrosOverTheOrigin)
+            {
+                if (isPlayback)
+                {
+                    if (!slideByOneImage && 0 < idx && idx < grids && isNoDeviation)
+                    {
+                        isCrossOverOrigin = true;
+                    }
+                }
+                else
+                {
+                    if(!slideByOneImage && imageFileManager.GetLastNoDeviationIndex(grids) < idx)
+                    {
+                        isCrossOverOrigin = true;
+                    }
+                }
+            }
+
             foreach(TileContainer tc in tileContainers)
             {
                 int param = 300; // (todo)設定可能にする
                 Debug.WriteLine("active slide start: " + tc.Margin);
                 Debug.WriteLine("isNodeviation: " + isNoDeviation);
-                tc.BeginActiveSlideAnimation(isNoDeviation, isPlayback, slideByOneImage, param);
+                tc.BeginActiveSlideAnimation(isNoDeviation, isPlayback, slideByOneImage, param, isCrossOverOrigin);
             }
+
+
         }
 
         private void StartIntervalSlide(bool slideByOneImage, int moveTime)
@@ -662,7 +666,7 @@ namespace C_SlideShow
             {
                 int param = moveTime;
                 Debug.WriteLine("interval slide start: " + tc.Margin);
-                tc.BeginActiveSlideAnimation(isNoDeviation, false, slideByOneImage, param);
+                tc.BeginActiveSlideAnimation(isNoDeviation, false, slideByOneImage, param, false);
             }
 
         }

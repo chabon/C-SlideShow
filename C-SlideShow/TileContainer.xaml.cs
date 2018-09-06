@@ -652,8 +652,9 @@ namespace C_SlideShow
         /// <param name="isNoDeviation">位置がずれていない(Sizeで割り切れる)</param>
         /// <param name="isPlayback">巻き戻しかどうか</param>
         /// <param name="slideByOneImage">画像１枚単位でスライド</param>
+        /// <param name="correctToOrigin">(原点をスライドで跨いだとき)アニメーション後画像位置を補正する</param>
         /// <param name="moveTime">かける時間(ms)</param>
-        public void BeginActiveSlideAnimation( bool isNoDeviation, bool isPlayback, bool slideByOneImage, int moveTime)
+        public void BeginActiveSlideAnimation( bool isNoDeviation, bool isPlayback, bool slideByOneImage, int moveTime, bool correctToOrigin)
         {
             // まだスライド中
             if (IsActiveSliding) return;
@@ -711,6 +712,14 @@ namespace C_SlideShow
 
             onStoryboardCompleted = (s, e) =>
             {
+                // 原点通過後の位置補正
+                if( correctToOrigin )
+                {
+                    if( Order == 0 ) MainWindow.ChangeCurrentImageIndex(0);
+                    IsActiveSliding = false;
+                    return;
+                }
+
                 // 先に進めた時、先頭のコンテナを末尾に移動するように、座標を変更
                 if (!isPlayback && activeSlideEndPoint == wrapPoint)
                 {

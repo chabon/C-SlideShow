@@ -292,6 +292,7 @@
                         <Label Margin="15,-5,0,0">└ </Label>
                         <CheckBox x:Name="MouseCursorAutoHideInFullScreenModeOnly" Margin="0">フルスクリーンモードの時のみ隠す</CheckBox>
                     </StackPanel>
+                    <CheckBox Margin="5" x:Name="CorrectPageIndexInOperationSlideCrrosOverTheOrigin">スライド時、先頭の画像を跨いだら画像の位置合わせをする</CheckBox>
                 </StackPanel>
             </TabItem>
 
