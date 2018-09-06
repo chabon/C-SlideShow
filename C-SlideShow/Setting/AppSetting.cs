@@ -211,6 +211,10 @@ namespace C_SlideShow
         [DataMember]
         public bool CorrectPageIndexInOperationSlideCrrosOverTheOrigin { get; set; }
 
+        [DataMember]
+        public int OperationSlideDuration { get; set; }
+
+
 
         public AppSetting()
         {
@@ -270,6 +274,7 @@ namespace C_SlideShow
             MouseCursorAutoHide = true;
             MouseCursorAutoHideInFullScreenModeOnly = false;
             CorrectPageIndexInOperationSlideCrrosOverTheOrigin = true;
+            OperationSlideDuration = 300;
         }
 
 

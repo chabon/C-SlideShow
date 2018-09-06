@@ -640,7 +640,7 @@ namespace C_SlideShow
 
             foreach(TileContainer tc in tileContainers)
             {
-                int param = 300; // (todo)設定可能にする
+                int param = Setting.OperationSlideDuration;
                 Debug.WriteLine("active slide start: " + tc.Margin);
                 Debug.WriteLine("isNodeviation: " + isNoDeviation);
                 tc.BeginActiveSlideAnimation(isNoDeviation, isPlayback, slideByOneImage, param, isCrossOverOrigin);

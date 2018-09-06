@@ -314,6 +314,7 @@ namespace C_SlideShow
             if( setting.MouseCursorAutoHide ) MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = true;
             else MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = false;
             CorrectPageIndexInOperationSlideCrrosOverTheOrigin.IsChecked = setting.CorrectPageIndexInOperationSlideCrrosOverTheOrigin;
+            OperationSlideDuration.Value = setting.OperationSlideDuration;
 
 
             isInitializing = false;
@@ -1296,6 +1297,7 @@ namespace C_SlideShow
             setting.MouseCursorAutoHide = (bool)MouseCursorAutoHide.IsChecked;
             setting.MouseCursorAutoHideInFullScreenModeOnly = (bool)MouseCursorAutoHideInFullScreenModeOnly.IsChecked;
             setting.CorrectPageIndexInOperationSlideCrrosOverTheOrigin = (bool)CorrectPageIndexInOperationSlideCrrosOverTheOrigin.IsChecked;
+            setting.OperationSlideDuration = OperationSlideDuration.Value;
 
             // メインウインドウ更新
             MainWindow.Current.UpdateUI();
