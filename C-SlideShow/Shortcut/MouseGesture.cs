@@ -359,10 +359,14 @@ namespace C_SlideShow.Shortcut
             {
                 Debug.WriteLine( "WMessage in HookProc  wParam:" + ( (int)wParam ).ToString() + "  lParam:" + ( (int)lParam ).ToString()  );
 
-                // マウス移動時は、軌道のチェック
+                // マウス移動時
                 if( (int)wParam == WM_MOUSEMOVE )
                 {
+                    // 軌道のチェック
                     if(EnableDragGesture) this.Test();
+
+                    // 始動ボタンが離されていないかチェック
+                    if( GetStartingButtonState() >= 0 ) End();
                 }
 
                 // 始動ボタンが離されたらジェスチャ終了
@@ -407,7 +411,7 @@ namespace C_SlideShow.Shortcut
                     }
                     else  // X2(進むボタン)
                     {
-                        Debug.WriteLine("Starting Button Up: Mouse XButton2 (進むボタン) Up");
+                        Debug.WriteLine("Starting Button Up: Mouse XButton2 (進むボタン)");
                         if( startingButton == MouseButton.XButton2 ) return true;
                     }
                 }
@@ -418,6 +422,25 @@ namespace C_SlideShow.Shortcut
                 }
             }
             return false;
+        }
+
+        private short GetStartingButtonState()
+        {
+            switch( StartingButton )
+            {
+                case MouseButton.Left:
+                    return GetKeyState(VK_LBUTTON);
+                case MouseButton.Right:
+                    return GetKeyState(VK_RBUTTON);
+                case MouseButton.Middle:
+                    return GetKeyState(VK_MBUTTON);
+                case MouseButton.XButton1:
+                    return GetKeyState(VK_XBUTTON1);
+                case MouseButton.XButton2:
+                    return GetKeyState(VK_XBUTTON2);
+                default:
+                    return 0;
+            }
         }
 
         private string GetClickStroke(IntPtr wParam, IntPtr lParam)
@@ -522,18 +545,26 @@ namespace C_SlideShow.Shortcut
 
         public const int WM_MOUSEWHEEL = 0x020A;    // 522
         
-
         public const int WM_MOUSEMOVE  = 0x0200;
 
-        private static readonly IntPtr LRESULTCancel = new IntPtr(1);
+        // Virtual key 
+        public const int VK_LBUTTON  = 0x01;
+        public const int VK_RBUTTON  = 0x02;
+        public const int VK_MBUTTON  = 0x04;
+        public const int VK_XBUTTON1 = 0x05;
+        public const int VK_XBUTTON2 = 0x06;
 
-
+        // Struct
         [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
+        private struct POINT
         {
             public int X;
             public int Y;
         }
+
+        // Function
+        [DllImport("user32")] 
+        private static extern short GetKeyState(int vKey);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -549,6 +580,7 @@ namespace C_SlideShow.Shortcut
         [DllImport("kernel32.dll", EntryPoint = "GetModuleHandleW", SetLastError = true)]
         private static extern IntPtr GetModuleHandle(string moduleName);
 
+        // Hook
         [DllImport("user32.dll")]
         private static extern IntPtr SetWindowsHookEx(int idHook, HOOKPROC lpfn, IntPtr hMod, IntPtr dwThreadId);
         private const int HC_ACTION = 0;
