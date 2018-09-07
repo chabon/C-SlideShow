@@ -17,16 +17,16 @@ namespace C_SlideShow
         //     フィールド
         /* ---------------------------------------------------- */
         private IntPtr  hWnd;
-        private RECT    rcMonitor;
-        private RECT    rcWork;
+        private RECT    rcMonitor = new RECT();
+        private RECT    rcWork    = new RECT();
 
         /* ---------------------------------------------------- */
         //     プロパティ
         /* ---------------------------------------------------- */
         public bool EnableWindowSnap { get; set; } = true;
         public bool EnableScreenSnap { get; set; } = true;
-        public int Range_Window { get; set; } = 10;
-        public int Range_Screen { get; set; } = 10;
+        public int  Range_Window { get; set; } = 10;
+        public int  Range_Screen { get; set; } = 10;
 
         /* ---------------------------------------------------- */
         //     コンストラクタ
@@ -189,9 +189,17 @@ namespace C_SlideShow
             IntPtr hTop = GetAncestor(hCtrl, GA_ROOT);
             if ( hTop == IntPtr.Zero ) return false;
 
-            if ( !GetWindowRect(hTop, out rc) ) return false;
+            System.OperatingSystem os = System.Environment.OSVersion;
+            if(os.Version.Major >= 6 ) // over windows vista
+            {
+                HRESULT hr = DwmGetWindowAttribute(hTop, DWMWINDOWATTRIBUTE.ExtendedFrameBounds, out rc, Marshal.SizeOf(rc));
+                if( hr == HRESULT.S_OK )
+                {
+                    return true;
+                }
+            }
 
-            return true;
+            return GetWindowRect(hTop, out rc);
         }
 
         private bool SnapTest_Window(int src, int dest)
@@ -262,6 +270,35 @@ namespace C_SlideShow
         private const uint MONITOR_DEFAULTTOPRIMARY  = 0x00000001;
 
         /* ---------------------------------------------------- */
+        //     define
+        /* ---------------------------------------------------- */
+        enum DWMWINDOWATTRIBUTE : uint
+        {
+            NCRenderingEnabled = 1,
+            NCRenderingPolicy,
+            TransitionsForceDisabled,
+            AllowNCPaint,
+            CaptionButtonBounds,
+            NonClientRtlLayout,
+            ForceIconicRepresentation,
+            Flip3DPolicy,
+            ExtendedFrameBounds,
+            HasIconicBitmap,
+            DisallowPeek,
+            ExcludedFromPeek,
+            Cloak,
+            Cloaked,
+            FreezeRepresentation
+        }
+
+        enum HRESULT : uint
+        {
+            S_FALSE = 0x0001,
+            S_OK = 0x0000,
+            E_INVALIDARG = 0x80070057,
+            E_OUTOFMEMORY = 0x8007000E
+        }
+        /* ---------------------------------------------------- */
         //     Native Method
         /* ---------------------------------------------------- */
         [DllImport("user32.dll")]
@@ -281,6 +318,9 @@ namespace C_SlideShow
 
         [DllImport("User32.dll")]
         private static extern IntPtr MonitorFromRect(out RECT lprc, uint dwFlags);
+
+        [DllImport("dwmapi.dll")]
+        static extern HRESULT DwmGetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE dwAttribute, out RECT pvAttribute, int cbAttribute);
 
         // end of class
     }
