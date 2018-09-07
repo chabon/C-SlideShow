@@ -850,6 +850,7 @@ namespace C_SlideShow
             Profile pf = Setting.TempProfile;
 
             // アス比 ボタン
+            Toolbar_AspectRate_Text.FontSize = 12;
             if( pf.NonFixAspectRatio.Value )
             {
                 Toolbar_AspectRate_Text.Text = "Free";
@@ -860,9 +861,18 @@ namespace C_SlideShow
                 string v = pf.AspectRatio.V.ToString();
                 string aRateTxt;
                 if( h.Length + v.Length > 4 )
+                {
                     aRateTxt = "Fixed";
-                else
+                }
+                else if( h.Length + v.Length > 3 )
+                {
+                    Toolbar_AspectRate_Text.FontSize = 11;
                     aRateTxt = h + " : " + v;
+                }
+                else
+                {
+                    aRateTxt = h + " : " + v;
+                }
                 Toolbar_AspectRate_Text.Text = aRateTxt;
             }
 

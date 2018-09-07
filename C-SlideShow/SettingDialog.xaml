@@ -11,14 +11,14 @@
 
             <!-- 全般 -->
             <TabItem Header="全般" Width="50">
-                <StackPanel Margin="10,4,10,5">
+                <StackPanel Margin="5,4,5,5">
 
                     <CheckBox x:Name="TopMost" Click="TopMost_Click" Margin="0,4">最前面表示</CheckBox>
                     <StackPanel Margin="0,8" Orientation="Horizontal">
                         <TextBlock>画像の並び順</TextBlock>
                         <ComboBox x:Name="FileReadingOrder" SelectedIndex="0"
                                   SelectionChanged="FileReadingOrder_SelectionChanged"
-                                  Margin="10,0" Width="145">
+                                  Margin="10,0" Width="160">
                             <ComboBoxItem>ファイル名(昇順)</ComboBoxItem>
                             <ComboBoxItem>ファイル名(降順)</ComboBoxItem>
                             <ComboBoxItem>ファイル名 自然順(昇順)
@@ -42,7 +42,7 @@
                                   SelectionChanged="BitmapDecodeTotalPixel_SelectionChanged"
                                   SelectedValuePath="Content"
                                   ToolTipService.ShowDuration="50000"
-                                  Margin="8,0" Width="55" >
+                                  Margin="8,0" Width="65" >
                             <ComboBoxItem>320</ComboBoxItem>
                             <ComboBoxItem>640</ComboBoxItem>
                             <ComboBoxItem>1024</ComboBoxItem>

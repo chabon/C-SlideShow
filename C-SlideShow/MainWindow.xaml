@@ -172,7 +172,7 @@
                                 <Border Margin="-5,0,0,0"
                                         Width="35" 
                                         >
-                                    <TextBlock x:Name="Toolbar_AspectRate_Text" TextAlignment="Center" Text="4 : 3"></TextBlock>
+                                    <TextBlock Margin="0,1,0,0" x:Name="Toolbar_AspectRate_Text" FontFamily="Arial" FontSize="12" TextAlignment="Center" Text="4 : 3"></TextBlock>
                                 </Border>
                             </MenuItem.Header>
                                 <MenuItem Header="4 : 3"  Tag="4_3"  IsCheckable="True" Click="Toolbar_AspectRate_Click" x:Name="Toolbar_AspectRate_4_3"/>
