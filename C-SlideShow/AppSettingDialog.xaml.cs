@@ -307,15 +307,28 @@ namespace C_SlideShow
             // 詳細
             ShowMenuItem_AdditionalRead.IsChecked = setting.ShowMenuItem_AdditionalRead;
             SerachAllDirectoriesInFolderReading.IsChecked = setting.SerachAllDirectoriesInFolderReading;
+
             SeekbarColor.PickedColor = setting.SeekbarColor;
+
             SeekBarIsMoveToPointEnabled.SelectedIndex = setting.SeekBarIsMoveToPointEnabled ? 1 : 0;
+
             MouseCursorAutoHide.IsChecked = setting.MouseCursorAutoHide;
             MouseCursorAutoHideInFullScreenModeOnly.IsChecked = setting.MouseCursorAutoHideInFullScreenModeOnly;
             if( setting.MouseCursorAutoHide ) MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = true;
             else MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = false;
+
             CorrectPageIndexInOperationSlideCrrosOverTheOrigin.IsChecked = setting.CorrectPageIndexInOperationSlideCrrosOverTheOrigin;
+
             OperationSlideDuration.Value = setting.OperationSlideDuration;
 
+            EnableScreenSnap.IsChecked = setting.EnableScreenSnap;
+            EnableWindowSnap.IsChecked = setting.EnableWindowSnap;
+            ScreenSnapRange.Value = setting.ScreenSnapRange;
+            WindowSnapRange.Value = setting.WindowSnapRange;
+            if( setting.EnableScreenSnap ) ScreenSnapRange.IsEnabled = true;
+            else ScreenSnapRange.IsEnabled = false;
+            if( setting.EnableWindowSnap ) WindowSnapRange.IsEnabled = true;
+            else WindowSnapRange.IsEnabled = false;
 
             isInitializing = false;
         }
@@ -1205,6 +1218,18 @@ namespace C_SlideShow
             else MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = false;
         }
 
+        private void EnableScreenSnap_Click(object sender, RoutedEventArgs e)
+        {
+            if( (bool)EnableScreenSnap.IsChecked ) ScreenSnapRange.IsEnabled = true;
+            else ScreenSnapRange.IsEnabled = false;
+        }
+
+        private void EnableWindowSnap_Click(object sender, RoutedEventArgs e)
+        {
+            if( (bool)EnableWindowSnap.IsChecked ) WindowSnapRange.IsEnabled = true;
+            else WindowSnapRange.IsEnabled = false;
+        }
+
         private void AllDefault_Detail_Click(object sender, RoutedEventArgs e)
         {
             ShowMenuItem_AdditionalRead.IsChecked = true;
@@ -1216,6 +1241,12 @@ namespace C_SlideShow
             MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = true;
             CorrectPageIndexInOperationSlideCrrosOverTheOrigin.IsChecked = true;
             OperationSlideDuration.Value = 300;
+            EnableScreenSnap.IsEnabled = true;
+            EnableWindowSnap.IsChecked = true;
+            ScreenSnapRange.Value = 10;
+            WindowSnapRange.Value = 10;
+            ScreenSnapRange.IsEnabled = true;
+            WindowSnapRange.IsEnabled = true;
         }
 
 
@@ -1311,6 +1342,10 @@ namespace C_SlideShow
             setting.MouseCursorAutoHideInFullScreenModeOnly = (bool)MouseCursorAutoHideInFullScreenModeOnly.IsChecked;
             setting.CorrectPageIndexInOperationSlideCrrosOverTheOrigin = (bool)CorrectPageIndexInOperationSlideCrrosOverTheOrigin.IsChecked;
             setting.OperationSlideDuration = OperationSlideDuration.Value;
+            setting.EnableScreenSnap = (bool)EnableScreenSnap.IsChecked;
+            setting.EnableWindowSnap = (bool)EnableWindowSnap.IsChecked;
+            setting.ScreenSnapRange = ScreenSnapRange.Value;
+            setting.WindowSnapRange = WindowSnapRange.Value;
 
             // メインウインドウ更新
             MainWindow.Current.UpdateUI();
@@ -1323,6 +1358,7 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
 
 
 

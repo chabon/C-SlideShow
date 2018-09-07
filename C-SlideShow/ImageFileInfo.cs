@@ -121,7 +121,7 @@ namespace C_SlideShow
 
             // 撮影日時(原画像データの生成日時)
             try { exifInfo.DateTaken = DateTime.Parse(metaData.DateTaken); }
-            catch { }
+            catch { return exifInfo; }
 
             // カメラメーカー
             try { exifInfo.CameraMaker = metaData.CameraManufacturer;

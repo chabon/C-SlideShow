@@ -214,6 +214,17 @@ namespace C_SlideShow
         [DataMember]
         public int OperationSlideDuration { get; set; }
 
+        [DataMember]
+        public bool EnableScreenSnap { get; set; }
+
+        [DataMember]
+        public bool EnableWindowSnap { get; set; }
+
+        [DataMember]
+        public int ScreenSnapRange { get; set; }
+
+        [DataMember]
+        public int WindowSnapRange { get; set; }
 
 
         public AppSetting()
@@ -275,6 +286,10 @@ namespace C_SlideShow
             MouseCursorAutoHideInFullScreenModeOnly = false;
             CorrectPageIndexInOperationSlideCrrosOverTheOrigin = true;
             OperationSlideDuration = 300;
+            EnableScreenSnap = true;
+            EnableWindowSnap = true;
+            ScreenSnapRange = 10;
+            WindowSnapRange = 10;
         }
 
 

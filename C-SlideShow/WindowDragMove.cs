@@ -24,10 +24,12 @@ namespace C_SlideShow
         private const double thresholdOfMaxDiff = 0.5; // DragMovedイベントを発生させるしきい値
 
         // プロパティ
+        public WindowSnap WindowSnap { get; private set; }
         public Func<bool> CanDragStart { private get; set; }
 
         // イベント
         public event EventHandler DragMoved;
+        public event EventHandler DragStart;
 
         // コンストラクタ
         public WindowDragMove(Window window)
@@ -48,7 +50,9 @@ namespace C_SlideShow
                 ptWindowPrev = new Point(targetWindow.Left, targetWindow.Top);
                 ptMaxDiff    = new Point(0, 0);
                 bDragStart   = true;
+                if(WindowSnap == null) WindowSnap = new WindowSnap(targetWindow);
                 SetHook();
+                DragStart?.Invoke( this, new EventArgs() );
             }
             else
             {
@@ -96,8 +100,13 @@ namespace C_SlideShow
                         if( ptMaxDiff.X < Math.Abs(ptDiff.X) ) ptMaxDiff.X = Math.Abs(ptDiff.X);
                         if( ptMaxDiff.Y < Math.Abs(ptDiff.Y) ) ptMaxDiff.Y = Math.Abs(ptDiff.Y);
 
-                        targetWindow.Left = ptWindowPrev.X + ptDiff.X;
-                        targetWindow.Top  = ptWindowPrev.Y + ptDiff.Y;
+                        Rect rcDest = new Rect() { X = ptWindowPrev.X + ptDiff.X, Y = ptWindowPrev.Y + ptDiff.Y, Width  = targetWindow.Width, Height = targetWindow.Height }; 
+
+                        if( !WindowSnap.OnWindowMoving(rcDest) )
+                        {
+                            targetWindow.Left = ptWindowPrev.X + ptDiff.X;
+                            targetWindow.Top  = ptWindowPrev.Y + ptDiff.Y;
+                        }
                     }
                 }
                 else

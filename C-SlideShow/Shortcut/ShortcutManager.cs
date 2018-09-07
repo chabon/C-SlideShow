@@ -83,6 +83,12 @@ namespace C_SlideShow.Shortcut
             windowDragMove = new WindowDragMove(MainWindow.Current);
             windowDragMove.CanDragStart = () => { return !MainWindow.Current.Setting.TempProfile.IsFullScreenMode.Value; };
             windowDragMove.DragMoved += (s, e) => { mouseButtonClickState_L.CommandExecuted = true; };
+            windowDragMove.DragStart += (s, e) => {
+                windowDragMove.WindowSnap.EnableScreenSnap = MainWindow.Current.Setting.EnableScreenSnap;
+                windowDragMove.WindowSnap.EnableWindowSnap = MainWindow.Current.Setting.EnableWindowSnap;
+                windowDragMove.WindowSnap.Range_Screen  = MainWindow.Current.Setting.ScreenSnapRange;
+                windowDragMove.WindowSnap.Range_Window  = MainWindow.Current.Setting.WindowSnapRange;
+            };
         }
 
         private void InitMouseGesture()

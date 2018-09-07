@@ -357,7 +357,7 @@ namespace C_SlideShow.Shortcut
         {
             if(isActive && nCode >= HC_ACTION)
             {
-                Debug.WriteLine( "WMessage in HookProc  wParam:" + ( (int)wParam ).ToString() + "  lParam:" + ( (int)lParam ).ToString()  );
+                //Debug.WriteLine( "WMessage in HookProc  wParam:" + ( (int)wParam ).ToString() + "  lParam:" + ( (int)lParam ).ToString()  );
 
                 // マウス移動時
                 if( (int)wParam == WM_MOUSEMOVE )

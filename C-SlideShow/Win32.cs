@@ -193,7 +193,7 @@ namespace C_SlideShow
             rcFrom.left     = (int)rcWnd.Left;
             rcFrom.top      = (int)rcWnd.Top;
             rcFrom.right    = (int)rcWnd.Right;
-            rcFrom.bottom   = (int)rcWnd.Right;
+            rcFrom.bottom   = (int)rcWnd.Bottom;
 
             //移動先モニターの取得(なければ近くのを取得)
             IntPtr hMonitor;
