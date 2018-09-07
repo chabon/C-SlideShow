@@ -90,7 +90,7 @@ namespace C_SlideShow
         {
             if( bDragStart )
             {
-                if( targetWindow.IsActive )
+                if( targetWindow.IsActive)
                 {
                     if( (int)wParam == Win32.WM_MOUSEMOVE )
                     {
@@ -104,9 +104,11 @@ namespace C_SlideShow
 
                         if( !WindowSnap.OnWindowMoving(rcDest) )
                         {
-                            targetWindow.Left = ptWindowPrev.X + ptDiff.X;
-                            targetWindow.Top  = ptWindowPrev.Y + ptDiff.Y;
+                            targetWindow.Left = rcDest.Left;
+                            targetWindow.Top  = rcDest.Top;
                         }
+
+                        if( Win32.GetKeyState(Win32.VK_LBUTTON) >= 0 ) DragFinish();
                     }
                 }
                 else
