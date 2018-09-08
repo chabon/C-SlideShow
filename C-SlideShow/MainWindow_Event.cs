@@ -67,7 +67,6 @@ namespace C_SlideShow
                 // 画像拡大パネルのサイズ更新、拡大中ならリセット
                 if( TileExpantionPanel.IsShowing )
                 {
-                    TileExpantionPanel.ZoomReset();
                     TileExpantionPanel.FitToMainWindow();
                 }
 

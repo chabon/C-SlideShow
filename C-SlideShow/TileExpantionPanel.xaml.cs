@@ -194,7 +194,7 @@ namespace C_SlideShow
             IsShowing = false;
 
             // ズーム解除
-            ZoomReset();
+            ResetZoomAndMove();
 
             // タイルの矩形を取得
             Rect rc = GetTileRect();
@@ -387,6 +387,9 @@ namespace C_SlideShow
             storyboard.Remove();
             Profile pf = MainWindow.Setting.TempProfile;
 
+            // 拡大と移動をリセット
+            ResetZoomAndMove();
+
             // 拡大パネルをMainWindowに合わせる
             double mwFrameThickness = MainWindow.MainContent.Margin.Left; // メインウインドウ枠
             Margin = new Thickness(0 + mwFrameThickness, 0 + mwFrameThickness, 0, 0);
@@ -402,10 +405,13 @@ namespace C_SlideShow
             storyboard.Remove();
             Profile pf = MainWindow.Setting.TempProfile;
 
+            // 拡大と移動をリセット
+            ResetZoomAndMove();
+
             // 位置とサイズ
             Margin = new Thickness(MainWindow.MainContent.Margin.Left, MainWindow.MainContent.Margin.Top, 0, 0);
             double containerScale = MainWindow.MainContent.LayoutTransform.Value.M11;
-            Width = MainWindow.TileContainer1.ActualWidth * containerScale;
+            Width  = MainWindow.TileContainer1.ActualWidth * containerScale;
             Height = MainWindow.TileContainer1.ActualHeight * containerScale;
 
             // 枠の太さ更新
@@ -481,14 +487,13 @@ namespace C_SlideShow
             if(zoomFactor > 1.0 )
             {
                 //ExpandedBorder.RenderTransform = new ScaleTransform(zoomFactor, zoomFactor);
-                ExpandedBorder.Width = this.ActualWidth * zoomFactor;
+                ExpandedBorder.Width  = this.ActualWidth  * zoomFactor;
                 ExpandedBorder.Height = this.ActualHeight * zoomFactor;
             }
             else
             {
-                //ExpandedBorder.RenderTransform = new ScaleTransform(1.0, 1.0);
-                ExpandedBorder.Width = double.NaN;
-                ExpandedBorder.Height = double.NaN;
+                ResetZoomAndMove();
+                return;
             }
 
             // 拡大に依る移動量算出
@@ -496,17 +501,13 @@ namespace C_SlideShow
             move.X = pos.X * (zoomFactor / zoomFactorPrev) - pos.X;
             move.Y = pos.Y * (zoomFactor / zoomFactorPrev) - pos.Y;
 
-            // 移動した分だけ、引き戻す(拡大率が1.0になったら位置リセット)
+            // 移動した分だけ、引き戻す
             if(zoomFactor > 1.0 )
             {
-                ExpandedBorder.Margin = new Thickness(
-                    ExpandedBorder.Margin.Left - move.X, ExpandedBorder.Margin.Top - move.Y, 0, 0);
+                double left = ExpandedBorder.Margin.Left - move.X;
+                double top  = ExpandedBorder.Margin.Top  - move.Y;
+                ExpandedBorder.Margin = new Thickness( left, top, 0, 0);
                 lastZoomedPos = new Point(pos.X + move.X, pos.Y + move.Y);
-            }
-            else
-            {
-                zoomFactor = 1.0;
-                ExpandedBorder.Margin = new Thickness( 0, 0, 0, 0);
             }
 
             Debug.WriteLine("pos: " + pos.ToString() );
@@ -532,17 +533,22 @@ namespace C_SlideShow
             Zoom(- param);
         }
 
-        public void ZoomReset()
+        public void ResetZoomAndMove()
         {
-            if(zoomFactor != 1.0 )
-            {
-                zoomFactor = 1.0;
-                ExpandedBorder.Width = double.NaN;
-                ExpandedBorder.Height = double.NaN;
-                ExpandedBorder.Margin = new Thickness( 0, 0, 0, 0);
-            }
+            zoomFactor = 1.0;
+            ExpandedBorder.Width = double.NaN;
+            ExpandedBorder.Height = double.NaN;
+            ExpandedBorder.Margin = new Thickness( 0, 0, 0, 0);
         }
 
+        public void Move(int x, int y)
+        {
+            var m = ExpandedBorder.Margin;
+
+            ExpandedBorder.Width  = ExpandedBorder.ActualWidth;
+            ExpandedBorder.Height = ExpandedBorder.ActualHeight;
+            ExpandedBorder.Margin = new Thickness(m.Left + x, m.Top + y, m.Right, m.Bottom);
+        }
 
         /* ---------------------------------------------------- */
         //     ツールバー

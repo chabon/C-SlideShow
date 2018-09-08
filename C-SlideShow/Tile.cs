@@ -91,7 +91,7 @@ namespace C_SlideShow
             Clipboard.SetFileDropList(files);
 
             // 通知
-            MainWindow.Current.NotificationBlock.Show("クリップボードにファイルをコピーしました: " + notificationFileName,
+            MainWindow.Current.NotificationBlock.Show("ファイルをコピー: " + notificationFileName,
                 CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
         }
 
@@ -102,7 +102,7 @@ namespace C_SlideShow
             Clipboard.SetImage(source);
 
             string fileName = System.IO.Path.GetFileName(ImageFileInfo.FilePath);
-            MainWindow.Current.NotificationBlock.Show("クリップボードに画像データをコピーしました: " + fileName,
+            MainWindow.Current.NotificationBlock.Show("画像データをコピー: " + fileName,
                 CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
         }
 
@@ -120,7 +120,7 @@ namespace C_SlideShow
             }
             Clipboard.SetText(filePath);
 
-            MainWindow.Current.NotificationBlock.Show("クリップボードにファイルパスをコピーしました: " + filePath,
+            MainWindow.Current.NotificationBlock.Show("ファイルパスをコピー: " + filePath,
                 CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
         }
 
@@ -130,7 +130,7 @@ namespace C_SlideShow
             string fileName = System.IO.Path.GetFileName(ImageFileInfo.FilePath);
             Clipboard.SetText(fileName);
 
-            MainWindow.Current.NotificationBlock.Show("クリップボードにファイル名をコピーしました: " + fileName,
+            MainWindow.Current.NotificationBlock.Show("ファイル名をコピー: " + fileName,
                 CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
         }
 

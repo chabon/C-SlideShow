@@ -4,9 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Windows;
+using System.Windows.Controls;
+
+
 namespace C_SlideShow.Shortcut.Command
 {
-    public class ShiftForward : ICommand
+    /// <summary>
+    /// 画像を[]px右に移動
+    /// </summary>
+    public class MoveZoomImageToRight : ICommand
     {
         public CommandID ID      { set; get; }
         public Scene     Scene   { set; get; }
@@ -17,33 +24,34 @@ namespace C_SlideShow.Shortcut.Command
         public bool      EnableValue     { get; } = true;
         public bool      EnableStrValue  { get; } = false;
 
-        public ShiftForward()
+        public MoveZoomImageToRight()
         {
-            ID    = CommandID.ShiftForward;
-            Scene = Scene.Nomal;
+            ID    = CommandID.MoveZoomImageToRight;
+            Scene = Scene.Expand;
         }
         
         public bool CanExecute()
         {
-            return true;
+            if( MainWindow.Current.TileExpantionPanel.IsShowing && MainWindow.Current.TileExpantionPanel.IsAnimationCompleted )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void Execute()
         {
-            MainWindow mw = MainWindow.Current;
-            int current = mw.ImageFileManager.ActualCurrentIndex;
-            current += Value;
-            int maxIndex = mw.ImageFileManager.ImgFileInfo.Count - 1;
-            if( current > maxIndex ) current = (current - 1) % maxIndex;
-
-            mw.ChangeCurrentImageIndex(current);
+            MainWindow.Current.TileExpantionPanel.Move(Value, 0);
 
             return;
         }
 
         public string GetDetail()
         {
-            return "画像" + Value.ToString() + "枚分ずらし進める";
+            return "画像を" + Value.ToString() + "px右に移動";
         }
     }
 }

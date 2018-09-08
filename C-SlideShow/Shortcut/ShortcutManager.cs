@@ -117,11 +117,20 @@ namespace C_SlideShow.Shortcut
             commands.Add( new WindowSizeUp() );
             commands.Add( new WindowSizeDown() );
             commands.Add( new ShowContextMenu() );
+            commands.Add( new OpenFolderByExplorer() );
             commands.Add( new LoadProfileFromNum() );
             commands.Add( new LoadProfileFromName() );
             commands.Add( new ShowAppSettingDialog() );
+            commands.Add( new OpenImageUnderCursorByExplorer() );
             commands.Add( new OpenImageUnderCursorByDefaultApp() );
             commands.Add( new OpenImageUnderCursorByExternalApp() );
+            commands.Add( new ExitApp() );
+            commands.Add( new ToggleTopMost() );
+            commands.Add( new ToggleFullScreen() );
+            commands.Add( new CopyImageFileUnderCursor() );
+            commands.Add( new CopyImageDataUnderCursor() );
+            commands.Add( new CopyImageFilePathUnderCursor() );
+            commands.Add( new CopyImageFileNameUnderCursor() );
 
             // 通常時
             commands.Add( new SlideToForward() );
@@ -137,11 +146,28 @@ namespace C_SlideShow.Shortcut
             commands.Add( new ZoomImageUnderCursor() );
             commands.Add( new ShiftForward() );
             commands.Add( new ShiftBackward() );
+            commands.Add( new ChangeSlideDirectionToLeft() );
+            commands.Add( new ChangeSlideDirectionToRight() );
+            commands.Add( new ChangeSlideDirectionToTop() );
+            commands.Add( new ChangeSlideDirectionToBottom() );
+            commands.Add( new ChangeSlideDirectionToRev() );
+            commands.Add( new AddColumn() );
+            commands.Add( new AddRow() );
+            commands.Add( new ReduceColumn() );
+            commands.Add( new ReduceRow() );
+            commands.Add( new ChangeNumOfColumn() );
+            commands.Add( new ChangeNumOfRow() );
+            commands.Add( new ToggleSlideShowPlay() );
 
             // 画像拡大時
             commands.Add( new ZoomInImage() );
             commands.Add( new ZoomOutImage() );
             commands.Add( new ExitZoom() );
+            commands.Add( new MoveZoomImageToLeft() );
+            commands.Add( new MoveZoomImageToRight() );
+            commands.Add( new MoveZoomImageToTop() );
+            commands.Add( new MoveZoomImageToBottom() );
+            commands.Add( new ToggleDisplayOfFileInfo() );
         }
         
         // IDからコマンド取得
@@ -167,7 +193,14 @@ namespace C_SlideShow.Shortcut
                 if( command.EnableValue ) command.Value = value;
                 if( command.EnableStrValue ) command.StrValue = strValue;
 
-                if( command.CanExecute() ) command.Execute();
+                if( command.CanExecute() )
+                {
+                    command.Execute();
+                    if(command.Message != null )
+                    {
+                        MainWindow.Current.NotificationBlock.Show(command.Message, NotificationPriority.Normal, NotificationTime.Short);
+                    }
+                }
             }
         }
 

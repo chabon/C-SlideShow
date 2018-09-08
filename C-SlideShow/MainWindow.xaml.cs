@@ -673,8 +673,11 @@ namespace C_SlideShow
 
         public void StopSlideShow()
         {
-            intervalSlideTimer.Stop();
-            intervalSlideTimerCount = 0;
+            if( intervalSlideTimer.IsEnabled )
+            {
+                intervalSlideTimer.Stop();
+                intervalSlideTimerCount = 0;
+            }
             foreach(TileContainer tc in tileContainers)
             {
                 //if (tc.IsContinuousSliding) tc.StopSlideAnimation();
@@ -704,7 +707,7 @@ namespace C_SlideShow
             UpdateToolbarViewing();
         }
 
-        private void ChangeGridDifinition(int numofCol, int numofRow)
+        public void ChangeGridDifinition(int numofCol, int numofRow)
         {
             if ( Setting.TempProfile.NumofMatrix.Col == numofCol && Setting.TempProfile.NumofMatrix.Row == numofRow) return;
 

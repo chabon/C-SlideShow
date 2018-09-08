@@ -50,7 +50,7 @@ namespace C_SlideShow.Shortcut.Command
             // 画像拡大パネルのサイズ更新、拡大中ならリセット
             if( mw.TileExpantionPanel.IsShowing )
             {
-                mw.TileExpantionPanel.ZoomReset();
+                mw.TileExpantionPanel.ResetZoomAndMove();
                 mw.TileExpantionPanel.FitToMainWindow();
             }
         }

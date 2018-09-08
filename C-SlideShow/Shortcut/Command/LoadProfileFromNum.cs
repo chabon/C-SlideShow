@@ -14,7 +14,7 @@ namespace C_SlideShow.Shortcut.Command
         public Scene     Scene   { set; get; }
         public string    Message { get; }
 
-        public int       Value           { get; set; }
+        public int       Value           { get; set; } = 1;
         public string    StrValue        { get; set; }
         public bool      EnableValue     { get; } = true;
         public bool      EnableStrValue  { get; } = false;

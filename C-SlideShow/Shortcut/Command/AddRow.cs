@@ -6,20 +6,23 @@ using System.Threading.Tasks;
 
 namespace C_SlideShow.Shortcut.Command
 {
-    public class ShiftBackward : ICommand
+    /// <summary>
+    /// 行数を[]増やす
+    /// </summary>
+    public class AddRow : ICommand
     {
         public CommandID ID      { set; get; }
         public Scene     Scene   { set; get; }
-        public string    Message { get; }
+        public string    Message { get; private set; }
 
         public int       Value           { get; set; } = 1;
         public string    StrValue        { get; set; }
         public bool      EnableValue     { get; } = true;
         public bool      EnableStrValue  { get; } = false;
 
-        public ShiftBackward()
+        public AddRow()
         {
-            ID    = CommandID.ShiftBackward;
+            ID    = CommandID.AddRow;
             Scene = Scene.Nomal;
         }
         
@@ -30,25 +33,20 @@ namespace C_SlideShow.Shortcut.Command
 
         public void Execute()
         {
-            MainWindow mw = MainWindow.Current;
-            int current = mw.ImageFileManager.ActualCurrentIndex;
-            int destIndex = current -= Value;
-            int maxIndex = mw.ImageFileManager.ImgFileInfo.Count - 1;
-            if( destIndex < 0 )
-            {
-                int revParam = Math.Abs(destIndex + 1);
-                if( revParam > maxIndex ) revParam = revParam % maxIndex;
-                destIndex = maxIndex - revParam;
-            }
+            var current = MainWindow.Current.Setting.TempProfile.NumofMatrix.Value;
+            if( current == null || current.Length < 2 ) return;
 
-            mw.ChangeCurrentImageIndex(destIndex);
+            if( 0 < current[1] + Value && current[1] + Value <= ProfileMember.NumofMatrix.Max )
+            {
+                MainWindow.Current.ChangeGridDifinition(current[0], current[1] + Value);
+            }
 
             return;
         }
 
         public string GetDetail()
         {
-            return "画像" + Value.ToString() + "枚分ずらし戻す";
+            return "行数を" + Value.ToString() + "増やす";
         }
     }
 }

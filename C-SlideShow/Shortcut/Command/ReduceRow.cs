@@ -6,20 +6,23 @@ using System.Threading.Tasks;
 
 namespace C_SlideShow.Shortcut.Command
 {
-    public class ShiftForward : ICommand
+    /// <summary>
+    /// 行数を[]減らす
+    /// </summary>
+    public class ReduceRow : ICommand
     {
         public CommandID ID      { set; get; }
         public Scene     Scene   { set; get; }
-        public string    Message { get; }
+        public string    Message { get; private set; }
 
-        public int       Value           { get; set; } = 1;
+        public int       Value           { get; set; }
         public string    StrValue        { get; set; }
         public bool      EnableValue     { get; } = true;
         public bool      EnableStrValue  { get; } = false;
 
-        public ShiftForward()
+        public ReduceRow()
         {
-            ID    = CommandID.ShiftForward;
+            ID    = CommandID.ReduceRow;
             Scene = Scene.Nomal;
         }
         
@@ -30,20 +33,20 @@ namespace C_SlideShow.Shortcut.Command
 
         public void Execute()
         {
-            MainWindow mw = MainWindow.Current;
-            int current = mw.ImageFileManager.ActualCurrentIndex;
-            current += Value;
-            int maxIndex = mw.ImageFileManager.ImgFileInfo.Count - 1;
-            if( current > maxIndex ) current = (current - 1) % maxIndex;
+            var current = MainWindow.Current.Setting.TempProfile.NumofMatrix.Value;
+            if( current == null || current.Length < 2 ) return;
 
-            mw.ChangeCurrentImageIndex(current);
+            if( 0 < current[1] - Value && current[1] - Value <= ProfileMember.NumofMatrix.Max )
+            {
+                MainWindow.Current.ChangeGridDifinition(current[0], current[1] - Value);
+            }
 
             return;
         }
 
         public string GetDetail()
         {
-            return "画像" + Value.ToString() + "枚分ずらし進める";
+            return "行数を" + Value.ToString() + "減らす";
         }
     }
 }
