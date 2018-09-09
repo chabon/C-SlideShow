@@ -148,6 +148,7 @@ namespace C_SlideShow
 
             // init
             InitControls();
+            InitControlsEvent();
             InitHelper();
             InitEvent();
 

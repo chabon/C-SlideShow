@@ -33,26 +33,6 @@ namespace C_SlideShow
 
         private void InitEvent()
         {
-            /* ---------------------------------------------------- */
-            //     init events
-            /* ---------------------------------------------------- */
-
-            MenuItem_Matrix.SubmenuOpened += (s, e) =>
-            {
-                MatrixSelecter.SetMatrix(Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row);
-            };
-
-            MenuItem_SlideSetting.SubmenuOpened += (s, e) =>
-            {
-                SlideSettingDialog.ApplySettingToDlg();
-            };
-
-            MenuItem_Setting.SubmenuOpened += (s, e) =>
-            {
-                SettingDialog.ApplySettingToDlg();
-            };
-
-
             this.SourceInitialized += (s, e) =>
             {
                 // ウインドウ位置復元が正常に行われたかチェック
@@ -167,11 +147,38 @@ namespace C_SlideShow
                 }
             };
 
-
             // end of method
         }
 
 
+        private void InitControlsEvent()
+        {
+            MenuItem_Matrix.SubmenuOpened += (s, e) =>
+            {
+                MatrixSelecter.SetMatrix(Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row);
+            };
+
+            MenuItem_SlideSetting.SubmenuOpened += (s, e) =>
+            {
+                SlideSettingDialog.ApplySettingToDlg();
+            };
+
+            MenuItem_Setting.SubmenuOpened += (s, e) =>
+            {
+                SettingDialog.ApplySettingToDlg();
+            };
+
+            //this.ToolbarWrapper.KeyDown += (s, e) =>
+            //{
+            //    e.Handled = true;
+            //};
+
+            Toolbar_Play.PreviewKeyDown += (s, e) => 
+            {
+                this.RaiseEvent( new KeyEventArgs( e.KeyboardDevice, e.InputSource, e.Timestamp, e.Key) { RoutedEvent=Keyboard.KeyDownEvent } );
+                e.Handled = true;
+            };
+        }
 
         private void intervalSlideTimer_Tick(object sender, EventArgs e)
         {

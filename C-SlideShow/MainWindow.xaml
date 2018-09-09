@@ -183,6 +183,7 @@
 
                 <!-- 再生ボタン -->
                 <Button x:Name="Toolbar_Play"
+                        KeyboardNavigation.AcceptsReturn="False"
                         ToolTip="再生 / 停止"
                         Click="Toolbar_Play_Click"
                         Style="{StaticResource ToolbarButtonStyle}"
