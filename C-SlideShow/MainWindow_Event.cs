@@ -560,11 +560,10 @@ namespace C_SlideShow
                         }
                     }
                 }
-
-                // xmlファイルからロード出来なかった、UserProfileInfoを全て削除
-                Setting.UserProfileList.RemoveAll( pl => pl.Profile == null );
             }
 
+            // xmlファイルからロード出来なかった、UserProfileInfoを全て削除
+            Setting.UserProfileList.RemoveAll( pl => pl.Profile == null );
 
             // イベントの発生元チェック(子要素からのイベントなら無視)
             MenuItem miSrc = e.OriginalSource as MenuItem;
