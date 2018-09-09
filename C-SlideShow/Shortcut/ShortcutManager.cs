@@ -365,9 +365,22 @@ namespace C_SlideShow.Shortcut
         {
             // キー情報取得
             ModifierKeys modKeys = Keyboard.Modifiers;
-            KeyInput keyInput;
-            if(e.Key == Key.System ) { keyInput = new KeyInput(modKeys, e.SystemKey); }
-            else { keyInput = new KeyInput(modKeys, e.Key); }
+            Key inputKey;
+
+            if (e.ImeProcessedKey != Key.None) // Ime有効な場合の対処
+            {
+                inputKey = e.ImeProcessedKey;
+            }
+            else if(e.Key == Key.System ) // システムキーが押された場合
+            {
+                inputKey = e.SystemKey;
+            }
+            else
+            { 
+                inputKey = e.Key;
+            }
+
+            KeyInput keyInput = new KeyInput(modKeys, inputKey);
             Debug.WriteLine( "key: " + keyInput.Key.ToString() + "\nmod: " + keyInput.Modifiers.ToString() );
 
             // キーインプット送信
