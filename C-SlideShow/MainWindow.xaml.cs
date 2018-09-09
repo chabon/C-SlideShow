@@ -97,19 +97,16 @@ namespace C_SlideShow
                 }
             }
         }
-        public bool IsToolbarMenuOpened
+        public bool IsAnyToolbarMenuOpened
         {
             get
             {
-                if( MenuItem_Load.IsSubmenuOpen
+                return MenuItem_Load.IsSubmenuOpen
                     || MenuItem_Matrix.IsSubmenuOpen
                     || MenuItem_AspectRatio.IsSubmenuOpen
                     || MenuItem_SlideSetting.IsSubmenuOpen
                     || MenuItem_Profile.IsSubmenuOpen
-                    || MenuItem_Setting.IsSubmenuOpen )
-                    return true;
-                else
-                    return false;
+                    || MenuItem_Setting.IsSubmenuOpen;
             }
         }
         public bool IgnoreResizeEvent { get; set; } = false;

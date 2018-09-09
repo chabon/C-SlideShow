@@ -170,12 +170,13 @@ namespace C_SlideShow
 
             //this.ToolbarWrapper.KeyDown += (s, e) =>
             //{
-            //    e.Handled = true;
+            //    Debug.WriteLine("ToolbarWrapper KeyDown original source:" + e.OriginalSource.ToString() );
+            //    Debug.WriteLine("Keybord focus:" + Keyboard.FocusedElement.ToString() );
             //};
 
             Toolbar_Play.PreviewKeyDown += (s, e) => 
             {
-                this.RaiseEvent( new KeyEventArgs( e.KeyboardDevice, e.InputSource, e.Timestamp, e.Key) { RoutedEvent=Keyboard.KeyDownEvent } );
+                this.RaiseEvent(new KeyEventArgs(e.KeyboardDevice, e.InputSource, e.Timestamp, e.Key) { RoutedEvent = Keyboard.KeyDownEvent });
                 e.Handled = true;
             };
         }

@@ -363,6 +363,9 @@ namespace C_SlideShow.Shortcut
         // キー押下イベント
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
+            // メニューが開いているなら無効
+            if( MainWindow.Current.IsAnyToolbarMenuOpened ) return;
+
             // キー情報取得
             ModifierKeys modKeys = Keyboard.Modifiers;
             Key inputKey;
@@ -381,7 +384,11 @@ namespace C_SlideShow.Shortcut
             }
 
             KeyInput keyInput = new KeyInput(modKeys, inputKey);
+            Debug.WriteLine("------------------------------------------------------------------");
+            Debug.WriteLine("MainWindow KeyDown   original source:" + e.OriginalSource.ToString() );
             Debug.WriteLine( "key: " + keyInput.Key.ToString() + "\nmod: " + keyInput.Modifiers.ToString() );
+            Debug.WriteLine("Keybord focus:" + Keyboard.FocusedElement.ToString() );
+            Debug.WriteLine("------------------------------------------------------------------");
 
             // キーインプット送信
             if( DispatchKeyInput(keyInput) ) e.Handled = true;
@@ -394,6 +401,9 @@ namespace C_SlideShow.Shortcut
         // マウスホイール
         private void MainWindow_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            // メニューが開いているなら無効
+            if( MainWindow.Current.IsAnyToolbarMenuOpened ) return;
+
             // マウスジェスチャ入力中
             if( mouseGesture != null && mouseGesture.IsActive ) return;
 
@@ -415,6 +425,9 @@ namespace C_SlideShow.Shortcut
         // マウスボタン押下
         private void MainWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            // メニューが開いているなら無効
+            if( MainWindow.Current.IsAnyToolbarMenuOpened ) return;
+
             // マウスジェスチャ入力中
             if( mouseGesture != null && mouseGesture.IsActive ) return;
 
@@ -455,6 +468,9 @@ namespace C_SlideShow.Shortcut
         // マウスボタン離した時
         private void MainWindow_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            // メニューが開いているなら無効
+            if( MainWindow.Current.IsAnyToolbarMenuOpened ) return;
+
             // マウスジェスチャ入力中
             if( mouseGesture != null && mouseGesture.IsActive ) return;
 
@@ -514,6 +530,9 @@ namespace C_SlideShow.Shortcut
         // ダブルクリック
         private void MainWindow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            // メニューが開いているなら無効
+            if( MainWindow.Current.IsAnyToolbarMenuOpened ) return;
+
             // マウスジェスチャ入力中
             if( mouseGesture != null && mouseGesture.IsActive ) return;
 

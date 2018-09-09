@@ -188,7 +188,7 @@ namespace C_SlideShow
             }
             else
             {
-                if(!mainWindow.IsToolbarMenuOpened)
+                if(!mainWindow.IsAnyToolbarMenuOpened)
                     mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
                 mainWindow.SystemButtonWrapper.Visibility = Visibility.Hidden;
             }
@@ -212,7 +212,7 @@ namespace C_SlideShow
 
         public void HideAllUI()
         {
-            if(!mainWindow.IsToolbarMenuOpened)
+            if(!mainWindow.IsAnyToolbarMenuOpened)
                 mainWindow.ToolbarWrapper.Visibility = Visibility.Hidden;
             mainWindow.SystemButtonWrapper.Visibility = Visibility.Hidden;
             //mainWindow.ResizeGrip.Visibility = Visibility.Hidden;
