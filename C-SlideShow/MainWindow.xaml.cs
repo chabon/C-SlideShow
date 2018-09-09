@@ -673,11 +673,9 @@ namespace C_SlideShow
 
         public void StopSlideShow()
         {
-            if( intervalSlideTimer.IsEnabled )
-            {
-                intervalSlideTimer.Stop();
-                intervalSlideTimerCount = 0;
-            }
+            intervalSlideTimer.Stop();
+            intervalSlideTimerCount = 0;
+
             foreach(TileContainer tc in tileContainers)
             {
                 //if (tc.IsContinuousSliding) tc.StopSlideAnimation();

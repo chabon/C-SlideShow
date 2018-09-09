@@ -506,6 +506,7 @@ namespace C_SlideShow
                 this.WaitingMessageBase.Refresh();
                 ChangeGridDifinition(ms.ColValue, ms.RowValue);
                 this.Focus();
+                this.WaitingMessageBase.Visibility = Visibility.Collapsed;
             }
 
         }
