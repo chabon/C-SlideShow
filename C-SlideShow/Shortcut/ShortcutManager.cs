@@ -530,6 +530,11 @@ namespace C_SlideShow.Shortcut
         // ダブルクリック
         private void MainWindow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            Debug.WriteLine("------------------------------------------------------------------");
+            Debug.WriteLine("MainWindow_MouseDoubleClick   original source:" + e.OriginalSource.ToString() );
+            Debug.WriteLine("Keybord focus:" + Keyboard.FocusedElement.ToString() );
+            Debug.WriteLine("------------------------------------------------------------------");
+
             // メニューが開いているなら無効
             if( MainWindow.Current.IsAnyToolbarMenuOpened ) return;
 

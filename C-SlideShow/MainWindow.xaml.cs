@@ -725,6 +725,7 @@ namespace C_SlideShow
 
         public void ChangeCurrentImageIndex(int index)
         {
+            if( ImageFileManager.CurrentIndex == index ) return;
             imageFileManager.NextIndex = index;
             StopSlideShow();
 
