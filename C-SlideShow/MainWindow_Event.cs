@@ -147,6 +147,7 @@ namespace C_SlideShow
                 }
             };
 
+
             // end of method
         }
 
