@@ -180,6 +180,8 @@ namespace C_SlideShow
                 this.RaiseEvent(new KeyEventArgs(e.KeyboardDevice, e.InputSource, e.Timestamp, e.Key) { RoutedEvent = Keyboard.KeyDownEvent });
                 e.Handled = true;
             };
+
+            //Toolbar_Play.PreviewMouseDoubleClick += (s, e) => { e.Handled = true; };
         }
 
         private void intervalSlideTimer_Tick(object sender, EventArgs e)

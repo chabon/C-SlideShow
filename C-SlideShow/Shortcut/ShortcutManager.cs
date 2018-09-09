@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Diagnostics;
 using System.Windows.Threading;
+using System.Windows;
+using System.Windows.Controls;
 
 using C_SlideShow.Shortcut.Command;
 using C_SlideShow.CommonControl;
@@ -534,6 +536,16 @@ namespace C_SlideShow.Shortcut
             Debug.WriteLine("MainWindow_MouseDoubleClick   original source:" + e.OriginalSource.ToString() );
             Debug.WriteLine("Keybord focus:" + Keyboard.FocusedElement.ToString() );
             Debug.WriteLine("------------------------------------------------------------------");
+
+            // Menu上、Slider上、Button上では無効
+            DependencyObject source = e.OriginalSource as DependencyObject;
+            if( source == null ) return;
+            Menu menu = source.FindAncestor<Menu>();
+            if( menu != null) return;
+            Slider slider = source.FindAncestor<Slider>();
+            if( slider != null) return;
+            Button button = source.FindAncestor<Button>();
+            if( button != null ) return;
 
             // メニューが開いているなら無効
             if( MainWindow.Current.IsAnyToolbarMenuOpened ) return;

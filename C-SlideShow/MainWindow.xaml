@@ -85,6 +85,7 @@
                 Background="Transparent">
             <WrapPanel Orientation="Horizontal"
                        Background="Transparent"
+                       x:Name="ToolbarWrapPanel"
                        ItemHeight="30">
                 <WrapPanel.Resources>
                     <Style x:Key="ToolbarMenuStyle" TargetType="Menu">
