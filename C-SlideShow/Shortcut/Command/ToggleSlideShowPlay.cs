@@ -36,26 +36,15 @@ namespace C_SlideShow.Shortcut.Command
         public void Execute()
         {
             MainWindow mw = MainWindow.Current;
-            Profile pf = mw.Setting.TempProfile;
-
 
             if( mw.IsPlaying )
             {
-                mw.StopSlideShow();
-
-                // 一定時間ごとのスライドだったら、停止がわかりにくいのでメッセージ
-                if(pf.SlidePlayMethod.Value == SlidePlayMethod.Interval)
-                    mw.NotificationBlock.Show("スライドショー停止", NotificationPriority.Normal, NotificationTime.Short);
+                mw.StopSlideShow(true);
             }
             else
             {
-                mw.StartSlideShow();
-
-                if(pf.SlidePlayMethod.Value == SlidePlayMethod.Interval)
-                mw.NotificationBlock.Show("スライドショー開始 (待機時間" + pf.SlideInterval.Value + "秒)",
-                    NotificationPriority.Normal, NotificationTime.Short);
+                mw.StartSlideShow(true);
             }
-
 
             return;
         }

@@ -119,11 +119,11 @@ namespace C_SlideShow
                 Setting.TempProfile.SlidePlayMethod.Value = SlidePlayMethod.Interval;
             }
 
-            mainWindow.StopSlideShow();
+            mainWindow.StopSlideShow(false);
             mainWindow.UpdateToolbarViewing();
             UpdateDlgShowing();
 
-            if( b ) mainWindow.StartSlideShow(); // 方法を変えても、スライドしてたら継続
+            if( b ) mainWindow.StartSlideShow(true); // 方法を変えても、スライドしてたら継続
         }
 
         // 速度

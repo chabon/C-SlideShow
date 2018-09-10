@@ -135,8 +135,8 @@ namespace C_SlideShow.Shortcut.Command
             // スライド再生中だったら止める
             if( !IsExpanded && mw.IsPlaying )
             {
-                mw.StopSlideShow();
-                contextMenu.Closed += (s, e) => { mw.StartSlideShow(); };
+                mw.StopSlideShow(false);
+                contextMenu.Closed += (s, e) => { mw.StartSlideShow(false); };
             }
 
             return;

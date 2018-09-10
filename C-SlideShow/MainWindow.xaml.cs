@@ -191,7 +191,7 @@ namespace C_SlideShow
             };
 
             // 自動再生
-            if( pf.SlideShowAutoStart.Value ) StartSlideShow();
+            if( pf.SlideShowAutoStart.Value ) StartSlideShow(true);
         }
 
         private void InitControls()
@@ -328,7 +328,7 @@ namespace C_SlideShow
             if( TileExpantionPanel.IsShowing ) TileExpantionPanel.Hide();
 
             // 自動再生
-            if( tp.SlideShowAutoStart.Value ) StartSlideShow();
+            if( tp.SlideShowAutoStart.Value ) StartSlideShow(false);
 
             // 読み込み完了メッセージ
             NotificationBlock.Show("プロファイルのロード完了: " + userProfile.Name, NotificationPriority.High, NotificationTime.Short);
@@ -352,7 +352,7 @@ namespace C_SlideShow
         public void InitMainContent(int firstIndex)
         {
             if( IsPlaying || tileContainers.Any(tc => tc.IsActiveSliding) )
-                StopSlideShow();
+                StopSlideShow(true);
 
             // profile
             Profile pf = Setting.TempProfile;
@@ -560,7 +560,7 @@ namespace C_SlideShow
             ignoreSliderValueChangeEvent = false;
         }
 
-        public void StartSlideShow()
+        public void StartSlideShow(bool allowNotification)
         {
             // ファイル無し
             if (imageFileManager.ImgFileInfo.Count < 1) return;
@@ -570,7 +570,7 @@ namespace C_SlideShow
 
             if( (SlidePlayMethod)Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Continuous )
             {
-                // 連続スライド
+                // 連続的スライド
 
                 // 速度 → 移動にかける時間パラメータ 3000(ms) - 300000(ms)
                 int param = (int)( 300000 / (double)Setting.TempProfile.SlideSpeed.Value );
@@ -586,6 +586,10 @@ namespace C_SlideShow
                 // インターバルスライド
                 intervalSlideTimer.Start();
                 intervalSlideTimerCount = 0;
+                if( allowNotification )
+                {
+                    NotificationBlock.Show("スライドショー開始 (待機時間" + Setting.TempProfile.SlideInterval.Value + "秒)", NotificationPriority.Normal, NotificationTime.Short);
+                }
             }
 
             // 再生ボタン表示変更
@@ -598,13 +602,13 @@ namespace C_SlideShow
             if (imageFileManager.ImgFileInfo.Count < 1) return;
 
             // インターバルスライド中なら、停止してスライド処理続行
-            if (intervalSlideTimer.IsEnabled) StopSlideShow();
+            if (intervalSlideTimer.IsEnabled) StopSlideShow(true);
 
             // まだ操作によるアクティブスライド中なら、短いので待つ
             else if (tileContainers.Any(c => c.IsActiveSliding)) return;
 
             // まだ自動再生中なら、止める
-            if (tileContainers.Any(c => c.IsContinuousSliding)) StopSlideShow();
+            if (tileContainers.Any(c => c.IsContinuousSliding)) StopSlideShow(false);
 
             // コンテナがずれているかどうか
             bool isNoDeviation = tileContainers.All(c =>
@@ -669,8 +673,12 @@ namespace C_SlideShow
 
         }
 
-        public void StopSlideShow()
+        public void StopSlideShow(bool allowNotification)
         {
+            if(allowNotification && Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Interval )
+            {
+                NotificationBlock.Show("スライドショー停止", NotificationPriority.Normal, NotificationTime.Short);
+            }
             intervalSlideTimer.Stop();
             intervalSlideTimerCount = 0;
 
@@ -688,8 +696,8 @@ namespace C_SlideShow
         {
             if (tileContainers[0].IsContinuousSliding)
             {
-                StopSlideShow();
-                StartSlideShow();
+                StopSlideShow(false);
+                StartSlideShow(false);
             }
         }
 
@@ -727,7 +735,7 @@ namespace C_SlideShow
         {
             if( ImageFileManager.ActualCurrentIndex == index ) return;
             imageFileManager.NextIndex = index;
-            StopSlideShow();
+            StopSlideShow(true);
 
             TileContainer.ReleaseBitmapLoadThread();
 

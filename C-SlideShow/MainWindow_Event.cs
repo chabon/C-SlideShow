@@ -532,10 +532,10 @@ namespace C_SlideShow
         private void Toolbar_Play_Click(object sender, RoutedEventArgs e)
         {
             // 再生中だったら停止
-            if(IsPlaying) StopSlideShow();
+            if(IsPlaying) StopSlideShow(true);
 
             // 再生
-            else StartSlideShow();
+            else StartSlideShow(true);
         }
 
 

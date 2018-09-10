@@ -61,7 +61,7 @@ namespace C_SlideShow
             // 再生中だったら、レジュームの準備
             if( MainWindow.IsPlaying )
             {
-                MainWindow.StopSlideShow();
+                MainWindow.StopSlideShow(false);
                 ExpandedDuringPlay = true;
             }
             else
@@ -257,7 +257,7 @@ namespace C_SlideShow
                 storyboard.Remove();
                 //Margin = new Thickness(Margin.Left, Margin.Top, 0, 0);
                 this.Visibility = Visibility.Hidden;
-                if( ExpandedDuringPlay ) MainWindow.StartSlideShow();
+                if( ExpandedDuringPlay ) MainWindow.StartSlideShow(false);
                 IsAnimationCompleted = true;
             };
 
