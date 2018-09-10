@@ -94,6 +94,7 @@
                         ToolTip="ファイル情報を表示/非表示"
                         Style="{StaticResource ToolbarButtonStyle}"
                         Click="Toolbar_ShowFileInfo_Click"
+                        PreviewKeyDown="ToolbarButton_PreviewKeyDown"
                         >
                     <Image Source="Resources\info.png" 
                            RenderOptions.BitmapScalingMode="NearestNeighbor"
@@ -105,6 +106,7 @@
                         ToolTip="エクスプローラーで開く"
                         Style="{StaticResource ToolbarButtonStyle}"
                         Click="Toolbar_OpenExplorer_Click"
+                        PreviewKeyDown="ToolbarButton_PreviewKeyDown"
                         >
                     <Image Source="Resources\folder_open.png" 
                            RenderOptions.BitmapScalingMode="NearestNeighbor"
@@ -137,6 +139,7 @@
                         ToolTip="外部プログラムで画像を開く"
                         Style="{StaticResource ToolbarButtonStyle}"
                         Click="Toolbar_OpenByExternalApp_Click"
+                        PreviewKeyDown="ToolbarButton_PreviewKeyDown"
                         >
                     <Image Source="Resources\open.png" 
                            RenderOptions.BitmapScalingMode="NearestNeighbor"

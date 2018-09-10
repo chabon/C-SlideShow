@@ -619,6 +619,11 @@ namespace C_SlideShow
             }
         }
 
+        private void ToolbarButton_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            this.RaiseEvent(new KeyEventArgs(e.KeyboardDevice, e.InputSource, e.Timestamp, e.Key) { RoutedEvent = Keyboard.KeyDownEvent });
+            e.Handled = true;
+        }
 
 
         // end of class
