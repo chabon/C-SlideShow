@@ -81,31 +81,40 @@ namespace C_SlideShow.Shortcut.Command
                 };
             }
 
+            // ツールチップ
+            ImageFileInfo fi = targetTile.ImageFileInfo;
+            string toolTip_CopyFile     = "コピー後、エクスプローラーで貼り付けが出来ます";
+            string toolTip_CopyFileData = "コピー後、ペイント等の画像編集ソフトへ貼り付けが出来ます";
+            string toolTip_FilePath;
+            if( fi.Archiver.CanReadFile ) { toolTip_FilePath = fi.FilePath; }
+            else { toolTip_FilePath = fi.Archiver.ArchiverPath; }
+            string toolTip_FileName = System.IO.Path.GetFileName( fi.FilePath );
+
             // メニューアイテム作成
             if( !IsExpanded )
             {
-                contextMenu.Items.Add( CreateMenuItem("拡大表示", (s, e) => { mw.TileExpantionPanel.Show(targetTile); }) );
+                contextMenu.Items.Add( CreateMenuItem("拡大表示", null, (s, e) => { mw.TileExpantionPanel.Show(targetTile); }) );
                 contextMenu.Items.Add( new Separator() );
-                contextMenu.Items.Add( CreateMenuItem("画像1枚分ずらし進める",  (s, e) => { mw.ShortcutManager.ExecuteCommand(CommandID.ShiftForward,  1, null); }) );
-                contextMenu.Items.Add( CreateMenuItem("画像1枚分ずらし戻す",    (s, e) => { mw.ShortcutManager.ExecuteCommand(CommandID.ShiftBackward, 1, null); }) );
+                contextMenu.Items.Add( CreateMenuItem("画像1枚分ずらし進める", null, (s, e) => { mw.ShortcutManager.ExecuteCommand(CommandID.ShiftForward,  1, null); }) );
+                contextMenu.Items.Add( CreateMenuItem("画像1枚分ずらし戻す",   null, (s, e) => { mw.ShortcutManager.ExecuteCommand(CommandID.ShiftBackward, 1, null); }) );
                 contextMenu.Items.Add( new Separator() );
-                contextMenu.Items.Add( CreateMenuItem("ファイルをコピー",       (s, e) => { targetTile.CopyFile(); }) );
-                contextMenu.Items.Add( CreateMenuItem("画像データをコピー",     (s, e) => { targetTile.CopyImageData(); }) );
-                contextMenu.Items.Add( CreateMenuItem("ファイルパスをコピー",   (s, e) => { targetTile.CopyFilePath(); }) );
-                contextMenu.Items.Add( CreateMenuItem("ファイル名をコピー",     (s, e) => { targetTile.CopyFileName(); }) );
+                contextMenu.Items.Add( CreateMenuItem("ファイルをコピー",      toolTip_CopyFile,     (s, e) => { targetTile.CopyFile(); }) );
+                contextMenu.Items.Add( CreateMenuItem("画像データをコピー",    toolTip_CopyFileData, (s, e) => { targetTile.CopyImageData(); }) );
+                contextMenu.Items.Add( CreateMenuItem("ファイルパスをコピー",  toolTip_FilePath,     (s, e) => { targetTile.CopyFilePath(); }) );
+                contextMenu.Items.Add( CreateMenuItem("ファイル名をコピー",    toolTip_FileName,     (s, e) => { targetTile.CopyFileName(); }) );
                 contextMenu.Items.Add( new Separator() );
-                contextMenu.Items.Add( CreateMenuItem("エクスプローラーで開く", (s, e) => { targetTile.OpenExplorer(); }) );
+                contextMenu.Items.Add( CreateMenuItem("エクスプローラーで開く", null, (s, e) => { targetTile.OpenExplorer(); }) );
             }
             else
             {
-                contextMenu.Items.Add( CreateMenuItem("拡大表示を終了", (s, e) => { mw.TileExpantionPanel.Hide(); }) );
+                contextMenu.Items.Add( CreateMenuItem("拡大表示を終了", null, (s, e) => { mw.TileExpantionPanel.Hide(); }) );
                 contextMenu.Items.Add( new Separator() );
-                contextMenu.Items.Add( CreateMenuItem("ファイルをコピー",       (s, e) => { targetTile.CopyFile(); }) );
-                contextMenu.Items.Add( CreateMenuItem("画像データをコピー",     (s, e) => { targetTile.CopyImageData(); }) );
-                contextMenu.Items.Add( CreateMenuItem("ファイルパスをコピー",   (s, e) => { targetTile.CopyFilePath(); }) );
-                contextMenu.Items.Add( CreateMenuItem("ファイル名をコピー",     (s, e) => { targetTile.CopyFileName(); }) );
+                contextMenu.Items.Add( CreateMenuItem("ファイルをコピー",      toolTip_CopyFile,     (s, e) => { targetTile.CopyFile(); }) );
+                contextMenu.Items.Add( CreateMenuItem("画像データをコピー",    toolTip_CopyFileData, (s, e) => { targetTile.CopyImageData(); }) );
+                contextMenu.Items.Add( CreateMenuItem("ファイルパスをコピー",  toolTip_FilePath,     (s, e) => { targetTile.CopyFilePath(); }) );
+                contextMenu.Items.Add( CreateMenuItem("ファイル名をコピー",    toolTip_FileName,     (s, e) => { targetTile.CopyFileName(); }) );
                 contextMenu.Items.Add( new Separator() );
-                contextMenu.Items.Add( CreateMenuItem("エクスプローラーで開く", (s, e) => { targetTile.OpenExplorer(); }) );
+                contextMenu.Items.Add( CreateMenuItem("エクスプローラーで開く", null, (s, e) => { targetTile.OpenExplorer(); }) );
             }
 
             foreach(var exAppInfo in MainWindow.Current.Setting.ExternalAppInfoList)
@@ -115,7 +124,7 @@ namespace C_SlideShow.Shortcut.Command
                     string name = exAppInfo.GetAppName();
                     if(name != null)
                     {
-                        contextMenu.Items.Add( CreateMenuItem( name + "で開く",   (s, e) => { targetTile.OpenByExternalApp(exAppInfo); }) );
+                        contextMenu.Items.Add( CreateMenuItem( name + "で開く", null, (s, e) => { targetTile.OpenByExternalApp(exAppInfo); }) );
                     }
                 }
             }
@@ -133,10 +142,11 @@ namespace C_SlideShow.Shortcut.Command
             return;
         }
 
-        private MenuItem CreateMenuItem(string header, RoutedEventHandler clickEventHandler)
+        private MenuItem CreateMenuItem(string header, string toolTip, RoutedEventHandler clickEventHandler)
         {
             MenuItem menuItem = new MenuItem();
             menuItem.Header = header;
+            if( toolTip != null ) menuItem.ToolTip = toolTip;
             menuItem.Click += clickEventHandler;
             return menuItem;
         }
