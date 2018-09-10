@@ -14,10 +14,10 @@
                 <StackPanel>
                     <GroupBox Header="起動時の設定" Margin="6" VerticalAlignment="Top">
                         <StackPanel>
-                            <CheckBox x:Name="StartUp_RestoreWindowSizeAndPos" Margin="5">前回のウインドウサイズと位置を復元する</CheckBox>
-                            <CheckBox x:Name="StartUp_LoadLastFiles"  Margin="5">前回のフォルダ・ファイルを開く</CheckBox>
-                            <CheckBox x:Name="StartUp_RestoreLastPageIndex"  Margin="5">前回のページ番号を復元する</CheckBox>
-                            <CheckBox x:Name="StartUp_RestoreSlideShowPlaying" Margin="5">前回のスライドショー再生状態を復元する</CheckBox>
+                            <CheckBox x:Name="StartUp_RestoreWindowSizeAndPos" HorizontalAlignment="Left" Margin="5">前回のウインドウサイズと位置を復元する</CheckBox>
+                            <CheckBox x:Name="StartUp_LoadLastFiles" HorizontalAlignment="Left"  Margin="5">前回のフォルダ・ファイルを開く</CheckBox>
+                            <CheckBox x:Name="StartUp_RestoreLastPageIndex" HorizontalAlignment="Left"  Margin="5">前回のページ番号を復元する</CheckBox>
+                            <CheckBox x:Name="StartUp_RestoreSlideShowPlaying" HorizontalAlignment="Left" Margin="5">前回のスライドショー再生状態を復元する</CheckBox>
                         </StackPanel>
                     </GroupBox>
                     <Button x:Name="AllDefault_StartUp" Click="AllDefault_StartUp_Click" Width="100" Margin="10,5" HorizontalAlignment="Left">すべてデフォルト</Button>
@@ -160,10 +160,10 @@
                     <CheckBox x:Name="EnabledItemsInHistory_ArchiverPath" Margin="5" >開いたフォルダ(書庫)の履歴を保存する</CheckBox>
                     <GroupBox Header="付随して保存する情報" Margin="10,0">
                         <StackPanel>
-                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_ImagePath" >最後に開いた画像</CheckBox>
-                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_AspectRatio" >アスペクト比</CheckBox>
-                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_Matrix" >行列数</CheckBox>
-                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_SlideDirection" >スライド方向</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_ImagePath" HorizontalAlignment="Left" >最後に開いた画像</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_AspectRatio" HorizontalAlignment="Left" >アスペクト比</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_Matrix" HorizontalAlignment="Left" >行列数</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_SlideDirection" HorizontalAlignment="Left" >スライド方向</CheckBox>
                         </StackPanel>
                     </GroupBox>
                     <StackPanel Orientation="Horizontal">
@@ -171,7 +171,7 @@
                         <cc:NumericUpDown Width="60" x:Name="NumofHistory" ValueChanged="NumofHistory_ValueChanged" MinValue="1" MaxValue="10000"></cc:NumericUpDown>
                     </StackPanel>
 
-                    <CheckBox Margin="5" x:Name="ApplyHistoryInfoInNewArchiverReading" >新たにフォルダ(書庫)を開いた時、それが履歴にあるなら、その履歴情報を適用する</CheckBox>
+                    <CheckBox Margin="5" x:Name="ApplyHistoryInfoInNewArchiverReading" HorizontalAlignment="Left" >新たにフォルダ(書庫)を開いた時、それが履歴にあるなら、その履歴情報を適用する</CheckBox>
 
                     <GroupBox Header="メニュー" Margin="5">
                         <StackPanel>
@@ -265,7 +265,7 @@
                                 <Label Width="80" DockPanel.Dock="Left">引数</Label>
                                 <TextBox x:Name="ExternalAppArg" TextChanged="ExternalAppArg_TextChanged" Height="22" ToolTip="$FilePath$がファイルパスに変換されます"></TextBox>
                             </DockPanel>
-                            <CheckBox x:Name="ExternalApp_ShowContextMenu" Click="ExternalApp_ShowContextMenu_Click" Margin="8,8">コンテキストメニューに表示する</CheckBox>
+                            <CheckBox x:Name="ExternalApp_ShowContextMenu" Click="ExternalApp_ShowContextMenu_Click" HorizontalAlignment="Left" Margin="8,8">コンテキストメニューに表示する</CheckBox>
                         </StackPanel>
                     </Grid>
                 </Grid>
@@ -274,8 +274,8 @@
             <!-- 詳細 -->
             <TabItem Header="詳細" Width="80">
                 <StackPanel Margin="10">
-                    <CheckBox Margin="5" x:Name="ShowMenuItem_AdditionalRead">「フォルダを追加読み込み」「ファイルを追加読み込み」を読み込みメニューに表示する</CheckBox>
-                    <CheckBox Margin="5" x:Name="SerachAllDirectoriesInFolderReading">フォルダ読み込み時、サブディレクトリ以下のファイルも読み込む</CheckBox>
+                    <CheckBox Margin="5" x:Name="ShowMenuItem_AdditionalRead" HorizontalAlignment="Left" >「フォルダを追加読み込み」「ファイルを追加読み込み」を読み込みメニューに表示する</CheckBox>
+                    <CheckBox Margin="5" x:Name="SerachAllDirectoriesInFolderReading" HorizontalAlignment="Left" >フォルダ読み込み時、サブディレクトリ以下のファイルも読み込む</CheckBox>
                     <StackPanel Margin="5" Orientation="Horizontal">
                         <TextBlock>シークバーの色</TextBlock>
                         <cc:ColorPickerButton Margin="8,0" x:Name="SeekbarColor"></cc:ColorPickerButton>
@@ -287,12 +287,12 @@
                             <ComboBoxItem>クリックした位置へ移動</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
-                    <CheckBox Margin="5" x:Name="CorrectPageIndexInOperationSlideCrrosOverTheOrigin">スライド時、先頭の画像を跨いだら画像の位置合わせをする</CheckBox>
+                    <CheckBox Margin="5" x:Name="CorrectPageIndexInOperationSlideCrrosOverTheOrigin" HorizontalAlignment="Left" >スライド時、先頭の画像を跨いだら画像の位置合わせをする</CheckBox>
                     <StackPanel Margin="0,5" Orientation="Horizontal">
                         <Label>操作によるスライド時にかける時間(ms)</Label>
                         <cc:NumericUpDown x:Name="OperationSlideDuration" Width="70" MinValue="1" MaxValue="10000"></cc:NumericUpDown>
                     </StackPanel>
-                    <CheckBox x:Name="MouseCursorAutoHide" Margin="5,8,0,5" Click="MouseCursorAutoHide_Click">マウスカーソルが一定時間静止したら自動で隠す</CheckBox>
+                    <CheckBox x:Name="MouseCursorAutoHide" Margin="5,8,0,5" Click="MouseCursorAutoHide_Click" HorizontalAlignment="Left" >マウスカーソルが一定時間静止したら自動で隠す</CheckBox>
                     <StackPanel Orientation="Horizontal">
                         <Label Margin="15,-5,0,0">└ </Label>
                         <CheckBox x:Name="MouseCursorAutoHideInFullScreenModeOnly" Margin="0">フルスクリーンモードの時のみ隠す</CheckBox>

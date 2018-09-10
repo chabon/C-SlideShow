@@ -13,7 +13,7 @@
             <TabItem Header="全般" Width="50">
                 <StackPanel Margin="5,4,5,5">
 
-                    <CheckBox x:Name="TopMost" Click="TopMost_Click" Margin="0,4">最前面表示</CheckBox>
+                    <CheckBox x:Name="TopMost" Click="TopMost_Click" Margin="0,4" HorizontalAlignment="Left">最前面表示</CheckBox>
                     <StackPanel Margin="0,8" Orientation="Horizontal">
                         <TextBlock>画像の並び順</TextBlock>
                         <ComboBox x:Name="FileReadingOrder" SelectedIndex="0"
@@ -35,7 +35,7 @@
                             </ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
-                    <CheckBox x:Name="ApplyRotateInfoFromExif" Click="ApplyRotateInfoFromExif_Click">Exifの回転・反転情報を反映させる</CheckBox>
+                    <CheckBox x:Name="ApplyRotateInfoFromExif" Click="ApplyRotateInfoFromExif_Click" HorizontalAlignment="Left">Exifの回転・反転情報を反映させる</CheckBox>
                     <StackPanel Orientation="Horizontal" Margin="0,4">
                         <Label>バックバッファのサイズ(ピクセル値)</Label>
                         <ComboBox x:Name="BitmapDecodeTotalPixel"
@@ -133,6 +133,7 @@
                         <StackPanel>
                             <CheckBox x:Name="AllowTransparency"
                                       Click="AllowTransparency_Click"
+                                      HorizontalAlignment="Left"
                                       Margin="2,2,8,2"
                                       ToolTip="有効にすると拡大時の負荷が大きくなります"
                                       >透過を有効にする</CheckBox>
@@ -160,7 +161,7 @@
                         <TextBlock Width="40">背景色</TextBlock>
                         <cc:ColorPickerButton Margin="8,0" x:Name="BaseGridBackgroundColor" ColorPicked="BaseGridBackgroundColor_ColorPicked"></cc:ColorPickerButton>
                     </StackPanel>
-                    <CheckBox x:Name="UsePlaidBackground" Click="UsePlaidBackground_Click" Margin="0,4">チェック柄の背景にする</CheckBox>
+                    <CheckBox x:Name="UsePlaidBackground" Click="UsePlaidBackground_Click" Margin="0,4" HorizontalAlignment="Left">チェック柄の背景にする</CheckBox>
                     <StackPanel Orientation="Horizontal">
                         <Label>└ ペアとなる色</Label>
                         <cc:ColorPickerButton Margin="8,2" x:Name="PairColorOfPlaidBackground" ColorPicked="PairColorOfPlaidBackground_ColorPicked"></cc:ColorPickerButton>
