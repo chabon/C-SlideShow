@@ -675,7 +675,7 @@ namespace C_SlideShow
 
         public void StopSlideShow(bool allowNotification)
         {
-            if(allowNotification && Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Interval )
+            if(allowNotification && Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Interval && intervalSlideTimer.IsEnabled)
             {
                 NotificationBlock.Show("スライドショー停止", NotificationPriority.Normal, NotificationTime.Short, NotificationType.None);
             }
