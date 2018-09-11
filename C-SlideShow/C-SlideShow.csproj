@@ -179,6 +179,7 @@
     <Compile Include="ListExtension.cs" />
     <Compile Include="Shortcut\KeyInput.cs" />
     <Compile Include="Shortcut\Command\ZoomInImage.cs" />
+    <Compile Include="Shortcut\MouseButtonState.cs" />
     <Compile Include="Shortcut\MouseGesture.cs" />
     <Compile Include="Shortcut\MouseGestureInput.cs" />
     <Compile Include="Shortcut\MouseInput.cs" />

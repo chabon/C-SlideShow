@@ -117,6 +117,32 @@ namespace C_SlideShow.Shortcut
             return new MouseInput(this.MouseInputButton, this.ModifierKeys);
         }
 
+        public static MouseInputButton MouseButtonToMouseInputButton(MouseButton button)
+        {
+            switch( button )
+            {
+                case MouseButton.Left:      return MouseInputButton.L_Click;
+                case MouseButton.Right:     return MouseInputButton.R_Click;
+                case MouseButton.Middle:    return MouseInputButton.M_Click;
+                case MouseButton.XButton1:  return MouseInputButton.X1_Click;
+                case MouseButton.XButton2:  return MouseInputButton.X2_Click;
+                default: return MouseInputButton.None;
+            }
+        }
+
+        public static MouseInputButton MouseButtonToMouseInputLongClickButton(MouseButton button)
+        {
+            switch( button )
+            {
+                case MouseButton.Left:      return MouseInputButton.L_LongClick;
+                case MouseButton.Right:     return MouseInputButton.R_LongClick;
+                case MouseButton.Middle:    return MouseInputButton.M_LongClick;
+                case MouseButton.XButton1:  return MouseInputButton.X1_LongClick;
+                case MouseButton.XButton2:  return MouseInputButton.X2_LongClick;
+                default: return MouseInputButton.None;
+            }
+        }
+
         /// <summary>
         /// Dictionary用比較処理
         /// </summary>

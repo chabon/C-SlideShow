@@ -18,17 +18,6 @@ using C_SlideShow.CommonControl;
 namespace C_SlideShow.Shortcut
 {
     /// <summary>
-    /// マウスボタンを押すときと離す時、どちらもウインドウ内でなければコマンドを発行しないこと
-    /// マウスボタンを押している最中に他のインプット方法によってコマンドが実行された場合、離した時の単クリックによるコマンドはキャンセルすること
-    /// の２つを管理するための値
-    /// </summary>
-    public class MouseButtonClickState
-    {
-        public bool IsPressed;
-        public bool CommandExecuted;
-    }
-
-    /// <summary>
     /// ショートカット全般を管理
     /// </summary>
     public class ShortcutManager
@@ -44,11 +33,7 @@ namespace C_SlideShow.Shortcut
         string strokeOfLastExecutedCommand;
 
         // マウスボタンの状態
-        MouseButtonClickState mouseButtonClickState_L  = new MouseButtonClickState();
-        MouseButtonClickState mouseButtonClickState_R  = new MouseButtonClickState();
-        MouseButtonClickState mouseButtonClickState_M  = new MouseButtonClickState();
-        MouseButtonClickState mouseButtonClickState_X1 = new MouseButtonClickState();
-        MouseButtonClickState mouseButtonClickState_X2 = new MouseButtonClickState();
+        MouseButtonStateSet mouseButtonStateSet = new MouseButtonStateSet();
 
         // 長押し用タイマー
         DispatcherTimer longClickTimer;
@@ -92,7 +77,7 @@ namespace C_SlideShow.Shortcut
             // 左クリック後、ドラッグでウインドウドラッグ可能に
             windowDragMove = new WindowDragMove(MainWindow.Current);
             windowDragMove.CanDragStart = () => { return !MainWindow.Current.Setting.TempProfile.IsFullScreenMode.Value; };
-            windowDragMove.DragMoved += (s, e) => { mouseButtonClickState_L.CommandExecuted = true; };
+            windowDragMove.DragMoved += (s, e) => { mouseButtonStateSet.L.CommandExecuted = true; };
             windowDragMove.DragStart += (s, e) => {
                 windowDragMove.WindowSnap.EnableScreenSnap = MainWindow.Current.Setting.EnableScreenSnap;
                 windowDragMove.WindowSnap.EnableWindowSnap = MainWindow.Current.Setting.EnableWindowSnap;
@@ -269,20 +254,7 @@ namespace C_SlideShow.Shortcut
             }
 
             StopLongClick();
-            switch( mouseButton )
-            {
-                case MouseButton.Left:     longClickButton = MouseInputButton.L_LongClick;
-                    break;
-                case MouseButton.Right:    longClickButton = MouseInputButton.R_LongClick;
-                    break;
-                case MouseButton.Middle:   longClickButton = MouseInputButton.M_LongClick;
-                    break;
-                case MouseButton.XButton1: longClickButton = MouseInputButton.X1_LongClick;
-                    break;
-                case MouseButton.XButton2: longClickButton = MouseInputButton.X2_LongClick;
-                    break;
-                default: return;
-            }
+            longClickButton = MouseInput.MouseButtonToMouseInputLongClickButton(mouseButton);
             longClickTimer.Interval = TimeSpan.FromMilliseconds(MainWindow.Current.Setting.LongClickDecisionTime);
             longClickTimer.Start();
         }
@@ -341,11 +313,7 @@ namespace C_SlideShow.Shortcut
                     if( cmd.Scene == Scene.All || cmd.Scene == currentScene )
                     {
                         ExecuteCommand(cmd, commandMap.CommandValue, commandMap.CommandStrValue);
-                        mouseButtonClickState_L.CommandExecuted = true;
-                        mouseButtonClickState_R.CommandExecuted = true;
-                        mouseButtonClickState_M.CommandExecuted = true;
-                        mouseButtonClickState_X1.CommandExecuted = true;
-                        mouseButtonClickState_X2.CommandExecuted = true;
+                        mouseButtonStateSet.CommandExecuted();
                         return true;
                     }
                 }
@@ -481,19 +449,9 @@ namespace C_SlideShow.Shortcut
             if( mouseGesture != null && mouseGesture.IsActive ) return;
 
             Debug.WriteLine("mouse down : " + e.ChangedButton.ToString());
-            MouseButtonClickState mouseButtonClickState = null;
 
-            if(e.ChangedButton == MouseButton.Left )          mouseButtonClickState = mouseButtonClickState_L;
-            else if(e.ChangedButton == MouseButton.Right )    mouseButtonClickState = mouseButtonClickState_R;
-            else if(e.ChangedButton == MouseButton.Middle )   mouseButtonClickState = mouseButtonClickState_M;
-            else if(e.ChangedButton == MouseButton.XButton1 ) mouseButtonClickState = mouseButtonClickState_X1;
-            else if(e.ChangedButton == MouseButton.XButton2 ) mouseButtonClickState = mouseButtonClickState_X2;
-
-            if(mouseButtonClickState != null )
-            {
-                mouseButtonClickState.IsPressed = true;
-                mouseButtonClickState.CommandExecuted = false;
-            }
+            // ボタン押下状態をセット
+            mouseButtonStateSet.SetPress(e.ChangedButton);
 
             // マウスボタン長押し判定スタート
             StartLongClick(e.ChangedButton);
@@ -526,60 +484,36 @@ namespace C_SlideShow.Shortcut
             // マウスジェスチャ入力中
             if( mouseGesture != null && mouseGesture.IsActive ) return;
 
+            Debug.WriteLine("mouse up : " + e.ChangedButton.ToString());
+
             // 長押しクリック判定解除
             StopLongClick();
 
-            // マウスクリックの取得
-            MouseButtonClickState mouseButtonClickState = null;
-            MouseInputButton mouseInputButton = MouseInputButton.None;
+            // マウスクリックの状態取得
+            MouseButtonState mouseButtonState = mouseButtonStateSet.GetState(e.ChangedButton);
 
-            Debug.WriteLine("mouse up : " + e.ChangedButton.ToString());
-
-            if(e.ChangedButton == MouseButton.Left )
-            {
-                mouseButtonClickState = mouseButtonClickState_L;
-                mouseInputButton = MouseInputButton.L_Click;
-            }
-            else if(e.ChangedButton == MouseButton.Right )
-            {
-                mouseButtonClickState = mouseButtonClickState_R;
-                mouseInputButton = MouseInputButton.R_Click;
-            }
-            else if(e.ChangedButton == MouseButton.Middle )
-            {
-                mouseButtonClickState = mouseButtonClickState_M;
-                mouseInputButton = MouseInputButton.M_Click;
-            }
-            else if(e.ChangedButton == MouseButton.XButton1 )
-            {
-                mouseButtonClickState = mouseButtonClickState_X1;
-                mouseInputButton = MouseInputButton.X1_Click;
-            }
-            else if(e.ChangedButton == MouseButton.XButton2 )
-            {
-                mouseButtonClickState = mouseButtonClickState_X2;
-                mouseInputButton = MouseInputButton.X2_Click;
-            }
+            // マウスインプット生成
+            MouseInputButton mouseInputButton = MouseInput.MouseButtonToMouseInputButton(e.ChangedButton);
 
             // 取得失敗
-            if( mouseButtonClickState == null) return;
+            if( mouseButtonState == null) return;
             if( mouseInputButton == MouseInputButton.None ) return;
 
             // 既に他の入力でコマンド実行済み
-            if( mouseButtonClickState.CommandExecuted )
+            if( mouseButtonState.CommandExecuted )
             {
                 //e.Handled = true;
             }
 
             // マウスクリックコマンド実行
-            else if(mouseButtonClickState.IsPressed)
+            else if(mouseButtonState.IsPressed)
             {
                 MouseInput mouseInput = new MouseInput(mouseInputButton, Keyboard.Modifiers);
                 if( DispatchMouseInput(mouseInput) ) e.Handled = true;
             }
 
             // 押下状態更新
-            mouseButtonClickState.IsPressed = false;
+            mouseButtonState.IsPressed = false;
         }
 
         // ダブルクリック
@@ -628,24 +562,8 @@ namespace C_SlideShow.Shortcut
         /* ---------------------------------------------------- */
         private void MouseGestureStrokeChanged(object sender, EventArgs e)
         {
-            switch( mouseGesture.StartingButton )
-            {
-                case MouseButton.Left:
-                    mouseButtonClickState_L.CommandExecuted = true;
-                    break;
-                case MouseButton.Right:
-                    mouseButtonClickState_R.CommandExecuted = true;
-                    break;
-                case MouseButton.Middle:
-                    mouseButtonClickState_M.CommandExecuted = true;
-                    break;
-                case MouseButton.XButton1:
-                    mouseButtonClickState_X1.CommandExecuted = true;
-                    break;
-                case MouseButton.XButton2:
-                    mouseButtonClickState_X2.CommandExecuted = true;
-                    break;
-            }
+            // １つでもジェスチャがあれば、開始ボタンによるMouseUp時のコマンドは無効化
+            mouseButtonStateSet.CommandExecuted(mouseGesture.StartingButton);
 
             // 長押しクリック判定解除
             StopLongClick();
