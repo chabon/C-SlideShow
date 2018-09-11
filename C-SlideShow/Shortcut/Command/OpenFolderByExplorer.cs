@@ -18,8 +18,6 @@ namespace C_SlideShow.Shortcut.Command
     /// </summary>
     public class OpenFolderByExplorer : ICommand
     {
-        private MainWindow mw;
-
         public CommandID ID      { set; get; }
         public Scene     Scene   { set; get; }
         public string    Message { get; }

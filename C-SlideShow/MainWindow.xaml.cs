@@ -331,7 +331,7 @@ namespace C_SlideShow
             if( tp.SlideShowAutoStart.Value ) StartSlideShow(false);
 
             // 読み込み完了メッセージ
-            NotificationBlock.Show("プロファイルのロード完了: " + userProfile.Name, NotificationPriority.High, NotificationTime.Short);
+            NotificationBlock.Show("プロファイルのロード完了: " + userProfile.Name, NotificationPriority.High, NotificationTime.Short, NotificationType.None);
         }
 
 
@@ -588,7 +588,7 @@ namespace C_SlideShow
                 intervalSlideTimerCount = 0;
                 if( allowNotification )
                 {
-                    NotificationBlock.Show("スライドショー開始 (待機時間" + Setting.TempProfile.SlideInterval.Value + "秒)", NotificationPriority.Normal, NotificationTime.Short);
+                    NotificationBlock.Show("スライドショー開始 (待機時間" + Setting.TempProfile.SlideInterval.Value + "秒)", NotificationPriority.Normal, NotificationTime.Short, NotificationType.None);
                 }
             }
 
@@ -677,7 +677,7 @@ namespace C_SlideShow
         {
             if(allowNotification && Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Interval )
             {
-                NotificationBlock.Show("スライドショー停止", NotificationPriority.Normal, NotificationTime.Short);
+                NotificationBlock.Show("スライドショー停止", NotificationPriority.Normal, NotificationTime.Short, NotificationType.None);
             }
             intervalSlideTimer.Stop();
             intervalSlideTimerCount = 0;

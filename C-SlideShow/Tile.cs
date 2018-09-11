@@ -17,6 +17,7 @@ using System.IO;
 using System.Windows;
 
 using System.Windows.Controls;
+using C_SlideShow.CommonControl;
 
 namespace C_SlideShow
 {
@@ -92,7 +93,7 @@ namespace C_SlideShow
 
             // 通知
             MainWindow.Current.NotificationBlock.Show("ファイルをコピー: " + notificationFileName,
-                CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
+                NotificationPriority.Normal, NotificationTime.Normal, NotificationType.None);
         }
 
         // 画像データをコピー
@@ -103,7 +104,7 @@ namespace C_SlideShow
 
             string fileName = System.IO.Path.GetFileName(ImageFileInfo.FilePath);
             MainWindow.Current.NotificationBlock.Show("画像データをコピー: " + fileName,
-                CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
+                NotificationPriority.Normal, NotificationTime.Normal, NotificationType.None);
         }
 
         // ファイルパスをコピー
@@ -121,7 +122,7 @@ namespace C_SlideShow
             Clipboard.SetText(filePath);
 
             MainWindow.Current.NotificationBlock.Show("ファイルパスをコピー: " + filePath,
-                CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
+                NotificationPriority.Normal, NotificationTime.Normal, NotificationType.None);
         }
 
         // ファイル名をコピー
@@ -131,7 +132,7 @@ namespace C_SlideShow
             Clipboard.SetText(fileName);
 
             MainWindow.Current.NotificationBlock.Show("ファイル名をコピー: " + fileName,
-                CommonControl.NotificationPriority.Normal, CommonControl.NotificationTime.Normal);
+                NotificationPriority.Normal, NotificationTime.Normal, NotificationType.None);
         }
 
         // 外部プログラムで画像を開く

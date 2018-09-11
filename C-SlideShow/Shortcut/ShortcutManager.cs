@@ -200,7 +200,7 @@ namespace C_SlideShow.Shortcut
                     command.Execute();
                     if(command.Message != null )
                     {
-                        MainWindow.Current.NotificationBlock.Show(command.Message, NotificationPriority.Normal, NotificationTime.Short);
+                        MainWindow.Current.NotificationBlock.Show(command.Message, NotificationPriority.Normal, NotificationTime.Short, NotificationType.None);
                     }
                 }
             }
@@ -607,7 +607,7 @@ namespace C_SlideShow.Shortcut
 
                 notification += "  [" + cmd.GetDetail() + "]";
             }
-            MainWindow.Current.NotificationBlock.Show(notification, NotificationPriority.Normal, NotificationTime.Eternally);
+            MainWindow.Current.NotificationBlock.Show(notification, NotificationPriority.Normal, NotificationTime.Eternally, NotificationType.GesturePreview);
         }
 
         // マウスジェスチャ ホールドクリック時
@@ -623,7 +623,7 @@ namespace C_SlideShow.Shortcut
                 {
                     //      コマンドがマッチした場合
 
-                    MainWindow.Current.NotificationBlock.Hide();
+                    MainWindow.Current.NotificationBlock.Hide(NotificationType.GesturePreview);
 
                     // 現在のストロークから、最後のクリックストロークを削除(ボタンをホールドしたまま、別のボタンのコマンドも押せるように)
                     mouseGesture.RemoveLastClickStroke();
@@ -643,7 +643,7 @@ namespace C_SlideShow.Shortcut
         private void MouseGestureFinished(object sender, EventArgs e)
         {
             MouseGestureInput gestureInput = new MouseGestureInput(mouseGesture.StartingButton, mouseGesture.Stroke);
-            MainWindow.Current.NotificationBlock.Hide();
+            MainWindow.Current.NotificationBlock.Hide(NotificationType.GesturePreview);
 
             if( gestureInput.Stroke.Length > 0 && gestureInput.Stroke != strokeOfLastExecutedCommand)
             {

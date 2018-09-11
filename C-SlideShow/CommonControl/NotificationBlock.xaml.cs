@@ -17,6 +17,12 @@ using System.Windows.Threading;
 
 namespace C_SlideShow.CommonControl
 {
+    public enum NotificationType
+    {
+        None,
+        GesturePreview,
+    }
+
     public enum NotificationPriority
     {
         Lowest,
@@ -46,6 +52,7 @@ namespace C_SlideShow.CommonControl
         private NotificationPriority currentPriority = NotificationPriority.Lowest;
         private DispatcherTimer hideTimer = new DispatcherTimer();
         private int hideCount = 0;
+        private NotificationType type;
 
         /* ---------------------------------------------------- */
         //     プロパティ
@@ -75,14 +82,16 @@ namespace C_SlideShow.CommonControl
         }
 
 
-        public void Show(string message, NotificationPriority priority, NotificationTime time)
+        public void Show(string message, NotificationPriority priority, NotificationTime time, NotificationType type)
         {
             if( currentPriority > priority ) return;
             currentPriority = priority;
 
             this.MessageLabel.Content = message;
             this.Visibility = Visibility.Visible;
+            this.type = type;
 
+            hideTimer.Stop();
             if( !(time == NotificationTime.Eternally) )
             {
                 hideCount = (int)time;
@@ -94,6 +103,11 @@ namespace C_SlideShow.CommonControl
         {
             currentPriority = NotificationPriority.Lowest;
             this.Visibility = Visibility.Collapsed;
+        }
+
+        public void Hide(NotificationType type)
+        {
+            if(type == this.type ) Hide();
         }
 
         /* ---------------------------------------------------- */
