@@ -69,6 +69,9 @@ namespace C_SlideShow.CommonControl
             }
         }
 
+        public event EventHandler PreviewShowNotification;
+
+
 
         /* ---------------------------------------------------- */
         //     メソッド
@@ -88,6 +91,7 @@ namespace C_SlideShow.CommonControl
             currentPriority = priority;
 
             this.MessageLabel.Content = message;
+            PreviewShowNotification?.Invoke( this, new EventArgs() );
             this.Visibility = Visibility.Visible;
             this.type = type;
 

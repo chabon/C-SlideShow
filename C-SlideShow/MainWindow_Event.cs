@@ -182,6 +182,26 @@ namespace C_SlideShow
             };
 
             //Toolbar_Play.PreviewMouseDoubleClick += (s, e) => { e.Handled = true; };
+
+            NotificationBlock.PreviewShowNotification += (s, e) =>
+            {
+                if( Setting.TempProfile.IsFullScreenMode.Value )
+                {
+                    var val = this.Width - (this.FullScreenBase_TopLeft.Width * 2);
+                    if( val > 0 && val < this.Width )
+                    {
+                        NotificationBlock.Width = val;
+                    }
+                    else
+                    {
+                        NotificationBlock.Width = double.NaN;
+                    }
+                }
+                else
+                {
+                    NotificationBlock.Width = double.NaN;
+                }
+            };
         }
 
         private void intervalSlideTimer_Tick(object sender, EventArgs e)

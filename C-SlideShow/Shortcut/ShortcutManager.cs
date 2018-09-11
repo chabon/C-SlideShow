@@ -9,7 +9,6 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 using C_SlideShow.Shortcut.Command;
 using C_SlideShow.CommonControl;

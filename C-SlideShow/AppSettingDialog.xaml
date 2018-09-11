@@ -75,7 +75,7 @@
                         </Button.ContextMenu>
                     </Button>
                     <StackPanel Margin="0,4,50,0" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
-                        <Label x:Name="CommandValueLabel" Visibility="Collapsed">コマンドの値</Label>
+                        <Label x:Name="CommandValueLabel" Visibility="Collapsed">コマンドのパラメータ</Label>
                         <TextBox x:Name="CommandValue" Visibility="Collapsed" TextChanged="CommandValue_TextChanged" Width="140" Height="20"></TextBox>
                     </StackPanel>
 
