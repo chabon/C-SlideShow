@@ -23,6 +23,11 @@ namespace C_SlideShow.Shortcut
         X2_Click, 
         L_DoubleClick,
         R_DoubleClick,
+        L_LongClick,
+        R_LongClick,
+        M_LongClick,
+        X1_LongClick,
+        X2_LongClick,
     }
 
 
@@ -74,32 +79,33 @@ namespace C_SlideShow.Shortcut
             {
                 case MouseInputButton.None:
                     return "";
-                case MouseInputButton.L_Click:
-                    buttonStr = "左クリック";
+                case MouseInputButton.L_Click:      buttonStr = "左クリック";
                     break;
-                case MouseInputButton.R_Click:
-                    buttonStr = "右クリック";
+                case MouseInputButton.R_Click:      buttonStr = "右クリック";
                     break;
-                case MouseInputButton.M_Click:
-                    buttonStr = "中クリック";
+                case MouseInputButton.M_Click:      buttonStr = "中クリック";
                     break;
-                case MouseInputButton.WheelUp:
-                    buttonStr = "Wheel Up";
+                case MouseInputButton.WheelUp:      buttonStr = "Wheel Up";
                     break;
-                case MouseInputButton.WheelDown:
-                    buttonStr = "Wheel Down";
+                case MouseInputButton.WheelDown:    buttonStr = "Wheel Down";
                     break;
-                case MouseInputButton.X1_Click:
-                    buttonStr = "戻るボタン";
+                case MouseInputButton.X1_Click:     buttonStr = "戻るボタン";
                     break;
-                case MouseInputButton.X2_Click:
-                    buttonStr = "進むボタン";
+                case MouseInputButton.X2_Click:     buttonStr = "進むボタン";
                     break;
-                case MouseInputButton.L_DoubleClick:
-                    buttonStr = "左ダブルクリック";
+                case MouseInputButton.L_DoubleClick:    buttonStr = "左ダブルクリック";
                     break;
-                case MouseInputButton.R_DoubleClick:
-                    buttonStr = "右ダブルクリック";
+                case MouseInputButton.R_DoubleClick:    buttonStr = "右ダブルクリック";
+                    break;
+                case MouseInputButton.L_LongClick:      buttonStr = "左クリック長押し";
+                    break;
+                case MouseInputButton.R_LongClick:      buttonStr = "右クリック長押し";
+                    break;
+                case MouseInputButton.M_LongClick:      buttonStr = "中クリック長押し";
+                    break;
+                case MouseInputButton.X1_LongClick:     buttonStr = "戻るボタン長押し";
+                    break;
+                case MouseInputButton.X2_LongClick:     buttonStr = "進むボタン長押し";
                     break;
             }
 

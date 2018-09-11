@@ -1272,9 +1272,9 @@ namespace C_SlideShow
                     {
                         Shortcut.ICommand cmd = MainWindow.Current.ShortcutManager.GetCommand(si.CommandID);
 
-                        KeyInput keyInput                   = si.KeyInput           != null? si.KeyInput            : null;
-                        MouseInput mouseInput               = si.MouseInput         != null? si.MouseInput          : null;
-                        MouseGestureInput mouseGestureInput = si.MouseGestureInput  != null? si.MouseGestureInput   : null;
+                        KeyInput            keyInput            = si.KeyInput           != null? si.KeyInput            : null;
+                        MouseInput          mouseInput          = si.MouseInput         != null? si.MouseInput          : null;
+                        MouseGestureInput   mouseGestureInput   = si.MouseGestureInput  != null? si.MouseGestureInput   : null;
 
                         CommandMap commandMap = new CommandMap(si.CommandID, si.CommandValue, si.CommandStrValue, keyInput, mouseInput, mouseGestureInput);
                         commandMapList.Add(commandMap);

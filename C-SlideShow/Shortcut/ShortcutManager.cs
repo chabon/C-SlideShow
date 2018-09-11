@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 using C_SlideShow.Shortcut.Command;
 using C_SlideShow.CommonControl;
@@ -49,6 +50,12 @@ namespace C_SlideShow.Shortcut
         MouseButtonClickState mouseButtonClickState_X1 = new MouseButtonClickState();
         MouseButtonClickState mouseButtonClickState_X2 = new MouseButtonClickState();
 
+        // 長押し用タイマー
+        DispatcherTimer longClickTimer;
+
+        // 長押しクリックの情報
+        MouseInputButton longClickButton;
+
         //// ウインドウドラッグの準備
         //bool mainWindowDragMoveReady = false;
 
@@ -79,6 +86,7 @@ namespace C_SlideShow.Shortcut
             MainWindow.Current.MouseWheel    += this.MainWindow_MouseWheel;
             MainWindow.Current.MouseDown     += this.MainWindow_MouseDown;
             MainWindow.Current.MouseUp       += this.MainWindow_MouseUp;
+            MainWindow.Current.MouseMove     += this.MainWindow_MouseMove;
             MainWindow.Current.MouseDoubleClick   += this.MainWindow_MouseDoubleClick;
 
             // 左クリック後、ドラッグでウインドウドラッグ可能に
@@ -247,6 +255,44 @@ namespace C_SlideShow.Shortcut
             return commands;
         }
 
+        // 長押しクリックの判定開始
+        private void StartLongClick(MouseButton mouseButton)
+        {
+            if( this.longClickTimer == null )
+            {
+                longClickTimer = new DispatcherTimer();
+                const int millTime = 500; // todo 設定可能に
+                longClickTimer.Interval = TimeSpan.FromMilliseconds(millTime);
+                longClickTimer.Tick += (s, e) =>
+                {
+                    StopLongClick();
+                    DispatchMouseInput( new MouseInput(longClickButton, Keyboard.Modifiers) );
+                };
+            }
+
+            StopLongClick();
+            switch( mouseButton )
+            {
+                case MouseButton.Left:     longClickButton = MouseInputButton.L_LongClick;
+                    break;
+                case MouseButton.Right:    longClickButton = MouseInputButton.R_LongClick;
+                    break;
+                case MouseButton.Middle:   longClickButton = MouseInputButton.M_LongClick;
+                    break;
+                case MouseButton.XButton1: longClickButton = MouseInputButton.X1_LongClick;
+                    break;
+                case MouseButton.XButton2: longClickButton = MouseInputButton.X2_LongClick;
+                    break;
+                default: return;
+            }
+            longClickTimer.Start();
+        }
+
+        private void StopLongClick()
+        {
+            if(longClickTimer != null) longClickTimer.Stop();
+        }
+
         /// <summary>
         /// キー入力から、コマンド実行
         /// </summary>
@@ -299,6 +345,8 @@ namespace C_SlideShow.Shortcut
                         mouseButtonClickState_L.CommandExecuted = true;
                         mouseButtonClickState_R.CommandExecuted = true;
                         mouseButtonClickState_M.CommandExecuted = true;
+                        mouseButtonClickState_X1.CommandExecuted = true;
+                        mouseButtonClickState_X2.CommandExecuted = true;
                         return true;
                     }
                 }
@@ -448,6 +496,9 @@ namespace C_SlideShow.Shortcut
                 mouseButtonHoldState.CommandExecuted = false;
             }
 
+            // マウスボタン長押し判定スタート
+            StartLongClick(e.ChangedButton);
+
             // マウスジェスチャ スタート
             if( shortcutSetting.CommandMap.Any( c => c.MouseGestureInput != null) )
             {
@@ -475,6 +526,9 @@ namespace C_SlideShow.Shortcut
 
             // マウスジェスチャ入力中
             if( mouseGesture != null && mouseGesture.IsActive ) return;
+
+            // 長押しクリック判定解除
+            StopLongClick();
 
             // マウスクリックの取得
             MouseButtonClickState mouseButtonClickState = null;
@@ -570,7 +624,9 @@ namespace C_SlideShow.Shortcut
         }
 
 
-        // マウスジェスチャ ストローク更新時
+        /* ---------------------------------------------------- */
+        //       EventHandler (マウスジェスチャ)
+        /* ---------------------------------------------------- */
         private void MouseGestureStrokeChanged(object sender, EventArgs e)
         {
             switch( mouseGesture.StartingButton )
@@ -591,6 +647,9 @@ namespace C_SlideShow.Shortcut
                     mouseButtonClickState_X2.CommandExecuted = true;
                     break;
             }
+
+            // 長押しクリック判定解除
+            StopLongClick();
 
             // 現在のストロークと、一致するコマンドを通知ブロックに表示
             MouseGestureInput gestureInput = new MouseGestureInput(mouseGesture.StartingButton, mouseGesture.Stroke);
@@ -650,6 +709,15 @@ namespace C_SlideShow.Shortcut
                 DispatchMouseGestureInput(gestureInput);
                 return;
             }
+        }
+
+
+        /* ---------------------------------------------------- */
+        //       EventHandler (その他)
+        /* ---------------------------------------------------- */
+        private void MainWindow_MouseMove(object sender, MouseEventArgs e)
+        {
+            StopLongClick();
         }
 
         // End of Class

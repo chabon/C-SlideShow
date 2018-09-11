@@ -109,6 +109,11 @@
                                         <ComboBoxItem>進むボタン</ComboBoxItem>
                                         <ComboBoxItem>左ダブルクリック</ComboBoxItem>
                                         <ComboBoxItem>右ダブルクリック</ComboBoxItem>
+                                        <ComboBoxItem>左クリック長押し</ComboBoxItem>
+                                        <ComboBoxItem>右クリック長押し</ComboBoxItem>
+                                        <ComboBoxItem>中クリック長押し</ComboBoxItem>
+                                        <ComboBoxItem>戻るボタン長押し</ComboBoxItem>
+                                        <ComboBoxItem>進むボタン長押し</ComboBoxItem>
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="3" HorizontalAlignment="Right">
@@ -146,7 +151,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <Label Width="70">判定距離</Label>
-                                    <cc:NumericUpDown x:Name="MouseGestureRange" ValueChanged="MouseGestureRange_ValueChanged" Width="60" MaxValue="9999" MinValue="1"></cc:NumericUpDown>
+                                    <cc:NumericUpDown x:Name="MouseGestureRange" ValueChanged="MouseGestureRange_ValueChanged" Width="60" MaxValue="9999" MinValue="3"></cc:NumericUpDown>
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>
