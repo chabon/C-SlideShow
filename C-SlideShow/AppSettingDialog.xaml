@@ -177,7 +177,7 @@
                     </GroupBox>
                     <StackPanel Orientation="Horizontal">
                         <Label Margin="5">保存する履歴の上限数</Label>
-                        <cc:NumericUpDown Width="60" x:Name="NumofHistory" ValueChanged="NumofHistory_ValueChanged" MinValue="1" MaxValue="10000"></cc:NumericUpDown>
+                        <cc:NumericUpDown Width="60" x:Name="NumofHistory" Variation="10" ValueChanged="NumofHistory_ValueChanged" MinValue="1" MaxValue="10000"></cc:NumericUpDown>
                     </StackPanel>
 
                     <CheckBox Margin="5" x:Name="ApplyHistoryInfoInNewArchiverReading" HorizontalAlignment="Left" >新たにフォルダ(書庫)を開いた時、それが履歴にあるなら、その履歴情報を適用する</CheckBox>
@@ -299,7 +299,7 @@
                     <CheckBox Margin="5" x:Name="CorrectPageIndexInOperationSlideCrrosOverTheOrigin" HorizontalAlignment="Left" >スライド時、先頭の画像を跨いだら画像の位置合わせをする</CheckBox>
                     <StackPanel Margin="0,5" Orientation="Horizontal">
                         <Label>操作によるスライド時にかける時間(ms)</Label>
-                        <cc:NumericUpDown x:Name="OperationSlideDuration" Width="70" MinValue="1" MaxValue="10000"></cc:NumericUpDown>
+                        <cc:NumericUpDown x:Name="OperationSlideDuration" Width="70" Variation="10" MinValue="1" MaxValue="10000"></cc:NumericUpDown>
                     </StackPanel>
                     <CheckBox x:Name="MouseCursorAutoHide" Margin="5,8,0,5" Click="MouseCursorAutoHide_Click" HorizontalAlignment="Left" >マウスカーソルが一定時間静止したら自動で隠す</CheckBox>
                     <StackPanel Orientation="Horizontal">
