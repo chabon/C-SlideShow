@@ -94,7 +94,7 @@
                             </GroupBox>
                             <Button x:Name="AllDefault_Shortcut" Click="AllDefault_Shortcut_Click" Margin="4" Width="100" HorizontalAlignment="Left">すべてデフォルト</Button>
                         </StackPanel>
-                        <GroupBox  Header="マウス入力" Height="100" Width="220" Margin="4,4,4,32" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                        <GroupBox  Header="マウス入力" Height="128" Width="220" Margin="4,4,4,4" VerticalAlignment="Bottom" HorizontalAlignment="Left">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="2">
                                     <Label Width="50">ボタン</Label>
@@ -122,6 +122,10 @@
                                     <CheckBox x:Name="MouseInputModifire_Alt"   Click="MouseInputModifier_Click" Width="40">Alt</CheckBox>
                                 </StackPanel>
                                 <Button x:Name="MouseInputMapClearButton" Click="MouseInputMapClearButton_Click" Width="40" Margin="4" HorizontalAlignment="Right">クリア</Button>
+                                <StackPanel Orientation="Horizontal" Margin="3">
+                                    <Label>長押し判定時間(ms)</Label>
+                                    <cc:NumericUpDown x:Name="LongClickDecisionTime" Variation="10" MaxValue="10000" MinValue="50" Width="60"></cc:NumericUpDown>
+                                </StackPanel>
                             </StackPanel>
                         </GroupBox>
                         <GroupBox  Header="マウスジェスチャ" Height="128" Width="220" Margin="4" VerticalAlignment="Bottom" HorizontalAlignment="Left">

@@ -257,6 +257,7 @@ namespace C_SlideShow
             }
 
             MouseGestureRange.Value = setting.MouseGestureRange;
+            LongClickDecisionTime.Value = setting.LongClickDecisionTime;
 
 
             // 履歴設定
@@ -1286,6 +1287,9 @@ namespace C_SlideShow
             addToCommandMapList.Invoke(ShortcutListView_Normal);
             addToCommandMapList.Invoke(ShortcutListView_Expand);
             setting.ShortcutSetting.CommandMap = commandMapList;
+
+            // ショートカット設定 長押し判定時間
+            setting.LongClickDecisionTime = LongClickDecisionTime.Value;
 
             // ショートカット設定 マウスジェスチャ判定距離
             setting.MouseGestureRange = MouseGestureRange.Value;

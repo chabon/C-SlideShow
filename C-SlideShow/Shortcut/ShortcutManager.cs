@@ -261,8 +261,6 @@ namespace C_SlideShow.Shortcut
             if( this.longClickTimer == null )
             {
                 longClickTimer = new DispatcherTimer();
-                const int millTime = 500; // todo 設定可能に
-                longClickTimer.Interval = TimeSpan.FromMilliseconds(millTime);
                 longClickTimer.Tick += (s, e) =>
                 {
                     StopLongClick();
@@ -285,6 +283,7 @@ namespace C_SlideShow.Shortcut
                     break;
                 default: return;
             }
+            longClickTimer.Interval = TimeSpan.FromMilliseconds(MainWindow.Current.Setting.LongClickDecisionTime);
             longClickTimer.Start();
         }
 
@@ -482,18 +481,18 @@ namespace C_SlideShow.Shortcut
             if( mouseGesture != null && mouseGesture.IsActive ) return;
 
             Debug.WriteLine("mouse down : " + e.ChangedButton.ToString());
-            MouseButtonClickState mouseButtonHoldState = null;
+            MouseButtonClickState mouseButtonClickState = null;
 
-            if(e.ChangedButton == MouseButton.Left )          mouseButtonHoldState = mouseButtonClickState_L;
-            else if(e.ChangedButton == MouseButton.Right )    mouseButtonHoldState = mouseButtonClickState_R;
-            else if(e.ChangedButton == MouseButton.Middle )   mouseButtonHoldState = mouseButtonClickState_M;
-            else if(e.ChangedButton == MouseButton.XButton1 ) mouseButtonHoldState = mouseButtonClickState_X1;
-            else if(e.ChangedButton == MouseButton.XButton2 ) mouseButtonHoldState = mouseButtonClickState_X2;
+            if(e.ChangedButton == MouseButton.Left )          mouseButtonClickState = mouseButtonClickState_L;
+            else if(e.ChangedButton == MouseButton.Right )    mouseButtonClickState = mouseButtonClickState_R;
+            else if(e.ChangedButton == MouseButton.Middle )   mouseButtonClickState = mouseButtonClickState_M;
+            else if(e.ChangedButton == MouseButton.XButton1 ) mouseButtonClickState = mouseButtonClickState_X1;
+            else if(e.ChangedButton == MouseButton.XButton2 ) mouseButtonClickState = mouseButtonClickState_X2;
 
-            if(mouseButtonHoldState != null )
+            if(mouseButtonClickState != null )
             {
-                mouseButtonHoldState.IsPressed = true;
-                mouseButtonHoldState.CommandExecuted = false;
+                mouseButtonClickState.IsPressed = true;
+                mouseButtonClickState.CommandExecuted = false;
             }
 
             // マウスボタン長押し判定スタート

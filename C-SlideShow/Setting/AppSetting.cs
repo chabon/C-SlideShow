@@ -159,6 +159,9 @@ namespace C_SlideShow
         [DataMember]
         public int MouseGestureRange { get; set; }
 
+        [DataMember]
+        public int LongClickDecisionTime { get; set; }
+
         // アスペクト比のリスト
         [DataMember]
         public List<Point> AspectRatioList { get; set; }
@@ -259,6 +262,7 @@ namespace C_SlideShow
             // ショートカット
             ShortcutSetting = new ShortcutSetting();
             MouseGestureRange = 15;
+            LongClickDecisionTime = 500;
 
             // 履歴設定
             History = new List<HistoryItem>();
