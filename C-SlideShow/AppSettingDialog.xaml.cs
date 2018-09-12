@@ -388,42 +388,30 @@ namespace C_SlideShow
             }
         }
 
-        // キー
-        private void SetKeyInputToControl(KeyInput keyInput)
-        {
-            if( keyInput == null ) { keyInput = new KeyInput(Key.None); }
-
-            HotkeyControl.SetKey( keyInput.Modifiers, keyInput.Key );
-
-            KeyInputModifire_Shift.IsChecked = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Shift    ) != 0  ) ? true : false;
-            KeyInputModifire_Ctrl.IsChecked  = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Control  ) != 0  ) ? true : false;
-            KeyInputModifire_Alt.IsChecked   = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Alt      ) != 0  ) ? true : false;
-        }
-
-        private void ClearKeyInputControl()
-        {
-            HotkeyControl.Clear();
-
-            KeyInputModifire_Shift.IsChecked = false;
-            KeyInputModifire_Ctrl.IsChecked  = false;
-            KeyInputModifire_Alt.IsChecked   = false; 
-        }
-
-        // 重複チェック
-        private bool DoubleCheck_Key(KeyInput keyInput, ShortcutListViewItem own)
+        // ショートカット 重複チェック
+        private bool DoubleCheck<T>(T input, ShortcutListViewItem own) where T : class, IEquatable<T>
         {
             // 重複したアイテムのリスト
             List<ShortcutListViewItem> doubleItemList = new List<ShortcutListViewItem>();
 
-            // チェック
-            Action<ListView> doubleCheck = (lv) =>
+            Func<ShortcutListViewItem, object> getInput = (si) =>
             {
-                foreach( var li in lv.Items )
+                if( typeof(T) == typeof(KeyInput) ) return si.KeyInput;
+                else if( typeof(T) == typeof(MouseInput) ) return si.MouseInput;
+                else if( typeof(T) == typeof(MouseGestureInput) ) return si.MouseGestureInput;
+                else return null;
+            };
+
+            // チェック
+            Action<ListView> doubleCheck = (listView) =>
+            {
+                foreach( var li in listView.Items )
                 {
                     ShortcutListViewItem si = li as ShortcutListViewItem;
-                    if(si != null && si.KeyInput != null && si != own )
+                    T otherInput = getInput(si) as T;
+                    if(si != null && otherInput != null && si != own )
                     {
-                        if( si.KeyInput.Equals(keyInput) )
+                        if( otherInput.Equals(input) )
                         {
                             doubleItemList.Add(si);
                         }
@@ -449,7 +437,7 @@ namespace C_SlideShow
             // 確認ダイアログ
             if(doubleItemList.Count > 0 )
             {
-                string message = keyInput.ToString() +  " は以下のコマンドに割り当てられています。\n置き換えてもよろしいですか？";
+                string message = input.ToString() +  "\n\nは以下のコマンドに割り当てられています。\n置き換えてもよろしいですか？";
                 message += "\n";
                 foreach(var item in doubleItemList )
                 {
@@ -457,6 +445,13 @@ namespace C_SlideShow
                     if(si != null )
                     {
                         message += "\n";
+                        C_SlideShow.Shortcut.ICommand cmd = MainWindow.Current.ShortcutManager.GetCommand(si.CommandID);
+                        switch( cmd.Scene )
+                        {
+                            case Scene.All:    message += "[いつでも] "; break;
+                            case Scene.Nomal:  message += "[通常時] "; break;
+                            case Scene.Expand: message += "[拡大時] "; break;
+                        }
                         message += si.CommandStr;
                     }
                 }
@@ -469,8 +464,21 @@ namespace C_SlideShow
                         ShortcutListViewItem si = item as ShortcutListViewItem;
                         if(si != null )
                         {
-                            si.KeyInput = null;
-                            si.KeyStr = "";
+                            if( typeof(T) == typeof(KeyInput) )
+                            {
+                                si.KeyInput = null;
+                                si.KeyStr = "";
+                            }
+                            else if( typeof(T) == typeof(MouseInput) )
+                            {
+                                si.MouseInput = null;
+                                si.MouseInputStr = "";
+                            }
+                            else if( typeof(T) == typeof(MouseGestureInput) )
+                            {
+                                si.MouseGestureInput = null;
+                                si.MouseGestureStr = "";
+                            }
                         }
                     }
 
@@ -487,14 +495,40 @@ namespace C_SlideShow
             return true;
         }
 
+        // キー
+        private void SetKeyInputToControl(KeyInput keyInput)
+        {
+            if( keyInput == null ) { keyInput = new KeyInput(Key.None); }
+
+            HotkeyControl.SetKey( keyInput.Modifiers, keyInput.Key );
+
+            KeyInputModifire_Shift.IsChecked = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Shift    ) != 0  ) ? true : false;
+            KeyInputModifire_Ctrl.IsChecked  = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Control  ) != 0  ) ? true : false;
+            KeyInputModifire_Alt.IsChecked   = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Alt      ) != 0  ) ? true : false;
+        }
+
+        private void ClearKeyInputControl()
+        {
+            HotkeyControl.Clear();
+
+            KeyInputModifire_Shift.IsChecked = false;
+            KeyInputModifire_Ctrl.IsChecked  = false;
+            KeyInputModifire_Alt.IsChecked   = false; 
+        }
+
         // マウスインプット
         private void SetMouseInputToControl(MouseInput mouseInput)
         {
+            isSettingToComboBox = true;
+
+            if( mouseInput == null ) mouseInput = new MouseInput(Shortcut.MouseInputButton.None, ModifierKeys.None);
             MouseInputModifire_Shift.IsChecked = (  ( (int)mouseInput.ModifierKeys & (int)ModifierKeys.Shift    ) != 0  ) ? true : false;
             MouseInputModifire_Ctrl.IsChecked  = (  ( (int)mouseInput.ModifierKeys & (int)ModifierKeys.Control  ) != 0  ) ? true : false;
             MouseInputModifire_Alt.IsChecked   = (  ( (int)mouseInput.ModifierKeys & (int)ModifierKeys.Alt      ) != 0  ) ? true : false;
 
             MouseInputButton.SelectedIndex = (int)mouseInput.MouseInputButton;
+
+            isSettingToComboBox = false;
         }
 
         private void ClearMouseInputControl()
@@ -509,43 +543,12 @@ namespace C_SlideShow
             isSettingToComboBox = false;
         }
 
-        private void DoubleCheck_MouseInput(MouseInput mouseInput, ShortcutListViewItem own)
-        {
-            foreach( var li in GetCurrentShortcutListView().Items )
-            {
-                ShortcutListViewItem si = li as ShortcutListViewItem;
-                if(si != null && si.MouseInput != null && si != own )
-                {
-                    if( si.MouseInput.Equals(mouseInput) )
-                    {
-                        si.MouseInput = null;
-                        si.MouseInputStr = "";
-                    }
-                }
-            }
-        }
-
         // マウスジェスチャ
         private void SetMouseGestureInputToControl(MouseGestureInput gestureInput)
         {
+            if( gestureInput == null ) return;
+
             MouseGestureControl.SetValue(gestureInput.Stroke, gestureInput.StartingButton);
-        }
-
-        private void DoubleCheck_MouseGestureInput(MouseGestureInput gestureInput, ShortcutListViewItem own)
-        {
-            foreach( var li in GetCurrentShortcutListView().Items )
-            {
-                ShortcutListViewItem si = li as ShortcutListViewItem;
-                if(si != null && si.MouseGestureInput != null && si != own )
-                {
-                    if( si.MouseGestureInput.Equals(gestureInput) )
-                    {
-                        si.MouseGestureInput = null;
-                        si.MouseGestureStr = null;
-                    }
-                }
-            }
-
         }
 
         // 外部連携
@@ -806,7 +809,7 @@ namespace C_SlideShow
             KeyInput ki = new KeyInput(HotkeyControl.Modifiers, HotkeyControl.Key);
 
             // 重複キーチェック
-            if( DoubleCheck_Key(ki, item) )
+            if( DoubleCheck<KeyInput>(ki, item) )
             {
                 item.KeyInput = ki;
                 item.KeyStr = ki.ToString();
@@ -843,7 +846,7 @@ namespace C_SlideShow
             KeyInput ki = new KeyInput(modifierKeys, item.KeyInput.Key);
 
             // 重複チェック
-            if( DoubleCheck_Key(ki, item) )
+            if( DoubleCheck<KeyInput>(ki, item) )
             {
                 item.KeyInput = ki;
                 item.KeyStr = item.KeyInput.ToString();
@@ -860,13 +863,20 @@ namespace C_SlideShow
             ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
             if( item == null ) return;
 
-            if( item.MouseInput == null ) item.MouseInput = new MouseInput();
+            MouseInput newMouseInput = new MouseInput((MouseInputButton)MouseInputButton.SelectedIndex, ModifierKeys.None);
+            if(item.MouseInput != null )
+            {
+                newMouseInput.ModifierKeys = item.MouseInput.ModifierKeys;
+            }
 
-            item.MouseInput.MouseInputButton = (Shortcut.MouseInputButton)MouseInputButton.SelectedIndex;
-            item.MouseInputStr = item.MouseInput.ToString();
+            // 重複チェック
+            if( DoubleCheck<MouseInput>(newMouseInput, item) )
+            {
+                item.MouseInput = newMouseInput;
+                item.MouseInputStr = item.MouseInput.ToString();
+            }
 
-            // 重複の削除
-            DoubleCheck_MouseInput(item.MouseInput, item);
+            SetMouseInputToControl(item.MouseInput);
         }
 
         private void MouseInputModifier_Click(object sender, RoutedEventArgs e)
@@ -876,18 +886,26 @@ namespace C_SlideShow
             ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
             if( item == null ) return;
 
-            if( item.MouseInput == null ) item.MouseInput = new MouseInput();
-
             ModifierKeys modifierKeys = ModifierKeys.None;
             if( (bool)MouseInputModifire_Shift.IsChecked ) modifierKeys |= ModifierKeys.Shift;
             if( (bool)MouseInputModifire_Ctrl.IsChecked  ) modifierKeys |= ModifierKeys.Control;
             if( (bool)MouseInputModifire_Alt.IsChecked   ) modifierKeys |= ModifierKeys.Alt;
 
-            item.MouseInput.ModifierKeys = modifierKeys;
-            item.MouseInputStr = item.MouseInput.ToString();
+            MouseInput newMouseInput = new MouseInput(Shortcut.MouseInputButton.None, modifierKeys);
 
-            // 重複の削除
-            DoubleCheck_MouseInput(item.MouseInput, item);
+            if( item.MouseInput != null )
+            {
+                newMouseInput.MouseInputButton = item.MouseInput.MouseInputButton;
+            }
+
+            // 重複チェック
+            if( DoubleCheck<MouseInput>(newMouseInput, item) )
+            {
+                item.MouseInput = newMouseInput;
+                item.MouseInputStr = item.MouseInput.ToString();
+            }
+
+            SetMouseInputToControl(item.MouseInput);
         }
 
         private void MouseInputMapClearButton_Click(object sender, RoutedEventArgs e)
@@ -913,14 +931,22 @@ namespace C_SlideShow
             MouseGestureInput gestureInput = new MouseGestureInput(MouseGestureControl.StartingButton, MouseGestureControl.Stroke);
             if( gestureInput.Stroke.Length > 0 )
             {
-                SetMouseGestureInputToControl(gestureInput);
-                item.MouseGestureInput = gestureInput;
-                item.MouseGestureStr = gestureInput.ToString();
+                // 重複チェック
+                if( DoubleCheck<MouseGestureInput>(gestureInput, item) )
+                {
+                    item.MouseGestureInput = gestureInput;
+                    item.MouseGestureStr = gestureInput.ToString();
+                }
             }
-            else { return; }
 
-            // 重複の削除
-            DoubleCheck_MouseGestureInput(gestureInput, item);
+            if(item.MouseGestureInput != null )
+            {
+                SetMouseGestureInputToControl(item.MouseGestureInput);
+            }
+            else
+            {
+                MouseGestureControl.StartAcceptingInput();
+            }
         }
 
         private void MouseGestureControl_MainBorderLostFocus(object sender, EventArgs e)
