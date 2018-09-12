@@ -191,6 +191,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.BaseGridBackgroundColor.Value = BaseGridBackgroundColor.PickedColor;
             mainWindow.ApplyColorAndOpacitySetting();
+            mainWindow.ToolbarWrapper.Visibility = Visibility.Visible;
             mainWindow.MenuItem_Setting.IsSubmenuOpen = true;
         }
 
@@ -214,6 +215,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.PairColorOfPlaidBackground.Value = PairColorOfPlaidBackground.PickedColor;
             mainWindow.ApplyColorAndOpacitySetting();
+            mainWindow.ToolbarWrapper.Visibility = Visibility.Visible;
             mainWindow.MenuItem_Setting.IsSubmenuOpen = true;
         }
 
@@ -249,6 +251,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.ResizeGripColor.Value = ResizeGripColor.PickedColor;
             mainWindow.UpdateUI();
+            mainWindow.ToolbarWrapper.Visibility = Visibility.Visible;
             mainWindow.MenuItem_Setting.IsSubmenuOpen = true;
         }
 
@@ -284,6 +287,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.GridLineColor.Value = GridLineColor.PickedColor;
             mainWindow.UpdateGridLine();
+            mainWindow.ToolbarWrapper.Visibility = Visibility.Visible;
             mainWindow.MenuItem_Setting.IsSubmenuOpen = true;
         }
 
