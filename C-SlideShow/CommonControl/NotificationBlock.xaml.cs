@@ -61,16 +61,24 @@ namespace C_SlideShow.CommonControl
         {
             get
             {
-                return this.MessageLabel.FontSize;
+                return this.MessageBlock.FontSize;
             }
             set
             {
-                this.MessageLabel.FontSize = value;
+                this.MessageBlock.FontSize = value;
+            }
+        }
+
+        public bool AllowWrapping
+        {
+            set
+            {
+                if(value) this.MessageBlock.TextWrapping = TextWrapping.Wrap;
+                else this.MessageBlock.TextWrapping = TextWrapping.NoWrap;
             }
         }
 
         public event EventHandler PreviewShowNotification;
-
 
 
         /* ---------------------------------------------------- */
@@ -90,7 +98,7 @@ namespace C_SlideShow.CommonControl
             if( currentPriority > priority ) return;
             currentPriority = priority;
 
-            this.MessageLabel.Content = message;
+            this.MessageBlock.Text = message;
             PreviewShowNotification?.Invoke( this, new EventArgs() );
             this.Visibility = Visibility.Visible;
             this.type = type;

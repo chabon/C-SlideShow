@@ -201,6 +201,8 @@ namespace C_SlideShow
                 {
                     NotificationBlock.Width = double.NaN;
                 }
+
+                NotificationBlock.AllowWrapping = true;
             };
         }
 

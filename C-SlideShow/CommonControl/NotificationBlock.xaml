@@ -5,12 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:C_SlideShow.CommonControl"
              mc:Ignorable="d" 
-             Height="34"
+             Height="Auto"
+             VerticalAlignment="Center"
              d:DesignHeight="30" d:DesignWidth="200">
     <Grid>
         <Border x:Name="BaseBorder" Background="White" Opacity="0.8" 
                 BorderBrush="Gray" BorderThickness="0,1,0,1">
-            <Label x:Name="MessageLabel" FontSize="16" FontWeight="Bold" Margin="5,0" FontFamily="Meiryo">null</Label>
+            <TextBlock x:Name="MessageBlock" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Margin="5,0" FontFamily="Meiryo">null</TextBlock>
         </Border>
     </Grid>
 </UserControl>
