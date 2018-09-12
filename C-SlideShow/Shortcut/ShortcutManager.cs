@@ -37,8 +37,11 @@ namespace C_SlideShow.Shortcut
         // 長押し用タイマー
         DispatcherTimer longClickTimer;
 
-        // 長押しクリックの情報
+        // 長押しクリック開始したボタン
         MouseInputButton longClickButton;
+
+        // 長押しクリック開始座標(スクリーン座標系)
+        Point longClickStartPos;
 
         //// ウインドウドラッグの準備
         //bool mainWindowDragMoveReady = false;
@@ -256,6 +259,7 @@ namespace C_SlideShow.Shortcut
 
             StopLongClick();
             longClickButton = MouseInput.MouseButtonToMouseInputLongClickButton(mouseButton);
+            longClickStartPos = Win32.GetCursorPos();
             longClickTimer.Interval = TimeSpan.FromMilliseconds(MainWindow.Current.Setting.LongClickDecisionTime);
             longClickTimer.Start();
         }
@@ -635,7 +639,11 @@ namespace C_SlideShow.Shortcut
         /* ---------------------------------------------------- */
         private void MainWindow_MouseMove(object sender, MouseEventArgs e)
         {
-            StopLongClick();
+            Point currentPos = Win32.GetCursorPos();
+            if(currentPos.X != longClickStartPos.X || currentPos.Y != longClickStartPos.Y )
+            {
+                StopLongClick();
+            }
         }
 
         // End of Class

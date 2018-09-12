@@ -1213,6 +1213,9 @@ namespace C_SlideShow
 
         public void Reload(bool keepCurrentIdx)
         {
+            // 拡大パネル表示中なら閉じる
+            if( TileExpantionPanel.IsShowing ) TileExpantionPanel.Hide();
+
             // 画像情報の読み込みとソート
             String[] files = Setting.TempProfile.Path.Value.ToArray();
             ReadFiles(files, false);
