@@ -15,7 +15,7 @@
                     <Grid x:Name="ContinuousSlideSettingWrapper">
                         <StackPanel Margin="15,4,0,4" Orientation="Horizontal">
                             <TextBlock>速度</TextBlock>
-                            <Slider x:Name="SlideSpeed" ValueChanged="SlideSpeed_ValueChanged" Margin="3,0,0,0" Maximum="100" Minimum="1" Width="110"></Slider>
+                            <Slider x:Name="SlideSpeed" ValueChanged="SlideSpeed_ValueChanged" SmallChange="1" Margin="3,0,0,0" Maximum="100" Minimum="1" Width="110"></Slider>
                             <TextBlock x:Name="Text_SlideSpeed" Width="20">100</TextBlock>
                         </StackPanel>
                     </Grid>

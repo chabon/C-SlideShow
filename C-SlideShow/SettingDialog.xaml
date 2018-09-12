@@ -140,6 +140,7 @@
                             <StackPanel Margin="6,2,0,8" Orientation="Horizontal">
                                 <TextBlock>不透明度(全体)</TextBlock>
                                 <Slider x:Name="OverallOpacity"
+                                        SmallChange="1"
                                         ValueChanged="OverallOpacity_ValueChanged"
                                         Maximum="100" Minimum="0"
                                         Margin="6,0" Width="100"></Slider>
@@ -148,6 +149,7 @@
                             <StackPanel Margin="6,2,0,8" Orientation="Horizontal">
                                 <TextBlock>不透明度(背景)</TextBlock>
                                 <Slider x:Name="BackgroundOpacity"
+                                        SmallChange="1"
                                         ValueChanged="BackgroundOpacity_ValueChanged"
                                         Maximum="100" Minimum="0"
                                         Margin="6,0" Width="100"></Slider>
