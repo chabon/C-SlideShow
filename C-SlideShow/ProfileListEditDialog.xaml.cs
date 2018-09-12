@@ -138,7 +138,7 @@ namespace C_SlideShow
             if( index < 0 || index > ProfileListBox.Items.Count - 1) return;
 
             UserProfileInfo upi = setting.UserProfileList[index];
-            MessageBoxResult result =  MessageBox.Show("プロファイル「" + upi.Profile.Name + "」を削除してもよろしいですか？", "確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            MessageBoxResult result =  MessageBoxEx.Show(this,"プロファイル「" + upi.Profile.Name + "」を削除してもよろしいですか？", "確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if( result == MessageBoxResult.Yes )
             {
                 MainWindow.Current.RemoveUserProfileInfo(upi);

@@ -695,9 +695,13 @@ namespace C_SlideShow
             {
                 MenuItem mi = ((ev.Source as MenuItem).Parent as ContextMenu).PlacementTarget as MenuItem; if( mi == null ) return;
 
-                MessageBoxResult result =  MessageBox.Show("プロファイル「" + upi.Profile.Name + "」を削除してもよろしいですか？", "確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if( result == MessageBoxResult.Yes ) RemoveUserProfileInfo(upi);
+                MessageBoxResult result =  MessageBoxEx.Show(this,"プロファイル「" + upi.Profile.Name + "」を削除してもよろしいですか？", "確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if( result == MessageBoxResult.Yes )
+                {
+                    RemoveUserProfileInfo(upi);
+                }
 
+                ToolbarWrapper.Visibility = Visibility.Visible;
                 MenuItem_Profile.IsSubmenuOpen = true;
             };
 

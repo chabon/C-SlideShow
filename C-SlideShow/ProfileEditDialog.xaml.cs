@@ -917,7 +917,7 @@ namespace C_SlideShow
             // １つ以上チェックが入っているか
             if( this.Descendants<CheckBox>().ToList().All( x => !(bool)x.IsChecked) )
             {
-                MessageBox.Show("プロファイルを作成するには、1つ以上の項目にチェックを入れて下さい", "エラー", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBoxEx.Show(this, "プロファイルを作成するには、1つ以上の項目にチェックを入れて下さい", "エラー", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -945,7 +945,7 @@ namespace C_SlideShow
             }
             if( conflict )
             {
-                MessageBoxResult result =  MessageBox.Show("プロファイル名「" + newProfile.Name + "」は既に存在しています。上書きしてよろしいですか？", "上書き確認", 
+                MessageBoxResult result =  MessageBoxEx.Show(this,"プロファイル名「" + newProfile.Name + "」は既に存在しています。上書きしてよろしいですか？", "上書き確認", 
                     MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if( result == MessageBoxResult.No ) return;
             }

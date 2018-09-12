@@ -911,7 +911,7 @@ namespace C_SlideShow
 
         private void DeleteHistory_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result =  MessageBox.Show("全てのフォルダ(書庫)の履歴を削除してもよろしいですか？\r\nこの操作はキャンセル出来ません", "削除確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            MessageBoxResult result =  MessageBoxEx.Show(this,"全てのフォルダ(書庫)の履歴を削除してもよろしいですか？\r\nこの操作はキャンセル出来ません", "削除確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if( result == MessageBoxResult.Yes )
             {
                 setting.History.Clear();
