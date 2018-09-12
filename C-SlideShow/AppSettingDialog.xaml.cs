@@ -391,6 +391,8 @@ namespace C_SlideShow
         // キー
         private void SetKeyInputToControl(KeyInput keyInput)
         {
+            if( keyInput == null ) { keyInput = new KeyInput(Key.None); }
+
             HotkeyControl.SetKey( keyInput.Modifiers, keyInput.Key );
 
             KeyInputModifire_Shift.IsChecked = (  ( (int)keyInput.Modifiers & (int)ModifierKeys.Shift    ) != 0  ) ? true : false;
@@ -407,20 +409,82 @@ namespace C_SlideShow
             KeyInputModifire_Alt.IsChecked   = false; 
         }
 
-        private void DoubleCheck_Key(KeyInput keyInput, ShortcutListViewItem own)
+        // 重複チェック
+        private bool DoubleCheck_Key(KeyInput keyInput, ShortcutListViewItem own)
         {
-            foreach( var li in GetCurrentShortcutListView().Items )
+            // 重複したアイテムのリスト
+            List<ShortcutListViewItem> doubleItemList = new List<ShortcutListViewItem>();
+
+            // チェック
+            Action<ListView> doubleCheck = (lv) =>
             {
-                ShortcutListViewItem si = li as ShortcutListViewItem;
-                if(si != null && si.KeyInput != null && si != own )
+                foreach( var li in lv.Items )
                 {
-                    if( si.KeyInput.Equals(keyInput) )
+                    ShortcutListViewItem si = li as ShortcutListViewItem;
+                    if(si != null && si.KeyInput != null && si != own )
                     {
-                        si.KeyInput = null;
-                        si.KeyStr = "";
+                        if( si.KeyInput.Equals(keyInput) )
+                        {
+                            doubleItemList.Add(si);
+                        }
                     }
                 }
+            };
+
+            doubleCheck.Invoke(ShortcutListView_ALL);
+            switch(ShortcutSettingTab.SelectedIndex)
+            {
+                case 0: // いつでも
+                    doubleCheck.Invoke(ShortcutListView_Normal);
+                    doubleCheck.Invoke(ShortcutListView_Expand);
+                    break;
+                case 1: // 通常時
+                    doubleCheck.Invoke(ShortcutListView_Normal);
+                    break;
+                case 2: // 拡大時
+                    doubleCheck.Invoke(ShortcutListView_Expand);
+                    break;
             }
+
+            // 確認ダイアログ
+            if(doubleItemList.Count > 0 )
+            {
+                string message = keyInput.ToString() +  " は以下のコマンドに割り当てられています。\n置き換えてもよろしいですか？";
+                message += "\n";
+                foreach(var item in doubleItemList )
+                {
+                    ShortcutListViewItem si = item as ShortcutListViewItem;
+                    if(si != null )
+                    {
+                        message += "\n";
+                        message += si.CommandStr;
+                    }
+                }
+
+                MessageBoxResult result =  MessageBoxEx.Show(this, message, "重複確認", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if( result == MessageBoxResult.Yes )
+                {
+                    foreach(var item in doubleItemList )
+                    {
+                        ShortcutListViewItem si = item as ShortcutListViewItem;
+                        if(si != null )
+                        {
+                            si.KeyInput = null;
+                            si.KeyStr = "";
+                        }
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+
+                }
+
+            }
+
+            return true;
         }
 
         // マウスインプット
@@ -741,12 +805,13 @@ namespace C_SlideShow
             if( item == null ) return;
             KeyInput ki = new KeyInput(HotkeyControl.Modifiers, HotkeyControl.Key);
 
-            item.KeyInput = ki;
-            item.KeyStr = ki.ToString();
+            // 重複キーチェック
+            if( DoubleCheck_Key(ki, item) )
+            {
+                item.KeyInput = ki;
+                item.KeyStr = ki.ToString();
+            }
             SetKeyInputToControl(item.KeyInput);
-
-            // 重複キーの削除
-            DoubleCheck_Key(ki, item);
         }
 
         private void KeymapClearButton_Click(object sender, RoutedEventArgs e)
@@ -775,12 +840,15 @@ namespace C_SlideShow
             if( (bool)KeyInputModifire_Ctrl.IsChecked  ) modifierKeys |= ModifierKeys.Control;
             if( (bool)KeyInputModifire_Alt.IsChecked   ) modifierKeys |= ModifierKeys.Alt;
 
-            item.KeyInput.Modifiers = modifierKeys;
-            item.KeyStr = item.KeyInput.ToString();
-            SetKeyInputToControl(item.KeyInput);
+            KeyInput ki = new KeyInput(modifierKeys, item.KeyInput.Key);
 
-            // 重複の削除
-            DoubleCheck_Key(item.KeyInput, item);
+            // 重複チェック
+            if( DoubleCheck_Key(ki, item) )
+            {
+                item.KeyInput = ki;
+                item.KeyStr = item.KeyInput.ToString();
+            }
+            SetKeyInputToControl(item.KeyInput);
         }
 
         // ショートカット設定 (マウス入力)
