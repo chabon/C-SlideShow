@@ -111,26 +111,28 @@ namespace C_SlideShow.Shortcut
             commands.Add( new OpenAdditionalFolder() );
             commands.Add( new OpenFile() );
             commands.Add( new OpenAdditionalFile() );
+            commands.Add( new Reload() );
+            commands.Add( new ToggleTopMost() );
+            commands.Add( new ToggleFullScreen() );
             commands.Add( new WindowSizeUp() );
             commands.Add( new WindowSizeDown() );
             commands.Add( new ShowContextMenu() );
             commands.Add( new OpenFolderByExplorer() );
-            commands.Add( new LoadProfileFromNum() );
-            commands.Add( new LoadProfileFromName() );
             commands.Add( new ShowAppSettingDialog() );
+            commands.Add( new ExitApp() );
             commands.Add( new OpenImageUnderCursorByExplorer() );
             commands.Add( new OpenImageUnderCursorByDefaultApp() );
             commands.Add( new OpenImageUnderCursorByExternalApp() );
-            commands.Add( new ExitApp() );
-            commands.Add( new ToggleTopMost() );
-            commands.Add( new ToggleFullScreen() );
             commands.Add( new CopyImageFileUnderCursor() );
             commands.Add( new CopyImageDataUnderCursor() );
             commands.Add( new CopyImageFilePathUnderCursor() );
             commands.Add( new CopyImageFileNameUnderCursor() );
-            commands.Add( new Reload() );
+            commands.Add( new LoadProfileFromNum() );
+            commands.Add( new LoadProfileFromName() );
 
             // 通常時
+            commands.Add( new ToggleSlideShowPlay() );
+            commands.Add( new ZoomImageUnderCursor() );
             commands.Add( new SlideToForward() );
             commands.Add( new SlideToBackward() );
             commands.Add( new SlideToLeft() );
@@ -141,27 +143,25 @@ namespace C_SlideShow.Shortcut
             commands.Add( new SlideToCursorDirectionRev() );
             commands.Add( new SlideToForwardByOneImage() );
             commands.Add( new SlideToBackwardByOneImage() );
-            commands.Add( new ZoomImageUnderCursor() );
-            commands.Add( new ShiftForward() );
-            commands.Add( new ShiftBackward() );
             commands.Add( new ChangeSlideDirectionToLeft() );
             commands.Add( new ChangeSlideDirectionToRight() );
             commands.Add( new ChangeSlideDirectionToTop() );
             commands.Add( new ChangeSlideDirectionToBottom() );
             commands.Add( new ChangeSlideDirectionToRev() );
+            commands.Add( new ShiftForward() );
+            commands.Add( new ShiftBackward() );
             commands.Add( new AddColumn() );
             commands.Add( new AddRow() );
             commands.Add( new ReduceColumn() );
             commands.Add( new ReduceRow() );
             commands.Add( new ChangeNumOfColumn() );
             commands.Add( new ChangeNumOfRow() );
-            commands.Add( new ToggleSlideShowPlay() );
             commands.Add( new ToggleTileImageStretch() );
 
             // 画像拡大時
+            commands.Add( new ExitZoom() );
             commands.Add( new ZoomInImage() );
             commands.Add( new ZoomOutImage() );
-            commands.Add( new ExitZoom() );
             commands.Add( new MoveZoomImageToLeft() );
             commands.Add( new MoveZoomImageToRight() );
             commands.Add( new MoveZoomImageToTop() );
