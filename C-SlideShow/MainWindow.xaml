@@ -90,6 +90,8 @@
                 <WrapPanel.Resources>
                     <Style x:Key="ToolbarMenuStyle" TargetType="Menu">
                         <Setter Property="Background" Value="Transparent"></Setter>
+                        <!--<Setter Property="KeyboardNavigation.ControlTabNavigation" Value="None"></Setter>-->
+                        <!--<Setter Property="KeyboardNavigation.TabNavigation" Value="None"></Setter>-->
                     </Style>
                     <Style x:Key="ToolbarMenuBorderStyle" TargetType="Border">
                         <Setter Property="Background" Value="White"></Setter>
@@ -107,6 +109,9 @@
                         <Setter Property="Width" Value="40"></Setter>
                         <Setter Property="Margin" Value="2"></Setter>
                         <Setter Property="VerticalAlignment" Value="Top"></Setter>
+                        <Setter Property="KeyboardNavigation.ControlTabNavigation" Value="None"></Setter>
+                        <Setter Property="KeyboardNavigation.TabNavigation" Value="None"></Setter>
+                        <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="None"></Setter>
                     </Style>
                 </WrapPanel.Resources>
 
@@ -188,6 +193,7 @@
                         Click="Toolbar_Play_Click"
                         Style="{StaticResource ToolbarButtonStyle}"
                         Width="50" 
+                        Focusable="False"
                         >
                     <Image Source="Resources\play.png" 
                            x:Name="Toolbar_Play_Image"

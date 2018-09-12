@@ -169,26 +169,6 @@ namespace C_SlideShow
                 SettingDialog.ApplySettingToDlg();
             };
 
-            //this.ToolbarWrapper.KeyDown += (s, e) =>
-            //{
-            //    Debug.WriteLine("ToolbarWrapper KeyDown original source:" + e.OriginalSource.ToString() );
-            //    Debug.WriteLine("Keybord focus:" + Keyboard.FocusedElement.ToString() );
-            //};
-
-            Toolbar_Play.PreviewKeyDown += (s, e) => 
-            {
-                Key inputKey;
-
-                if (e.ImeProcessedKey != Key.None) { inputKey = e.ImeProcessedKey; }
-                else if(e.Key == Key.System ) { inputKey = e.SystemKey; }
-                else { inputKey = e.Key; }
-
-                this.RaiseEvent(new KeyEventArgs(e.KeyboardDevice, e.InputSource, e.Timestamp, inputKey) { RoutedEvent = Keyboard.KeyDownEvent });
-                //e.Handled = true;
-            };
-
-            //Toolbar_Play.PreviewMouseDoubleClick += (s, e) => { e.Handled = true; };
-
             NotificationBlock.PreviewShowNotification += (s, e) =>
             {
                 if( Setting.TempProfile.IsFullScreenMode.Value )

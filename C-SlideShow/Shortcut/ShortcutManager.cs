@@ -526,7 +526,7 @@ namespace C_SlideShow.Shortcut
         {
             Debug.WriteLine("------------------------------------------------------------------");
             Debug.WriteLine("MainWindow_MouseDoubleClick   original source:" + e.OriginalSource.ToString() );
-            Debug.WriteLine("Keybord focus:" + Keyboard.FocusedElement.ToString() );
+            //Debug.WriteLine("Keybord focus:" + Keyboard.FocusedElement.ToString() );
             Debug.WriteLine("------------------------------------------------------------------");
 
             // Menu上、Slider上、Button上では無効

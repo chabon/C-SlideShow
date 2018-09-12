@@ -49,7 +49,7 @@ namespace C_SlideShow
             defaultCommandMap.Add( new CommandMap(CommandID.WindowSizeDown,                     10, null,       null, null, new MouseGestureInput(MouseButton.Right, "[WD]")) );
             defaultCommandMap.Add( new CommandMap(CommandID.ShowContextMenu,                    0,  null,       null, new MouseInput(MouseInputButton.L_LongClick, ModifierKeys.None), null) );
             defaultCommandMap.Add( new CommandMap(CommandID.OpenFolderByExplorer,               0,  null,       null, null, null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.ShowAppSettingDialog,               0,  null,       null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ShowAppSettingDialog,               0,  null,       new KeyInput(ModifierKeys.None, Key.O), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ExitApp,                            0,  null,       null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.OpenImageUnderCursorByExplorer,     0,  null,       null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.OpenImageUnderCursorByDefaultApp,   0,  null,       null, null, null) );
