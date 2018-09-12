@@ -59,6 +59,7 @@ namespace C_SlideShow
             defaultCommandMap.Add( new CommandMap(CommandID.CopyImageDataUnderCursor,           0,  null,       null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.CopyImageFilePathUnderCursor,       0,  null,       null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.CopyImageFileNameUnderCursor,       0,  null,       null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.Reload,                             0,  null,       null, null, null) );
 
             // 通常時
             defaultCommandMap.Add( new CommandMap(CommandID.SlideToForward,                     0, null,  new KeyInput(ModifierKeys.None, Key.F), new MouseInput(MouseInputButton.WheelDown, ModifierKeys.None), null) );
@@ -86,6 +87,7 @@ namespace C_SlideShow
             defaultCommandMap.Add( new CommandMap(CommandID.ChangeNumOfColumn,                  2, null,  null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ChangeNumOfRow,                     2, null,  null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ToggleSlideShowPlay,                0, null,  new KeyInput(ModifierKeys.None, Key.Space), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ToggleTileImageStretch,             0, null,  null, null, null) );
 
             // 画像拡大時
             defaultCommandMap.Add( new CommandMap(CommandID.ZoomInImage,                50, null,   null, new MouseInput(MouseInputButton.WheelUp, ModifierKeys.None), null) );

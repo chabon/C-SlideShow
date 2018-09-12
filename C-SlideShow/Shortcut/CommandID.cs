@@ -32,6 +32,7 @@ namespace C_SlideShow.Shortcut
         CopyImageDataUnderCursor,           // カーソル下の画像データをコピー
         CopyImageFilePathUnderCursor,       // カーソル下の画像ファイルパスをコピー
         CopyImageFileNameUnderCursor,       // カーソル下の画像ファイル名をコピー
+        Reload,                             // 再読込み
 
         // 通常時
         SlideToForward,                     // 前方向にスライド
@@ -59,6 +60,7 @@ namespace C_SlideShow.Shortcut
         ChangeNumOfColumn,                  // 列数を[]に変更
         ChangeNumOfRow,                     // 行数を[]に変更
         ToggleSlideShowPlay,                // スライドショー 再生/停止
+        ToggleTileImageStretch,             // グリッド枠内への画像の収め方を切り替え
 
         // 画像拡大時
         ZoomInImage,                        // 画像の拡大率を[ ]%アップ

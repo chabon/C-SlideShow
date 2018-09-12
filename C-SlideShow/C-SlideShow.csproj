@@ -91,6 +91,8 @@
     <Compile Include="Setting\CommandMap.cs" />
     <Compile Include="Setting\ShortcutSetting.cs" />
     <Compile Include="Shortcut\CommandID.cs" />
+    <Compile Include="Shortcut\Command\ToggleTileImageStretch.cs" />
+    <Compile Include="Shortcut\Command\Reload.cs" />
     <Compile Include="Shortcut\Command\ToggleSlideShowPlay.cs" />
     <Compile Include="Shortcut\Command\CopyImageFileNameUnderCursor.cs" />
     <Compile Include="Shortcut\Command\CopyImageFilePathUnderCursor.cs" />

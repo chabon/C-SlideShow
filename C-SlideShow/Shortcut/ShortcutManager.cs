@@ -125,6 +125,7 @@ namespace C_SlideShow.Shortcut
             commands.Add( new CopyImageDataUnderCursor() );
             commands.Add( new CopyImageFilePathUnderCursor() );
             commands.Add( new CopyImageFileNameUnderCursor() );
+            commands.Add( new Reload() );
 
             // 通常時
             commands.Add( new SlideToForward() );
@@ -152,6 +153,7 @@ namespace C_SlideShow.Shortcut
             commands.Add( new ChangeNumOfColumn() );
             commands.Add( new ChangeNumOfRow() );
             commands.Add( new ToggleSlideShowPlay() );
+            commands.Add( new ToggleTileImageStretch() );
 
             // 画像拡大時
             commands.Add( new ZoomInImage() );
