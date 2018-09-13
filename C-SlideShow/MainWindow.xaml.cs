@@ -1404,6 +1404,7 @@ namespace C_SlideShow
         public void ShowAppSettingDialog(int tabIndex)
         {
             AppSettingDialog appSettingDialog = new AppSettingDialog();
+            appSettingDialog.Owner = this;
 
             // サイズ復元
             if( !(Setting.AppSettingDialogSize == Size.Empty) )
@@ -1427,6 +1428,7 @@ namespace C_SlideShow
         public void ShowProfileListEditDialog()
         {
             ProfileListEditDialog profileListEditDialog = new ProfileListEditDialog();
+            profileListEditDialog.Owner = this;
             Util.SetWindowCenterOnWindow(this, profileListEditDialog);
             profileListEditDialog.Initialize();
             profileListEditDialog.ShowDialog();
