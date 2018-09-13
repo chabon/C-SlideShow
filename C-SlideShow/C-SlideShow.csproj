@@ -92,6 +92,9 @@
     <Compile Include="Setting\CommandMap.cs" />
     <Compile Include="Setting\ShortcutSetting.cs" />
     <Compile Include="Shortcut\CommandID.cs" />
+    <Compile Include="Shortcut\Command\OepnSubMenu_AspectRatio.cs" />
+    <Compile Include="Shortcut\Command\OepnSubMenu_Profile.cs" />
+    <Compile Include="Shortcut\Command\OepnSubMenu_Load.cs" />
     <Compile Include="Shortcut\Command\ToggleTileImageStretch.cs" />
     <Compile Include="Shortcut\Command\Reload.cs" />
     <Compile Include="Shortcut\Command\ToggleSlideShowPlay.cs" />

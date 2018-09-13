@@ -157,11 +157,15 @@ namespace C_SlideShow.Shortcut
             commands.Add( new ChangeNumOfColumn() );
             commands.Add( new ChangeNumOfRow() );
             commands.Add( new ToggleTileImageStretch() );
+            commands.Add( new OepnSubMenu_Load() );
+            commands.Add( new OepnSubMenu_AspectRatio() );
+            commands.Add( new OepnSubMenu_Profile() );
 
             // 画像拡大時
             commands.Add( new ExitZoom() );
             commands.Add( new ZoomInImage() );
             commands.Add( new ZoomOutImage() );
+            commands.Add( new ZoomReset() );
             commands.Add( new MoveZoomImageToLeft() );
             commands.Add( new MoveZoomImageToRight() );
             commands.Add( new MoveZoomImageToTop() );
