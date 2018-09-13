@@ -225,7 +225,7 @@ namespace C_SlideShow
         private void OnSeekbarValueChanged(int value)
         {
             int index = value - 1;
-            ChangeCurrentImageIndex(index);
+            if(index != imageFileManager.CurrentIndex) ChangeCurrentImageIndex(index);
         }
 
         private void Seekbar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

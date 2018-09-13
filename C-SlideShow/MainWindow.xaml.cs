@@ -778,7 +778,7 @@ namespace C_SlideShow
 
         public void ChangeCurrentImageIndex(int index)
         {
-            if( ImageFileManager.ActualCurrentIndex == index ) return;
+            //if( ImageFileManager.ActualCurrentIndex == index ) return;
             imageFileManager.NextIndex = index;
             StopSlideShow(true);
 
@@ -866,7 +866,7 @@ namespace C_SlideShow
             {
                 tc.InitGridLineColor( (Color)pf.GridLineColor.Value );
                 tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
-                //tc.InitSizeAndPos(pf.AspectRatioH, pf.AspectRatioV, pf.TilePadding);
+                //tc.InitSizeAndPos(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
             }
 
             // 現在表示中の画像をそのままに、コンテナの位置を初期化する
