@@ -45,7 +45,6 @@ namespace C_SlideShow
 
         UIHelper uiHelper;
         Rect windowRectBeforeFullScreen = new Rect(50, 50, 400, 300);
-        bool isTopmostBeforeFullScreen = false;
 
         // property
         public static MainWindow Current { get; private set; }
@@ -1009,7 +1008,6 @@ namespace C_SlideShow
                 this.MainContent.Margin = new Thickness(Setting.TempProfile.ResizeGripThickness.Value);
                 this.ResizeGrip.Visibility = Visibility.Visible;
                 this.IgnoreResizeEvent = true;
-                //this.Topmost = isTopmostBeforeFullScreen;
                 this.Left = windowRectBeforeFullScreen.Left;
                 this.Top = windowRectBeforeFullScreen.Top;
                 this.Width = windowRectBeforeFullScreen.Width;
@@ -1031,14 +1029,12 @@ namespace C_SlideShow
             {
                 // フルスクリーン開始
                 windowRectBeforeFullScreen = new Rect(Left, Top, Width, Height);
-                //isTopmostBeforeFullScreen = this.Topmost;
 
                 // このウインドウと一番重なりが大きいモニターのサイズを取得
                 Rect rcMonitor = Win32.GetScreenRectFromRect(new Rect(Left, Top, Width, Height));
 
                 // サイズ変更
                 this.IgnoreResizeEvent = true;
-                this.Topmost = true;
                 this.Left = rcMonitor.Left;
                 this.Top = rcMonitor.Top;
                 this.Width = rcMonitor.Width;
