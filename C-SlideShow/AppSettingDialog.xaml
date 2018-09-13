@@ -167,11 +167,11 @@
             <TabItem Header="履歴" Width="80">
                 <StackPanel>
                     <CheckBox x:Name="EnabledItemsInHistory_ArchiverPath" Margin="5" >開いたフォルダ(書庫)の履歴を保存する</CheckBox>
-                    <GroupBox Header="付随して保存する情報" Margin="10,0">
+                    <GroupBox Header="付随して保存/復元する情報" Margin="10,0">
                         <StackPanel>
                             <CheckBox Margin="5" x:Name="EnabledItemsInHistory_ImagePath" HorizontalAlignment="Left" >最後に開いた画像</CheckBox>
                             <CheckBox Margin="5" x:Name="EnabledItemsInHistory_AspectRatio" HorizontalAlignment="Left" >アスペクト比</CheckBox>
-                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_Matrix" HorizontalAlignment="Left" >行列数</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_Matrix" HorizontalAlignment="Left" >列数・行数</CheckBox>
                             <CheckBox Margin="5" x:Name="EnabledItemsInHistory_SlideDirection" HorizontalAlignment="Left" >スライド方向</CheckBox>
                         </StackPanel>
                     </GroupBox>

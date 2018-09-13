@@ -296,7 +296,6 @@ namespace C_SlideShow
             }
             else
             {
-                this.WaitingMessageBase.Visibility = Visibility.Visible;
                 if( userProfile.FileSortMethod.IsEnabled ) SortOnFileLoaded(); // ファイルは読み込まずにソート
                 InitMainContent(tp.LastPageIndex.Value);
             }
@@ -339,17 +338,16 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         public void ReadFilesAndInitMainContent(string[] pathes, bool isAddition, int firstIndex)
         {
-            // 「読み込み中」メッセージ
-            this.WaitingMessageBase.Visibility = Visibility.Visible; 
-            this.WaitingMessageBase.Refresh();
-
             ReadFiles(pathes, isAddition);
             InitMainContent(firstIndex);
-            this.WaitingMessageBase.Visibility = Visibility.Collapsed;
         }
 
         public void InitMainContent(int firstIndex)
         {
+            // 「読み込み中」メッセージ
+            this.WaitingMessageBase.Visibility = Visibility.Visible; 
+            this.WaitingMessageBase.Refresh();
+
             if( IsPlaying || tileContainers.Any(tc => tc.IsActiveSliding) )
                 StopSlideShow(true);
 
@@ -408,6 +406,10 @@ namespace C_SlideShow
 
         private void ReadFiles(string[] pathes, bool isAddition)
         {
+            // 「読み込み中」メッセージ
+            this.WaitingMessageBase.Visibility = Visibility.Visible; 
+            this.WaitingMessageBase.Refresh();
+
             Profile pf = Setting.TempProfile;
 
             if( isAddition )
@@ -463,6 +465,9 @@ namespace C_SlideShow
             {
                 Setting.History.RemoveRange( Setting.NumofHistory, Setting.History.Count - Setting.NumofHistory);
             }
+
+            // 「読み込み中」メッセージ解除
+            this.WaitingMessageBase.Visibility = Visibility.Collapsed;
         }
 
         public void DropNewFiles(string[] pathes)
@@ -509,9 +514,6 @@ namespace C_SlideShow
             // 履歴にない場合
             else
             {
-                this.WaitingMessageBase.Visibility = Visibility.Visible; 
-                this.WaitingMessageBase.Refresh();
-
                 ReadFiles(new string[] { dirPath }, false);
                 ImageFileInfo dropedFileInfo = imageFileManager.ImgFileInfo.FirstOrDefault(i => i.FilePath == path);
                 int firstIndex;
@@ -524,8 +526,6 @@ namespace C_SlideShow
                     firstIndex = 0;
                 }
                 InitMainContent(firstIndex);
-
-                this.WaitingMessageBase.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -1346,16 +1346,11 @@ namespace C_SlideShow
                     pf.SlideDirection.Value = hi.SlideDirection;
                 }
 
-                this.WaitingMessageBase.Visibility = Visibility.Visible; 
-                this.WaitingMessageBase.Refresh();
-
                 InitMainContent(pf.LastPageIndex.Value);
 
                 // 更新
                 UpdateMainWindowView();
                 UpdateToolbarViewing();
-
-                this.WaitingMessageBase.Visibility = Visibility.Collapsed;
             }
         }
 

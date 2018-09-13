@@ -127,10 +127,6 @@ namespace C_SlideShow
 
             this.Drop += (s, e) =>
             {
-                // 「読み込み中」メッセージの表示
-                this.WaitingMessageBase.Visibility = Visibility.Visible;
-                this.WaitingMessageBase.Refresh();
-
                 SaveHistoryItem();
 
                 string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
@@ -521,11 +517,8 @@ namespace C_SlideShow
             if(ms != null)
             {
                 this.MenuItem_Matrix.IsSubmenuOpen = false;
-                this.WaitingMessageBase.Visibility = Visibility.Visible;
-                this.WaitingMessageBase.Refresh();
                 ChangeGridDifinition(ms.ColValue, ms.RowValue);
                 this.Focus();
-                this.WaitingMessageBase.Visibility = Visibility.Collapsed;
             }
 
         }
