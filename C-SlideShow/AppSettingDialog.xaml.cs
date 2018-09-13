@@ -308,6 +308,7 @@ namespace C_SlideShow
             // 詳細
             ShowMenuItem_AdditionalRead.IsChecked = setting.ShowMenuItem_AdditionalRead;
             SerachAllDirectoriesInFolderReading.IsChecked = setting.SerachAllDirectoriesInFolderReading;
+            ReadSingleImageAsParentFolder.IsChecked = setting.ReadSingleImageAsParentFolder;
 
             SeekbarColor.PickedColor = setting.SeekbarColor;
 
@@ -1329,6 +1330,7 @@ namespace C_SlideShow
         {
             ShowMenuItem_AdditionalRead.IsChecked = true;
             SerachAllDirectoriesInFolderReading.IsChecked = true;
+            ReadSingleImageAsParentFolder.IsChecked = true;
             SeekbarColor.PickedColor = Colors.Black;
             SeekBarIsMoveToPointEnabled.SelectedIndex = 1;
             MouseCursorAutoHide.IsChecked = true;
@@ -1434,6 +1436,7 @@ namespace C_SlideShow
             // 詳細
             setting.ShowMenuItem_AdditionalRead = (bool)ShowMenuItem_AdditionalRead.IsChecked ;
             setting.SerachAllDirectoriesInFolderReading = (bool)SerachAllDirectoriesInFolderReading.IsChecked;
+            setting.ReadSingleImageAsParentFolder = (bool)ReadSingleImageAsParentFolder.IsChecked;
             setting.SeekbarColor = SeekbarColor.PickedColor;
             setting.SeekBarIsMoveToPointEnabled = SeekBarIsMoveToPointEnabled.SelectedIndex == 1 ? true : false;
             setting.MouseCursorAutoHide = (bool)MouseCursorAutoHide.IsChecked;

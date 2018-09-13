@@ -285,6 +285,7 @@
                 <StackPanel Margin="10">
                     <CheckBox Margin="5" x:Name="ShowMenuItem_AdditionalRead" HorizontalAlignment="Left" >「フォルダを追加読み込み」「ファイルを追加読み込み」を読み込みメニューに表示する</CheckBox>
                     <CheckBox Margin="5" x:Name="SerachAllDirectoriesInFolderReading" HorizontalAlignment="Left" >フォルダ読み込み時、サブディレクトリ以下のファイルも読み込む</CheckBox>
+                    <CheckBox Margin="5" x:Name="ReadSingleImageAsParentFolder" HorizontalAlignment="Left" >画像を1枚だけ読み込んだ場合は、代わりに親フォルダを読み込む</CheckBox>
                     <StackPanel Margin="5" Orientation="Horizontal">
                         <TextBlock>シークバーの色</TextBlock>
                         <cc:ColorPickerButton Margin="8,0" x:Name="SeekbarColor"></cc:ColorPickerButton>

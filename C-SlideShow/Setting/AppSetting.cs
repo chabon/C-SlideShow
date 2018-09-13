@@ -200,6 +200,9 @@ namespace C_SlideShow
         public bool SerachAllDirectoriesInFolderReading { get; set; }
 
         [DataMember]
+        public bool ReadSingleImageAsParentFolder { get; set; }
+
+        [DataMember]
         public Color SeekbarColor { get; set; }
 
         [DataMember]
@@ -262,7 +265,7 @@ namespace C_SlideShow
             // ショートカット
             ShortcutSetting = new ShortcutSetting();
             MouseGestureRange = 15;
-            LongClickDecisionTime = 500;
+            LongClickDecisionTime = 400;
 
             // 履歴設定
             History = new List<HistoryItem>();
@@ -284,6 +287,7 @@ namespace C_SlideShow
             // 詳細
             ShowMenuItem_AdditionalRead = true;
             SerachAllDirectoriesInFolderReading = true;
+            ReadSingleImageAsParentFolder = true;
             SeekbarColor = Colors.Black;
             SeekBarIsMoveToPointEnabled = true;
             MouseCursorAutoHide = true;

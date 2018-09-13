@@ -471,6 +471,14 @@ namespace C_SlideShow
             // 拡大中なら解除
             if( TileExpantionPanel.IsShowing ) TileExpantionPanel.Hide();
 
+            // 画像1枚だけ読み込みの時は、親フォルダを読み込む
+            if(  Setting.ReadSingleImageAsParentFolder && pathes.Length == 1 && File.Exists(pathes[0]) &&  
+                ArchiverBase.AllowedFileExt.Any( ext => pathes[0].ToLower().EndsWith(ext) )  )
+            {
+                DropNewFileAsFolder(pathes[0]);
+                return;
+            }
+
             // 読み込み
             if( Setting.EnabledItemsInHistory.ArchiverPath && pathes.Length == 1 &&
                 Setting.History.Any( hi => hi.ArchiverPath == pathes[0]) && Setting.ApplyHistoryInfoInNewArchiverReading)
@@ -481,6 +489,44 @@ namespace C_SlideShow
             else
             {
                 ReadFilesAndInitMainContent(pathes, false, 0);
+            }
+        }
+
+        public void DropNewFileAsFolder(string path)
+        {
+            // 単体画像をフォルダとして読み込み
+            string dirPath = Directory.GetParent(path).FullName;
+
+            // 履歴にあるかチェック
+            HistoryItem historyItem = Setting.History.FirstOrDefault(hi => hi.ArchiverPath == dirPath);
+
+            // 履歴にあるなら、最後に開いた画像の情報を置き換え
+            if( Setting.EnabledItemsInHistory.ArchiverPath && historyItem != null && Setting.ApplyHistoryInfoInNewArchiverReading)
+            {
+                historyItem.ImagePath = path;
+                LoadHistory(dirPath);
+            }
+
+            // 履歴にない場合
+            else
+            {
+                this.WaitingMessageBase.Visibility = Visibility.Visible; 
+                this.WaitingMessageBase.Refresh();
+
+                ReadFiles(new string[] { dirPath }, false);
+                ImageFileInfo dropedFileInfo = imageFileManager.ImgFileInfo.FirstOrDefault(i => i.FilePath == path);
+                int firstIndex;
+                if(dropedFileInfo != null )
+                {
+                    firstIndex = imageFileManager.ImgFileInfo.IndexOf(dropedFileInfo);
+                }
+                else
+                {
+                    firstIndex = 0;
+                }
+                InitMainContent(firstIndex);
+
+                this.WaitingMessageBase.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -963,7 +1009,7 @@ namespace C_SlideShow
                 this.MainContent.Margin = new Thickness(Setting.TempProfile.ResizeGripThickness.Value);
                 this.ResizeGrip.Visibility = Visibility.Visible;
                 this.IgnoreResizeEvent = true;
-                this.Topmost = isTopmostBeforeFullScreen;
+                //this.Topmost = isTopmostBeforeFullScreen;
                 this.Left = windowRectBeforeFullScreen.Left;
                 this.Top = windowRectBeforeFullScreen.Top;
                 this.Width = windowRectBeforeFullScreen.Width;
@@ -985,7 +1031,7 @@ namespace C_SlideShow
             {
                 // フルスクリーン開始
                 windowRectBeforeFullScreen = new Rect(Left, Top, Width, Height);
-                isTopmostBeforeFullScreen = this.Topmost;
+                //isTopmostBeforeFullScreen = this.Topmost;
 
                 // このウインドウと一番重なりが大きいモニターのサイズを取得
                 Rect rcMonitor = Win32.GetScreenRectFromRect(new Rect(Left, Top, Width, Height));
