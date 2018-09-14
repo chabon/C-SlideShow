@@ -247,7 +247,7 @@ namespace C_SlideShow
             AppSettingDialogTabIndex = 0;
             AppSettingDialog_ShortcutSettingTabIndex = 0;
             AppSettingDialogSize = Size.Empty;
-            MatrixSelecterMaxSize = 6;
+            MatrixSelecterMaxSize = 4;
             FolderOpenDialogLastSelectedPath = null;
             FileOpenDialogLastSelectedPath = null;
 
