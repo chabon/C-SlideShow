@@ -33,7 +33,14 @@ namespace C_SlideShow.Shortcut.Command
 
         public void Execute()
         {
-            MainWindow.Current.Close();
+
+            System.Windows.Threading.DispatcherTimer timer = new System.Windows.Threading.DispatcherTimer() { Interval = TimeSpan.FromMilliseconds(10) };
+            timer.Tick += (s, e) =>
+            {
+                timer.Stop();
+                MainWindow.Current.Close();
+            };
+            timer.Start();
 
             return;
         }
