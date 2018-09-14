@@ -26,10 +26,16 @@
             
             <!-- ショートカット -->
             <TabItem Header="ショートカット" Width="80">
+                <TabItem.Resources>
+                    <Style x:Key="ShortcutListViewItemContainerStyle" TargetType="ListViewItem">
+                        <EventSetter Event="MouseDoubleClick" Handler="ShortcutListViewItem_MouseDoubleClick"></EventSetter>
+                    </Style>
+                </TabItem.Resources>
                 <Grid>
                     <TabControl Margin="3,10,3,135" x:Name="ShortcutSettingTab" SelectionChanged="ShortcutSettingTab_SelectionChanged">
                         <TabItem Header="いつでも" Width="70">
-                            <ListView x:Name="ShortcutListView_ALL" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged">
+                            <ListView x:Name="ShortcutListView_ALL" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged"
+                                      ItemContainerStyle="{StaticResource ShortcutListViewItemContainerStyle}">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="300" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
@@ -41,7 +47,8 @@
                             </ListView>
                         </TabItem>
                         <TabItem Header="通常時" Width="70">
-                            <ListView x:Name="ShortcutListView_Normal" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged">
+                            <ListView x:Name="ShortcutListView_Normal" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged"
+                                      ItemContainerStyle="{StaticResource ShortcutListViewItemContainerStyle}">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="300" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>
@@ -53,7 +60,8 @@
                             </ListView>
                         </TabItem>
                         <TabItem Header="拡大時" Width="70">
-                            <ListView x:Name="ShortcutListView_Expand" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged">
+                            <ListView x:Name="ShortcutListView_Expand" SelectionMode="Single" SelectionChanged="ShortcutListView_SelectionChanged"
+                                      ItemContainerStyle="{StaticResource ShortcutListViewItemContainerStyle}">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="コマンド" Width="300" DisplayMemberBinding="{Binding CommandStr}"></GridViewColumn>

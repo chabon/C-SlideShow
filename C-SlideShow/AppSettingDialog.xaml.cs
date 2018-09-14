@@ -690,6 +690,18 @@ namespace C_SlideShow
             }
         }
 
+        private void ShortcutListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ListViewItem item = sender as ListViewItem;
+            if( item != null && item.IsSelected )
+            {
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input, new Action(delegate()
+                    {
+                        Keyboard.Focus(HotkeyControl.MainBorder);
+                    }));
+            }
+        }
+
         private void AllDefault_Shortcut_Click(object sender, RoutedEventArgs e)
         {
             List<CommandMap> defaultCommandMap = ShortcutSetting.CreateDefaultCommandMap();
@@ -1459,6 +1471,7 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
 
 
 
