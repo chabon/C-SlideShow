@@ -267,22 +267,33 @@
                             </StackPanel>
                             <DockPanel Margin="3">
                                 <Label Width="80" DockPanel.Dock="Left">名前(省略可)</Label>
-                                <TextBox Height="22" Margin="0,0,32,0" x:Name="ExternalAppName" TextChanged="ExternalAppName_TextChanged" Width="200" HorizontalAlignment="Left"></TextBox>
+                                <TextBox Height="22" Margin="0,0,32,0" x:Name="ExternalAppName" TextChanged="ExternalAppName_TextChanged" Width="200" HorizontalAlignment="Left" IsEnabled="False"></TextBox>
                             </DockPanel>
 
                             <DockPanel Margin="3">
                                 <Label Width="80" DockPanel.Dock="Left">パス</Label>
                                 <Grid>
                                     <TextBox Height="22" Margin="0,0,32,0" x:Name="ExternalAppPath" TextChanged="ExternalAppPath_TextChanged"
-                                             ToolTip="指定がなければ、拡張子で関連付けされた規定のプログラムで開きます"></TextBox>
-                                    <Button x:Name="ExternalAppPathBrowse" Click="ExternalAppPathBrowse_Click" Width="30" HorizontalAlignment="Right" Height="22">参照</Button>
+                                             ToolTip="指定がなければ、拡張子で関連付けされた規定のプログラムで開きます" IsEnabled="False"></TextBox>
+                                    <Button x:Name="ExternalAppPathBrowse" Click="ExternalAppPathBrowse_Click" Width="30" HorizontalAlignment="Right" Height="22" IsEnabled="False">参照</Button>
                                 </Grid>
                             </DockPanel>
                             <DockPanel Margin="3">
                                 <Label Width="80" DockPanel.Dock="Left">引数</Label>
-                                <TextBox x:Name="ExternalAppArg" TextChanged="ExternalAppArg_TextChanged" Height="22" ToolTip="$FilePath$がファイルパスに変換されます"></TextBox>
+                                <Grid>
+                                    <TextBox x:Name="ExternalAppArg" Margin="0,0,32,0" TextChanged="ExternalAppArg_TextChanged" Height="22" ToolTip="$FilePath$がファイルパスに変換されます" IsEnabled="False"></TextBox>
+                                    <Button x:Name="ExternalAppArgFormat" Click="ExternalAppArgFormat_Click" Width="30" HorizontalAlignment="Right" Height="22" IsEnabled="False">書式
+                                        <Button.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="$FilePath$" InputGestureText="ファイルパス" Click="ExternalAppArgFormatItem_Click"></MenuItem>
+                                                <MenuItem Header="$FolderPath$" InputGestureText="フォルダ(書庫)のパス" Click="ExternalAppArgFormatItem_Click"></MenuItem>
+                                                <MenuItem Header="$ParentFolderPath$" InputGestureText="フォルダ(書庫)の親フォルダのパス" Click="ExternalAppArgFormatItem_Click"></MenuItem>
+                                            </ContextMenu>
+                                        </Button.ContextMenu>
+                                    </Button>
+                                </Grid>
                             </DockPanel>
-                            <CheckBox x:Name="ExternalApp_ShowContextMenu" Click="ExternalApp_ShowContextMenu_Click" HorizontalAlignment="Left" Margin="8,8">コンテキストメニューに表示する</CheckBox>
+                            <CheckBox x:Name="ExternalApp_ShowContextMenu" Click="ExternalApp_ShowContextMenu_Click" HorizontalAlignment="Left" Margin="8,8" IsEnabled="False">コンテキストメニューに表示する</CheckBox>
                         </StackPanel>
                     </Grid>
                 </Grid>

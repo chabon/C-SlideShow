@@ -51,16 +51,16 @@ namespace C_SlideShow
         // エクスプローラーでタイルを開く
         public void OpenExplorer()
         {
-            string folderDirPath;
+            string dirPath;
             string filePath;
             if( ImageFileInfo.Archiver.CanReadFile )
             {
-                folderDirPath = Directory.GetParent(ImageFileInfo.FilePath).FullName;
+                dirPath = Directory.GetParent(ImageFileInfo.FilePath).FullName;
                 filePath = ImageFileInfo.FilePath;
             }
             else
             {
-                folderDirPath = Directory.GetParent(ImageFileInfo.Archiver.ArchiverPath).FullName;
+                dirPath = Directory.GetParent(ImageFileInfo.Archiver.ArchiverPath).FullName;
                 filePath = ImageFileInfo.Archiver.ArchiverPath;
             }
             Process.Start("explorer.exe", "/select,\"" + filePath + "\"");
@@ -138,40 +138,70 @@ namespace C_SlideShow
         // 外部プログラムで画像を開く
         public void OpenByExternalApp(ExternalAppInfo exAppInfo)
         {
+            const string filePathFormat         = "$FilePath$";
+            const string folderPathFormat       = "$FolderPath$";
+            const string parentFolderPathFormat = "$ParentFolderPath$";
+
+            if( exAppInfo == null ) return;
+
             // ファイルパスの決定
-            string filePath;
-            if( ImageFileInfo.Archiver.CanReadFile )
+            string filePath = "";
+            if( exAppInfo.Arg.Contains(filePathFormat) )
             {
-                filePath = ImageFileInfo.FilePath;
-            }
-            else
-            {
-                // 書庫内ファイルなら一時展開
-                if( ImageFileInfo.TempFilePath == null ) ImageFileInfo.WriteToTempFolder();
-                filePath = ImageFileInfo.TempFilePath;
-            }
-
-            // 外部プログラム呼び出し
-            if( exAppInfo != null)
-            {
-                string filePathFormat = "$FilePath$";
-
-                string arg = exAppInfo.Arg;
-                if( arg == "" ) arg = "\"" + filePathFormat + "\"";
-
-                if(exAppInfo.Path != null && exAppInfo.Path != "" )
+                if( ImageFileInfo.Archiver.CanReadFile )
                 {
-                    // プログラムの指定あり
-                    try { Process.Start( exAppInfo.Path, arg.Replace(filePathFormat, filePath) ); }
-                    catch { }
+                    filePath = ImageFileInfo.FilePath;
                 }
                 else
                 {
-                    // プログラムの指定がなければ、拡張子で関連付けられているプログラムで開く
-                    try { Process.Start( "\"" +  filePath +"\"" ); }
-                    catch { }
+                    // 書庫内ファイルなら一時展開
+                    if( ImageFileInfo.TempFilePath == null ) ImageFileInfo.WriteToTempFolder();
+                    filePath = ImageFileInfo.TempFilePath;
                 }
             }
+
+            // フォルダ(書庫)パスの決定
+            string folderPath;
+            ImageFileInfo fi = this.ImageFileInfo;
+            if(fi.Archiver is Archiver.NullArchiver )
+            {
+                try { folderPath = Directory.GetParent(fi.FilePath).FullName; }
+                catch { folderPath = ""; }
+            }
+            else
+            {
+                folderPath = fi.Archiver.ArchiverPath;
+            }
+
+            // 親フォルダパスの決定
+            string parentFolderPath;
+            try { parentFolderPath = Directory.GetParent(folderPath).FullName; }
+            catch { parentFolderPath = ""; }
+
+
+            // 外部プログラム呼び出し
+            string arg = exAppInfo.Arg;
+            arg = arg.Replace(filePathFormat, filePath);
+            arg = arg.Replace(folderPathFormat, folderPath);
+            arg = arg.Replace(parentFolderPathFormat, parentFolderPath);
+
+            if(exAppInfo.Path != null && exAppInfo.Path != "" )
+            {
+                // プログラムの指定あり
+                try { Process.Start( exAppInfo.Path, arg ); }
+                catch { }
+            }
+            else
+            {
+                // プログラムの指定がなければ、拡張子で関連付けられているプログラムで開く(引数そのままStart()に)
+                try { Process.Start( arg ); }
+                catch { }
+            }
+        }
+
+        // 規定の外部プログラムで開く
+        public void OpenByDefaultExternalApp(ExternalAppInfo exAppInfo)
+        {
 
         }
 

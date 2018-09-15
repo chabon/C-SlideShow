@@ -1162,6 +1162,7 @@ namespace C_SlideShow
                 ExternalAppPath.IsEnabled = true;
                 ExternalAppPathBrowse.IsEnabled = true;
                 ExternalAppArg.IsEnabled = true;
+                ExternalAppArgFormat.IsEnabled = true;
                 ExternalApp_ShowContextMenu.IsEnabled = true;
             }
             else
@@ -1170,6 +1171,7 @@ namespace C_SlideShow
                 ExternalAppPath.IsEnabled = false;
                 ExternalAppPathBrowse.IsEnabled = false;
                 ExternalAppArg.IsEnabled = false;
+                ExternalAppArgFormat.IsEnabled = false;
                 ExternalApp_ShowContextMenu.IsEnabled = false;
             }
 
@@ -1306,6 +1308,20 @@ namespace C_SlideShow
 
             var item = GetSelectedExternalAppListViewItem();
             if(item != null)  item.Arg = ExternalAppArg.Text;
+        }
+
+        private void ExternalAppArgFormat_Click(object sender, RoutedEventArgs e)
+        {
+            ExternalAppArgFormat.ContextMenu.IsOpen = true;
+        }
+
+        private void ExternalAppArgFormatItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem mi = sender as MenuItem;
+            if(mi != null )
+            {
+                ExternalAppArg.Text += mi.Header;
+            }
         }
 
         private void ExternalApp_ShowContextMenu_Click(object sender, RoutedEventArgs e)
@@ -1471,6 +1487,8 @@ namespace C_SlideShow
         {
             this.Close();
         }
+
+
 
 
 
