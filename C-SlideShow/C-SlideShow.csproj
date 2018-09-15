@@ -82,6 +82,7 @@
     <Compile Include="CommonControl\NotificationBlock.xaml.cs">
       <DependentUpon>NotificationBlock.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Format.cs" />
     <Compile Include="MessageBoxEx.cs" />
     <Compile Include="Setting\AppSetting.cs" />
     <Compile Include="Archiver\ArchiverBase.cs" />

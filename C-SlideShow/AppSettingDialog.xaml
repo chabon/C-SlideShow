@@ -238,7 +238,7 @@
             <!-- 外部連携 -->
             <TabItem Header="外部連携" Width="80">
                 <Grid Margin="10">
-                    <ListView Margin="0,0,0,200" x:Name="ExternalAppListView" SelectionChanged="ExternalAppListView_SelectionChanged">
+                    <ListView Margin="0,0,0,210" x:Name="ExternalAppListView" SelectionChanged="ExternalAppListView_SelectionChanged">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="名前" Width="110" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
@@ -250,7 +250,7 @@
                     </ListView>
 
 
-                    <Grid x:Name="ExternalAppDialogFooter" Height="200" VerticalAlignment="Bottom">
+                    <Grid x:Name="ExternalAppDialogFooter" Height="210" VerticalAlignment="Bottom">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel.Resources>
@@ -294,6 +294,7 @@
                                 </Grid>
                             </DockPanel>
                             <CheckBox x:Name="ExternalApp_ShowContextMenu" Click="ExternalApp_ShowContextMenu_Click" HorizontalAlignment="Left" Margin="8,8" IsEnabled="False">コンテキストメニューに表示する</CheckBox>
+                            <Button x:Name="AllDefault_ExApp" Width="100" Click="AllDefault_ExApp_Click" HorizontalAlignment="Left" Margin="0,15">すべてデフォルト</Button>
                         </StackPanel>
                     </Grid>
                 </Grid>

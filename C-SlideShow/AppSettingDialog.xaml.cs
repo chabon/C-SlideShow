@@ -133,7 +133,7 @@ namespace C_SlideShow
                 }
             }
         }
-        private string arg = "\"$FilePath$\"";
+        private string arg = "\""+ Format.FilePathFormat + "\"";
         public string Arg
         {
             get { return arg; }
@@ -1320,7 +1320,7 @@ namespace C_SlideShow
             MenuItem mi = sender as MenuItem;
             if(mi != null )
             {
-                ExternalAppArg.Text += mi.Header;
+                ExternalAppArg.Text =  "\"" + mi.Header + "\"";
             }
         }
 
@@ -1334,6 +1334,29 @@ namespace C_SlideShow
                 item.ShowContextMenu = (bool)ExternalApp_ShowContextMenu.IsChecked ? "○" : "×";
             }
         }
+
+        private void AllDefault_ExApp_Click(object sender, RoutedEventArgs e)
+        {
+            ExternalAppListView.Items.Clear();
+
+            ExternalAppListView.Items.Add(new ExternalAppListViewItem
+            {
+                Name            = "規定のプログラム",
+                Path            = "",
+                Arg             = "\"" + Format.FilePathFormat + "\"",
+                ShowContextMenu = "○"
+            });
+
+            ExternalAppListView.Items.Add(new ExternalAppListViewItem
+            {
+                Name            = "エクスプローラー",
+                Path            = "explorer.exe",
+                Arg             = "/select,\"" + Format.FilePathFormat + "\"",
+                ShowContextMenu = "○"
+            });
+            ExternalAppListView_SelectionChanged(this, null);
+        }
+
 
         // 詳細
         private void MouseCursorAutoHide_Click(object sender, RoutedEventArgs e)

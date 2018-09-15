@@ -138,15 +138,11 @@ namespace C_SlideShow
         // 外部プログラムで画像を開く
         public void OpenByExternalApp(ExternalAppInfo exAppInfo)
         {
-            const string filePathFormat         = "$FilePath$";
-            const string folderPathFormat       = "$FolderPath$";
-            const string parentFolderPathFormat = "$ParentFolderPath$";
-
             if( exAppInfo == null ) return;
 
             // ファイルパスの決定
             string filePath = "";
-            if( exAppInfo.Arg.Contains(filePathFormat) )
+            if( exAppInfo.Arg.Contains(Format.FilePathFormat) )
             {
                 if( ImageFileInfo.Archiver.CanReadFile )
                 {
@@ -181,9 +177,9 @@ namespace C_SlideShow
 
             // 外部プログラム呼び出し
             string arg = exAppInfo.Arg;
-            arg = arg.Replace(filePathFormat, filePath);
-            arg = arg.Replace(folderPathFormat, folderPath);
-            arg = arg.Replace(parentFolderPathFormat, parentFolderPath);
+            arg = arg.Replace(Format.FilePathFormat, filePath);
+            arg = arg.Replace(Format.FolderPathFormat, folderPath);
+            arg = arg.Replace(Format.ParentFolderPathFormat, parentFolderPath);
 
             if(exAppInfo.Path != null && exAppInfo.Path != "" )
             {

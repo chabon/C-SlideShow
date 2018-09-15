@@ -70,7 +70,7 @@ namespace C_SlideShow
         public string Path { get; set; } = "";
 
         [DataMember]
-        public string Arg { get; set; } = "\"$FilePath$\"";
+        public string Arg { get; set; } = "\"" + Format.FilePathFormat + "\"";
 
         [DataMember]
         public bool ShowContextMenu { get; set; } = true;
@@ -280,9 +280,17 @@ namespace C_SlideShow
 
             // 外部連携
             ExternalAppInfoList = new List<ExternalAppInfo>();
-            var exAppInfo = new ExternalAppInfo();
-            exAppInfo.Name = "規定のプログラム"; 
-            ExternalAppInfoList.Add(exAppInfo);
+
+            var exAppInfo1 = new ExternalAppInfo();
+            exAppInfo1.Name = "規定のプログラム"; 
+            exAppInfo1.Arg = "\""+ Format.FilePathFormat + "\"";
+            ExternalAppInfoList.Add(exAppInfo1);
+
+            var exAppInfo2 = new ExternalAppInfo();
+            exAppInfo2.Name = "エクスプローラー";
+            exAppInfo2.Path = "explorer.exe";
+            exAppInfo2.Arg = "/select,\""+ Format.FilePathFormat + "\"";
+            ExternalAppInfoList.Add(exAppInfo2);
 
             // 詳細
             ShowMenuItem_AdditionalRead = true;
