@@ -442,7 +442,7 @@ namespace C_SlideShow.ProfileMember
     {
         public TileImageStretch()
         {
-            this.Value = C_SlideShow.TileImageStretch.UniformToFill;
+            this.Value = C_SlideShow.TileImageStretch.Uniform;
             IsEnabled  = false;
         }
 

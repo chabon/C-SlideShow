@@ -275,7 +275,7 @@ namespace C_SlideShow
                 if( val > ProfileMember.TilePadding.Max ) val = (int)ProfileMember.TilePadding.Max;
                 if( val < ProfileMember.TilePadding.Min ) val = (int)ProfileMember.TilePadding.Min;
                 Setting.TempProfile.TilePadding.Value = val;
-                mainWindow.UpdateGridLine();
+                mainWindow.ImgContainerManager.ApplyGridLineThickness();
             }
             catch { }
         }
@@ -286,7 +286,7 @@ namespace C_SlideShow
             if (isInitializing) return;
 
             Setting.TempProfile.GridLineColor.Value = GridLineColor.PickedColor;
-            mainWindow.UpdateGridLine();
+            mainWindow.ImgContainerManager.ApplyGridLineColor();
             mainWindow.ToolbarWrapper.Visibility = Visibility.Visible;
             mainWindow.MenuItem_Setting.IsSubmenuOpen = true;
         }

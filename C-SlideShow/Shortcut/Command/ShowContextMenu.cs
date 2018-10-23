@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Diagnostics;
 using System.Windows.Threading;
+using C_SlideShow.Core;
 
 namespace C_SlideShow.Shortcut.Command
 {
@@ -41,13 +42,17 @@ namespace C_SlideShow.Shortcut.Command
             MainWindow mw = MainWindow.Current;
 
             // カーソル下のタイル取得
-            Tile targetTile = mw.GetTileUnderCursor();
+            //Tile targetTile = mw.GetBorderUnderCursor();
+
+            // カーソル下の画像情報、Border取得
+            ImageFileContext ifc = mw.GetImageFileContextUnderCursor();
+            Border border = mw.GetBorderUnderCursor();
 
             // 取得失敗
-            if( targetTile == null ) return;
+            if( ifc == null ) return;
 
             // ダミーだった場合
-            if( targetTile != null && targetTile.ImageFileInfo.IsDummy ) return;
+            if( ifc != null && ifc.IsDummy ) return;
 
             // コンテキストメニューのClosedイベント完了を待つ
             if(!closedEventFinished)
@@ -69,31 +74,30 @@ namespace C_SlideShow.Shortcut.Command
             bool IsExpanded = MainWindow.Current.TileExpantionPanel.IsShowing;
             if( !IsExpanded )
             {
-                HighlightTargetTile(targetTile);
+                HighlightTargetTile(border);
                 closedEventFinished = false;
 
                 contextMenu.Closed += (se, ev) =>
                 {
-                    targetTile.Border.BorderBrush = new SolidColorBrush(mw.Setting.TempProfile.GridLineColor.Value);
-                    targetTile.Border.BorderThickness = new Thickness(mw.Setting.TempProfile.TilePadding.Value);
+                    border.BorderBrush = new SolidColorBrush(mw.Setting.TempProfile.GridLineColor.Value);
+                    border.BorderThickness = new Thickness(mw.Setting.TempProfile.TilePadding.Value);
 
                     closedEventFinished = true;
                 };
             }
 
             // ツールチップ
-            ImageFileInfo fi = targetTile.ImageFileInfo;
             string toolTip_CopyFile     = "コピー後、エクスプローラーで貼り付けが出来ます";
             string toolTip_CopyFileData = "コピー後、ペイント等の画像編集ソフトへ貼り付けが出来ます";
             string toolTip_FilePath;
-            if( fi.Archiver.CanReadFile ) { toolTip_FilePath = fi.FilePath; }
-            else { toolTip_FilePath = fi.Archiver.ArchiverPath; }
-            string toolTip_FileName = System.IO.Path.GetFileName( fi.FilePath );
+            if( ifc.Archiver.CanReadFile ) { toolTip_FilePath = ifc.FilePath; }
+            else { toolTip_FilePath = ifc.Archiver.ArchiverPath; }
+            string toolTip_FileName = System.IO.Path.GetFileName( ifc.FilePath );
 
             // メニューアイテム作成
             if( !IsExpanded )
             {
-                contextMenu.Items.Add( CreateMenuItem("拡大表示", null, (s, e) => { mw.TileExpantionPanel.Show(targetTile); }) );
+                contextMenu.Items.Add( CreateMenuItem("拡大表示", null, (s, e) => { var t = mw.TileExpantionPanel.Show(border); }) );
                 contextMenu.Items.Add( new Separator() );
             }
             else
@@ -110,7 +114,7 @@ namespace C_SlideShow.Shortcut.Command
                     string name = exAppInfo.GetAppName();
                     if(name != null)
                     {
-                        contextMenu.Items.Add( CreateMenuItem( name + "で開く", null, (s, e) => { targetTile.OpenByExternalApp(exAppInfo); }) );
+                        contextMenu.Items.Add( CreateMenuItem( name + "で開く", null, (s, e) => { ifc.OpenByExternalApp(exAppInfo); }) );
                         num++;
                     }
                 }
@@ -118,10 +122,10 @@ namespace C_SlideShow.Shortcut.Command
 
             if(num > 0) contextMenu.Items.Add( new Separator() );
 
-            contextMenu.Items.Add( CreateMenuItem("ファイルをコピー",      toolTip_CopyFile,     (s, e) => { targetTile.CopyFile(); }) );
-            contextMenu.Items.Add( CreateMenuItem("画像データをコピー",    toolTip_CopyFileData, (s, e) => { targetTile.CopyImageData(); }) );
-            contextMenu.Items.Add( CreateMenuItem("ファイルパスをコピー",  toolTip_FilePath,     (s, e) => { targetTile.CopyFilePath(); }) );
-            contextMenu.Items.Add( CreateMenuItem("ファイル名をコピー",    toolTip_FileName,     (s, e) => { targetTile.CopyFileName(); }) );
+            contextMenu.Items.Add( CreateMenuItem("ファイルをコピー",      toolTip_CopyFile,     (s, e) => { ifc.CopyFile(); }) );
+            contextMenu.Items.Add( CreateMenuItem("画像データをコピー",    toolTip_CopyFileData, (s, e) => { ifc.CopyImageData(); }) );
+            contextMenu.Items.Add( CreateMenuItem("ファイルパスをコピー",  toolTip_FilePath,     (s, e) => { ifc.CopyFilePath(); }) );
+            contextMenu.Items.Add( CreateMenuItem("ファイル名をコピー",    toolTip_FileName,     (s, e) => { ifc.CopyFileName(); }) );
 
             if( !IsExpanded )
             {
@@ -136,8 +140,8 @@ namespace C_SlideShow.Shortcut.Command
             // スライド再生中だったら止める
             if( !IsExpanded && mw.IsPlaying )
             {
-                mw.StopSlideShow(false);
-                contextMenu.Closed += (s, e) => { mw.StartSlideShow(false); };
+                mw.ImgContainerManager.StopSlideShow(false);
+                contextMenu.Closed += (s, e) => { mw.ImgContainerManager.StartSlideShow(false); };
             }
 
             return;
@@ -152,13 +156,11 @@ namespace C_SlideShow.Shortcut.Command
             return menuItem;
         }
 
-        private void HighlightTargetTile(Tile targetTile)
+        private void HighlightTargetTile(Border border)
         {
             // タイルの強調表示
-            if(targetTile != null )
+            if(border != null )
             {
-                Border border = targetTile.Border;
-
                 // 強調表示のボーダーの太さを決める(内部の画像のアス比はキープする)
                 double h = border.BorderThickness.Left;
                 double v = border.BorderThickness.Top;

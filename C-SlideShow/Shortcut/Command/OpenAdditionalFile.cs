@@ -53,7 +53,8 @@ namespace C_SlideShow.Shortcut.Command
                 if (ofd.ShowDialog() == Forms.DialogResult.OK)
                 {
                     if(ofd.FileNames.Length > 0) mw.Setting.FileOpenDialogLastSelectedPath = ofd.FileNames[0];
-                    mw.ReadFilesAndInitMainContent(ofd.FileNames, true,  0);
+                    mw.ReadFiles(ofd.FileNames, true);
+                    var t = mw.ImgContainerManager.InitAllContainer(0);
 
                     // 拡大中なら解除
                     if( mw.TileExpantionPanel.IsShowing ) mw.TileExpantionPanel.Hide();

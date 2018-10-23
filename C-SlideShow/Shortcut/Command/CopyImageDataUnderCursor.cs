@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Input;
 using System.Diagnostics;
-
+using C_SlideShow.Core;
 
 namespace C_SlideShow.Shortcut.Command
 {
@@ -43,19 +43,20 @@ namespace C_SlideShow.Shortcut.Command
         public void Execute()
         {
             mw = MainWindow.Current;
-            Tile targetTile;
+            ImageFileContext ifc;
+
             if( mw.TileExpantionPanel.IsShowing )
             {
-                targetTile = mw.TileExpantionPanel.TargetTile;
+                ifc = mw.TileExpantionPanel.TargetImgFileContext;
             }
             else
             {
-                targetTile = mw.GetTileUnderCursor();
+                ifc = mw.GetImageFileContextUnderCursor();
             }
 
-            if(targetTile != null)
+            if(ifc != null)
             {
-                targetTile.CopyImageData();
+                ifc.CopyImageData();
             }
         }
 

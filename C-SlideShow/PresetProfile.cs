@@ -27,6 +27,7 @@ namespace C_SlideShow
                 if(member != null) member.IsEnabled = true;
             }
             Default.Path.IsEnabled = false;
+            Default.LastPageIndex.IsEnabled = false;
             Default.WindowPos.IsEnabled = false;
 
             // 書籍用(左綴じ)

@@ -32,24 +32,6 @@
             <Grid x:Name="Bg_ForTransparencySetting" Background="White" Visibility="Hidden">
             </Grid>
             <Grid x:Name="MainContent" Margin="5">
-                <local:TileContainer
-                    Order="0"
-                    x:Name="TileContainer1"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="top">
-                </local:TileContainer>
-                <local:TileContainer
-                    x:Name="TileContainer2"
-                    Order="1"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="top">
-                </local:TileContainer>
-                <local:TileContainer
-                    x:Name="TileContainer3"
-                    Order="2"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="top">
-                </local:TileContainer>
             </Grid>
         </Grid>
             
@@ -367,13 +349,13 @@
         <cc:NotificationBlock x:Name="NotificationBlock" Visibility="Collapsed"></cc:NotificationBlock>
 
         <!-- 読み込み中メッセージ -->
-        <Grid x:Name="WaitingMessageBase"
+        <!--<Grid x:Name="WaitingMessageBase"
                    Background="White" Opacity="0.8" Visibility="Hidden" Margin="0,-6,0,6" >
             <Label HorizontalAlignment="Center" 
                    VerticalAlignment="Center" 
                    FontSize="25"
                    Content="読み込み中...">
             </Label>
-        </Grid>
+        </Grid>-->
     </Grid>
 </Window>

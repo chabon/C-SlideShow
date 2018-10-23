@@ -31,9 +31,9 @@ namespace C_SlideShow.Shortcut.Command
         public void Execute()
         {
             MainWindow mw = MainWindow.Current;
-            int current = mw.ImageFileManager.ActualCurrentIndex;
+            int current = mw.ImgContainerManager.CurrentImageIndex;
             int destIndex = current -= Value;
-            int maxIndex = mw.ImageFileManager.ImgFileInfo.Count - 1;
+            int maxIndex = mw.ImgContainerManager.ImagePool.ImageFileContextList.Count - 1;
             if( destIndex < 0 )
             {
                 int revParam = Math.Abs(destIndex + 1);
@@ -41,7 +41,7 @@ namespace C_SlideShow.Shortcut.Command
                 destIndex = maxIndex - revParam;
             }
 
-            mw.ChangeCurrentImageIndex(destIndex);
+            var t = mw.ImgContainerManager.ChangeCurrentIndex(destIndex);
 
             return;
         }

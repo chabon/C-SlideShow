@@ -45,13 +45,13 @@ namespace C_SlideShow.Shortcut.Command
             mw = MainWindow.Current;
             if( mw.TileExpantionPanel.IsShowing ) return;
 
-            Tile targetTile = mw.GetTileUnderCursor();
+            Border targetTile = mw.GetBorderUnderCursor();
 
             if(targetTile != null )
             {
                 // 表示
                 Debug.WriteLine(targetTile.ToString());
-                mw.TileExpantionPanel.Show(targetTile);
+                var t = mw.TileExpantionPanel.Show(targetTile);
             }
         }
 

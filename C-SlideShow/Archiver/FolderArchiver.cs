@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 using System.IO;
 
+using C_SlideShow.Core;
+
+
 namespace C_SlideShow.Archiver
 {
     public class FolderArchiver : ArchiverBase
@@ -24,7 +27,7 @@ namespace C_SlideShow.Archiver
                 return Stream.Null;
         }
 
-        public override List<ImageFileInfo> LoadImageFileInfoList()
+        public override List<ImageFileContext> LoadImageFileContextList()
         {
             // サブディレクトリを含める/含めない オプション
             SearchOption searchOpt;
@@ -37,13 +40,12 @@ namespace C_SlideShow.Archiver
                 file.ToLower().EndsWith(ext)));
 
             // ロード
-            List<ImageFileInfo> newList = new List<ImageFileInfo>();
+            List<ImageFileContext> newList = new List<ImageFileContext>();
             foreach (string imgPath in filteredFiles)
             {
-                ImageFileInfo imageFileInfo = new ImageFileInfo();
-                imageFileInfo.FilePath = imgPath;
-                imageFileInfo.Archiver = this;
-                newList.Add(imageFileInfo);
+                ImageFileContext imageFileContext = new ImageFileContext(imgPath);
+                imageFileContext.Archiver = this;
+                newList.Add(imageFileContext);
             }
 
             return newList;

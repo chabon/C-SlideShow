@@ -194,7 +194,7 @@ namespace C_SlideShow
             }
 
             // シークバー
-            if (mainWindow.IsHorizontalSlide)
+            if (mainWindow.Setting.TempProfile.IsHorizontalSlide)
             {
                 // 水平
                 if (pt.Y > ptWnd.Y + h3 * 2) ShowSeekbar();

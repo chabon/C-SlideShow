@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 
 using SharpCompress.Archives;
 
+using C_SlideShow.Core;
+
 
 namespace C_SlideShow.Archiver
 {
@@ -54,22 +56,25 @@ namespace C_SlideShow.Archiver
             }
         }
 
-        public override List<ImageFileInfo> LoadImageFileInfoList()
+        public override List<ImageFileContext> LoadImageFileContextList()
         {
-            List<ImageFileInfo> newList = new List<ImageFileInfo>();
+            List<ImageFileContext> newList = new List<ImageFileContext>();
             try
             {
-                foreach(IArchiveEntry entory in archive.Entries)
+                foreach(IArchiveEntry entry in archive.Entries)
                 {
                     // ファイル拡張子でフィルタ
-                    if(  AllowedFileExt.Any( ext => entory.Key.ToLower().EndsWith(ext) ) )
+                    if(  AllowedFileExt.Any( ext => entry.Key.ToLower().EndsWith(ext) ) )
                     {
                         // ロード
-                        ImageFileInfo fi = new ImageFileInfo(entory.Key);
-                        fi.LastWriteTime = entory.LastModifiedTime;
-                        fi.Length = entory.Size;
-                        fi.Archiver = this;
-                        newList.Add(fi);
+                        ImageFileContext ifc = new ImageFileContext(entry.Key);
+                        ifc.Archiver = this;
+                        ImageFileInfo fi = new ImageFileInfo();
+                        fi.LastWriteTime = entry.LastModifiedTime;
+                        fi.Length = entry.Size;
+                        ifc.Info = fi;
+
+                        newList.Add(ifc);
                     }
                 }
             }

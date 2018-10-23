@@ -16,7 +16,7 @@ using System.Windows.Media.Animation;
 using System.IO;
 using System.Diagnostics;
 using WpfAnimatedGif;
-
+using C_SlideShow.Core;
 
 namespace C_SlideShow
 {
@@ -25,17 +25,18 @@ namespace C_SlideShow
     /// </summary>
     public partial class TileExpantionPanel : UserControl
     {
-        private Tile targetTile;
-        private Storyboard storyboard;
-        private double zoomFactor = 1.0;
-        private Point lastZoomedPos; // 最後に拡大縮小をした後の位置(ExpandedBorder上の座標系)
+        private Storyboard  storyboard;
+        private double      zoomFactor = 1.0;
+        private Point       lastZoomedPos; // 最後に拡大縮小をした後の位置(ExpandedBorder上の座標系)
 
-        public MainWindow MainWindow { private get; set; }
-        public ImageFileManager ImageFileManager { private get; set; }
-        public bool ExpandedDuringPlay { get; set; } = false;
-        public bool IsShowing { get; private set; } = false;
-        public bool IsAnimationCompleted { get; private set; } = true;
-        public Tile TargetTile { get { return targetTile; } }
+        public MainWindow       MainWindow              { private get; set; }
+        public bool             ExpandedDuringPlay      { get; set; } = false;
+        public bool             IsShowing               { get; private set; } = false;
+        public bool             IsAnimationCompleted    { get; private set; } = true;
+
+        public Border           TargetBorder            { get; private set; }
+        public ImageFileContext TargetImgFileContext    { get; private set; }
+        public ImgContainer     ParentContainer         { get; private set; }
 
 
         public TileExpantionPanel()
@@ -50,18 +51,25 @@ namespace C_SlideShow
             };
         }
 
-        public void Show(Tile tile)
+        public async Task Show(Border border)
         {
+            // ターゲット
+            this.TargetBorder = border;
+            ParentContainer = WpfTreeUtil.FindAncestor<ImgContainer>(border);
+            if( ParentContainer == null ) return;
+            int idx = ParentContainer.MainGrid.Children.IndexOf(border);
+            this.TargetImgFileContext = ParentContainer.ImageFileContextMapList[idx];
+
             // 設定プロファイル
             Profile pf = MainWindow.Setting.TempProfile;
 
             // ダミーをクリックした時
-            if( tile.ImageFileInfo.IsDummy ) return;
+            if( TargetImgFileContext.IsDummy ) return;
 
             // 再生中だったら、レジュームの準備
             if( MainWindow.IsPlaying )
             {
-                MainWindow.StopSlideShow(false);
+                MainWindow.ImgContainerManager.StopSlideShow(false);
                 ExpandedDuringPlay = true;
             }
             else
@@ -69,11 +77,8 @@ namespace C_SlideShow
                 ExpandedDuringPlay = false;
             }
 
-            // ターゲットとなるタイルを保持
-            this.targetTile = tile;
-
             // 画像をロード
-            LoadImage();
+            await LoadImage();
             if( ExpandedImage.Source == null ) return;
 
             // ボーダー色、背景色
@@ -169,9 +174,7 @@ namespace C_SlideShow
             storyboard.Completed += (s, e) =>
             {
                 // コンテナを隠す
-                MainWindow.TileContainer1.Visibility = Visibility.Hidden;
-                MainWindow.TileContainer2.Visibility = Visibility.Hidden;
-                MainWindow.TileContainer3.Visibility = Visibility.Hidden;
+                MainWindow.ImgContainerManager.Hide();
 
                 // ファイル情報表示
                 UpdateFileInfoAreaVisiblity();
@@ -257,14 +260,12 @@ namespace C_SlideShow
                 storyboard.Remove();
                 //Margin = new Thickness(Margin.Left, Margin.Top, 0, 0);
                 this.Visibility = Visibility.Hidden;
-                if( ExpandedDuringPlay ) MainWindow.StartSlideShow(false);
+                if( ExpandedDuringPlay ) MainWindow.ImgContainerManager.StartSlideShow(false);
                 IsAnimationCompleted = true;
             };
 
             // コンテナを表示
-            MainWindow.TileContainer1.Visibility = Visibility.Visible;
-            MainWindow.TileContainer2.Visibility = Visibility.Visible;
-            MainWindow.TileContainer3.Visibility = Visibility.Visible;
+            MainWindow.ImgContainerManager.Show();
 
             // アニメーションを開始
             storyboard.Begin();
@@ -272,18 +273,18 @@ namespace C_SlideShow
         }
 
 
-        private void LoadImage()
+        private async Task LoadImage()
         {
-            ImageFileInfo fi = targetTile.ImageFileInfo;
+            ImageFileInfo fi = TargetImgFileContext.Info;
 
             // gif拡大時
-            if(fi.Archiver.CanReadFile && Path.GetExtension( fi.FilePath ).ToLower() == ".gif" )
+            if(TargetImgFileContext.Archiver.CanReadFile && Path.GetExtension( TargetImgFileContext.FilePath ).ToLower() == ".gif" )
             {
                 var source = new BitmapImage();
                 source.BeginInit();
                 source.CacheOption = BitmapCacheOption.OnLoad;
                 source.CreateOptions = BitmapCreateOptions.None;
-                source.UriSource = new Uri(fi.FilePath);
+                source.UriSource = new Uri(TargetImgFileContext.FilePath);
                 ImageBehavior.SetAnimatedSource(ExpandedImage, source);
                 ExpandedImage.Source = source;
                 source.EndInit();
@@ -294,7 +295,7 @@ namespace C_SlideShow
                 ImageBehavior.SetAnimatedSource(ExpandedImage, null);
                 int pixel = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixel.Value;
                 Size pixelSize = new Size(pixel, pixel);
-                var bitmap = ImageFileManager.LoadBitmap( fi, pixelSize );
+                var bitmap = await TargetImgFileContext.GetImage(pixelSize);
 
                 if(bitmap != null) this.ExpandedImage.Source = bitmap;
                 else this.ExpandedImage.Source = null;
@@ -311,12 +312,7 @@ namespace C_SlideShow
 
             try
             {
-#if DEBUG
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-#endif
-                ImageFileInfo ifi =
-                    ImageFileManager.ImgFileInfo.First(i => i.FilePath == targetTile.ImageFileInfo.FilePath);
+                ImageFileInfo ifi = TargetImgFileContext.Info;
 
                 // ファイルサイズ
                 long length = 0;
@@ -326,27 +322,20 @@ namespace C_SlideShow
                 }
                 else
                 {
-                    FileInfo fi = new FileInfo(targetTile.ImageFileInfo.FilePath);
+                    FileInfo fi = new FileInfo(TargetImgFileContext.FilePath);
                     length = fi.Length;
                 }
 
-                // 更新日時
-                if( ifi.LastWriteTime == null ) // 更新日時情報がない場合取得
-                    ifi.ReadLastWriteTime();
+                // 更新日時取得
+                if( ifi.LastWriteTime == null ) TargetImgFileContext.ReadLastWriteTime();
 
-                newText += "ファイル名: " + Path.GetFileName(targetTile.ImageFileInfo.FilePath) + "\n";
+                newText += "ファイル名: " + Path.GetFileName(TargetImgFileContext.FilePath) + "\n";
                 newText += "画像サイズ: " + length / 1024 + "KB\n";
                 if(ifi.LastWriteTime != null)
                     newText += "更新日時: " + ifi.LastWriteTime.Value.DateTime + "\n";
                 if( ifi.ExifInfo.DateTaken != null )
                     newText += "撮影日時: " + ifi.ExifInfo.DateTaken.Value.DateTime + "\n";
                 newText += "ピクセル数: " + ifi.PixelSize.Width + "x" + ifi.PixelSize.Height;
-#if DEBUG
-                sw.Stop();
-                Debug.WriteLine("-----------------------------------------------------");
-                Debug.WriteLine(" expanded image info loaded  time: " + sw.Elapsed);
-                Debug.WriteLine("-----------------------------------------------------");
-#endif
             }
             catch
             {
@@ -411,8 +400,8 @@ namespace C_SlideShow
             // 位置とサイズ
             Margin = new Thickness(MainWindow.MainContent.Margin.Left, MainWindow.MainContent.Margin.Top, 0, 0);
             double containerScale = MainWindow.MainContent.LayoutTransform.Value.M11;
-            Width  = MainWindow.TileContainer1.ActualWidth * containerScale;
-            Height = MainWindow.TileContainer1.ActualHeight * containerScale;
+            Width  = MainWindow.ImgContainerManager.CurrentContainer.Width * containerScale;
+            Height = MainWindow.ImgContainerManager.CurrentContainer.Height * containerScale;
 
             // 枠の太さ更新
             UpdateBorderThickness();
@@ -439,22 +428,22 @@ namespace C_SlideShow
         private Rect GetTileRect()
         {
             Rect rect = new Rect();
-            if( targetTile == null ) return rect;
+            if( TargetBorder == null ) return rect;
 
             // 大きさ
             double zoomFactor = MainWindow.MainContent.LayoutTransform.Value.M11;
-            rect.Width = targetTile.Border.RenderSize.Width + targetTile.Border.Margin.Left * 2;
-            rect.Height = targetTile.Border.RenderSize.Height + targetTile.Border.Margin.Top * 2;
-            rect.Width *= zoomFactor;
+            rect.Width  = TargetBorder.RenderSize.Width + TargetBorder.Margin.Left * 2;
+            rect.Height = TargetBorder.RenderSize.Height + TargetBorder.Margin.Top * 2;
+            rect.Width  *= zoomFactor;
             rect.Height *= zoomFactor;
 
             // 位置
-            var parent = targetTile.Border.Parent as UIElement;
-            var location = targetTile.Border.TranslatePoint(new Point(0, 0), parent);
-            location.X -= targetTile.Border.Margin.Left;
-            location.Y -= targetTile.Border.Margin.Top;
-            location.X += targetTile.ParentConteiner.Margin.Left; // コンテナのスライド量を反映
-            location.Y += targetTile.ParentConteiner.Margin.Top;
+            var parent = TargetBorder.Parent as UIElement;
+            var location = TargetBorder.TranslatePoint(new Point(0, 0), parent);
+            location.X -= TargetBorder.Margin.Left;
+            location.Y -= TargetBorder.Margin.Top;
+            location.X += ParentContainer.Margin.Left; // コンテナのスライド量を反映
+            location.Y += ParentContainer.Margin.Top;
             location.X *= zoomFactor;
             location.Y *= zoomFactor;
             location.X += MainWindow.MainContent.Margin.Left; // メインウインドウ枠の分
@@ -563,7 +552,7 @@ namespace C_SlideShow
         // エクスプローラーで開く
         private void Toolbar_OpenExplorer_Click(object sender, RoutedEventArgs e)
         {
-            targetTile.OpenExplorer();
+            TargetImgFileContext.OpenExplorer();
         }
 
         // クリップボードへコピー
@@ -571,37 +560,35 @@ namespace C_SlideShow
         {
             MenuItem_Copy.Items.Clear();
 
-            ImageFileInfo fi = targetTile.ImageFileInfo;
-
             // ファイル
             MenuItem mi_file = new MenuItem();
             mi_file.Header = Path.GetFileName("ファイル");
             mi_file.ToolTip = Path.GetFileName("コピー後、エクスプローラーで貼り付けが出来ます");
-            mi_file.Click += (s, ev) => { targetTile.CopyFile(); };
+            mi_file.Click += (s, ev) => { TargetImgFileContext.CopyFile(); };
             MenuItem_Copy.Items.Add(mi_file);
 
             // 画像データ
             MenuItem mi_image = new MenuItem();
             mi_image.Header = Path.GetFileName("画像データ");
             mi_image.ToolTip = Path.GetFileName("コピー後、ペイント等の画像編集ソフトへ貼り付けが出来ます");
-            mi_image.Click += (s, ev) => { targetTile.CopyImageData(); };
+            mi_image.Click += (s, ev) => { TargetImgFileContext.CopyImageData(); };
             MenuItem_Copy.Items.Add(mi_image);
 
             // ファイルパス
             string filePath;
-            if( fi.Archiver.CanReadFile ) filePath = fi.FilePath;
-            else filePath = fi.Archiver.ArchiverPath;
+            if( TargetImgFileContext.Archiver.CanReadFile ) filePath = TargetImgFileContext.FilePath;
+            else filePath = TargetImgFileContext.Archiver.ArchiverPath;
             MenuItem mi_filePath = new MenuItem();
             mi_filePath.Header = Path.GetFileName("ファイルパス");
             mi_filePath.ToolTip = filePath;
-            mi_filePath.Click += (s, ev) => { targetTile.CopyFilePath(); };
+            mi_filePath.Click += (s, ev) => { TargetImgFileContext.CopyFilePath(); };
             MenuItem_Copy.Items.Add(mi_filePath);
 
             // ファイル名
             MenuItem mi_fileName = new MenuItem();
             mi_fileName.Header = "ファイル名";
-            mi_fileName.ToolTip = Path.GetFileName( fi.FilePath );
-            mi_fileName.Click += (s, ev) => { targetTile.CopyFileName(); };
+            mi_fileName.ToolTip = Path.GetFileName( TargetImgFileContext.FilePath );
+            mi_fileName.Click += (s, ev) => { TargetImgFileContext.CopyFileName(); };
             MenuItem_Copy.Items.Add(mi_fileName);
 
         }
@@ -611,11 +598,11 @@ namespace C_SlideShow
         {
             if(MainWindow.Setting.ExternalAppInfoList.Count > 0 )
             {
-                targetTile.OpenByExternalApp(MainWindow.Setting.ExternalAppInfoList[0]);
+                TargetImgFileContext.OpenByExternalApp(MainWindow.Setting.ExternalAppInfoList[0]);
             }
             else
             {
-                targetTile.OpenByExternalApp( new ExternalAppInfo() );
+                TargetImgFileContext.OpenByExternalApp( new ExternalAppInfo() );
             }
         }
 

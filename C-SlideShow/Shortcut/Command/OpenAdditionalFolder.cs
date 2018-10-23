@@ -53,7 +53,8 @@ namespace C_SlideShow.Shortcut.Command
                 {
                     mw.Setting.FolderOpenDialogLastSelectedPath = dlg.SelectedPath;
                     string[] path = { dlg.SelectedPath };
-                    mw.ReadFilesAndInitMainContent(path, true,  0);
+                    mw.ReadFiles(path, true);
+                    var t = mw.ImgContainerManager.InitAllContainer(0);
 
                     // 拡大中なら解除
                     if( mw.TileExpantionPanel.IsShowing ) mw.TileExpantionPanel.Hide();

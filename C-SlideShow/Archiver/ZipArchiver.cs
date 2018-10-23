@@ -10,6 +10,9 @@ using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 
+using C_SlideShow.Core;
+
+
 namespace C_SlideShow.Archiver
 {
     public class ZipArchiver : ArchiverBase
@@ -51,9 +54,9 @@ namespace C_SlideShow.Archiver
             }
         }
 
-        public override List<ImageFileInfo> LoadImageFileInfoList()
+        public override List<ImageFileContext> LoadImageFileContextList()
         {
-            List<ImageFileInfo> newList = new List<ImageFileInfo>();
+            List<ImageFileContext> newList = new List<ImageFileContext>();
             try
             {
                 // エントリ
@@ -65,11 +68,13 @@ namespace C_SlideShow.Archiver
                     if(  AllowedFileExt.Any( ext => entory.FullName.ToLower().EndsWith(ext) ) )
                     {
                         // ロード
-                        ImageFileInfo fi = new ImageFileInfo(entory.FullName);
+                        ImageFileContext ifc = new ImageFileContext(entory.FullName);
+                        ifc.Archiver = this;
+                        ImageFileInfo fi = new ImageFileInfo();
                         fi.LastWriteTime = entory.LastWriteTime;
                         fi.Length = entory.Length;
-                        fi.Archiver = this;
-                        newList.Add(fi);
+
+                        newList.Add(ifc);
                     }
                 }
             }

@@ -34,7 +34,7 @@ namespace C_SlideShow.Shortcut.Command
         public void Execute()
         {
             MainWindow mw = MainWindow.Current;
-            mw.StartOperationSlide(true, false);
+            mw.ImgContainerManager.ActiveSlideToBackward(false, MainWindow.Current.Setting.OperationSlideDuration);
         }
 
         public string GetDetail()

@@ -31,12 +31,12 @@ namespace C_SlideShow.Shortcut.Command
         public void Execute()
         {
             MainWindow mw = MainWindow.Current;
-            int current = mw.ImageFileManager.ActualCurrentIndex;
+            int current = mw.ImgContainerManager.CurrentImageIndex;
             current += Value;
-            int maxIndex = mw.ImageFileManager.ImgFileInfo.Count - 1;
+            int maxIndex = mw.ImgContainerManager.ImagePool.ImageFileContextList.Count - 1;
             if( current > maxIndex ) current = (current - 1) % maxIndex;
 
-            mw.ChangeCurrentImageIndex(current);
+            var t = mw.ImgContainerManager.ChangeCurrentIndex(current);
 
             return;
         }

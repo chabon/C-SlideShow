@@ -33,12 +33,15 @@ namespace C_SlideShow.Shortcut.Command
 
         public void Execute()
         {
-            var current = MainWindow.Current.Setting.TempProfile.NumofMatrix.Value;
+            Profile pf = MainWindow.Current.Setting.TempProfile;
+
+            var current = pf.NumofMatrix.Value;
             if( current == null || current.Length < 2 ) return;
 
             if( 0 < current[0] + Value && current[0] + Value <= ProfileMember.NumofMatrix.Max )
             {
-                MainWindow.Current.ChangeGridDifinition(current[0] + Value, current[1]);
+                pf.NumofMatrix.Value = new int[] { current[0] + Value, current[1] };
+                MainWindow.Current.ImgContainerManager.ApplyGridDifinition();
             }
 
             return;

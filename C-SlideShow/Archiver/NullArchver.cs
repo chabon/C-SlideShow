@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using System.IO;
 
+using C_SlideShow.Core;
+
 
 namespace C_SlideShow.Archiver
 {
@@ -27,17 +29,16 @@ namespace C_SlideShow.Archiver
                 return Stream.Null;
         }
 
-        public ImageFileInfo LoadImageFileInfo(string filePath)
+        public ImageFileContext LoadImageFileContext(string filePath)
         {
             // 拡張子でフィルタ
             if( !AllowedFileExt.Any(ext => filePath.ToLower().EndsWith(ext)) )
                 return null;
 
-            ImageFileInfo imageFileInfo = new ImageFileInfo();
-            imageFileInfo.FilePath = filePath;
-            imageFileInfo.Archiver = this;
+            ImageFileContext imageFileContext = new ImageFileContext(filePath);
+            imageFileContext.Archiver = this;
 
-            return imageFileInfo;
+            return imageFileContext;
         }
 
     }

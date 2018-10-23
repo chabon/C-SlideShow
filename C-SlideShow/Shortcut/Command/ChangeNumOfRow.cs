@@ -33,7 +33,9 @@ namespace C_SlideShow.Shortcut.Command
 
         public void Execute()
         {
-            var current = MainWindow.Current.Setting.TempProfile.NumofMatrix.Value;
+            Profile pf = MainWindow.Current.Setting.TempProfile;
+
+            var current = pf.NumofMatrix.Value;
             if( current == null || current.Length < 2 ) return;
 
             int num;
@@ -41,7 +43,8 @@ namespace C_SlideShow.Shortcut.Command
             else if( Value > ProfileMember.NumofMatrix.Max ) num = ProfileMember.NumofMatrix.Max;
             else num = Value;
 
-            MainWindow.Current.ChangeGridDifinition(current[0], num);
+            pf.NumofMatrix.Value = new int[] { current[0], num };
+            MainWindow.Current.ImgContainerManager.ApplyGridDifinition();
 
             return;
         }

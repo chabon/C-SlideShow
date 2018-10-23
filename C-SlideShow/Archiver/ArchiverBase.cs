@@ -9,6 +9,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Windows.Media;
 
+using C_SlideShow.Core;
+
 
 namespace C_SlideShow.Archiver
 {
@@ -47,9 +49,9 @@ namespace C_SlideShow.Archiver
             fs.Close();
         }
 
-        public virtual List<ImageFileInfo> LoadImageFileInfoList()
+        public virtual List<ImageFileContext> LoadImageFileContextList()
         {
-            return new List<ImageFileInfo>();
+            return new List<ImageFileContext>();
         }
 
         public virtual void DisposeArchive()

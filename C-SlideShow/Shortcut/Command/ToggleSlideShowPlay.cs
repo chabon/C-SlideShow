@@ -37,13 +37,16 @@ namespace C_SlideShow.Shortcut.Command
         {
             MainWindow mw = MainWindow.Current;
 
-            if( mw.IsPlaying )
+            // 再生中ならストップ
+            if( mw.ImgContainerManager.SlideShowState != Core.SlideShowState.Stop )
             {
-                mw.StopSlideShow(true);
+                mw.ImgContainerManager.StopSlideShow(true);
             }
+
+            // 停止中なら再生
             else
             {
-                mw.StartSlideShow(true);
+                mw.ImgContainerManager.StartSlideShow(true);
             }
 
             return;

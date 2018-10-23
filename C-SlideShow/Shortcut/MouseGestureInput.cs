@@ -86,5 +86,13 @@ namespace C_SlideShow.Shortcut
             if( obj.GetType() != this.GetType() ) return false;
             return this.Equals((MouseGestureInput)obj);
         }
+
+        /// <summary>
+        /// Dictionary用比較処理
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return (int)StartingButton + int.Parse(Stroke);
+        }
     }
 }

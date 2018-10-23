@@ -191,7 +191,7 @@ namespace C_SlideShow
         public ProfileMember.GridLineColor GridLineColor { get; set; } = new ProfileMember.GridLineColor();
 
 
-
+        // コンストラクタ
         public Profile()
         {
             ProfileType = ProfileType.Temp; // タイプ
@@ -205,7 +205,23 @@ namespace C_SlideShow
             this.SlideShowAutoStart = new ProfileMember.SlideShowAutoStart();
         }
 
+        /* ---------------------------------------------------- */
+        //     プロパティ
+        /* ---------------------------------------------------- */
+        public bool IsHorizontalSlide
+        {
+            get
+            {
+                if( SlideDirection.Value == C_SlideShow.SlideDirection.Left || SlideDirection.Value == C_SlideShow.SlideDirection.Right )
+                    return true;
+                else
+                    return false;
+            }
+        }
 
+        /* ---------------------------------------------------- */
+        //     メソッド
+        /* ---------------------------------------------------- */
         /// <summary>
         /// 他のプロファイルの設定値を統合(有効なメンバが衝突したら、他のプロファイルを優先)
         /// </summary>
@@ -348,7 +364,6 @@ namespace C_SlideShow
             return newProfile;
         }
 
-
         public string CreateProfileToolTip()
         {
             string tooltip = "";
@@ -371,6 +386,21 @@ namespace C_SlideShow
             return tooltip;
         }
 
+        public static SlideDirection GetReversedSlideDirection(SlideDirection dir)
+        {
+            switch( dir )
+            {
+                default:
+                case C_SlideShow.SlideDirection.Left:
+                    return C_SlideShow.SlideDirection.Right;
+                case C_SlideShow.SlideDirection.Top:
+                    return C_SlideShow.SlideDirection.Bottom;
+                case C_SlideShow.SlideDirection.Right:
+                    return C_SlideShow.SlideDirection.Left;
+                case C_SlideShow.SlideDirection.Bottom:
+                    return C_SlideShow.SlideDirection.Top;
+            }
+        }
 
     }
 }

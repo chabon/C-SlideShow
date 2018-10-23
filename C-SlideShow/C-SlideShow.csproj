@@ -82,6 +82,14 @@
     <Compile Include="CommonControl\NotificationBlock.xaml.cs">
       <DependentUpon>NotificationBlock.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\ImageFileContext.cs" />
+    <Compile Include="Core\ImageFileInfo.cs" />
+    <Compile Include="Core\ImagePool.cs" />
+    <Compile Include="Core\ImgContainer.xaml.cs">
+      <DependentUpon>ImgContainer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Core\ImgContainerAnimation.cs" />
+    <Compile Include="Core\ImgContainerManager.cs" />
     <Compile Include="Format.cs" />
     <Compile Include="MessageBoxEx.cs" />
     <Compile Include="Setting\AppSetting.cs" />
@@ -166,7 +174,6 @@
     <Compile Include="AppSettingDialog.xaml.cs">
       <DependentUpon>AppSettingDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ImageFileInfo.cs" />
     <Compile Include="MainWindow_Event.cs" />
     <Compile Include="MatrixSelecter.xaml.cs">
       <DependentUpon>MatrixSelecter.xaml</DependentUpon>
@@ -198,11 +205,6 @@
     <Compile Include="SlideSettingDialog.xaml.cs">
       <DependentUpon>SlideSettingDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tile.cs" />
-    <Compile Include="TileContainer.xaml.cs">
-      <DependentUpon>TileContainer.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ImageFileManager.cs" />
     <Compile Include="TileExpantionPanel.xaml.cs">
       <DependentUpon>TileExpantionPanel.xaml</DependentUpon>
     </Compile>
@@ -235,6 +237,10 @@
     <Page Include="CommonControl\NotificationBlock.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Core\ImgContainer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -275,10 +281,6 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="TileContainer.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TileExpantionPanel.xaml">
       <SubType>Designer</SubType>
@@ -399,6 +401,7 @@
   <ItemGroup>
     <Resource Include="appicon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

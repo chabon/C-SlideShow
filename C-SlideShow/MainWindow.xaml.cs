@@ -23,6 +23,7 @@ using System.IO;
 using C_SlideShow.Archiver;
 using C_SlideShow.Shortcut;
 using C_SlideShow.CommonControl;
+using C_SlideShow.Core;
 
 using Forms = System.Windows.Forms;
 
@@ -34,11 +35,10 @@ namespace C_SlideShow
     /// </summary>
     public partial class MainWindow : Window
     {
-        // field
-        ImageFileManager imageFileManager;
-        DispatcherTimer intervalSlideTimer = new DispatcherTimer(DispatcherPriority.Normal) ;
-        int intervalSlideTimerCount = 0;
-        List<TileContainer> tileContainers = new List<TileContainer>();
+        /* ---------------------------------------------------- */
+        //     フィールド
+        /* ---------------------------------------------------- */
+        //ImageFileManager imageFileManager;
         bool ignoreSliderValueChangeEvent = false; // SliderのValue変更時にイベントを飛ばさないフラグ
         bool isSeekbarDragStarted = false;
         //Point aspectRatioInNonFixMode = new Point( 4, 3 );
@@ -46,24 +46,20 @@ namespace C_SlideShow
         UIHelper uiHelper;
         Rect windowRectBeforeFullScreen = new Rect(50, 50, 400, 300);
 
-        // property
+        /* ---------------------------------------------------- */
+        //     プロパティ
+        /* ---------------------------------------------------- */
         public static MainWindow Current { get; private set; }
         public AppSetting Setting { get; set; }
         public ShortcutManager ShortcutManager { get; set; }
-        public ImageFileManager ImageFileManager { get { return imageFileManager; } }
+        //public ImageFileManager ImageFileManager { get { return imageFileManager; } }
+        public ImgContainerManager ImgContainerManager = new ImgContainerManager();
 
         public MatrixSelecter       MatrixSelecter { get; private set; }
         public SlideSettingDialog   SlideSettingDialog { get; private set; }
         public SettingDialog        SettingDialog { get; private set; }
         public ProfileEditDialog    ProfileEditDialog { get; private set; }
 
-        public bool IsHorizontalSlide
-        {
-            get
-            {
-                return tileContainers[0].IsHorizontalSlide;
-            }
-        }
         private bool IsCtrlOrShiftKeyPressed
         {
             get
@@ -78,22 +74,7 @@ namespace C_SlideShow
         {
             get
             {
-                return (double)(tileContainers[0].Width)
-                    / ( tileContainers[0].Height );
-            }
-        }
-        public bool IsPlaying
-        {
-            get
-            {
-                if (intervalSlideTimer.IsEnabled || tileContainers[0].IsContinuousSliding)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return (double)(ImgContainerManager.ContainerWidth) / ( ImgContainerManager.ContainerHeight);
             }
         }
         public bool IsAnyToolbarMenuOpened
@@ -109,7 +90,17 @@ namespace C_SlideShow
             }
         }
         public bool IgnoreResizeEvent { get; set; } = false;
-
+        public bool IsPlaying
+        {
+            get
+            {
+                if( ImgContainerManager.SlideShowState == SlideShowState.Stop ) return false;
+                else return true;
+            }
+        }
+        /* ---------------------------------------------------- */
+        //     コンストラクタ
+        /* ---------------------------------------------------- */
         // 起動時
         public MainWindow(AppSetting setting)
         {
@@ -128,6 +119,9 @@ namespace C_SlideShow
         }
 
 
+        /* ---------------------------------------------------- */
+        //     メソッド
+        /* ---------------------------------------------------- */
         private void InitMainWindow(AppSetting setting)
         {
             Setting = setting;
@@ -142,11 +136,15 @@ namespace C_SlideShow
             //Setting.ShortcutSetting = new ShortcutSetting();
 #endif
 
-            // init
+            // 色々初期化
             InitControls();
             InitControlsEvent();
             InitHelper();
             InitEvent();
+
+            // コンテナマネージャ初期化
+            ImgContainerManager.Initialize();
+            ImgContainerManager.Containers.ForEach(tc => MainContent.Children.Add(tc));
 
             // ショートカットマネージャー
             ShortcutManager = new ShortcutManager();
@@ -169,7 +167,8 @@ namespace C_SlideShow
 
             // 画像情報の読み込みとソート
             String[] files = pf.Path.Value.ToArray();
-            ReadFilesAndInitMainContent(files, false, pf.LastPageIndex.Value);
+            ReadFiles(files, false);
+            var t = ImgContainerManager.InitAllContainer(pf.LastPageIndex.Value);
 
             // 背景色と不透明度
             ApplyColorAndOpacitySetting();
@@ -190,22 +189,11 @@ namespace C_SlideShow
             };
 
             // 自動再生
-            if( pf.SlideShowAutoStart.Value ) StartSlideShow(true);
+            if( pf.SlideShowAutoStart.Value ) ImgContainerManager.StartSlideShow(true);
         }
 
         private void InitControls()
         {
-            tileContainers.Add(this.TileContainer1);
-            tileContainers.Add(this.TileContainer2);
-            tileContainers.Add(this.TileContainer3);
-            TileContainer1.ForwardContainer = TileContainer3;
-            TileContainer2.ForwardContainer = TileContainer1;
-            TileContainer3.ForwardContainer = TileContainer2;
-            foreach(TileContainer tc in tileContainers)
-            {
-                tc.MainWindow = this;
-            }
-
             MenuItem_MatrixSelecter.ApplyTemplate();
             MatrixSelecter = MenuItem_MatrixSelecter.Template.FindName("MatrixSelecter", MenuItem_MatrixSelecter) as MatrixSelecter;
             MatrixSelecter.MaxSize = Setting.MatrixSelecterMaxSize;
@@ -227,22 +215,11 @@ namespace C_SlideShow
             SettingDialog.Setting = this.Setting;
             SettingDialog.MainTabControl.SelectedIndex = Setting.SettingDialogTabIndex;
 
-            // タイマー
-            intervalSlideTimer.Tick += intervalSlideTimer_Tick;
-            intervalSlideTimer.Interval = new TimeSpan(0, 0, 0, 1);
-
         }
 
         private void InitHelper()
         {
-            // helper
             uiHelper = new UIHelper(this);
-            imageFileManager = new ImageFileManager();
-            foreach(TileContainer tc in tileContainers)
-            {
-                tc.ImageFileManager = imageFileManager;
-            }
-            this.TileExpantionPanel.ImageFileManager = imageFileManager;
         }
 
         public void LoadUserProfile(Profile userProfile)
@@ -292,12 +269,13 @@ namespace C_SlideShow
             if( userProfile.Path.IsEnabled )
             {
                 String[] files = tp.Path.Value.ToArray();
-                ReadFilesAndInitMainContent(files, false, tp.LastPageIndex.Value);
+                ReadFiles(files, false);
+                var t = ImgContainerManager.InitAllContainer(tp.LastPageIndex.Value);
             }
             else
             {
                 if( userProfile.FileSortMethod.IsEnabled ) SortOnFileLoaded(); // ファイルは読み込まずにソート
-                InitMainContent(tp.LastPageIndex.Value);
+                var t = ImgContainerManager.InitAllContainer(tp.LastPageIndex.Value);
             }
             
             // 外観更新
@@ -326,7 +304,7 @@ namespace C_SlideShow
             if( TileExpantionPanel.IsShowing ) TileExpantionPanel.Hide();
 
             // 自動再生
-            if( tp.SlideShowAutoStart.Value ) StartSlideShow(false);
+            if( tp.SlideShowAutoStart.Value ) ImgContainerManager.StartSlideShow(false);
 
             // 読み込み完了メッセージ
             NotificationBlock.Show("プロファイルのロード完了: " + userProfile.Name, NotificationPriority.High, NotificationTime.Short, NotificationType.None);
@@ -336,111 +314,22 @@ namespace C_SlideShow
         /* ---------------------------------------------------- */
         //     
         /* ---------------------------------------------------- */
-        public void ReadFilesAndInitMainContent(string[] pathes, bool isAddition, int firstIndex)
+
+        public void ReadFiles(string[] pathes, bool isAddition)
         {
-            ReadFiles(pathes, isAddition);
-            InitMainContent(firstIndex);
-        }
-
-        public void InitMainContent(int firstIndex)
-        {
-            // 「読み込み中」メッセージ
-            this.WaitingMessageBase.Visibility = Visibility.Visible; 
-            this.WaitingMessageBase.Refresh();
-
-            if( IsPlaying || tileContainers.Any(tc => tc.IsActiveSliding) )
-                StopSlideShow(true);
-
-            // profile
-            Profile pf = Setting.TempProfile;
-            
-            // 行列
-            ProfileMember.NumofMatrix mtx = Setting.TempProfile.NumofMatrix;
-
-            // アス比
-            //ProfileMember.AspectRatio ar = Setting.TempProfile.AspectRatio;
-            Point ar = new Point(pf.AspectRatio.H, pf.AspectRatio.V);
-
-            // set up imageFileManager
-            int grids = mtx.Col * mtx.Row;
-            imageFileManager.FillFileInfoVacancyWithDummy(grids);
-            if (firstIndex > imageFileManager.NumofImageFile - 1) firstIndex = 0;
-            imageFileManager.NextIndex = firstIndex;
-            imageFileManager.ApplyRotateInfoFromExif = pf.ApplyRotateInfoFromExif.Value;
-
-            // init container
-            TileContainer.TileAspectRatio = ar.Y / ar.X;
-            TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel.Value, mtx.Col, mtx.Row);
-            foreach(TileContainer tc in tileContainers)
-            {
-                tc.InitSlideDerection(pf.SlideDirection.Value);
-                tc.InitGrid(mtx.Col, mtx.Row, pf.TileImageStretch.Value);
-                tc.InitGridLineColor(pf.GridLineColor.Value);
-                tc.InitSizeAndPos((int)ar.X, (int)ar.Y, pf.TilePadding.Value);
-                tc.InitWrapPoint();
-                tc.InitTileOrigin(pf.TileOrigin.Value, pf.TileOrientation.Value, pf.UseDefaultTileOrigin.Value);
-            }
-
-            // load image
-            TileContainer.ReleaseBitmapLoadThread();
-            if(imageFileManager.ImgFileInfo.Count > 0)
-            {
-                foreach(TileContainer tc in tileContainers)
-                {
-                    tc.LoadImageToGrid(false, false);
-                }
-            }
-
-
-            // 巻き戻し用のインデックス初期値は必ずファイルを全てのコンテナに割り当てた後決める
-            // (割り当て中にスライドしてしまうので)
-            imageFileManager.InitPrevIndex(firstIndex);
-
-            // init ui
-            UpdatePageInfo();
-            InitSeekbar();
-
-            // 「読み込み中」メッセージ解除
-            this.WaitingMessageBase.Visibility = Visibility.Collapsed;
-        }
-
-        private void ReadFiles(string[] pathes, bool isAddition)
-        {
-            // 「読み込み中」メッセージ
-            this.WaitingMessageBase.Visibility = Visibility.Visible; 
-            this.WaitingMessageBase.Refresh();
-
             Profile pf = Setting.TempProfile;
 
-            if( isAddition )
+            if( !isAddition )
             {
-                // 追加の場合、ダミーファイル情報を消す
-                imageFileManager.ImgFileInfo.RemoveAll( fi => fi.IsDummy );
-            }
-            else
-            {
-                // 追加じゃない場合、色々クリア
+                // 追加じゃない場合、ファイルパスクリア
                 pf.Path.Value.Clear();
-                imageFileManager.ClearFileInfo();
-                tileContainers.ForEach( tc => tc.ClearAllTileImage() );
             }
 
             // 読み込み
             if (pathes.Length > 0)
             {
-#if DEBUG
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
-#endif
-                foreach(string path in pathes )
-                {
-                    imageFileManager.LoadImageFileInfo(path);
-                    pf.Path.Value.Add(path);
-                }
-#if DEBUG
-                sw.Stop();
-                Debug.WriteLine( pathes.Length + " filePathes loaded"  + " time: " + sw.Elapsed);
-#endif
+                ImgContainerManager.ImagePool.Initialize(pathes);
+                pf.Path.Value = pathes.ToList();
             }
 
             // ソート
@@ -449,15 +338,15 @@ namespace C_SlideShow
             // ヒストリーに追加
             if( Setting.EnabledItemsInHistory.ArchiverPath )
             {
-                imageFileManager.Archivers.Where(a1 => a1.LeaveHistory).ToList().ForEach( a2 => 
-                {
-                    HistoryItem hiOld = Setting.History.FirstOrDefault( h => h.ArchiverPath == a2.ArchiverPath );
-                    Setting.History.RemoveAll(h => h.ArchiverPath == a2.ArchiverPath);
-                    if(hiOld != null)
-                        Setting.History.Insert( 0, hiOld );
-                    else
-                        Setting.History.Insert( 0, new HistoryItem(a2.ArchiverPath) );
-                });
+                ImgContainerManager.ImagePool.Archivers.Where(a1 => a1.LeaveHistory).ToList().ForEach(a2 =>
+               {
+                   HistoryItem hiOld = Setting.History.FirstOrDefault(h => h.ArchiverPath == a2.ArchiverPath);
+                   Setting.History.RemoveAll(h => h.ArchiverPath == a2.ArchiverPath);
+                   if( hiOld != null )
+                       Setting.History.Insert(0, hiOld);
+                   else
+                       Setting.History.Insert(0, new HistoryItem(a2.ArchiverPath));
+               });
             }
 
             // ヒストリー上限超えを削除
@@ -465,9 +354,6 @@ namespace C_SlideShow
             {
                 Setting.History.RemoveRange( Setting.NumofHistory, Setting.History.Count - Setting.NumofHistory);
             }
-
-            // 「読み込み中」メッセージ解除
-            this.WaitingMessageBase.Visibility = Visibility.Collapsed;
         }
 
         public void DropNewFiles(string[] pathes)
@@ -479,7 +365,7 @@ namespace C_SlideShow
             if(  Setting.ReadSingleImageAsParentFolder && pathes.Length == 1 && File.Exists(pathes[0]) &&  
                 ArchiverBase.AllowedFileExt.Any( ext => pathes[0].ToLower().EndsWith(ext) )  )
             {
-                DropNewFileAsFolder(pathes[0]);
+                DropNewSingleFileAsFolder(pathes[0]);
                 return;
             }
 
@@ -492,11 +378,12 @@ namespace C_SlideShow
             }
             else
             {
-                ReadFilesAndInitMainContent(pathes, false, 0);
+                ReadFiles(pathes, false);
+                var t = ImgContainerManager.InitAllContainer(0);
             }
         }
 
-        public void DropNewFileAsFolder(string path)
+        public void DropNewSingleFileAsFolder(string path)
         {
             // 単体画像をフォルダとして読み込み
             string dirPath = Directory.GetParent(path).FullName;
@@ -515,47 +402,53 @@ namespace C_SlideShow
             else
             {
                 ReadFiles(new string[] { dirPath }, false);
-                ImageFileInfo dropedFileInfo = imageFileManager.ImgFileInfo.FirstOrDefault(i => i.FilePath == path);
+                ImageFileContext dropedFileInfo = ImgContainerManager.ImagePool.ImageFileContextList.FirstOrDefault(i => i.FilePath == path);
                 int firstIndex;
-                if(dropedFileInfo != null )
+                if( dropedFileInfo != null )
                 {
-                    firstIndex = imageFileManager.ImgFileInfo.IndexOf(dropedFileInfo);
+                    firstIndex = ImgContainerManager.ImagePool.ImageFileContextList.IndexOf(dropedFileInfo);
                 }
                 else
                 {
                     firstIndex = 0;
                 }
-                InitMainContent(firstIndex);
+                var t = ImgContainerManager.InitAllContainer(firstIndex);
             }
         }
 
         private void SortOnFileLoaded()
         {
-            if( imageFileManager.Archivers.Count == 1 && Directory.Exists(imageFileManager.Archivers[0].ArchiverPath) && Setting.TempProfile.FileSortMethod.Value == FileSortMethod.FileName)
+            ImagePool imagePool = ImgContainerManager.ImagePool;
+            if( imagePool.Archivers.Count == 1 && Directory.Exists(imagePool.Archivers[0].ArchiverPath) && Setting.TempProfile.FileSortMethod.Value == FileSortMethod.FileName )
             {
                 // 追加ではなく、フォルダ１つだけを読み込んだ場合ファイル名順になっているので、
                 // 並び順設定が「ファイル名(昇順)」ならばソートの必要なし
             }
             else
             {
-                imageFileManager.Sort( Setting.TempProfile.FileSortMethod.Value );
+                imagePool.Sort(Setting.TempProfile.FileSortMethod.Value);
             }
         }
 
-        private void InitSeekbar()
+        public void InitSeekbar()
         {
+            // イベント防止
+            ignoreSliderValueChangeEvent = true;
+
             // クリックした時の挙動
             //Seekbar.IsMoveToPointEnabled = true;
 
             int grids = Setting.TempProfile.NumofMatrix.Grid;
-            Seekbar.Maximum = imageFileManager.GetLastNoDeviationIndex(grids) + 1; // 末尾がずれないように
+            //Seekbar.Maximum = imageFileManager.GetLastNoDeviationIndex(grids) + 1; // 末尾がずれないように
+            Seekbar.Maximum = ImgContainerManager.ImagePool.ImageFileContextList.Count;
             Seekbar.Minimum = 1;
 
             // クリック時(Large)、方向キー(Small)押下時の移動量
             Seekbar.LargeChange = 1;
             Seekbar.SmallChange = 1;
 
-            if (tileContainers[0].IsHorizontalSlide)
+            // シークバー位置
+            if (Setting.TempProfile.IsHorizontalSlide)
             {
                 SeekbarWrapper.VerticalAlignment = VerticalAlignment.Bottom;
                 SeekbarWrapper.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -574,6 +467,7 @@ namespace C_SlideShow
                 Seekbar.VerticalAlignment = VerticalAlignment.Stretch;
             }
 
+            // メーターの方向
             switch ( (SlideDirection)Setting.TempProfile.SlideDirection.Value )
             {
                 case SlideDirection.Left:
@@ -597,209 +491,29 @@ namespace C_SlideShow
             }
 
             // 表示更新(Seekbar.IsDirectionReversed 変更後のつまみの位置反映の為)
-            ignoreSliderValueChangeEvent = true;
             double tmp = Seekbar.Value;
             Seekbar.Value = Seekbar.Maximum;
             Seekbar.Value = Seekbar.Minimum;
             Seekbar.Value = tmp;
+
+            // イベント防止処置の終了
             ignoreSliderValueChangeEvent = false;
         }
 
-        public void StartSlideShow(bool allowNotification)
-        {
-            // ファイル無し
-            if (imageFileManager.ImgFileInfo.Count < 1) return;
-
-            // 今再生中
-            if (IsPlaying) return;
-
-            if( (SlidePlayMethod)Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Continuous )
-            {
-                // 連続的スライド
-
-                // 速度 → 移動にかける時間パラメータ 3000(ms) - 300000(ms)
-                int param = (int)( 300000 / (double)Setting.TempProfile.SlideSpeed.Value );
-
-                foreach(TileContainer tc in tileContainers)
-                {
-                    Point ptFrom = new Point(tc.Margin.Left, tc.Margin.Top);
-                    tc.BeginContinuousSlideAnimation(ptFrom, param);
-                }
-            }
-            else
-            {
-                // インターバルスライド
-                intervalSlideTimer.Start();
-                intervalSlideTimerCount = 0;
-                if( allowNotification )
-                {
-                    NotificationBlock.Show("スライドショー開始 (待機時間" + Setting.TempProfile.SlideInterval.Value + "秒)", NotificationPriority.Normal, NotificationTime.Short, NotificationType.None);
-                }
-            }
-
-            // 再生ボタン表示変更
-            UpdateToolbarViewing();
-        }
-
-        public void StartOperationSlide(bool isPlayback, bool slideByOneImage)
-        {
-            // ファイル無し
-            if (imageFileManager.ImgFileInfo.Count < 1) return;
-
-            // インターバルスライド中なら、停止してスライド処理続行
-            if (intervalSlideTimer.IsEnabled) StopSlideShow(true);
-
-            // まだ操作によるアクティブスライド中なら、短いので待つ
-            else if (tileContainers.Any(c => c.IsActiveSliding)) return;
-
-            // まだ自動再生中なら、止める
-            if (tileContainers.Any(c => c.IsContinuousSliding)) StopSlideShow(false);
-
-            // コンテナがずれているかどうか
-            bool isNoDeviation = tileContainers.All(c =>
-            {
-                if (c.IsHorizontalSlide && c.Margin.Left % c.Width == 0) return true;
-                else if (c.IsVerticalSlide && c.Margin.Top % c.Height == 0) return true;
-                else return false;
-            });
-
-            // 最初の画像(原点)をまたぐかどうか
-            bool isCrossOverOrigin = false;
-            int grids = Setting.TempProfile.NumofMatrix.Grid;
-            int idx = imageFileManager.ActualCurrentIndex;
-            if(Setting.CorrectPageIndexInOperationSlideCrrosOverTheOrigin)
-            {
-                if (isPlayback)
-                {
-                    if (!slideByOneImage && 0 < idx && idx < grids && isNoDeviation)
-                    {
-                        isCrossOverOrigin = true;
-                    }
-                }
-                else
-                {
-                    if(!slideByOneImage && imageFileManager.GetLastNoDeviationIndex(grids) < idx)
-                    {
-                        isCrossOverOrigin = true;
-                    }
-                }
-            }
-
-            foreach(TileContainer tc in tileContainers)
-            {
-                int param = Setting.OperationSlideDuration;
-                Debug.WriteLine("active slide start: " + tc.Margin);
-                Debug.WriteLine("isNodeviation: " + isNoDeviation);
-                tc.BeginActiveSlideAnimation(isNoDeviation, isPlayback, slideByOneImage, param, isCrossOverOrigin);
-            }
-
-
-        }
-
-        private void StartIntervalSlide(bool slideByOneImage, int moveTime)
-        {
-            // ファイル無し
-            if (imageFileManager.ImgFileInfo.Count < 1) return;
-
-            // コンテナがずれているかどうか
-            bool isNoDeviation = tileContainers.All(c =>
-            {
-                if (c.IsHorizontalSlide && c.Margin.Left % c.Width == 0) return true;
-                else if (c.IsVerticalSlide && c.Margin.Top % c.Height == 0) return true;
-                else return false;
-            });
-
-            foreach(TileContainer tc in tileContainers)
-            {
-                int param = moveTime;
-                Debug.WriteLine("interval slide start: " + tc.Margin);
-                tc.BeginActiveSlideAnimation(isNoDeviation, false, slideByOneImage, param, false);
-            }
-
-        }
-
-        public void StopSlideShow(bool allowNotification)
-        {
-            if(allowNotification && Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Interval && intervalSlideTimer.IsEnabled)
-            {
-                NotificationBlock.Show("スライドショー停止", NotificationPriority.Normal, NotificationTime.Short, NotificationType.None);
-            }
-            intervalSlideTimer.Stop();
-            intervalSlideTimerCount = 0;
-
-            foreach(TileContainer tc in tileContainers)
-            {
-                //if (tc.IsContinuousSliding) tc.StopSlideAnimation();
-                tc.StopSlideAnimation();
-            }
-            //DoEvents();
-            //System.Threading.Thread.Sleep(100);
-            UpdateToolbarViewing();
-        }
-
-        public void UpdateSlideSpeed()
-        {
-            if (tileContainers[0].IsContinuousSliding)
-            {
-                StopSlideShow(false);
-                StartSlideShow(false);
-            }
-        }
 
         public void ChangeSlideDirection(SlideDirection direction)
         {
             if ( direction == (SlideDirection)Setting.TempProfile.SlideDirection.Value ) return;
 
             Setting.TempProfile.SlideDirection.Value = direction;
-            InitMainContent(imageFileManager.CurrentIndex);
+            var t = ImgContainerManager.InitAllContainer(ImgContainerManager.CurrentImageIndex);
 
             UpdateToolbarViewing();
-        }
-
-        public void ChangeGridDifinition(int numofCol, int numofRow)
-        {
-            if ( Setting.TempProfile.NumofMatrix.Col == numofCol && Setting.TempProfile.NumofMatrix.Row == numofRow) return;
-
-            Setting.TempProfile.NumofMatrix.Value = new int[] { numofCol, numofRow };
-
-            InitMainContent(imageFileManager.CurrentIndex);
-
-            UpdateMainWindowView();
-        }
-
-        private void ChangeAspectRatio(int h, int v)
-        {
-            Setting.TempProfile.AspectRatio.Value = new int[] { h, v };
-            InitMainContent(imageFileManager.CurrentIndex);
-            UpdateToolbarViewing();
-
-            UpdateMainWindowView();
-        }
-
-        public void ChangeCurrentImageIndex(int index)
-        {
-            //if( ImageFileManager.ActualCurrentIndex == index ) return;
-            imageFileManager.NextIndex = index;
-            StopSlideShow(true);
-
-            TileContainer.ReleaseBitmapLoadThread();
-
-            foreach(TileContainer tc in tileContainers)
-            {
-                //tc.InitSizeAndPos(Setting.TempProfile.AspectRatio.H, Setting.TempProfile.AspectRatio.V, Setting.TempProfile.TilePadding.Value);
-                tc.InitPos();
-                tc.LoadImageToGrid(false, true);
-            }
-
-            imageFileManager.PrevIndex = index;
-            imageFileManager.DecrementPrevIndex();
-            UpdatePageInfo();
-
         }
 
         public void FitMainContentToWindow()
         {
-            double zoomFactor = (this.Width - MainContent.Margin.Left * 2 ) / this.tileContainers[0].Width;
+            double zoomFactor = (this.Width - MainContent.Margin.Left * 2 ) / ImgContainerManager.ContainerWidth;
             this.MainContent.LayoutTransform = new ScaleTransform(zoomFactor, zoomFactor);
         }
 
@@ -819,8 +533,8 @@ namespace C_SlideShow
         public void UpdateWindowSize()
         {
             //// サイズ変更後の枠内の比率
-            double w = tileContainers[0].Width;
-            double h = tileContainers[0].Height;
+            double w = ImgContainerManager.ContainerWidth;
+            double h = ImgContainerManager.ContainerHeight;
             double nextRate = h / w;
 
             // サイズ変更前の枠内面積
@@ -842,48 +556,24 @@ namespace C_SlideShow
 
         public void UpdatePageInfo()
         {
-            this.PageInfoText.Text = imageFileManager.CreateCurrentIndexInfoString();
-            int c = imageFileManager.CurrentIndex + 1;
+            int idx = ImgContainerManager.CurrentImageIndex;
+            int num = idx + 1;
+            int max = ImgContainerManager.ImagePool.ImageFileContextList.Count;
+            if (max < 1) { num = 0; max = 0; }
+            this.PageInfoText.Text = String.Format("{0} / {1}", num, max);
+
+            //this.PageInfoText.Text = imageFileManager.CreateCurrentIndexInfoString();
+            //int c = imageFileManager.CurrentIndex + 1;
 
             this.ignoreSliderValueChangeEvent = true;
-            this.Seekbar.Value = c;
+            this.Seekbar.Value = num;
             this.ignoreSliderValueChangeEvent = false;
-        }
-
-        public void UpdateIntervalSlideTimer()
-        {
-            if (intervalSlideTimer.IsEnabled)
-            {
-                intervalSlideTimerCount = 0;
-            }
-        }
-            
-        public void UpdateGridLine()
-        {
-            Profile pf = Setting.TempProfile;
-
-            foreach(TileContainer tc in tileContainers)
-            {
-                tc.InitGridLineColor( (Color)pf.GridLineColor.Value );
-                tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
-                //tc.InitSizeAndPos(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
-            }
-
-            // 現在表示中の画像をそのままに、コンテナの位置を初期化する
-            ChangeCurrentImageIndex(imageFileManager.CurrentIndex);
-
-            foreach(TileContainer tc in tileContainers)
-            {
-                tc.InitWrapPoint();
-            }
-
-            UpdateMainWindowView();
         }
 
         public void UpdateTileArrange()
         {
             // タイルの配置を更新
-            InitMainContent(imageFileManager.CurrentIndex);
+            var t = ImgContainerManager.InitAllContainer(ImgContainerManager.CurrentImageIndex);
         }
 
         public void UpdateUI()
@@ -1063,8 +753,8 @@ namespace C_SlideShow
             double monitorRatio = Width / Height;
             double zoomFactor;
             Point origin;
-            double w = tileContainers[0].Width;
-            double h = tileContainers[0].Height;
+            double w = ImgContainerManager.ContainerWidth;
+            double h = ImgContainerManager.ContainerHeight;
             if(MainContentAspectRatio > monitorRatio)
             {
                 // モニターよりも横長 → 拡大率はモニターの幅と比べて決まる
@@ -1174,7 +864,7 @@ namespace C_SlideShow
         public void UpdateTempProfile()
         {
             SaveWindowRect();
-            Setting.TempProfile.LastPageIndex.Value = imageFileManager.CurrentIndex;
+            Setting.TempProfile.LastPageIndex.Value = ImgContainerManager.CurrentImageIndex;
             Setting.SettingDialogTabIndex = SettingDialog.MainTabControl.SelectedIndex;
             if( IsPlaying ) Setting.TempProfile.SlideShowAutoStart.Value = true;
             else Setting.TempProfile.SlideShowAutoStart.Value = false;
@@ -1182,44 +872,15 @@ namespace C_SlideShow
 
         public void SortAllImage(FileSortMethod order)
         {
-            // 読み込み中のメッセージ
-            this.WaitingMessageBase.Visibility = Visibility.Visible;
-            this.WaitingMessageBase.Refresh();
-
             if( order == FileSortMethod.None )
                 ReadFiles(Setting.TempProfile.Path.Value.ToArray(), false);
             int grids = Setting.TempProfile.NumofMatrix.Grid;
-            imageFileManager.Sort(order);
-            imageFileManager.FillFileInfoVacancyWithDummy(grids);
-            ChangeCurrentImageIndex(0);
-
-            this.WaitingMessageBase.Visibility = Visibility.Collapsed;
+            ImgContainerManager.ImagePool.Sort(order);
+            var t = ImgContainerManager.ChangeCurrentIndex(0);
         }
 
-        public List<TileContainer> GetTileContainersInCurrentOrder()
-        {
-            List<TileContainer> containersInCurrentOrder;
-            switch (Setting.TempProfile.SlideDirection.Value)
-            {
-                case SlideDirection.Left:
-                default:
-                    containersInCurrentOrder = tileContainers.OrderBy(c => c.Margin.Left).ToList();
-                    break;
-                case SlideDirection.Top:
-                    containersInCurrentOrder = tileContainers.OrderBy(c => c.Margin.Top).ToList();
-                    break;
-                case SlideDirection.Right:
-                    containersInCurrentOrder = tileContainers.OrderByDescending(c => c.Margin.Left).ToList();
-                    break;
-                case SlideDirection.Bottom:
-                    containersInCurrentOrder = tileContainers.OrderByDescending(c => c.Margin.Top).ToList();
-                    break;
-            }
 
-            return containersInCurrentOrder;
-        }
-
-        public Tile GetTileUnderCursor()
+        public Border GetBorderUnderCursor()
         {
             // MainWindow上の座標取得
             Point p = Mouse.GetPosition(this);
@@ -1231,11 +892,7 @@ namespace C_SlideShow
             if( source == null ) return null;
 
             // 拡大時は1つしか候補が無い
-            if( TileExpantionPanel.IsShowing ) return TileExpantionPanel.TargetTile;
-
-            // クリックされたTileContainer
-            TileContainer tc = WpfTreeUtil.FindAncestor<TileContainer>(source);
-            if( tc == null ) return null;
+            if( TileExpantionPanel.IsShowing ) return TileExpantionPanel.TargetBorder;
 
             // クリックされたBorder
             Border border;
@@ -1246,15 +903,29 @@ namespace C_SlideShow
             }
             if( border == null ) return null;
 
-            // 紐づけられているTileオブジェクトを特定
-            Tile targetTile = tc.Tiles.FirstOrDefault(t => t.Border == border);
-            if( targetTile == null ) return null;
-
-            return targetTile;
+            return border;
         }
+
+        
+        public ImageFileContext GetImageFileContextUnderCursor()
+        {
+            Border border = GetBorderUnderCursor();
+            if( border == null ) return null;
+
+            ImgContainer parentContainer = WpfTreeUtil.FindAncestor<ImgContainer>(border);
+            if( parentContainer == null ) return null;
+            int idx = parentContainer.MainGrid.Children.IndexOf(border);
+            ImageFileContext targetImgFileContext = parentContainer.ImageFileContextMapList[idx];
+
+            return targetImgFileContext;
+        }
+
 
         public void Reload(bool keepCurrentIdx)
         {
+            // 現在のページを保持
+            int currentIndex = ImgContainerManager.CurrentImageIndex;
+
             // 拡大パネル表示中なら閉じる
             if( TileExpantionPanel.IsShowing ) TileExpantionPanel.Hide();
 
@@ -1263,17 +934,15 @@ namespace C_SlideShow
             ReadFiles(files, false);
 
             // コンテンツ初期化
+            ImgContainerManager.ImagePool.ReleaseAllBitmapImage();
             if( keepCurrentIdx )
             {
-                InitMainContent(imageFileManager.CurrentIndex);
+                var t = ImgContainerManager.InitAllContainer(currentIndex);
             }
             else
             {
-                InitMainContent(0);
+                var t = ImgContainerManager.InitAllContainer(0);
             }
-
-            // 画面更新
-            UpdateMainWindowView();
         }
 
         public void SaveHistoryItem()
@@ -1282,20 +951,19 @@ namespace C_SlideShow
             if( !ei.ImagePath && !ei.Matrix && !ei.SlideDirection ) return;
 
             // アーカイバが１つの時だけ保存
-            if( imageFileManager.IsSingleArchiver && imageFileManager.Archivers[0].LeaveHistory )
+            if( ImgContainerManager.ImagePool.IsSingleArchiver && ImgContainerManager.ImagePool.Archivers[0].LeaveHistory )
             {
-                HistoryItem hi = Setting.History.FirstOrDefault( h => h.ArchiverPath == imageFileManager.Archivers[0].ArchiverPath );
-                if(hi != null )
+                HistoryItem hi = Setting.History.FirstOrDefault(h => h.ArchiverPath == ImgContainerManager.ImagePool.Archivers[0].ArchiverPath);
+                if( hi != null )
                 {
                     // 最後に読み込んだ画像のパス(並び順に依らないページ番号復元用)
                     if( ei.ImagePath )
                     {
-                        ImageFileInfo ifi = imageFileManager.CurrentImageFileInfo;
-                        if( ifi != null ) hi.ImagePath = imageFileManager.CurrentImageFileInfo.FilePath;
-                        else hi.ImagePath = null;
+                        ImageFileContext ifc = ImgContainerManager.CurrentImageFileContext;
+                        hi.ImagePath = ifc.FilePath;
                     }
                     // アス比
-                    if(ei.AspectRatio)
+                    if( ei.AspectRatio )
                         hi.AspectRatio = new int[] { Setting.TempProfile.AspectRatio.H, Setting.TempProfile.AspectRatio.V };
                     // 行列
                     if( ei.Matrix )
@@ -1322,10 +990,10 @@ namespace C_SlideShow
                 pf.LastPageIndex.Value = 0;
                 if( ei.ImagePath && hi.ImagePath != null)
                 {
-                    ImageFileInfo lastImageInfo = imageFileManager.ImgFileInfo.FirstOrDefault( ifi => ifi.FilePath == hi.ImagePath );
-                    if( lastImageInfo != null )
+                    ImageFileContext lastImageFileContext = ImgContainerManager.ImagePool.ImageFileContextList.FirstOrDefault(i => i.FilePath == hi.ImagePath);
+                    if( lastImageFileContext != null )
                     {
-                        pf.LastPageIndex.Value = imageFileManager.ImgFileInfo.IndexOf(lastImageInfo);
+                        pf.LastPageIndex.Value = ImgContainerManager.ImagePool.ImageFileContextList.IndexOf(lastImageFileContext);
                     }
                 }
                 // アス比
@@ -1346,10 +1014,10 @@ namespace C_SlideShow
                     pf.SlideDirection.Value = hi.SlideDirection;
                 }
 
-                InitMainContent(pf.LastPageIndex.Value);
+                // 画像読み込み
+                var t = ImgContainerManager.InitAllContainer(pf.LastPageIndex.Value);
 
-                // 更新
-                UpdateMainWindowView();
+                // ツールバー更新
                 UpdateToolbarViewing();
             }
         }
@@ -1471,21 +1139,20 @@ namespace C_SlideShow
 
         public void OpenCurrentFolderByExplorer()
         {
-            ImageFileInfo fi = imageFileManager.CurrentImageFileInfo;
+            ImageFileContext ifc = ImgContainerManager.CurrentImageFileContext;
             string archiverPath;
+            if( ifc == null ) return;
 
-            if(fi.Archiver is NullArchiver )
+            if( ifc.Archiver is NullArchiver )
             {
-                if( fi.IsDummy ) return;
-                archiverPath = Directory.GetParent(fi.FilePath).FullName;
+                archiverPath = Directory.GetParent(ifc.FilePath).FullName;
             }
             else
             {
-                archiverPath = fi.Archiver.ArchiverPath;
+                archiverPath = ifc.Archiver.ArchiverPath;
             }
 
             Process.Start("explorer.exe", "/select,\"" + archiverPath + "\"");
-
         }
 
     }

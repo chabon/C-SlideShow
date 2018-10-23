@@ -119,11 +119,11 @@ namespace C_SlideShow
                 Setting.TempProfile.SlidePlayMethod.Value = SlidePlayMethod.Interval;
             }
 
-            mainWindow.StopSlideShow(false);
+            mainWindow.ImgContainerManager.StopSlideShow(false);
             mainWindow.UpdateToolbarViewing();
             UpdateDlgShowing();
 
-            if( b ) mainWindow.StartSlideShow(true); // 方法を変えても、スライドしてたら継続
+            if( b ) mainWindow.ImgContainerManager.StartSlideShow(true); // 方法を変えても、スライドしてたら継続
         }
 
         // 速度
@@ -134,7 +134,13 @@ namespace C_SlideShow
             Text_SlideSpeed.Text = ( (int)SlideSpeed.Value ).ToString();
             Setting.TempProfile.SlideSpeed.Value = (int)SlideSpeed.Value;
 
-            mainWindow.UpdateSlideSpeed();
+            // 更新反映
+            if (mainWindow.ImgContainerManager.SlideShowState ==  Core.SlideShowState.Continuous)
+            {
+                mainWindow.ImgContainerManager.StopSlideShow(false);
+                mainWindow.ImgContainerManager.StartSlideShow(false);
+            }
+
         }
 
         // 待機時間
@@ -146,7 +152,7 @@ namespace C_SlideShow
             int.TryParse( SlideInterval.Text, out val);
             if (val < ProfileMember.SlideInterval.Min || val > ProfileMember.SlideInterval.Max) val = 5;
             Setting.TempProfile.SlideInterval.Value = val;
-            mainWindow.UpdateIntervalSlideTimer();
+            mainWindow.ImgContainerManager.IntervalSlideTimerCount = 0;
         }
 
         // スライド時間

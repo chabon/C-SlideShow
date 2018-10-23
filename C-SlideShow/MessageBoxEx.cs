@@ -140,6 +140,10 @@ public class MessageBoxEx
     [DllImport("user32.dll")]
     public static extern int EndDialog(IntPtr hDlg, IntPtr nResult);
 
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+
     [StructLayout(LayoutKind.Sequential)]
     public struct CWPRETSTRUCT
     {
@@ -165,7 +169,10 @@ public class MessageBoxEx
 
         if (_owner != null)
         {
-            _hHook = SetWindowsHookEx(WH_CALLWNDPROCRET, _hookProc, IntPtr.Zero, AppDomain.GetCurrentThreadId());
+            //_hHook = SetWindowsHookEx(WH_CALLWNDPROCRET, _hookProc, IntPtr.Zero, AppDomain.GetCurrentThreadId()); // 「古い形式」と警告が出る
+            //_hHook = SetWindowsHookEx(WH_CALLWNDPROCRET, _hookProc, IntPtr.Zero, System.Diagnostics.Process.GetCurrentProcess().Threads[0].Id); // 機能しない
+            uint processID = 0;
+            _hHook = SetWindowsHookEx(WH_CALLWNDPROCRET, _hookProc, IntPtr.Zero, (int) GetWindowThreadProcessId(_owner, out processID));
         }
     }
 

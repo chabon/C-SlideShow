@@ -22,8 +22,7 @@ using System.IO;
 
 using Forms = System.Windows.Forms;
 using C_SlideShow.Shortcut;
-
-
+using C_SlideShow.Core;
 
 namespace C_SlideShow
 {
@@ -56,55 +55,24 @@ namespace C_SlideShow
                     // 現在のプロファイル
                     Profile pf = Setting.TempProfile;
 
-                    // 現在の順番でコンテナを取得
-                    List<TileContainer> containersInCurrentOrder = GetTileContainersInCurrentOrder();
-                    //Debug.WriteLine("Current top container: " + currentContainers[0].Order);
-
                     // タイルサイズ(アス比)の決定
                     double w = (this.Width - MainContent.Margin.Left * 2) / pf.NumofMatrix.Col;
                     double h = (this.Height - MainContent.Margin.Left * 2) / pf.NumofMatrix.Row;
                     double gridRatio = h / w;
 
-                    int gridWidth = TileContainer.StandardTileWidth + pf.TilePadding.Value * 2;
-                    int gridHeight = (int)( gridWidth * gridRatio );
-                    pf.AspectRatio.Value = new int[] { TileContainer.StandardTileWidth, gridHeight - pf.TilePadding.Value * 2 };
+                    int gridWidth = ImgContainer.StandardTileWidth + pf.TilePadding.Value * 2;
+                    int gridHeight = (int)(gridWidth * gridRatio);
+                    pf.AspectRatio.Value = new int[] { ImgContainer.StandardTileWidth, gridHeight - pf.TilePadding.Value * 2 };
 
                     // コンテナサイズの決定
-                    foreach( TileContainer tc in tileContainers )
-                    {
-                        tc.InitSize(pf.AspectRatio.H, pf.AspectRatio.V, pf.TilePadding.Value);
-                        tc.InitWrapPoint();
-                    }
+                    ImgContainerManager.InitContainerSize();
+                    ImgContainerManager.InitWrapPoint(pf.SlideDirection.Value);
 
-                    // 1タイルのバックバッファサイズを更新
-                    TileContainer.TileAspectRatio = (double)pf.AspectRatio.V / pf.AspectRatio.H;
-                    TileContainer.SetBitmapDecodePixelOfTile(pf.BitmapDecodeTotalPixel.Value, pf.NumofMatrix.Col, pf.NumofMatrix.Row);
+                    // BitmapDecodePixelOfTilewを更新
+                    ImgContainerManager.InitBitmapDecodePixelOfTile();
 
                     // 位置を正規化
-                    containersInCurrentOrder[0].Margin = new Thickness(0);
-                    double containerWidth = tileContainers[0].Width;
-                    double containerHeight = tileContainers[0].Height;
-                    switch( pf.SlideDirection.Value )
-                    {
-                        case SlideDirection.Left:
-                        default:
-                            containersInCurrentOrder[1].Margin = new Thickness(containerWidth, 0, 0, 0);
-                            containersInCurrentOrder[2].Margin = new Thickness(2 * containerWidth, 0, 0, 0);
-                            break;
-                        case SlideDirection.Top:
-                            containersInCurrentOrder[1].Margin = new Thickness(0, containerHeight, 0, 0);
-                            containersInCurrentOrder[2].Margin = new Thickness(0, 2 * containerHeight, 0, 0);
-                            break;
-                        case SlideDirection.Right:
-                            containersInCurrentOrder[1].Margin = new Thickness(-containerWidth, 0, 0, 0);
-                            containersInCurrentOrder[2].Margin = new Thickness(-2 * containerWidth, 0, 0, 0);
-                            break;
-                        case SlideDirection.Bottom:
-                            containersInCurrentOrder[1].Margin = new Thickness(0, -containerHeight, 0, 0);
-                            containersInCurrentOrder[2].Margin = new Thickness(0, -2 * containerHeight, 0, 0);
-                            break;
-                    }
-
+                    ImgContainerManager.InitContainerPos();
                 }
 
                 // アス比固定・非固定に関わらず拡大縮小
@@ -134,7 +102,8 @@ namespace C_SlideShow
                 if( IsCtrlOrShiftKeyPressed )
                 {
                     // 追加読み込み
-                    ReadFilesAndInitMainContent(files, true, 0);
+                    ReadFiles(files, true);
+                    var t = ImgContainerManager.InitAllContainer(0);
                 }
                 else
                 {
@@ -188,27 +157,6 @@ namespace C_SlideShow
             };
         }
 
-        private void intervalSlideTimer_Tick(object sender, EventArgs e)
-        {
-            intervalSlideTimerCount += 1;
-
-            if(Setting.TempProfile.SlidePlayMethod.Value == SlidePlayMethod.Interval)
-            {
-                if(intervalSlideTimerCount >= Setting.TempProfile.SlideInterval.Value)
-                {
-                    Profile pf = Setting.TempProfile;
-                    StartIntervalSlide(pf.SlideByOneImage.Value, pf.SlideTimeInIntevalMethod.Value);
-
-                    int slideTime = (int)( pf.SlideTimeInIntevalMethod.Value / 1000 );
-                    intervalSlideTimerCount = 0 - slideTime;
-                }
-            }
-            else
-            {
-                intervalSlideTimer.Stop();
-            }
-        }
-
 
         // シークバー
         private void Seekbar_DragStarted(object sender, RoutedEventArgs e)
@@ -225,7 +173,9 @@ namespace C_SlideShow
         private void OnSeekbarValueChanged(int value)
         {
             int index = value - 1;
-            if(index != imageFileManager.CurrentIndex) ChangeCurrentImageIndex(index);
+            if( index != ImgContainerManager.CurrentImageIndex ) {
+                var t = ImgContainerManager.ChangeCurrentIndex(index);
+            }
         }
 
         private void Seekbar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -236,8 +186,7 @@ namespace C_SlideShow
             //if (isHSeekbarDragStarted && BitmapPresenter.FileInfo.Count > 99)
             if (isSeekbarDragStarted)
             {
-                PageInfoText.Text = String.Format("{0} / {1}",
-                    value, imageFileManager.NumofImageFile);
+                PageInfoText.Text = String.Format("{0} / {1}", value, ImgContainerManager.ImagePool.ImageFileContextList.Count);
                 return;
             }
             Debug.WriteLine("seek bar value: " + Seekbar.Value);
@@ -322,7 +271,8 @@ namespace C_SlideShow
                 if( mi == null ) return;
 
                 string[] path = { mi.ToolTip.ToString() };
-                ReadFilesAndInitMainContent(path, true, 0);
+                ReadFiles(path, true);
+                var t = ImgContainerManager.InitAllContainer(0);
             };
 
             // エクスプローラーで開く
@@ -504,7 +454,8 @@ namespace C_SlideShow
                     int w = int.Parse(str[0]);
                     int h = int.Parse(str[1]);
 
-                    ChangeAspectRatio(w, h);
+                    Setting.TempProfile.AspectRatio.Value = new int[] { w, h };
+                    ImgContainerManager.ApplyAspectRatio(true);
                 }
             }
         }
@@ -517,7 +468,9 @@ namespace C_SlideShow
             if(ms != null)
             {
                 this.MenuItem_Matrix.IsSubmenuOpen = false;
-                ChangeGridDifinition(ms.ColValue, ms.RowValue);
+                Setting.TempProfile.NumofMatrix.Value = new int[] { ms.ColValue, ms.RowValue };
+
+                ImgContainerManager.ApplyGridDifinition();
                 this.Focus();
             }
 
@@ -529,14 +482,10 @@ namespace C_SlideShow
         }
 
 
-        // 再生
+        // 再生 / 停止
         private void Toolbar_Play_Click(object sender, RoutedEventArgs e)
         {
-            // 再生中だったら停止
-            if(IsPlaying) StopSlideShow(true);
-
-            // 再生
-            else StartSlideShow(true);
+            ShortcutManager.ExecuteCommand(CommandID.ToggleSlideShowPlay);
         }
 
 

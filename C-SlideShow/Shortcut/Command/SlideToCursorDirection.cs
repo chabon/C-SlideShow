@@ -46,7 +46,7 @@ namespace C_SlideShow.Shortcut.Command
             // カーソルのスクリーン座標取得
             Point ptCursor = Win32.GetCursorPos();
 
-            if( mw.IsHorizontalSlide )
+            if( mw.Setting.TempProfile.IsHorizontalSlide )
             {
                 if( ptCursor.X < ptCenter.X )
                 {
@@ -69,7 +69,6 @@ namespace C_SlideShow.Shortcut.Command
                 }
             }
 
-            mw.StartOperationSlide(true, false);
         }
 
         public string GetDetail()

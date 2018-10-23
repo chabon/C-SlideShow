@@ -28,7 +28,7 @@ namespace C_SlideShow.Shortcut.Command
         
         public bool CanExecute()
         {
-            if( MainWindow.Current.IsHorizontalSlide )
+            if( MainWindow.Current.Setting.TempProfile.IsHorizontalSlide )
             {
                 return true;
             }
@@ -44,11 +44,11 @@ namespace C_SlideShow.Shortcut.Command
 
             if(mw.Setting.TempProfile.SlideDirection.Value == SlideDirection.Left )
             {
-                mw.StartOperationSlide(false, false);
+                mw.ImgContainerManager.ActiveSlideToForward(false, mw.Setting.OperationSlideDuration, false);
             }
             else
             {
-                mw.StartOperationSlide(true, false);
+                mw.ImgContainerManager.ActiveSlideToBackward(false, mw.Setting.OperationSlideDuration);
             }
         }
 
