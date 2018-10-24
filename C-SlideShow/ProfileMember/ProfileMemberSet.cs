@@ -53,6 +53,39 @@ namespace C_SlideShow.ProfileMember
         public static readonly int Min = 0;
         public static readonly int Max = int.MaxValue;
     }
+
+
+    public class DetectionOfSpread : ProfileMemberBase
+    {
+        public DetectionOfSpread()
+        {
+            this.Value = C_SlideShow.DetectionOfSpread.None;
+            IsEnabled  = false;
+        }
+
+        public new C_SlideShow.DetectionOfSpread Value { get; set; }
+
+        public override string TooltipStr
+        {
+            get
+            {
+                string method;
+                switch( this.Value )
+                {
+                    case C_SlideShow.DetectionOfSpread.None:
+                    default:
+                        method =  "しない"; break;
+                    case C_SlideShow.DetectionOfSpread.ByWideImage:
+                        method = "横長の画像を見開きとして表示"; break;
+                    case C_SlideShow.DetectionOfSpread.ByHighImage:
+                        method = "縦長の画像を見開きとして表示"; break;
+                }
+
+                return "見開き検出: " + method;
+            }
+        }
+    }
+
     /* ---------------------------------------------------- */
     // 行列設定
     /* ---------------------------------------------------- */

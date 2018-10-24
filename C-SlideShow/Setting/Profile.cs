@@ -13,6 +13,11 @@ using System.Windows;
 
 namespace C_SlideShow
 {
+    public enum DetectionOfSpread
+    {
+        None, ByWideImage, ByHighImage
+    }
+
     public enum SlideDirection
     {
         Left, Top, Right, Bottom, None
@@ -76,6 +81,7 @@ namespace C_SlideShow
         //     Member
         /* ---------------------------------------------------- */
         // ダイアログ未実装
+
 
         // ダイアログにはない設定
         [DataMember]
@@ -143,6 +149,9 @@ namespace C_SlideShow
         [DataMember]
         public ProfileMember.BitmapDecodeTotalPixel BitmapDecodeTotalPixel { get; set; } = new ProfileMember.BitmapDecodeTotalPixel();
 
+        [DataMember]
+        public ProfileMember.DetectionOfSpread DetectionOfSpread { get; set; } = new ProfileMember.DetectionOfSpread();
+
 
         // その他の設定_配置
         [DataMember]
@@ -202,7 +211,7 @@ namespace C_SlideShow
         [OnDeserializing]
         public void DefaultDeserializing(StreamingContext sc)
         {
-            this.SlideShowAutoStart = new ProfileMember.SlideShowAutoStart();
+            this.DetectionOfSpread  = new ProfileMember.DetectionOfSpread();    // after ver3.0
         }
 
         /* ---------------------------------------------------- */
@@ -231,6 +240,7 @@ namespace C_SlideShow
             // 読み込み
             if( pf.Path.IsEnabled )          Path.Value = new List<string>(pf.Path.Value);
             if( pf.LastPageIndex.IsEnabled ) LastPageIndex.Value = pf.LastPageIndex.Value;
+            if( pf.DetectionOfSpread.IsEnabled ) DetectionOfSpread.Value = pf.DetectionOfSpread.Value;
 
             // 行列設定
             if( pf.NumofMatrix.IsEnabled )          Array.Copy(pf.NumofMatrix.Value, NumofMatrix.Value, 2);
@@ -312,6 +322,7 @@ namespace C_SlideShow
             // 読み込み
             newProfile.Path.Value = new List<string>(this.Path.Value);
             newProfile.LastPageIndex.Value = this.LastPageIndex.Value;
+            newProfile.DetectionOfSpread.Value = this.DetectionOfSpread.Value;
 
             // 行列設定
             Array.Copy(this.NumofMatrix.Value, newProfile.NumofMatrix.Value, 2);

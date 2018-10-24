@@ -242,7 +242,7 @@ namespace C_SlideShow
             TempProfile.ProfileType = ProfileType.Temp;
 
             // ダイアログにはない設定
-            ShowFileInfoInTileExpantionPanel = false;
+            ShowFileInfoInTileExpantionPanel = true;
             SettingDialogTabIndex = 0;
             AppSettingDialogTabIndex = 0;
             AppSettingDialog_ShortcutSettingTabIndex = 0;

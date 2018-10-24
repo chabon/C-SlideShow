@@ -206,6 +206,35 @@ namespace C_SlideShow.Core
         } 
 
 
+        /// <summary>
+        /// 次のピックが見開きかチェック
+        /// </summary>
+        /// <param name="isBackward">巻き戻し方向をチェック</param>
+        /// <returns>見開きならtrue</returns>
+        public bool IsNextPickImageSpreaded(bool isBackward)
+        {
+            ImageFileContext context;
+            if( !isBackward ) context = ImageFileContextList[ForwardIndex];
+            else context = ImageFileContextList[BackwardIndex];
+
+            context.ReadInfoForView();
+            Size pxSize = context.Info.PixelSize;
+            if( pxSize == Size.Empty || pxSize == null ) return false;
+
+            switch( MainWindow.Current.Setting.TempProfile.DetectionOfSpread.Value )
+            {
+                default:
+                case DetectionOfSpread.None:
+                    return false;
+                case DetectionOfSpread.ByWideImage:
+                    if( pxSize.Width > pxSize.Height ) return true;
+                    else return false;
+                case DetectionOfSpread.ByHighImage:
+                    if( pxSize.Height > pxSize.Width ) return true;
+                    else return false;
+            }
+        }
+
 
         /// <summary>
         /// ソート

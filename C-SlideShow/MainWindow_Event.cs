@@ -60,9 +60,9 @@ namespace C_SlideShow
                     double h = (this.Height - MainContent.Margin.Left * 2) / pf.NumofMatrix.Row;
                     double gridRatio = h / w;
 
-                    int gridWidth = ImgContainer.StandardTileWidth + pf.TilePadding.Value * 2;
+                    int gridWidth = ImgContainer.StandardInnerTileWidth + pf.TilePadding.Value * 2;
                     int gridHeight = (int)(gridWidth * gridRatio);
-                    pf.AspectRatio.Value = new int[] { ImgContainer.StandardTileWidth, gridHeight - pf.TilePadding.Value * 2 };
+                    pf.AspectRatio.Value = new int[] { ImgContainer.StandardInnerTileWidth, gridHeight - pf.TilePadding.Value * 2 };
 
                     // コンテナサイズの決定
                     ImgContainerManager.InitContainerSize();

@@ -173,6 +173,7 @@ namespace C_SlideShow
                 if( pf.FileSortMethod.IsEnabled ) PfCheckBox_FileSortMethod.IsChecked = true;
                 if( pf.ApplyRotateInfoFromExif.IsEnabled ) PfCheckBox_ApplyRotateInfoFromExif.IsChecked = true;
                 if( pf.BitmapDecodeTotalPixel.IsEnabled ) PfCheckBox_BitmapDecodeTotalPixel.IsChecked = true;
+                if( pf.DetectionOfSpread.IsEnabled ) PfCheckBox_DetectionOfSpread.IsChecked = true;
                 // その他/配置
                 if( pf.UseDefaultTileOrigin.IsEnabled ) PfCheckBox_UseDefaultTileOrigin.IsChecked = true;
                 if( pf.TileOrigin.IsEnabled ) PfCheckBox_TileOrigin.IsChecked = true;
@@ -330,6 +331,20 @@ namespace C_SlideShow
 
             // バックバッファのサイズ(ピクセル値)
             BitmapDecodeTotalPixel.Value = pf.BitmapDecodeTotalPixel.Value;
+
+            // 見開き検出
+            switch( pf.DetectionOfSpread.Value )
+            {
+                case C_SlideShow.DetectionOfSpread.None:
+                    DetectionOfSpread.SelectedIndex = 0;
+                    break;
+                case C_SlideShow.DetectionOfSpread.ByWideImage:
+                    DetectionOfSpread.SelectedIndex = 1;
+                    break;
+                case C_SlideShow.DetectionOfSpread.ByHighImage:
+                    DetectionOfSpread.SelectedIndex = 2;
+                    break;
+            }
 
             /* ---------------------------------------------------- */
             // その他/配置
@@ -683,6 +698,24 @@ namespace C_SlideShow
             {
                 pf.BitmapDecodeTotalPixel.IsEnabled = true;
                 pf.BitmapDecodeTotalPixel.Value = BitmapDecodeTotalPixel.Value;
+            }
+
+            // 見開き検出
+            if( (bool)PfCheckBox_DetectionOfSpread.IsChecked )
+            {
+                pf.DetectionOfSpread.IsEnabled = true;
+                switch( DetectionOfSpread.SelectedIndex )
+                {
+                    case 0:
+                        pf.DetectionOfSpread.Value = C_SlideShow.DetectionOfSpread.None;
+                        break;
+                    case 1:
+                        pf.DetectionOfSpread.Value = C_SlideShow.DetectionOfSpread.ByWideImage;
+                        break;
+                    case 2:
+                        pf.DetectionOfSpread.Value = C_SlideShow.DetectionOfSpread.ByHighImage;
+                        break;
+                }
             }
 
             /* ---------------------------------------------------- */

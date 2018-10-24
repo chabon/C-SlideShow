@@ -37,6 +37,7 @@ namespace C_SlideShow
             BookBoundOnLeftSide.NonFixAspectRatio.IsEnabled = true;
             BookBoundOnLeftSide.SlideDirection.IsEnabled = true;
             BookBoundOnLeftSide.UseDefaultTileOrigin.IsEnabled = true;
+            BookBoundOnLeftSide.DetectionOfSpread.IsEnabled = true;
 
             BookBoundOnLeftSide.Name = "書籍用(左綴じ)";
             BookBoundOnLeftSide.NumofMatrix.Value = new int[] { 2, 1 };
@@ -44,6 +45,7 @@ namespace C_SlideShow
             BookBoundOnLeftSide.NonFixAspectRatio.Value = true;
             BookBoundOnLeftSide.SlideDirection.Value = SlideDirection.Left;
             BookBoundOnLeftSide.UseDefaultTileOrigin.Value = true;
+            BookBoundOnLeftSide.DetectionOfSpread.Value = DetectionOfSpread.ByWideImage;
 
 
             // 書籍用(右綴じ)
@@ -53,6 +55,7 @@ namespace C_SlideShow
             BookBoundOnRightSide.NonFixAspectRatio.IsEnabled = true;
             BookBoundOnRightSide.SlideDirection.IsEnabled = true;
             BookBoundOnRightSide.UseDefaultTileOrigin.IsEnabled = true;
+            BookBoundOnRightSide.DetectionOfSpread.IsEnabled = true;
 
             BookBoundOnRightSide.Name = "書籍用(右綴じ)";
             BookBoundOnRightSide.NumofMatrix.Value = new int[] { 2, 1 };
@@ -60,6 +63,7 @@ namespace C_SlideShow
             BookBoundOnRightSide.NonFixAspectRatio.Value = true;
             BookBoundOnRightSide.SlideDirection.Value = SlideDirection.Right;
             BookBoundOnRightSide.UseDefaultTileOrigin.Value = true;
+            BookBoundOnRightSide.DetectionOfSpread.Value = DetectionOfSpread.ByWideImage;
 
             // リスト
             Items.Add(Default);

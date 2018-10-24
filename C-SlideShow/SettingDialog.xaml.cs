@@ -94,6 +94,9 @@ namespace C_SlideShow
             // バックバッファの幅(ピクセル値)
             BitmapDecodeTotalPixel.Text = pf.BitmapDecodeTotalPixel.Value.ToString();
 
+            // 見開き検出
+            DetectionOfSpread.SelectedIndex = (int)pf.DetectionOfSpread.Value;
+
             // グリッドへの画像の配置方法
             if( pf.UseDefaultTileOrigin.Value )
             {
@@ -332,14 +335,24 @@ namespace C_SlideShow
         {
             if (isInitializing) return;
 
-                int val = Int32.Parse(BitmapDecodeTotalPixel.SelectedValue.ToString());
+            int val = Int32.Parse(BitmapDecodeTotalPixel.SelectedValue.ToString());
 
-                if( val > ProfileMember.BitmapDecodeTotalPixel.Max ) val = (int)ProfileMember.BitmapDecodeTotalPixel.Max;
-                if( val < ProfileMember.BitmapDecodeTotalPixel.Min ) val = (int)ProfileMember.BitmapDecodeTotalPixel.Min;
+            if( val > ProfileMember.BitmapDecodeTotalPixel.Max ) val = (int)ProfileMember.BitmapDecodeTotalPixel.Max;
+            if( val < ProfileMember.BitmapDecodeTotalPixel.Min ) val = (int)ProfileMember.BitmapDecodeTotalPixel.Min;
 
-                Setting.TempProfile.BitmapDecodeTotalPixel.Value = val;
-                mainWindow.Reload(true);
+            Setting.TempProfile.BitmapDecodeTotalPixel.Value = val;
+            mainWindow.Reload(true);
         }
+
+        // 見開き画像の検出
+        private void DetectionOfSpread_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (isInitializing) return;
+
+            Setting.TempProfile.DetectionOfSpread.Value = (DetectionOfSpread)DetectionOfSpread.SelectedIndex;
+            var t = mainWindow.ImgContainerManager.InitAllContainer(mainWindow.ImgContainerManager.CurrentImageIndex);
+        }
+
 
         // アプリの設定
         private void AppSettingButton_Click(object sender, RoutedEventArgs e)
@@ -541,5 +554,6 @@ namespace C_SlideShow
             Setting.TempProfile.TileImageStretch.Value = (TileImageStretch)TileImageStretch.SelectedIndex;
             mainWindow.UpdateTileArrange();
         }
+
     }
 }

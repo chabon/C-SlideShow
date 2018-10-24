@@ -20,24 +20,32 @@ namespace C_SlideShow.Core
 {
     public class ImageFileContext
     {
+        /* ---------------------------------------------------- */
+        //     プロパティ
+        /* ---------------------------------------------------- */
         public string        FilePath       { get; set; }
         public bool          IsDummy        { get; set; }
         public BitmapImage   BitmapImage    { get; set; }
         public ImageFileInfo Info           { get; set; } = new ImageFileInfo();
         public ArchiverBase  Archiver       { get; set; } 
-        public int           RefCount       { get; set; } = 0; // 参照カウンタ(コンテナからの)
-        public string        TempFilePath   { get; set; }  // 一時展開ファイルフルパス
-        public const string  TempDirName = "temp";       // 一時展開フォルダ名
+        public int           RefCount       { get; set; } = 0;  // 参照カウンタ(コンテナからの)
+        public string        TempFilePath   { get; set; }       // 一時展開ファイルフルパス
+        public const string  TempDirName = "temp";              // 一時展開フォルダ名
 
+        /* ---------------------------------------------------- */
+        //     メソッド
+        /* ---------------------------------------------------- */
         public ImageFileContext(string path)
         {
             this.FilePath = path;
         }
 
+
         public Stream GetStream()
         {
             return File.OpenRead(this.FilePath);
         }
+
 
         // @ref https://chitoku.jp/programming/wpf-lazy-image-behavior
         public Task<BitmapSource> GetImage(Size bitmapDecodePixel)

@@ -35,7 +35,7 @@ namespace C_SlideShow.Core
 
 
         public Size         BitmapDecodePixelOfTile { get; set; } = new Size(640, 480); // 1タイル毎のBitmapの上限
-        static public int   StandardTileWidth = 1000; // タイルの幅の基準
+        static public int   StandardInnerTileWidth = 1000; // タイル幅の基準(インナーサイズ)
 
         public int        InnerTileWidth  { get; private set; } // マージンを含まない(アス比に対応)
         public int        InnerTileHeight { get; private set; }
@@ -90,9 +90,9 @@ namespace C_SlideShow.Core
         public void InitSize(int aspectRatioH, int aspectRatioV, int tilePadding, int numofCol, int numofRow)
         {
             // タイルのインナーサイズ(Paddingを抜いたサイズ)
-            if( aspectRatioH > StandardTileWidth ) aspectRatioH = StandardTileWidth;
-            int mod = StandardTileWidth % aspectRatioH;
-            InnerTileWidth = StandardTileWidth - mod; // InnerTileWidthがaspectRatioHの整数倍になるようにする
+            if( aspectRatioH > StandardInnerTileWidth ) aspectRatioH = StandardInnerTileWidth;
+            int mod = StandardInnerTileWidth % aspectRatioH;
+            InnerTileWidth = StandardInnerTileWidth - mod; // InnerTileWidthがaspectRatioHの整数倍になるようにする
             int p = InnerTileWidth / aspectRatioH;
             InnerTileHeight = aspectRatioV * p;
 
@@ -314,7 +314,10 @@ namespace C_SlideShow.Core
             }
         }
 
-        // BitmapDecodePixelOfTileにサイズが足りていないBitmapImageを開放(サイズオーバーは許可する)
+
+        /// <summary>
+        /// BitmapDecodePixelOfTileにサイズが足りていないBitmapImageを開放(サイズオーバーは許可する)
+        /// </summary>
         public void ReleaseIncorrectSizeBitmap()
         {
             foreach( ImageFileContext ifc in ImageFileContextMapList )
@@ -333,6 +336,18 @@ namespace C_SlideShow.Core
                 }
             }
         }
+
+
+        /// <summary>
+        /// 見開き表示用に全グリッドを結合して1つのグリッドにする
+        /// </summary>
+        public void CombineAllGrid()
+        {
+            InitGrid(1, 1);
+            SetImageElementToGrid();
+            BitmapDecodePixelOfTile = new Size(TempProfile.BitmapDecodeTotalPixel.Value, TempProfile.BitmapDecodeTotalPixel.Value);
+        }
+
 
         public void ApplyGridLineColor()
         {

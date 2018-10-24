@@ -134,6 +134,7 @@ namespace C_SlideShow
             // debug
 #if DEBUG
             //Setting.ShortcutSetting = new ShortcutSetting();
+            //Setting.TempProfile.DetectionOfSpread.Value = DetectionOfSpread.ByWideImage;
 #endif
 
             // 色々初期化
@@ -960,7 +961,7 @@ namespace C_SlideShow
                     if( ei.ImagePath )
                     {
                         ImageFileContext ifc = ImgContainerManager.CurrentImageFileContext;
-                        hi.ImagePath = ifc.FilePath;
+                        if(ifc != null) hi.ImagePath = ifc.FilePath;
                     }
                     // アス比
                     if( ei.AspectRatio )

@@ -337,27 +337,50 @@ namespace C_SlideShow.Core
         public void MapImageFileContextToContainer(ImgContainer container, bool isBackward)
         {
             container.ImageFileContextMapList.Clear();
+            bool bReachToEnd = false;
 
-            bool bReachEnd = false;
+            // 見開き用に一時変更されたコンテナだったら、標準に戻す
+            if( TempProfile.DetectionOfSpread.Value != DetectionOfSpread.None && container.NumofGrid == 1 && TempProfile.NumofMatrix.Grid != 1)
+            {
+                container.InitGrid(TempProfile.NumofMatrix.Col, TempProfile.NumofMatrix.Row);
+                container.SetImageElementToGrid();
+                container.InitBitmapDecodePixelOfTile(TempProfile.AspectRatio.H, TempProfile.AspectRatio.V);
+            }
 
             for(int i=0; i < container.NumofGrid; i++ )
             {
+                // 自動見開き対応
+                if( TempProfile.DetectionOfSpread.Value != DetectionOfSpread.None && !bReachToEnd && TempProfile.NumofMatrix.Grid != 1)
+                {
+                    if(  ( !isBackward && ImagePool.IsNextPickImageSpreaded(false) ) || ( isBackward && ImagePool.IsNextPickImageSpreaded(true) ) ) // 見開きの検出
+                    {
+                        if( i == 0 ) {
+                            // 見開きページとして表示
+                            container.CombineAllGrid();
+                            if( !isBackward )   container.ImageFileContextMapList.Add( ImagePool.PickForward() );
+                            else                container.ImageFileContextMapList.Insert( 0, ImagePool.PickBackward() );
+                            return;
+                        }
+                        else bReachToEnd = true;    // 次のコンテナで見開きとして表示
+                    }
+                }
+
                 // 前方向
                 if( !isBackward )
                 {
-                    if( bReachEnd ) container.ImageFileContextMapList.Add( ImagePool.DummyImageContext );
+                    if( bReachToEnd ) container.ImageFileContextMapList.Add( ImagePool.DummyImageContext );
                     else container.ImageFileContextMapList.Add( ImagePool.PickForward() );
 
-                    if( !bReachEnd && ImagePool.ForwardIndex == 0 ) bReachEnd = true;
+                    if( !bReachToEnd && ImagePool.ForwardIndex == 0 ) bReachToEnd = true;
                 }
 
                 // 巻き戻し方向
                 else
                 {
-                    if( bReachEnd ) container.ImageFileContextMapList.Insert( 0, ImagePool.DummyImageContext );
+                    if( bReachToEnd ) container.ImageFileContextMapList.Insert( 0, ImagePool.DummyImageContext );
                     else container.ImageFileContextMapList.Insert( 0, ImagePool.PickBackward() );
 
-                    if( !bReachEnd && ImagePool.BackwardIndex == ImagePool.ImageFileContextList.Count - 1 ) bReachEnd = true;
+                    if( !bReachToEnd && ImagePool.BackwardIndex == ImagePool.ImageFileContextList.Count - 1 ) bReachToEnd = true;
                 }
             }
         }

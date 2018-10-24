@@ -249,6 +249,16 @@
                             <CheckBox x:Name="PfCheckBox_BitmapDecodeTotalPixel" Style="{StaticResource ProfileCheckboxStyle}">バックバッファのサイズ(ピクセル値)</CheckBox>
                             <cc:NumericUpDown x:Name="BitmapDecodeTotalPixel" Width="55" Variation="100"></cc:NumericUpDown>
                         </StackPanel>
+                        <Line Style="{StaticResource SeparateLine}"></Line>
+                        <!-- 見開き検出 -->
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="PfCheckBox_DetectionOfSpread" Style="{StaticResource ProfileCheckboxStyle}">見開き検出</CheckBox>
+                            <ComboBox x:Name="DetectionOfSpread" Style="{StaticResource ComboBoxStyle}" Width="195" SelectedIndex="0">
+                                <ComboBoxItem>しない</ComboBoxItem>
+                                <ComboBoxItem>横長の画像を見開きとして表示</ComboBoxItem>
+                                <ComboBoxItem>縦長の画像を見開きとして表示</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
                     </StackPanel>
                 </GroupBox>
 
