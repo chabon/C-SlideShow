@@ -297,7 +297,7 @@ namespace C_SlideShow
 
             // 詳細
             ShowMenuItem_AdditionalRead = true;
-            SerachAllDirectoriesInFolderReading = true;
+            SerachAllDirectoriesInFolderReading = false;
             ReadSingleImageAsParentFolder = true;
             SeekbarColor = Colors.Black;
             SeekBarIsMoveToPointEnabled = true;
