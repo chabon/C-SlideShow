@@ -56,7 +56,7 @@ namespace C_SlideShow.Shortcut.Command
 
             if(ifc != null)
             {
-                ifc.OpenExplorer();
+                ifc.OpenByExplorer();
             }
         }
 

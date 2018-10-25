@@ -269,22 +269,13 @@ namespace C_SlideShow.Core
         /* ---------------------------------------------------- */
         //     コマンド
         /* ---------------------------------------------------- */
-        // エクスプローラーでタイルを開く
-        public void OpenExplorer()
+        // エクスプローラーで開く
+        public void OpenByExplorer()
         {
-            string dirPath;
-            string filePath;
-            if( Archiver.CanReadFile )
-            {
-                dirPath = Directory.GetParent(FilePath).FullName;
-                filePath = FilePath;
-            }
-            else
-            {
-                dirPath = Directory.GetParent(Archiver.ArchiverPath).FullName;
-                filePath = Archiver.ArchiverPath;
-            }
-            Process.Start("explorer.exe", "/select,\"" + filePath + "\"");
+            ExternalAppInfo exAppInfo = new ExternalAppInfo();
+            exAppInfo.Path = "explorer.exe";
+            exAppInfo.Arg  = "/select," + Format.FilePathFormat;
+            OpenByExternalApp(exAppInfo);
         }
 
 

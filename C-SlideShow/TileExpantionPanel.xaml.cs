@@ -552,7 +552,7 @@ namespace C_SlideShow
         // エクスプローラーで開く
         private void Toolbar_OpenExplorer_Click(object sender, RoutedEventArgs e)
         {
-            TargetImgFileContext.OpenExplorer();
+            TargetImgFileContext.OpenByExplorer();
         }
 
         // クリップボードへコピー
