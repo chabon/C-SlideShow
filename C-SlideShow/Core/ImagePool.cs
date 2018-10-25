@@ -63,7 +63,6 @@ namespace C_SlideShow.Core
                 ImageFileContext ifc = NullArchiver.LoadImageFileContext(path);
                 if( ifc != null )
                 {
-                    //IsSingleImageFileLoaded = true;
                     ImageFileContextList.Add(ifc);
                 }
 

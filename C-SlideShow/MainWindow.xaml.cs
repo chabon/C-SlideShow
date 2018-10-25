@@ -436,13 +436,9 @@ namespace C_SlideShow
             // イベント防止
             ignoreSliderValueChangeEvent = true;
 
-            // クリックした時の挙動
-            //Seekbar.IsMoveToPointEnabled = true;
-
             int grids = Setting.TempProfile.NumofMatrix.Grid;
-            //Seekbar.Maximum = imageFileManager.GetLastNoDeviationIndex(grids) + 1; // 末尾がずれないように
             Seekbar.Maximum = ImgContainerManager.ImagePool.ImageFileContextList.Count;
-            Seekbar.Minimum = 1;
+            Seekbar.Minimum = Seekbar.Maximum !=0 ? 1 : 0;
 
             // クリック時(Large)、方向キー(Small)押下時の移動量
             Seekbar.LargeChange = 1;

@@ -221,6 +221,9 @@ namespace C_SlideShow.Core
         {
             StopSlideShow(true);
 
+            // シークバー初期化
+            MainWindow.Current.InitSeekbar();
+
             ImagePool.InitIndex(index);
             ImagePool.InitImageFileContextRefCount();
             InitContainerIndex();
@@ -231,6 +234,13 @@ namespace C_SlideShow.Core
             InitContainerGrid();
             InitBitmapDecodePixelOfTile();
             SetImageElementToContainerGrid();
+
+            // 読み込めるファイルが無い場合
+            if( ImagePool.ImageFileContextList.Count < 1 ) {
+                MainWindow.Current.UpdatePageInfo();
+                MainWindow.Current.UpdateMainWindowView();
+                return;
+            }
 
             // 前方向マッピング
             MapImageFileContextToContainer(Containers[2], false);
@@ -243,9 +253,6 @@ namespace C_SlideShow.Core
 
             // メインウインドウ表示更新
             MainWindow.Current.UpdateMainWindowView();
-
-            // シークバー初期化
-            MainWindow.Current.InitSeekbar();
 
             // ページ番号更新
             MainWindow.Current.UpdatePageInfo();
