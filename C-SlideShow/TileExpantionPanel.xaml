@@ -44,7 +44,7 @@
               >
             <Border CornerRadius="3"
                     Background="White"
-                    Opacity="0.8">
+                    Opacity="0.7">
             </Border>
             <TextBlock x:Name="FileInfoTextBlock"
                        Text=""
@@ -57,7 +57,7 @@
         </Grid>
 
         <!-- ツールバー -->
-        <Border Margin="8" 
+        <Border Margin="10" 
                 x:Name="ToolbarWrapper"
                 Opacity="0.9"
                 Visibility="Visible"
@@ -148,6 +148,28 @@
 
             </WrapPanel>
         </Border>
+
+        <!-- ファイルパステキスト -->
+        <!--<Grid x:Name="FilePathGrid"
+              Margin="10,4"
+              HorizontalAlignment="Left"
+              VerticalAlignment="Bottom"
+              Visibility="Hidden"
+              >
+            <Border CornerRadius="3"
+                    Background="White"
+                    Opacity="0.7">
+            </Border>
+            <TextBlock x:Name="FilePathTextBlock"
+                       Text=""
+                       Width="Auto"
+                       HorizontalAlignment="Left"
+                       Padding="3,1"
+                       Opacity="1.0"
+                       Foreground="Black">
+            </TextBlock>
+        </Grid>-->
+
 
     </Grid>
 </UserControl>

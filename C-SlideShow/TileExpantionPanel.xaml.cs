@@ -100,6 +100,9 @@ namespace C_SlideShow
             // ファイル情報のテキストを更新
             UpdateFileInfoText();
 
+            // ファイルパスのテキストを更新
+            //UpdateFilePathText();
+
             // 外部プログラムで開くボタンのツールチップ
             Toolbar_OpenByExternalApp.ToolTip = "規定のプログラムで画像を開く";
             if(MainWindow.Setting.ExternalAppInfoList.Count > 0 )
@@ -336,6 +339,16 @@ namespace C_SlideShow
                 if( ifi.ExifInfo.DateTaken != null )
                     newText += "撮影日時: " + ifi.ExifInfo.DateTaken.Value.DateTime + "\n";
                 newText += "ピクセル数: " + ifi.PixelSize.Width + "x" + ifi.PixelSize.Height;
+
+                // ツールチップでファイルパス表示
+                if( TargetImgFileContext.Archiver.CanReadFile )
+                {
+                    FileInfoGrid.ToolTip = TargetImgFileContext.FilePath;
+                }
+                else
+                {
+                    FileInfoGrid.ToolTip = TargetImgFileContext.Archiver.ArchiverPath + "\\" + TargetImgFileContext.FilePath;
+                }
             }
             catch
             {
@@ -359,15 +372,29 @@ namespace C_SlideShow
         }
 
 
+        //private void UpdateFilePathText()
+        //{
+        //    if( TargetImgFileContext.Archiver.CanReadFile )
+        //    {
+        //        FilePathTextBlock.Text = TargetImgFileContext.FilePath;
+        //    }
+        //    else
+        //    {
+        //        FilePathTextBlock.Text = TargetImgFileContext.Archiver.ArchiverPath + "\\" + TargetImgFileContext.FilePath;
+        //    }
+        //}
+
         public void UpdateFileInfoAreaVisiblity()
         {
             if( MainWindow.Setting.ShowFileInfoInTileExpantionPanel )
             {
                 this.FileInfoGrid.Visibility = Visibility.Visible;
+                //this.FilePathGrid.Visibility = Visibility.Visible;
             }
             else
             {
                 this.FileInfoGrid.Visibility = Visibility.Hidden;
+                //this.FilePathGrid.Visibility = Visibility.Hidden;
             }
         }
 
