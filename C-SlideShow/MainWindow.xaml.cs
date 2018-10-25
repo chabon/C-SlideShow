@@ -392,7 +392,11 @@ namespace C_SlideShow
             // 履歴にあるかチェック
             HistoryItem historyItem = Setting.History.FirstOrDefault(hi => hi.ArchiverPath == dirPath);
 
-            // 履歴にあるなら、最後に開いた画像の情報を置き換え
+            // 一時的に「サブディレクトリ以下も読み込む」設定を、必ずOFFにする
+            bool temp = Setting.SerachAllDirectoriesInFolderReading;
+            Setting.SerachAllDirectoriesInFolderReading = false;
+
+            // 履歴にあるなら、最後に開いた画像のパスを、ドロップしたファイルのパスに置き換える
             if( Setting.EnabledItemsInHistory.ArchiverPath && historyItem != null && Setting.ApplyHistoryInfoInNewArchiverReading)
             {
                 historyItem.ImagePath = path;
@@ -415,6 +419,9 @@ namespace C_SlideShow
                 }
                 var t = ImgContainerManager.InitAllContainer(firstIndex);
             }
+
+            // 「サブディレクトリ以下も読み込む」設定を復元
+            Setting.SerachAllDirectoriesInFolderReading = temp;
         }
 
         private void SortOnFileLoaded()
