@@ -181,6 +181,7 @@
                             <CheckBox Margin="5" x:Name="EnabledItemsInHistory_AspectRatio" HorizontalAlignment="Left" >アスペクト比</CheckBox>
                             <CheckBox Margin="5" x:Name="EnabledItemsInHistory_Matrix" HorizontalAlignment="Left" >列数・行数</CheckBox>
                             <CheckBox Margin="5" x:Name="EnabledItemsInHistory_SlideDirection" HorizontalAlignment="Left" >スライド方向</CheckBox>
+                            <CheckBox Margin="5" x:Name="EnabledItemsInHistory_DetectionOfSpread" HorizontalAlignment="Left" >見開きを検出するかどうか</CheckBox>
                         </StackPanel>
                     </GroupBox>
                     <StackPanel Orientation="Horizontal">

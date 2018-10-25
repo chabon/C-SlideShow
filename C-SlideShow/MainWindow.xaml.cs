@@ -958,20 +958,17 @@ namespace C_SlideShow
                 if( hi != null )
                 {
                     // 最後に読み込んだ画像のパス(並び順に依らないページ番号復元用)
-                    if( ei.ImagePath )
-                    {
-                        ImageFileContext ifc = ImgContainerManager.CurrentImageFileContext;
-                        if(ifc != null) hi.ImagePath = ifc.FilePath;
-                    }
+                    ImageFileContext ifc = ImgContainerManager.CurrentImageFileContext;
+                    if( ifc != null ) hi.ImagePath = ifc.FilePath;
+                    else hi.ImagePath = "";
                     // アス比
-                    if( ei.AspectRatio )
-                        hi.AspectRatio = new int[] { Setting.TempProfile.AspectRatio.H, Setting.TempProfile.AspectRatio.V };
+                    hi.AspectRatio = new int[] { Setting.TempProfile.AspectRatio.H, Setting.TempProfile.AspectRatio.V };
                     // 行列
-                    if( ei.Matrix )
-                        hi.Matrix = new int[] { Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row };
+                    hi.Matrix = new int[] { Setting.TempProfile.NumofMatrix.Col, Setting.TempProfile.NumofMatrix.Row };
                     // スライド方向
-                    if( ei.SlideDirection )
-                        hi.SlideDirection = Setting.TempProfile.SlideDirection.Value;
+                    hi.SlideDirection = Setting.TempProfile.SlideDirection.Value;
+                    // 見開きを検出するかどうか
+                    hi.DetectionOfSpread = Setting.TempProfile.DetectionOfSpread.Value;
                 }
             }
         }
@@ -989,7 +986,7 @@ namespace C_SlideShow
 
                 // 最後に読み込んだ画像(ページ番号)
                 pf.LastPageIndex.Value = 0;
-                if( ei.ImagePath && hi.ImagePath != null)
+                if( hi.ImagePath != null)
                 {
                     ImageFileContext lastImageFileContext = ImgContainerManager.ImagePool.ImageFileContextList.FirstOrDefault(i => i.FilePath == hi.ImagePath);
                     if( lastImageFileContext != null )
@@ -1013,6 +1010,12 @@ namespace C_SlideShow
                 if( ei.SlideDirection && !(hi.SlideDirection == SlideDirection.None) )
                 {
                     pf.SlideDirection.Value = hi.SlideDirection;
+                }
+
+                // 見開きを検出するかどうか
+                if( ei.DetectionOfSpread )
+                {
+                    pf.DetectionOfSpread.Value = hi.DetectionOfSpread;
                 }
 
                 // 画像読み込み

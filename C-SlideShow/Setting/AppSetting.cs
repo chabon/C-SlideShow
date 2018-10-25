@@ -36,6 +36,9 @@ namespace C_SlideShow
 
         [DataMember]
         public SlideDirection SlideDirection { get; set; } = SlideDirection.None;
+
+        [DataMember]
+        public DetectionOfSpread DetectionOfSpread { get; set; } = DetectionOfSpread.None;
     }
 
     // 履歴に残す項目
@@ -56,6 +59,9 @@ namespace C_SlideShow
 
         [DataMember]
         public bool SlideDirection { get; set; } = true;
+
+        [DataMember]
+        public bool DetectionOfSpread { get; set; } = true;
     }
 
 

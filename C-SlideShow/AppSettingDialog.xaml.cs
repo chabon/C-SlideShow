@@ -266,6 +266,7 @@ namespace C_SlideShow
             EnabledItemsInHistory_AspectRatio.IsChecked =  setting.EnabledItemsInHistory.AspectRatio ;
             EnabledItemsInHistory_Matrix.IsChecked =  setting.EnabledItemsInHistory.Matrix ;
             EnabledItemsInHistory_SlideDirection.IsChecked =  setting.EnabledItemsInHistory.SlideDirection ;
+            EnabledItemsInHistory_DetectionOfSpread.IsChecked =  setting.EnabledItemsInHistory.DetectionOfSpread ;
 
             NumofHistory.Value = setting.NumofHistory;
             ApplyHistoryInfoInNewArchiverReading.IsChecked =  setting.ApplyHistoryInfoInNewArchiverReading ;
@@ -1447,6 +1448,7 @@ namespace C_SlideShow
             setting.EnabledItemsInHistory.AspectRatio =  (bool)EnabledItemsInHistory_AspectRatio.IsChecked ;
             setting.EnabledItemsInHistory.Matrix =  (bool)EnabledItemsInHistory_Matrix.IsChecked ;
             setting.EnabledItemsInHistory.SlideDirection =  (bool)EnabledItemsInHistory_SlideDirection.IsChecked ;
+            setting.EnabledItemsInHistory.DetectionOfSpread =  (bool)EnabledItemsInHistory_DetectionOfSpread.IsChecked ;
             setting.NumofHistory = NumofHistory.Value;
             setting.ApplyHistoryInfoInNewArchiverReading =  (bool)ApplyHistoryInfoInNewArchiverReading.IsChecked ;
             setting.NumofHistoryInMenu = NumofHistoryInMenu.Value;
