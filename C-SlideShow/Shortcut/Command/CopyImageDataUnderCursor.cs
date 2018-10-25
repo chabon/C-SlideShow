@@ -56,7 +56,7 @@ namespace C_SlideShow.Shortcut.Command
 
             if(ifc != null)
             {
-                ifc.CopyImageData();
+                var t = ifc.CopyImageData();
             }
         }
 

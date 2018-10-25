@@ -320,14 +320,13 @@ namespace C_SlideShow.Core
 
 
         // 画像データをコピー
-        public void CopyImageData()
+        public async Task CopyImageData()
         {
-            //BitmapSource source = MainWindow.Current.ImageFileManager.LoadBitmap( ImageFileInfo, new Size(0, 0) );
-            //Clipboard.SetImage(source);
+            BitmapSource source = await GetImage( new Size(0, 0) );
+            Clipboard.SetImage(source);
 
             string fileName = System.IO.Path.GetFileName(FilePath);
-            MainWindow.Current.NotificationBlock.Show("画像データをコピー: " + fileName,
-                NotificationPriority.Normal, NotificationTime.Normal, NotificationType.None);
+            MainWindow.Current.NotificationBlock.Show("画像データをコピー: " + fileName, NotificationPriority.Normal, NotificationTime.Normal, NotificationType.None);
         }
 
 

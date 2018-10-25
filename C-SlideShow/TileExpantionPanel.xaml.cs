@@ -571,7 +571,7 @@ namespace C_SlideShow
             MenuItem mi_image = new MenuItem();
             mi_image.Header = Path.GetFileName("画像データ");
             mi_image.ToolTip = Path.GetFileName("コピー後、ペイント等の画像編集ソフトへ貼り付けが出来ます");
-            mi_image.Click += (s, ev) => { TargetImgFileContext.CopyImageData(); };
+            mi_image.Click += (s, ev) => { var t = TargetImgFileContext.CopyImageData(); };
             MenuItem_Copy.Items.Add(mi_image);
 
             // ファイルパス

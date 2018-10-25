@@ -123,7 +123,7 @@ namespace C_SlideShow.Shortcut.Command
             if(num > 0) contextMenu.Items.Add( new Separator() );
 
             contextMenu.Items.Add( CreateMenuItem("ファイルをコピー",      toolTip_CopyFile,     (s, e) => { ifc.CopyFile(); }) );
-            contextMenu.Items.Add( CreateMenuItem("画像データをコピー",    toolTip_CopyFileData, (s, e) => { ifc.CopyImageData(); }) );
+            contextMenu.Items.Add( CreateMenuItem("画像データをコピー",    toolTip_CopyFileData, (s, e) => { var t = ifc.CopyImageData(); }) );
             contextMenu.Items.Add( CreateMenuItem("ファイルパスをコピー",  toolTip_FilePath,     (s, e) => { ifc.CopyFilePath(); }) );
             contextMenu.Items.Add( CreateMenuItem("ファイル名をコピー",    toolTip_FileName,     (s, e) => { ifc.CopyFileName(); }) );
 
