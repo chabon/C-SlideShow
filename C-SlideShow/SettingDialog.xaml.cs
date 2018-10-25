@@ -377,7 +377,7 @@ namespace C_SlideShow
                 isInitializing = true;
                 SetTileArrangeSettingBySlideDirection();
                 isInitializing = false;
-                mainWindow.UpdateTileArrange();
+                mainWindow.ImgContainerManager.UpdateTileArrange();
             }
             else
             {
@@ -396,7 +396,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.TileOrigin.Value = (TileOrigin)TileOrigin.SelectedIndex;
             UpdateTileArrangePreview();
-            mainWindow.UpdateTileArrange();
+            mainWindow.ImgContainerManager.UpdateTileArrange();
         }
 
         // 配置設定 配置方向
@@ -406,7 +406,7 @@ namespace C_SlideShow
 
             Setting.TempProfile.TileOrientation.Value = (TileOrientation)TileOrientation.SelectedIndex;
             UpdateTileArrangePreview();
-            mainWindow.UpdateTileArrange();
+            mainWindow.ImgContainerManager.UpdateTileArrange();
         }
 
         // スライド方向により、配置設定を決める
@@ -552,7 +552,7 @@ namespace C_SlideShow
             if( isInitializing ) return;
 
             Setting.TempProfile.TileImageStretch.Value = (TileImageStretch)TileImageStretch.SelectedIndex;
-            mainWindow.UpdateTileArrange();
+            var t = mainWindow.ImgContainerManager.InitAllContainer(mainWindow.ImgContainerManager.CurrentImageIndex);
         }
 
     }

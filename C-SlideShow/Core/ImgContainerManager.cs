@@ -584,6 +584,11 @@ namespace C_SlideShow.Core
         }
 
 
+        public void UpdateTileArrange()
+        {
+            var t = InitAllContainer(CurrentImageIndex);
+        }
+
         public void Hide()
         {
             Containers.ForEach(c => c.Visibility = Visibility.Collapsed);

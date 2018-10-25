@@ -571,12 +571,6 @@ namespace C_SlideShow
             this.ignoreSliderValueChangeEvent = false;
         }
 
-        public void UpdateTileArrange()
-        {
-            // タイルの配置を更新
-            var t = ImgContainerManager.InitAllContainer(ImgContainerManager.CurrentImageIndex);
-        }
-
         public void UpdateUI()
         {
             Profile pf = Setting.TempProfile;

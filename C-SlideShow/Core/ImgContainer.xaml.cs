@@ -175,34 +175,12 @@ namespace C_SlideShow.Core
 
         public void SetImageElementToGrid()
         {
-            SlideDirection      slideDirection = TempProfile.SlideDirection.Value;
-            TileOrientation     orientaition;
-            TileOrigin          origin;
-            TileImageStretch    tileImageStretch = TempProfile.TileImageStretch.Value;
+            TileOrientation     orientaition        = TempProfile.TileOrientation.Value;
+            TileOrigin          origin              = TempProfile.TileOrigin.Value;
+            TileImageStretch    tileImageStretch    = TempProfile.TileImageStretch.Value;
 
             int numofRow = MainGrid.RowDefinitions.Count;
             int numofCol = MainGrid.ColumnDefinitions.Count;
-
-            switch( slideDirection )
-            {
-                default:
-                case SlideDirection.Left:
-                    orientaition    = TileOrientation.Vertical;
-                    origin          = TileOrigin.TopLeft;
-                    break;
-                case SlideDirection.Top:
-                    orientaition    = TileOrientation.Horizontal;
-                    origin          = TileOrigin.TopLeft;
-                    break;
-                case SlideDirection.Right:
-                    orientaition    = TileOrientation.Vertical;
-                    origin          = TileOrigin.TopRight;
-                    break;
-                case SlideDirection.Bottom:
-                    orientaition    = TileOrientation.Horizontal;
-                    origin          = TileOrigin.BottomRight;
-                    break;
-            }
 
             Action<int, int> setToGrid = (i, j) =>
             {

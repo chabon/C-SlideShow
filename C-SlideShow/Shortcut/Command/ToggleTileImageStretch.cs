@@ -53,7 +53,8 @@ namespace C_SlideShow.Shortcut.Command
                     break;
             }
 
-            MainWindow.Current.UpdateTileArrange();
+            MainWindow mw = MainWindow.Current;
+            var t = mw.ImgContainerManager.InitAllContainer(mw.ImgContainerManager.CurrentImageIndex);
 
             return;
         }
