@@ -38,10 +38,13 @@ namespace C_SlideShow.Core
         /* ---------------------------------------------------- */
         //     メソッド
         /* ---------------------------------------------------- */
-        public void Initialize(string[] pathes)
+        public void Initialize(string[] pathes, bool isAddition)
         {
-            ImageFileContextList.Clear();
-            Archivers.Clear();
+            if( !isAddition )
+            {
+                ImageFileContextList.Clear();
+                Archivers.Clear();
+            }
 
             foreach( string path in pathes )
             {

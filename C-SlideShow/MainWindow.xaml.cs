@@ -329,8 +329,8 @@ namespace C_SlideShow
             // 読み込み
             if (pathes.Length > 0)
             {
-                ImgContainerManager.ImagePool.Initialize(pathes);
-                pf.Path.Value = pathes.ToList();
+                ImgContainerManager.ImagePool.Initialize(pathes, isAddition);
+                pf.Path.Value.AddRange( pathes.ToList() );
             }
 
             // ソート
