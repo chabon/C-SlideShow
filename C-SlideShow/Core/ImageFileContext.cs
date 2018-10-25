@@ -304,12 +304,13 @@ namespace C_SlideShow.Core
                 // 書庫内ファイルの場合
                 if(TempFilePath == null) WriteToTempFolder();
 
+                srcFilePath = TempFilePath;
                 notificationFileName = TempDirName + "\\" + Path.GetFileName(TempFilePath);
             }
 
             // コピー
             System.Collections.Specialized.StringCollection files = new System.Collections.Specialized.StringCollection();
-            files.Add(TempFilePath);
+            files.Add(srcFilePath);
             Clipboard.SetFileDropList(files);
 
             // 通知
