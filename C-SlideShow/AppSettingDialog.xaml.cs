@@ -320,8 +320,6 @@ namespace C_SlideShow
             if( setting.MouseCursorAutoHide ) MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = true;
             else MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = false;
 
-            CorrectPageIndexInOperationSlideCrrosOverTheOrigin.IsChecked = setting.CorrectPageIndexInOperationSlideCrrosOverTheOrigin;
-
             OperationSlideDuration.Value = setting.OperationSlideDuration;
 
             EnableScreenSnap.IsChecked = setting.EnableScreenSnap;
@@ -1388,7 +1386,6 @@ namespace C_SlideShow
             MouseCursorAutoHide.IsChecked = true;
             MouseCursorAutoHideInFullScreenModeOnly.IsChecked = false;
             MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = true;
-            CorrectPageIndexInOperationSlideCrrosOverTheOrigin.IsChecked = true;
             OperationSlideDuration.Value = 300;
             EnableScreenSnap.IsEnabled = true;
             EnableWindowSnap.IsChecked = true;
@@ -1494,7 +1491,6 @@ namespace C_SlideShow
             setting.SeekBarIsMoveToPointEnabled = SeekBarIsMoveToPointEnabled.SelectedIndex == 1 ? true : false;
             setting.MouseCursorAutoHide = (bool)MouseCursorAutoHide.IsChecked;
             setting.MouseCursorAutoHideInFullScreenModeOnly = (bool)MouseCursorAutoHideInFullScreenModeOnly.IsChecked;
-            setting.CorrectPageIndexInOperationSlideCrrosOverTheOrigin = (bool)CorrectPageIndexInOperationSlideCrrosOverTheOrigin.IsChecked;
             setting.OperationSlideDuration = OperationSlideDuration.Value;
             setting.EnableScreenSnap = (bool)EnableScreenSnap.IsChecked;
             setting.EnableWindowSnap = (bool)EnableWindowSnap.IsChecked;

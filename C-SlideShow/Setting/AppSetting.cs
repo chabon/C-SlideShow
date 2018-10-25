@@ -221,9 +221,6 @@ namespace C_SlideShow
         public bool MouseCursorAutoHideInFullScreenModeOnly { get; set; }
 
         [DataMember]
-        public bool CorrectPageIndexInOperationSlideCrrosOverTheOrigin { get; set; }
-
-        [DataMember]
         public int OperationSlideDuration { get; set; }
 
         [DataMember]
@@ -306,7 +303,6 @@ namespace C_SlideShow
             SeekBarIsMoveToPointEnabled = true;
             MouseCursorAutoHide = true;
             MouseCursorAutoHideInFullScreenModeOnly = false;
-            CorrectPageIndexInOperationSlideCrrosOverTheOrigin = true;
             OperationSlideDuration = 300;
             EnableScreenSnap = true;
             EnableWindowSnap = true;
