@@ -69,8 +69,9 @@ namespace C_SlideShow.Archiver
                     {
                         // ロード
                         ImageFileContext ifc = new ImageFileContext(entory.FullName);
-                        ifc.Archiver = this;
                         ImageFileInfo fi = new ImageFileInfo();
+                        ifc.Info = fi;
+                        ifc.Archiver = this;
                         fi.LastWriteTime = entory.LastWriteTime;
                         fi.Length = entory.Length;
 

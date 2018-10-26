@@ -351,7 +351,7 @@ namespace C_SlideShow
                 {
                     length = ifi.Length;
                 }
-                else
+                else if(TargetImgFileContext.Archiver.CanReadFile)
                 {
                     FileInfo fi = new FileInfo(TargetImgFileContext.FilePath);
                     length = fi.Length;
@@ -361,7 +361,7 @@ namespace C_SlideShow
                 if( ifi.LastWriteTime == null ) TargetImgFileContext.ReadLastWriteTime();
 
                 newText += "ファイル名: " + Path.GetFileName(TargetImgFileContext.FilePath) + "\n";
-                newText += "画像サイズ: " + length / 1024 + "KB\n";
+                newText += "画像サイズ: " + length / 1024 + "KB\n"; // 取得エラーの場合は0KBと表示される
                 if(ifi.LastWriteTime != null)
                     newText += "更新日時: " + ifi.LastWriteTime.Value.DateTime + "\n";
                 if( ifi.ExifInfo.DateTaken != null )
