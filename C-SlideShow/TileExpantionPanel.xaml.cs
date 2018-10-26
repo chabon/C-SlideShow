@@ -314,14 +314,17 @@ namespace C_SlideShow
 
                 // ウインドウサイズに合わせたBitmapをロード
                 double p = MainWindow.MainContent.LayoutTransform.Value.M11;
-                Size pixelSize = new Size(MainWindow.ImgContainerManager.ContainerWidth * p, MainWindow.ImgContainerManager.ContainerHeight * p);
-                var cts1 = new CancellationTokenSource();
-                this.Cts = cts1;
-                var bitmap = await TargetImgFileContext.GetImage(pixelSize);
-                if( cts1.Token.IsCancellationRequested ) return;
-                this.ExpandedImage.Source = bitmap;
+                Size winSize = new Size(MainWindow.ImgContainerManager.ContainerWidth * p, MainWindow.ImgContainerManager.ContainerHeight * p);
+                if(winSize.Width < fi.PixelSize.Width && winSize.Height < fi.PixelSize.Height ) // 本来の画像サイズがウインドウサイズより大きい時のみロード
+                {
+                    var cts1 = new CancellationTokenSource();
+                    this.Cts = cts1;
+                    var bitmap = await TargetImgFileContext.GetImage(winSize);
+                    if( cts1.Token.IsCancellationRequested ) return;
+                    this.ExpandedImage.Source = bitmap;
+                }
 
-                // 本来のサイズでロード
+                // 本来のサイズでBitmapをロード
                 var cts2 = new CancellationTokenSource();
                 this.Cts = cts2;
                 var trueBitmap = await TargetImgFileContext.GetImage(Size.Empty);
