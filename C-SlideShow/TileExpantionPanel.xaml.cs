@@ -56,6 +56,9 @@ namespace C_SlideShow
 
         public async Task Show(Border border)
         {
+            // まだ拡大パネルを閉じるアニメーション中
+            if( !IsAnimationCompleted ) return;
+
             // ターゲット
             this.TargetBorder = border;
             ParentContainer = WpfTreeUtil.FindAncestor<ImgContainer>(border);
