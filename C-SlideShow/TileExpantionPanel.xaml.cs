@@ -17,6 +17,7 @@ using System.IO;
 using System.Diagnostics;
 using WpfAnimatedGif;
 using C_SlideShow.Core;
+using System.Threading;
 
 namespace C_SlideShow
 {
@@ -37,6 +38,8 @@ namespace C_SlideShow
         public Border           TargetBorder            { get; private set; }
         public ImageFileContext TargetImgFileContext    { get; private set; }
         public ImgContainer     ParentContainer         { get; private set; }
+
+        public CancellationTokenSource Cts { get; private set; }    // Taskのキャンセルを管理
 
 
         public TileExpantionPanel()
@@ -77,8 +80,8 @@ namespace C_SlideShow
                 ExpandedDuringPlay = false;
             }
 
-            // 画像をロード
-            await LoadImage();
+            // タイル画像をコピー
+            ExpandedImage.Source = TargetImgFileContext.BitmapImage;
             if( ExpandedImage.Source == null ) return;
 
             // ボーダー色、背景色
@@ -127,6 +130,7 @@ namespace C_SlideShow
             ExpandedBorder.BorderThickness = 
                 new Thickness(pf.TilePadding.Value * containerScale);
 
+            #region アニメーション準備
             // 拡大アニメーション(パネル自体)
             // --------------------------------------------------------
             storyboard = new Storyboard();
@@ -184,16 +188,23 @@ namespace C_SlideShow
 
                 IsAnimationCompleted = true;
             };
+            #endregion
 
             // アニメーションを開始
             IsAnimationCompleted = false;
             storyboard.Begin();
+
+            // アニメーションしながら、大きいサイズの画像をロード
+            await LoadImage();
         }
 
         public void Hide()
         {
             // まだ表示されていない
             if( !IsShowing || !IsAnimationCompleted ) return;
+
+            // まだ読み込み中のTaskがあるならキャンセル
+            Cts?.Cancel();
 
             // ファイル情報を隠す
             this.FileInfoGrid.Visibility = Visibility.Hidden;
@@ -297,11 +308,22 @@ namespace C_SlideShow
             {
                 ImageBehavior.SetAnimatedSource(ExpandedImage, null);
                 int pixel = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixel.Value;
-                Size pixelSize = new Size(pixel, pixel);
-                var bitmap = await TargetImgFileContext.GetImage(pixelSize);
 
-                if(bitmap != null) this.ExpandedImage.Source = bitmap;
-                else this.ExpandedImage.Source = null;
+                // ウインドウサイズに合わせたBitmapをロード
+                double p = MainWindow.MainContent.LayoutTransform.Value.M11;
+                Size pixelSize = new Size(MainWindow.ImgContainerManager.ContainerWidth * p, MainWindow.ImgContainerManager.ContainerHeight * p);
+                var cts1 = new CancellationTokenSource();
+                this.Cts = cts1;
+                var bitmap = await TargetImgFileContext.GetImage(pixelSize);
+                if( cts1.Token.IsCancellationRequested ) return;
+                this.ExpandedImage.Source = bitmap;
+
+                // 本来のサイズでロード
+                var cts2 = new CancellationTokenSource();
+                this.Cts = cts2;
+                var trueBitmap = await TargetImgFileContext.GetImage(Size.Empty);
+                if( cts2.Token.IsCancellationRequested ) return;
+                this.ExpandedImage.Source = trueBitmap;
             }
 
         }
