@@ -88,6 +88,9 @@ namespace C_SlideShow.Core
                         case ".tar":
                             Archivers.Add(archiver = new TarArchiver(path));
                             break;
+                        case ".pdf":
+                            Archivers.Add(archiver = new PdfArchiver(path));
+                            break;
                         default:
                             return;
                     }

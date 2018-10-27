@@ -18,6 +18,7 @@ using System.Diagnostics;
 using WpfAnimatedGif;
 using C_SlideShow.Core;
 using System.Threading;
+using C_SlideShow.Archiver;
 
 namespace C_SlideShow
 {
@@ -319,7 +320,7 @@ namespace C_SlideShow
                 {
                     var cts1 = new CancellationTokenSource();
                     this.Cts = cts1;
-                    var bitmap = await TargetImgFileContext.GetImage(winSize);
+                    var bitmap = await TargetImgFileContext.LoadBitmap(winSize);
                     if( cts1.Token.IsCancellationRequested ) return;
                     this.ExpandedImage.Source = bitmap;
                 }
@@ -327,7 +328,7 @@ namespace C_SlideShow
                 // 本来のサイズでBitmapをロード
                 var cts2 = new CancellationTokenSource();
                 this.Cts = cts2;
-                var trueBitmap = await TargetImgFileContext.GetImage(Size.Empty);
+                var trueBitmap = await TargetImgFileContext.LoadBitmap(Size.Empty);
                 if( cts2.Token.IsCancellationRequested ) return;
                 this.ExpandedImage.Source = trueBitmap;
             }
@@ -345,7 +346,7 @@ namespace C_SlideShow
             {
                 ImageFileInfo ifi = TargetImgFileContext.Info;
 
-                // ファイルサイズ
+                // ファイルサイズ取得
                 long length = 0;
                 if( ifi.Length != 0 )
                 {
@@ -360,13 +361,28 @@ namespace C_SlideShow
                 // 更新日時取得
                 if( ifi.LastWriteTime == null ) TargetImgFileContext.ReadLastWriteTime();
 
-                newText += "ファイル名: " + Path.GetFileName(TargetImgFileContext.FilePath) + "\n";
-                newText += "画像サイズ: " + length / 1024 + "KB\n"; // 取得エラーの場合は0KBと表示される
+                // ファイル名(ページ番号)
+                if(TargetImgFileContext.Archiver is PdfArchiver ) {
+                    newText += "ページ番号: " + TargetImgFileContext.FilePath + "\n";
+                }
+                else {
+                    newText += "ファイル名: " + Path.GetFileName(TargetImgFileContext.FilePath) + "\n";
+                }
+
+                // 画像サイズ
+                if(length != 0) newText += "画像サイズ: " + length / 1024 + "KB\n";
+
+                // 更新日時
                 if(ifi.LastWriteTime != null)
                     newText += "更新日時: " + ifi.LastWriteTime.Value.DateTime + "\n";
-                if( ifi.ExifInfo.DateTaken != null )
+
+                // 撮影日時
+                if( ifi.ExifInfo != null && ifi.ExifInfo.DateTaken != null )
                     newText += "撮影日時: " + ifi.ExifInfo.DateTaken.Value.DateTime + "\n";
-                newText += "ピクセル数: " + ifi.PixelSize.Width + "x" + ifi.PixelSize.Height;
+
+                // ピクセル数
+                Size pixelSize = ifi.PixelSize.Round();
+                newText += "ピクセル数: " + pixelSize.Width + "x" + pixelSize.Height;
 
                 // ツールチップでファイルパス表示
                 if( TargetImgFileContext.Archiver.CanReadFile )
@@ -375,7 +391,7 @@ namespace C_SlideShow
                 }
                 else
                 {
-                    FileInfoGrid.ToolTip = TargetImgFileContext.Archiver.ArchiverPath + "\\" + TargetImgFileContext.FilePath;
+                    FileInfoGrid.ToolTip = TargetImgFileContext.Archiver.ArchiverPath + "/" + TargetImgFileContext.FilePath;
                 }
             }
             catch

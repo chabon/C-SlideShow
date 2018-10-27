@@ -292,13 +292,15 @@ namespace C_SlideShow.Core
                 Image   image   = border.Child as Image;
                 ImageFileContext mapedImageFileContext = ImageFileContextMapList[i];
 
-                if(border != null && image != null && i < ImageFileContextMapList.Count && mapedImageFileContext != null)
+                if( border == null || image == null || mapedImageFileContext == null ) continue;
+
+                if( i < ImageFileContextMapList.Count)
                 {
                     if(mapedImageFileContext.BitmapImage == null )
                     {
                         // 新たにファイルから読み込み
                         Debug.WriteLine("BitmapImage = null : " + mapedImageFileContext.FilePath);
-                        var source = await ImageFileContextMapList[i].GetImage(BitmapDecodePixelOfTile);
+                        var source = await ImageFileContextMapList[i].LoadBitmap(BitmapDecodePixelOfTile);
                         mapedImageFileContext.BitmapImage = (BitmapImage)source;
 
                         if( !token.IsCancellationRequested ) {
@@ -332,11 +334,11 @@ namespace C_SlideShow.Core
 
                 if( ifc.Info.PixelSize.Height > ifc.Info.PixelSize.Width ) // 画像が縦長のとき
                 {
-                    if( bmp.DecodePixelHeight < ifc.Info.PixelSize.Height && bmp.DecodePixelHeight < BitmapDecodePixelOfTile.Height ) ifc.BitmapImage = null;
+                    if( bmp.PixelHeight < ifc.Info.PixelSize.Height && bmp.PixelHeight < BitmapDecodePixelOfTile.Height ) ifc.BitmapImage = null;
                 }
                 else // 画像が横長のとき
                 {
-                    if( bmp.DecodePixelWidth < ifc.Info.PixelSize.Width && bmp.DecodePixelWidth < BitmapDecodePixelOfTile.Width ) ifc.BitmapImage = null;
+                    if( bmp.PixelWidth < ifc.Info.PixelSize.Width && bmp.PixelWidth < BitmapDecodePixelOfTile.Width ) ifc.BitmapImage = null;
                 }
             }
         }
