@@ -100,7 +100,7 @@ namespace C_SlideShow.Archiver
             if( pdfDoc != null ) pdfDoc.Dispose();
         }
 
-        public override Task<BitmapSource> LoadBitmap(Size bitmapDecodePixel, ImageFileContext context)
+        public override Task<BitmapSource> LoadBitmap(Size bitmapDecodePixelMax, ImageFileContext context)
         {
             return Task.Run(() =>
             {
@@ -109,41 +109,22 @@ namespace C_SlideShow.Archiver
                 // 表示に必要な情報取得
                 ReadInfoForView(context);
 
-                //Size size = context.Info.PixelSize.StreachAsUniform(bitmapDecodePixel).Round();
-
-
-                // 画像のアス比から、縦横どちらのDecodePixelを適用するのかを決める
-                // DecodePixelの値が、画像のサイズをオーバーする場合は、画像サイズをDecodePixelの値として指定する
-                ImageFileInfo info = context.Info;
-                if( bitmapDecodePixel == Size.Empty || bitmapDecodePixel.Width == 0 || bitmapDecodePixel.Height == 0 ) bitmapDecodePixel = new Size(info.PixelSize.Width, info.PixelSize.Height);
-                Size decodePixel = new Size(0, 0);
-                double ratio = info.PixelSize.Height / info.PixelSize.Width;
-                if( bitmapDecodePixel != Size.Empty )
+                // BitmapDecodePixel値の決定
+                Size bitmapDecodePixel;
+                if( bitmapDecodePixelMax != Size.Empty)
                 {
-                    if(context.Info.PixelSize.Height > (double)context.Info.PixelSize.Width) // 画像が縦長
-                    {
-                        if(bitmapDecodePixel.Height > context.Info.PixelSize.Height)
-                            decodePixel.Height = context.Info.PixelSize.Height;
-                        else
-                            decodePixel.Height = bitmapDecodePixel.Height;
-
-                        decodePixel.Width = decodePixel.Height / ratio;
-                    }
-                    else // 画像が横長
-                    {
-                        if(bitmapDecodePixel.Width > context.Info.PixelSize.Width)
-                            decodePixel.Width = context.Info.PixelSize.Width;
-                        else
-                            decodePixel.Width = bitmapDecodePixel.Width;
-
-                        decodePixel.Height = decodePixel.Width * ratio;
+                    bitmapDecodePixel = context.Info.PixelSize.StreachAsUniform(bitmapDecodePixelMax).Round();
+                    if( bitmapDecodePixel.Width > context.Info.PixelSize.Width ) {   // 画像のサイズをオーバーする場合は、画像サイズをDecodePixelの値として指定する
+                        bitmapDecodePixel = context.Info.PixelSize;
                     }
                 }
-
-                decodePixel = decodePixel.Round();
+                else
+                {
+                    bitmapDecodePixel = context.Info.PixelSize;
+                }
 
                 // Bitmap読み込み(System.Drawing.Image)
-                var bitmap = pdfDoc.Render( PathToPageIndex(context.FilePath), (int)decodePixel.Width, (int)decodePixel.Height, 96, 96, false );
+                var bitmap = pdfDoc.Render( PathToPageIndex(context.FilePath), (int)bitmapDecodePixel.Width, (int)bitmapDecodePixel.Height, 96, 96, false );
 
                 // BitmapSourceに変換
                 using(MemoryStream ms = new MemoryStream())

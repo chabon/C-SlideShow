@@ -209,7 +209,7 @@ namespace C_SlideShow.Core
 
         public void InitBitmapDecodePixelOfTile()
         {
-            Containers.ForEach( c => c.InitBitmapDecodePixelOfTile(TempProfile.AspectRatio.H, TempProfile.AspectRatio.V) );
+            Containers.ForEach( c => c.InitBitmapDecodePixelOfTile() );
         }
 
         public void SetImageElementToContainerGrid()
@@ -351,7 +351,7 @@ namespace C_SlideShow.Core
             {
                 container.InitGrid(TempProfile.NumofMatrix.Col, TempProfile.NumofMatrix.Row);
                 container.SetImageElementToGrid();
-                container.InitBitmapDecodePixelOfTile(TempProfile.AspectRatio.H, TempProfile.AspectRatio.V);
+                container.InitBitmapDecodePixelOfTile();
             }
 
             for(int i=0; i < container.NumofGrid; i++ )

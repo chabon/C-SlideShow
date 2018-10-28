@@ -151,26 +151,10 @@ namespace C_SlideShow.Core
             }
         }
 
-        public void InitBitmapDecodePixelOfTile(int aspectRatioH, int aspectRatioV)
+        public void InitBitmapDecodePixelOfTile()
         {
-            // タイルのアス比
-            double tileAspectRatio = (double)aspectRatioV / aspectRatioH;
-
-            int w, h;
             int pixelSize = TempProfile.BitmapDecodeTotalPixel.Value;
-
-            if( NumofRow > NumofCol ) // 行が多い(横3x縦4等)
-            {
-                h = pixelSize / NumofRow;
-                w = (int)(h / tileAspectRatio);
-            }
-            else // 列が多い(書籍の横2x縦1等)
-            {
-                w = pixelSize / NumofCol;
-                h = (int)(w * tileAspectRatio);
-            }
-
-            BitmapDecodePixelOfTile = new Size(w, h);
+            BitmapDecodePixelOfTile = new Size(pixelSize / NumofCol, pixelSize / NumofRow);
         }
 
         public void SetImageElementToGrid()
@@ -313,7 +297,7 @@ namespace C_SlideShow.Core
                     else if(image.Source != mapedImageFileContext.BitmapImage)
                     {
                         // すでにあるBitmapImageを利用
-                        System.Diagnostics.Debug.WriteLine("BitmapImage = exist! : " + mapedImageFileContext.FilePath);
+                        System.Diagnostics.Debug.WriteLine("BitmapImage = exist! : " + mapedImageFileContext.FilePath + "  Size: " + mapedImageFileContext.BitmapImage.PixelWidth + "x" + mapedImageFileContext.BitmapImage.PixelHeight);
                         image.Source = mapedImageFileContext.BitmapImage;
                     }
                 }
@@ -332,13 +316,12 @@ namespace C_SlideShow.Core
                 BitmapImage bmp = ifc.BitmapImage;
                 if( bmp == null ) continue;
 
-                if( ifc.Info.PixelSize.Height > ifc.Info.PixelSize.Width ) // 画像が縦長のとき
+                Size bitmapSize = new Size(bmp.PixelWidth, bmp.PixelHeight);
+
+                // 画像オリジナルサイズに足りていないことが前提
+                if( bitmapSize.IsInnerOf(ifc.Info.PixelSize) )
                 {
-                    if( bmp.PixelHeight < ifc.Info.PixelSize.Height && bmp.PixelHeight < BitmapDecodePixelOfTile.Height ) ifc.BitmapImage = null;
-                }
-                else // 画像が横長のとき
-                {
-                    if( bmp.PixelWidth < ifc.Info.PixelSize.Width && bmp.PixelWidth < BitmapDecodePixelOfTile.Width ) ifc.BitmapImage = null;
+                    if( bitmapSize.IsInnerOf(BitmapDecodePixelOfTile) ) ifc.BitmapImage = null;
                 }
             }
         }

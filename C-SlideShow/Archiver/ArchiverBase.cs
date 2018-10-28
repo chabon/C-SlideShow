@@ -61,7 +61,7 @@ namespace C_SlideShow.Archiver
         }
 
         // @ref https://chitoku.jp/programming/wpf-lazy-image-behavior
-        public virtual Task<BitmapSource> LoadBitmap(Size bitmapDecodePixel, ImageFileContext context)
+        public virtual Task<BitmapSource> LoadBitmap(Size bitmapDecodePixelMax, ImageFileContext context)
         {
             return Task.Run(() =>
             {
@@ -80,23 +80,15 @@ namespace C_SlideShow.Archiver
                         source.CacheOption = BitmapCacheOption.OnLoad;
                         source.CreateOptions = BitmapCreateOptions.None;
 
-                        // 画像のアス比から、縦横どちらのDecodePixelを適用するのかを決める
-                        // DecodePixelの値が、画像のサイズをオーバーする場合は、画像サイズをDecodePixelの値として指定する
-                        if( bitmapDecodePixel != Size.Empty )
+                        // DecodePixel値の決定
+                        if( bitmapDecodePixelMax != Size.Empty )
                         {
-                            if(context.Info.PixelSize.Height > (double)context.Info.PixelSize.Width) // 画像が縦長
-                            {
-                                if(bitmapDecodePixel.Height > context.Info.PixelSize.Height)
-                                    source.DecodePixelHeight = (int)context.Info.PixelSize.Height;
-                                else
-                                    source.DecodePixelHeight = (int)bitmapDecodePixel.Height;
+                            Size bitmapDecodePixel = context.Info.PixelSize.StreachAsUniform(bitmapDecodePixelMax).Round();
+                            if( bitmapDecodePixel.Width > context.Info.PixelSize.Width ) {   // 画像のサイズをオーバーする場合は、画像サイズをDecodePixelの値として指定する
+                                source.DecodePixelWidth = (int)context.Info.PixelSize.Width;
                             }
-                            else // 画像が横長
-                            {
-                                if(bitmapDecodePixel.Width > context.Info.PixelSize.Width)
-                                    source.DecodePixelWidth = (int)context.Info.PixelSize.Width;
-                                else
-                                    source.DecodePixelWidth = (int)bitmapDecodePixel.Width;
+                            else {
+                                source.DecodePixelWidth = (int)bitmapDecodePixel.Width;
                             }
                         }
 

@@ -46,5 +46,17 @@ namespace C_SlideShow
         {
             return new Size( Math.Round(self.Width), Math.Round(self.Height) );
         }
+
+
+        /// <summary>
+        /// 他のSizeの内側に収まるかどうかを取得
+        /// </summary>
+        /// <param name="self"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static bool IsInnerOf(this Size self, Size target)
+        {
+            return (self.Width < target.Width && self.Height < target.Height);
+        }
     }
 }
