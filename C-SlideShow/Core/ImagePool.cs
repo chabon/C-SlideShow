@@ -10,8 +10,10 @@ using System.Windows.Controls;
 using System.Windows;
 using System.IO;
 
-using C_SlideShow.Archiver;
 using System.Diagnostics;
+
+using C_SlideShow.Archiver;
+
 
 namespace C_SlideShow.Core
 {
@@ -62,6 +64,9 @@ namespace C_SlideShow.Core
             // ファイル
             if( File.Exists(path) )
             {
+                // 拡張子取得
+                string ext = Path.GetExtension(path);
+
                 // 画像ファイル単体
                 ImageFileContext ifc = NullArchiver.LoadImageFileContext(path);
                 if( ifc != null )
@@ -72,8 +77,6 @@ namespace C_SlideShow.Core
                 // 圧縮ファイル / その他のファイル
                 else
                 {
-                    string ext = Path.GetExtension(path);
-
                     switch( ext )
                     {
                         case ".zip":
@@ -91,6 +94,10 @@ namespace C_SlideShow.Core
                         case ".pdf":
                             Archivers.Add(archiver = new PdfArchiver(path));
                             break;
+                        case ".lnk":
+                            // .lnkファイルの場合、ショートカット先のフルパスを取得し、やり直し
+                            LoadFileOrDirectory( GetShortcutTargetPath(path) );
+                            return;
                         default:
                             return;
                     }
@@ -106,6 +113,29 @@ namespace C_SlideShow.Core
                 ImageFileContextList.AddRange( archiver.LoadImageFileContextList() );
             }
         }
+
+        
+        private string GetShortcutTargetPath(string shortcutFilePath)
+        {
+            try
+            {
+                IWshRuntimeLibrary.IWshShell_Class TheShell = new IWshRuntimeLibrary.IWshShell_Class();
+                IWshRuntimeLibrary.IWshShortcut_Class shortcut;
+                shortcut = (IWshRuntimeLibrary.IWshShortcut_Class)TheShell.CreateShortcut( shortcutFilePath );
+
+                string targetPath = shortcut.TargetPath;
+                string ext = Path.GetExtension(targetPath);
+                if( ext == ".lnk" ) throw new Exception("target path is .lnk");  // LoadFileOrDirectory()時の、無限ループ防止
+                else return shortcut.TargetPath;
+            }
+            catch
+            {
+                return "";
+            }
+        }
+
+
+
 
         public void InitIndex(int index)
         {
