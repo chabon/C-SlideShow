@@ -97,6 +97,9 @@ namespace C_SlideShow
             {
                 SaveHistoryItem();
 
+                // メインウインドウをアクティブに
+                this.Activate();
+
                 string[] files = e.Data.GetData(DataFormats.FileDrop) as string[];
 
                 if( IsCtrlOrShiftKeyPressed )
