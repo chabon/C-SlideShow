@@ -116,6 +116,7 @@
     <Compile Include="Setting\ShortcutSetting.cs" />
     <Compile Include="Shortcut\CommandFactory.cs" />
     <Compile Include="Shortcut\CommandID.cs" />
+    <Compile Include="Shortcut\Command\MinimizeWindow.cs" />
     <Compile Include="Shortcut\Command\CloseFile.cs" />
     <Compile Include="Shortcut\Command\ReduceColumnAndRow.cs" />
     <Compile Include="Shortcut\Command\AddColumnAndRow.cs" />

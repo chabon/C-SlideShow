@@ -24,6 +24,7 @@ namespace C_SlideShow.Shortcut
         OpenPrevArchiver,                   // 前のフォルダ(書庫)を開く
         ShowAppSettingDialog,               // アプリの設定ダイアログを表示
         CloseFile,                          // ファイルを閉じる
+        MinimizeWindow,                     // ウインドウを最小化
         ExitApp,                            // アプリケーションを終了
         OpenImageUnderCursorByExplorer,     // カーソル下の画像をエクスプローラーで開く
         OpenImageUnderCursorByDefaultApp,   // カーソル下の画像を規定のプログラムで開く

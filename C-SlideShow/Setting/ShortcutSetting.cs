@@ -82,6 +82,7 @@ namespace C_SlideShow
             defaultCommandMap.Add( new CommandMap(CommandID.OpenPrevArchiver,                   0,  null,       new KeyInput(ModifierKeys.Control, Key.P), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ShowAppSettingDialog,               0,  null,       new KeyInput(ModifierKeys.None, Key.O), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.CloseFile,                          0,  null,       null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.MinimizeWindow,                     0,  null,       null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ExitApp,                            0,  null,       null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.OpenImageUnderCursorByExplorer,     0,  null,       null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.OpenImageUnderCursorByDefaultApp,   0,  null,       null, null, null) );

@@ -30,6 +30,7 @@ namespace C_SlideShow.Shortcut
                 case CommandID.OpenPrevArchiver:                  return new OpenPrevArchiver();                    // 前のフォルダ(書庫)を開く
                 case CommandID.ShowAppSettingDialog:              return new ShowAppSettingDialog();                // アプリの設定ダイアログを表示
                 case CommandID.CloseFile:                         return new CloseFile();                           // ファイルを閉じる
+                case CommandID.MinimizeWindow:                    return new MinimizeWindow();                      // ウインドウを最小化
                 case CommandID.ExitApp:                           return new ExitApp();                             // アプリケーションを終了
                 case CommandID.OpenImageUnderCursorByExplorer:    return new OpenImageUnderCursorByExplorer();      // カーソル下の画像をエクスプローラーで開く
                 case CommandID.OpenImageUnderCursorByDefaultApp:  return new OpenImageUnderCursorByDefaultApp();    // カーソル下の画像を規定のプログラムで開く
