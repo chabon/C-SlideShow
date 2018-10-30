@@ -18,7 +18,8 @@ namespace C_SlideShow.Archiver
     public class ArchiverBase
     {
         public string ArchiverPath { get; set; }
-        public static string[] AllowedFileExt = { ".jpg", ".png", ".jpeg", ".bmp", ".gif", ".ico" };
+        public static string[] AllowedFileExt     = { ".jpg", ".png", ".jpeg", ".bmp", ".gif", ".ico" };
+        public static string[] AllowedArchiverExt = { ".zip", ".rar", ".7z", ".tar", ".pdf" };
         public bool LeaveHistory { get; protected set; } = false;  // 履歴に残すかどうか
         public bool CanReadFile  { get; protected set; } = false;  // 圧縮書庫でないならtrue
 
@@ -29,6 +30,13 @@ namespace C_SlideShow.Archiver
         public ArchiverBase(string archiverPath)
         {
             ArchiverPath = archiverPath;
+        }
+
+        public static bool IsReadablePath(string path)
+        {
+            if( Directory.Exists(path) ) return true;    // フォルダ
+            else if( AllowedArchiverExt.Any(ext => path.ToLower().EndsWith(ext)) ) return true;　// 対応可能な書庫
+            else return false;
         }
 
         public virtual Stream OpenStream(string path)

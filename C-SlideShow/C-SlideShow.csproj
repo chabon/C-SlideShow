@@ -82,6 +82,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Archiver\ArchiverFactory.cs" />
     <Compile Include="Archiver\PdfArchiver.cs" />
     <Compile Include="CommonControl\HotkeyControl.xaml.cs">
       <DependentUpon>HotkeyControl.xaml</DependentUpon>
@@ -113,7 +114,10 @@
     <Compile Include="Archiver\ZipArchiver.cs" />
     <Compile Include="Setting\CommandMap.cs" />
     <Compile Include="Setting\ShortcutSetting.cs" />
+    <Compile Include="Shortcut\CommandFactory.cs" />
     <Compile Include="Shortcut\CommandID.cs" />
+    <Compile Include="Shortcut\Command\OpenPrevArchiver.cs" />
+    <Compile Include="Shortcut\Command\OpenNextArchiver.cs" />
     <Compile Include="Shortcut\Command\OepnSubMenu_AspectRatio.cs" />
     <Compile Include="Shortcut\Command\OepnSubMenu_Profile.cs" />
     <Compile Include="Shortcut\Command\OepnSubMenu_Load.cs" />
@@ -169,7 +173,6 @@
     <Compile Include="Shortcut\Command\OpenAdditionalFile.cs" />
     <Compile Include="Shortcut\Command\OpenFile.cs" />
     <Compile Include="Shortcut\Command\OpenFolder.cs" />
-    <Compile Include="Shortcut\Command\Null.cs" />
     <Compile Include="Shortcut\Command\ExitZoom.cs" />
     <Compile Include="Shortcut\Command\MoveZoomImageToLeft.cs" />
     <Compile Include="Shortcut\Command\ZoomReset.cs" />

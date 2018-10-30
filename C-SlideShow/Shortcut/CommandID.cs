@@ -8,8 +8,6 @@ namespace C_SlideShow.Shortcut
 {
     public enum CommandID
     {
-        None,                               // 無し
-
         // 全般
         OpenFolder,                         // フォルダを開く
         OpenAdditionalFolder,               // フォルダ追加読み込み
@@ -22,6 +20,8 @@ namespace C_SlideShow.Shortcut
         WindowSizeDown,                     // ウインドウサイズを[ ]%小さく
         ShowContextMenu,                    // コンテキストメニューを表示
         OpenFolderByExplorer,               // エクスプローラでフォルダを開く
+        OpenNextArchiver,                   // 次のフォルダ(書庫)を開く
+        OpenPrevArchiver,                   // 前のフォルダ(書庫)を開く
         ShowAppSettingDialog,               // アプリの設定ダイアログを表示
         ExitApp,                            // アプリケーションを終了
         OpenImageUnderCursorByExplorer,     // カーソル下の画像をエクスプローラーで開く

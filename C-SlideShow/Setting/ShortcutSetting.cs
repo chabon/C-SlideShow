@@ -33,6 +33,35 @@ namespace C_SlideShow
             CommandMap = CreateDefaultCommandMap();
         }
 
+        [OnDeserialized]
+        public void DefaultDeserialized(StreamingContext sc)
+        {
+            // デシリアライズ後、1つもないコマンドは補填
+            bool compensated = false;
+            foreach(  CommandID id in Enum.GetValues( typeof(CommandID) )  )
+            {
+                if( CommandMap.Any(m => m.CommandID == id) ) continue;
+                else
+                {
+                    int     defaultValue = 0;
+                    string  defaultStrValue = null;
+
+                    C_SlideShow.Shortcut.ICommand cmd = CommandFactory.CreateById(id);
+                    if( cmd.EnableValue ) defaultValue = cmd.Value;
+                    if( cmd.EnableStrValue ) defaultStrValue = cmd.StrValue;
+
+                    CommandMap.Add( new CommandMap(id, defaultValue, defaultStrValue, null, null, null) );
+                    compensated = true;
+                }
+            }
+
+            // 補填されたならID順でソート
+            if( compensated )
+            {
+                CommandMap = CommandMap.OrderBy(m => m.CommandID).ToList();
+            }
+        }
+
         public static List<CommandMap> CreateDefaultCommandMap()
         {
             List<CommandMap> defaultCommandMap = new List<CommandMap>();
@@ -49,6 +78,8 @@ namespace C_SlideShow
             defaultCommandMap.Add( new CommandMap(CommandID.WindowSizeDown,                     10, null,       null, null, new MouseGestureInput(MouseButton.Right, "[WD]")) );
             defaultCommandMap.Add( new CommandMap(CommandID.ShowContextMenu,                    0,  null,       null, new MouseInput(MouseInputButton.L_LongClick, ModifierKeys.None), null) );
             defaultCommandMap.Add( new CommandMap(CommandID.OpenFolderByExplorer,               0,  null,       null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenNextArchiver,                   0,  null,       new KeyInput(ModifierKeys.Control, Key.N), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.OpenPrevArchiver,                   0,  null,       new KeyInput(ModifierKeys.Control, Key.P), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ShowAppSettingDialog,               0,  null,       new KeyInput(ModifierKeys.None, Key.O), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ExitApp,                            0,  null,       null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.OpenImageUnderCursorByExplorer,     0,  null,       null, null, null) );

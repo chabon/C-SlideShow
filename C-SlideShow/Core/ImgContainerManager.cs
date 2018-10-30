@@ -230,6 +230,7 @@ namespace C_SlideShow.Core
             InitContainerSize();
             InitContainerPos();
             InitWrapPoint(CurrentSlideDirection);
+            Containers.ForEach( c => c.ImageFileContextMapList.Clear() );
 
             InitContainerGrid();
             InitBitmapDecodePixelOfTile();

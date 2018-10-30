@@ -77,29 +77,18 @@ namespace C_SlideShow.Core
                 // 圧縮ファイル / その他のファイル
                 else
                 {
-                    switch( ext )
+                    if(ext == ".lnk" )
                     {
-                        case ".zip":
-                            Archivers.Add(archiver = new ZipArchiver(path));
-                            break;
-                        case ".rar":
-                            Archivers.Add(archiver = new RarArchiver(path));
-                            break;
-                        case ".7z":
-                            Archivers.Add(archiver = new SevenZipArchiver(path));
-                            break;
-                        case ".tar":
-                            Archivers.Add(archiver = new TarArchiver(path));
-                            break;
-                        case ".pdf":
-                            Archivers.Add(archiver = new PdfArchiver(path));
-                            break;
-                        case ".lnk":
-                            // .lnkファイルの場合、ショートカット先のフルパスを取得し、やり直し
-                            LoadFileOrDirectory( GetShortcutTargetPath(path) );
-                            return;
-                        default:
-                            return;
+                        // .lnkファイルの場合、ショートカット先のフルパスを取得し、やり直し
+                        LoadFileOrDirectory( GetShortcutTargetPath(path) );
+                        return;
+                    }
+                    else
+                    {
+                        // 書庫
+                        archiver = ArchiverFactory.Create(path, ext);
+                        if( archiver == null ) return;
+                        else Archivers.Add(archiver);
                     }
 
                     ImageFileContextList.AddRange(archiver.LoadImageFileContextList());

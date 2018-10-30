@@ -106,71 +106,10 @@ namespace C_SlideShow.Shortcut
         {
             commands = new List<ICommand>();
 
-            // 全般
-            commands.Add( new OpenFolder() );
-            commands.Add( new OpenAdditionalFolder() );
-            commands.Add( new OpenFile() );
-            commands.Add( new OpenAdditionalFile() );
-            commands.Add( new Reload() );
-            commands.Add( new ToggleTopMost() );
-            commands.Add( new ToggleFullScreen() );
-            commands.Add( new WindowSizeUp() );
-            commands.Add( new WindowSizeDown() );
-            commands.Add( new ShowContextMenu() );
-            commands.Add( new OpenFolderByExplorer() );
-            commands.Add( new ShowAppSettingDialog() );
-            commands.Add( new ExitApp() );
-            commands.Add( new OpenImageUnderCursorByExplorer() );
-            commands.Add( new OpenImageUnderCursorByDefaultApp() );
-            commands.Add( new OpenImageUnderCursorByExternalApp() );
-            commands.Add( new CopyImageFileUnderCursor() );
-            commands.Add( new CopyImageDataUnderCursor() );
-            commands.Add( new CopyImageFilePathUnderCursor() );
-            commands.Add( new CopyImageFileNameUnderCursor() );
-            commands.Add( new LoadProfileFromNum() );
-            commands.Add( new LoadProfileFromName() );
-
-            // 通常時
-            commands.Add( new ToggleSlideShowPlay() );
-            commands.Add( new ZoomImageUnderCursor() );
-            commands.Add( new SlideToForward() );
-            commands.Add( new SlideToBackward() );
-            commands.Add( new SlideToLeft() );
-            commands.Add( new SlideToRight() );
-            commands.Add( new SlideToTop() );
-            commands.Add( new SlideToBottom() );
-            commands.Add( new SlideToCursorDirection() );
-            commands.Add( new SlideToCursorDirectionRev() );
-            commands.Add( new SlideToForwardByOneImage() );
-            commands.Add( new SlideToBackwardByOneImage() );
-            commands.Add( new ChangeSlideDirectionToLeft() );
-            commands.Add( new ChangeSlideDirectionToRight() );
-            commands.Add( new ChangeSlideDirectionToTop() );
-            commands.Add( new ChangeSlideDirectionToBottom() );
-            commands.Add( new ChangeSlideDirectionToRev() );
-            commands.Add( new ShiftForward() );
-            commands.Add( new ShiftBackward() );
-            commands.Add( new AddColumn() );
-            commands.Add( new AddRow() );
-            commands.Add( new ReduceColumn() );
-            commands.Add( new ReduceRow() );
-            commands.Add( new ChangeNumOfColumn() );
-            commands.Add( new ChangeNumOfRow() );
-            commands.Add( new ToggleTileImageStretch() );
-            commands.Add( new OepnSubMenu_Load() );
-            commands.Add( new OepnSubMenu_AspectRatio() );
-            commands.Add( new OepnSubMenu_Profile() );
-
-            // 画像拡大時
-            commands.Add( new ExitZoom() );
-            commands.Add( new ZoomInImage() );
-            commands.Add( new ZoomOutImage() );
-            commands.Add( new ZoomReset() );
-            commands.Add( new MoveZoomImageToLeft() );
-            commands.Add( new MoveZoomImageToRight() );
-            commands.Add( new MoveZoomImageToTop() );
-            commands.Add( new MoveZoomImageToBottom() );
-            commands.Add( new ToggleDisplayOfFileInfo() );
+            foreach( CommandID id in Enum.GetValues(typeof(CommandID)) )
+            {
+                commands.Add( CommandFactory.CreateById(id) );
+            }
         }
         
         // IDからコマンド取得
