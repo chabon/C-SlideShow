@@ -1388,7 +1388,7 @@ namespace C_SlideShow
             MouseCursorAutoHideInFullScreenModeOnly.IsChecked = false;
             MouseCursorAutoHideInFullScreenModeOnly.IsEnabled = true;
             OperationSlideDuration.Value = 300;
-            EnableScreenSnap.IsEnabled = true;
+            EnableScreenSnap.IsChecked = true;
             EnableWindowSnap.IsChecked = true;
             ScreenSnapRange.Value = 10;
             WindowSnapRange.Value = 10;
