@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 
-namespace C_SlideShow
+namespace C_SlideShow.Shortcut.Drag
 {
     public class WindowSnap
     {

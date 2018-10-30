@@ -219,6 +219,7 @@
     <Compile Include="Shortcut\MouseInput.cs" />
     <Compile Include="Shortcut\Scene.cs" />
     <Compile Include="Shortcut\ShortcutManager.cs" />
+    <Compile Include="Shortcut\Drag\Drag.cs" />
     <Compile Include="SlideSettingDialog.xaml.cs">
       <DependentUpon>SlideSettingDialog.xaml</DependentUpon>
     </Compile>
@@ -231,8 +232,8 @@
     </Compile>
     <Compile Include="UserProfileInfo.cs" />
     <Compile Include="Util.cs" />
-    <Compile Include="WindowDragMove.cs" />
-    <Compile Include="WindowSnap.cs" />
+    <Compile Include="Shortcut\Drag\WindowDragMove.cs" />
+    <Compile Include="Shortcut\Drag\WindowSnap.cs" />
     <Compile Include="WpfTreeUtil.cs" />
     <Compile Include="Win32.cs" />
     <Page Include="CommonControl\ColorPickerButton.xaml">

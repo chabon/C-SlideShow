@@ -28,10 +28,10 @@ namespace C_SlideShow
     public partial class TileExpantionPanel : UserControl
     {
         private Storyboard  storyboard;
-        private double      zoomFactor = 1.0;
         private Point       lastZoomedPos; // 最後に拡大縮小をした後の位置(ExpandedBorder上の座標系)
 
         public MainWindow       MainWindow              { private get; set; }
+        public double           ZoomFactor              { get; private set; } = 1.0;
         public bool             ExpandedDuringPlay      { get; set; } = false;
         public bool             IsShowing               { get; private set; } = false;
         public bool             IsAnimationCompleted    { get; private set; } = true;
@@ -529,8 +529,8 @@ namespace C_SlideShow
 
         public void Zoom(double vari)
         {
-            double zoomFactorPrev = zoomFactor;
-            zoomFactor += vari;
+            double zoomFactorPrev = ZoomFactor;
+            ZoomFactor += vari;
 
             // カーソル位置取得(ExpandedBorder上の座標系)
             Point pos = Mouse.GetPosition(ExpandedBorder);
@@ -544,11 +544,11 @@ namespace C_SlideShow
             }
 
             // 拡大
-            if(zoomFactor > 1.0 )
+            if(ZoomFactor > 1.0 )
             {
                 //ExpandedBorder.RenderTransform = new ScaleTransform(zoomFactor, zoomFactor);
-                ExpandedBorder.Width  = this.ActualWidth  * zoomFactor;
-                ExpandedBorder.Height = this.ActualHeight * zoomFactor;
+                ExpandedBorder.Width  = this.ActualWidth  * ZoomFactor;
+                ExpandedBorder.Height = this.ActualHeight * ZoomFactor;
             }
             else
             {
@@ -558,11 +558,11 @@ namespace C_SlideShow
 
             // 拡大に依る移動量算出
             Point move = new Point();
-            move.X = pos.X * (zoomFactor / zoomFactorPrev) - pos.X;
-            move.Y = pos.Y * (zoomFactor / zoomFactorPrev) - pos.Y;
+            move.X = pos.X * (ZoomFactor / zoomFactorPrev) - pos.X;
+            move.Y = pos.Y * (ZoomFactor / zoomFactorPrev) - pos.Y;
 
             // 移動した分だけ、引き戻す
-            if(zoomFactor > 1.0 )
+            if(ZoomFactor > 1.0 )
             {
                 double left = ExpandedBorder.Margin.Left - move.X;
                 double top  = ExpandedBorder.Margin.Top  - move.Y;
@@ -595,7 +595,7 @@ namespace C_SlideShow
 
         public void ResetZoomAndMove()
         {
-            zoomFactor = 1.0;
+            ZoomFactor = 1.0;
             ExpandedBorder.Width = double.NaN;
             ExpandedBorder.Height = double.NaN;
             ExpandedBorder.Margin = new Thickness( 0, 0, 0, 0);

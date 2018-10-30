@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 using C_SlideShow.Shortcut.Command;
+using C_SlideShow.Shortcut.Drag;
 using C_SlideShow.CommonControl;
 
 
@@ -78,14 +79,12 @@ namespace C_SlideShow.Shortcut
 
             // 左クリック後、ドラッグでウインドウドラッグ可能に
             windowDragMove = new WindowDragMove(MainWindow.Current);
-            windowDragMove.CanDragStart = () => { return !MainWindow.Current.Setting.TempProfile.IsFullScreenMode.Value; };
-            windowDragMove.DragMoved += (s, e) => { mouseButtonStateSet.L.CommandExecuted = true; };
-            windowDragMove.DragStart += (s, e) => {
-                windowDragMove.WindowSnap.EnableScreenSnap = MainWindow.Current.Setting.EnableScreenSnap;
-                windowDragMove.WindowSnap.EnableWindowSnap = MainWindow.Current.Setting.EnableWindowSnap;
-                windowDragMove.WindowSnap.Range_Screen  = MainWindow.Current.Setting.ScreenSnapRange;
-                windowDragMove.WindowSnap.Range_Window  = MainWindow.Current.Setting.WindowSnapRange;
+            windowDragMove.CanDragStart = () => {
+                if( MainWindow.Current.Setting.TempProfile.IsFullScreenMode.Value ) return false;
+                //if( MainWindow.Current.TileExpantionPanel.IsShowing && MainWindow.Current.TileExpantionPanel.ZoomFactor > 1.0 ) return false;
+                return true;
             };
+            windowDragMove.DragMoved += (s, e) => { mouseButtonStateSet.L.CommandExecuted = true; };
         }
 
         private void InitMouseGesture()

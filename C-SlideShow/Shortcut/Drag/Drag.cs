@@ -8,31 +8,33 @@ using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
 
-namespace C_SlideShow
+namespace C_SlideShow.Shortcut.Drag
 {
-    public class WindowDragMove
+    public class Drag
     {
         // フィールド
-        private Window targetWindow;
-        private bool   bDragStart = false;
-        private Point  ptDragStart;
-        private Point  ptWindowPrev;
+        protected Window targetWindow;
+        protected bool   bDragStart = false;
+        protected Point  ptDragStart;           // ドラッグ開始時のカーソル位置(スクリーン座標系。以下2つも同様)
+        protected Point  ptDragMoving;          // ドラッグ中のカーソル位置
+        protected Point  ptDragMovingDiff;      // ドラッグ開始時の位置との差分
+
         private IntPtr hHook = IntPtr.Zero;
         private event Win32.HOOKPROC hookCallback;
 
-        private Point  ptMaxDiff; // ドラッグ開始時からの最大移動量
-        private const double thresholdOfMaxDiff = 0.5; // DragMovedイベントを発生させるしきい値
+        protected Point  ptMaxDiff; // ドラッグ開始時からの最大移動量
+        protected const double thresholdOfMaxDiff = 0.5; // DragMovedイベントを発生させるしきい値
 
         // プロパティ
-        public WindowSnap WindowSnap { get; private set; }
         public Func<bool> CanDragStart { private get; set; }
 
         // イベント
-        public event EventHandler DragMoved;
         public event EventHandler DragStart;
+        public event EventHandler DragMoving;
+        public event EventHandler DragMoved;
 
         // コンストラクタ
-        public WindowDragMove(Window window)
+        public Drag(Window window)
         {
             targetWindow = window;
             targetWindow.MouseLeftButtonDown += TargetWindow_MouseLeftButtonDown;
@@ -47,10 +49,8 @@ namespace C_SlideShow
             if(hHook == IntPtr.Zero )
             {
                 ptDragStart  = Win32.GetCursorPos();
-                ptWindowPrev = new Point(targetWindow.Left, targetWindow.Top);
                 ptMaxDiff    = new Point(0, 0);
                 bDragStart   = true;
-                if(WindowSnap == null) WindowSnap = new WindowSnap(targetWindow);
                 SetHook();
                 DragStart?.Invoke( this, new EventArgs() );
             }
@@ -94,19 +94,13 @@ namespace C_SlideShow
                 {
                     if( (int)wParam == Win32.WM_MOUSEMOVE )
                     {
-                        Point ptCurrent = Win32.GetCursorPos();
-                        Point ptDiff    = new Point(ptCurrent.X - ptDragStart.X, ptCurrent.Y - ptDragStart.Y);
+                        ptDragMoving        = Win32.GetCursorPos();
+                        ptDragMovingDiff    = new Point(ptDragMoving.X - ptDragStart.X, ptDragMoving.Y - ptDragStart.Y);
 
-                        if( ptMaxDiff.X < Math.Abs(ptDiff.X) ) ptMaxDiff.X = Math.Abs(ptDiff.X);
-                        if( ptMaxDiff.Y < Math.Abs(ptDiff.Y) ) ptMaxDiff.Y = Math.Abs(ptDiff.Y);
+                        if( ptMaxDiff.X < Math.Abs(ptDragMovingDiff.X) ) ptMaxDiff.X = Math.Abs(ptDragMovingDiff.X);
+                        if( ptMaxDiff.Y < Math.Abs(ptDragMovingDiff.Y) ) ptMaxDiff.Y = Math.Abs(ptDragMovingDiff.Y);
 
-                        Rect rcDest = new Rect() { X = ptWindowPrev.X + ptDiff.X, Y = ptWindowPrev.Y + ptDiff.Y, Width  = targetWindow.Width, Height = targetWindow.Height }; 
-
-                        if( !WindowSnap.OnWindowMoving(rcDest) )
-                        {
-                            targetWindow.Left = rcDest.Left;
-                            targetWindow.Top  = rcDest.Top;
-                        }
+                        DragMoving?.Invoke( this, new EventArgs() );
 
                         if( Win32.GetKeyState(Win32.VK_LBUTTON) >= 0 ) DragFinish();
                     }
