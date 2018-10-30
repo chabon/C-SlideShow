@@ -66,6 +66,8 @@ namespace C_SlideShow.Shortcut
                 case CommandID.ReduceRow:                         return new ReduceRow();                           // 行数を[]減らす
                 case CommandID.ChangeNumOfColumn:                 return new ChangeNumOfColumn();                   // 列数を[]に変更
                 case CommandID.ChangeNumOfRow:                    return new ChangeNumOfRow();                      // 行数を[]に変更
+                case CommandID.AddColumnAndRow:                   return new AddColumnAndRow();                     // 列数と行数を[]増やす
+                case CommandID.ReduceColumnAndRow:                return new ReduceColumnAndRow();                  // 列数と行数を[]減らす
                 case CommandID.ToggleTileImageStretch:            return new ToggleTileImageStretch();              // グリッド枠内への画像の収め方を切り替え
                 case CommandID.OepnSubMenu_Load:                  return new OepnSubMenu_Load();                    // メニューの表示： 読み込み
                 case CommandID.OepnSubMenu_AspectRatio:           return new OepnSubMenu_AspectRatio();             // メニューの表示： グリッドのアスペクト比

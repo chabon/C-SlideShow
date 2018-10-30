@@ -12,9 +12,6 @@ using C_SlideShow.CommonControl;
 
 namespace C_SlideShow.Shortcut.Command
 {
-    /// <summary>
-    /// 列数を[]増やす
-    /// </summary>
     public class OpenPrevArchiver : ICommand
     {
         public CommandID ID      { set; get; }

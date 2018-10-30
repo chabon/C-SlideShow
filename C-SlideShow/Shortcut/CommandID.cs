@@ -58,6 +58,8 @@ namespace C_SlideShow.Shortcut
         AddRow,                             // 行数を[]増やす
         ReduceColumn,                       // 列数を[]減らす
         ReduceRow,                          // 行数を[]減らす
+        AddColumnAndRow,                    // 列数と行数を[]増やす
+        ReduceColumnAndRow,                 // 列数と行数を[]減らす
         ChangeNumOfColumn,                  // 列数を[]に変更
         ChangeNumOfRow,                     // 行数を[]に変更
         ToggleTileImageStretch,             // グリッド枠内への画像の収め方を切り替え

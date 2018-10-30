@@ -119,6 +119,8 @@ namespace C_SlideShow
             defaultCommandMap.Add( new CommandMap(CommandID.AddRow,                             1, null,  null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ReduceColumn,                       1, null,  null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ReduceRow,                          1, null,  null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.AddColumnAndRow,                    1, null,  null, null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ReduceColumnAndRow,                 1, null,  null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ChangeNumOfColumn,                  2, null,  null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ChangeNumOfRow,                     2, null,  null, null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ToggleTileImageStretch,             0, null,  null, null, null) );
