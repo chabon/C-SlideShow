@@ -30,7 +30,7 @@ namespace C_SlideShow.CommonControl
         public string Stroke { get; set; } = "";
         public MouseButton StartingButton { get; set; }
         public bool ShowStartingButtonText { get; set; } = true;
-        public string OperationDesc { get; set; } = "任意のボタンを押下しながら\nドラッグ or クリック or ホイール";
+        public string OperationDesc { get; } = "任意のボタンを押下しながら\nドラッグ or クリック or ホイール";
         public bool AllowLButtonStart { get; set; } = true;
         public bool AllowLButtonDrag { get; set; } = true;
         public bool AllowHoldClick { get; set; } = true; // ジェスチャ中のクリックをジェスチャとみなすかどうか

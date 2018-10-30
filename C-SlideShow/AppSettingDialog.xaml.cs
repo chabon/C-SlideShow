@@ -936,6 +936,7 @@ namespace C_SlideShow
         private void MouseGestureControl_GestureAssigned(object sender, EventArgs e)
         {
             if( isInitializing ) return;
+            if( MouseGestureControl.Stroke.Length < 1 ) return;
 
             ShortcutListViewItem item = GetCurrentShortcutListView().SelectedItem as ShortcutListViewItem;
             if( item == null ) return;
