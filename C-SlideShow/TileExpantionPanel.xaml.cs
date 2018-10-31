@@ -130,6 +130,14 @@ namespace C_SlideShow
             this.Height = rc.Height;
             this.Margin = new Thickness(rc.Left, rc.Top, 0, 0);
 
+            // 列数・行数が1のときは、視覚効果を出すために初期値調整
+            if(MainWindow.Setting.TempProfile.NumofMatrix.Col == 1 && MainWindow.Setting.TempProfile.NumofMatrix.Row == 1 )
+            {
+                this.Width = rc.Width - 20;
+                this.Height = rc.Height - 20;
+                this.Margin = new Thickness(rc.Left + 10, rc.Top + 10, 0, 0);
+            }
+
             // タイル拡大パネルの枠の太さ(拡大前)
             ExpandedBorder.BorderThickness = 
                 new Thickness(pf.TilePadding.Value * containerScale);
@@ -220,6 +228,20 @@ namespace C_SlideShow
             // タイルの矩形を取得
             Rect rc = GetTileRect();
 
+            // アニメーション先の矩形
+            Rect rcDest;
+
+            // 列数・行数が1のときは、視覚効果を出すためにアニメーション先の矩形を調整
+            if(MainWindow.Setting.TempProfile.NumofMatrix.Col == 1 && MainWindow.Setting.TempProfile.NumofMatrix.Row == 1 )
+            {
+                rcDest = new Rect(rc.Left + 10, rc.Top + 10, rc.Width - 20, rc.Height - 20);
+            }
+            else
+            {
+                rcDest = new Rect(rc.Left, rc.Top, rc.Width, rc.Height);
+            }
+
+
             // 現在のTileContainerの拡大率
             double zoomFactor = MainWindow.MainContent.LayoutTransform.Value.M11;
 
@@ -233,7 +255,7 @@ namespace C_SlideShow
             Storyboard.SetTargetProperty(a1, new PropertyPath(TileExpantionPanel.MarginProperty));
             double frameThickness = MainWindow.MainContent.Margin.Left; // メインウインドウ枠
             a1.From = this.Margin;
-            a1.To = new Thickness(rc.Left, rc.Top, 0, 0);
+            a1.To = new Thickness(rcDest.Left, rcDest.Top, 0, 0);
             a1.Duration = TimeSpan.FromSeconds(duration);
             storyboard.Children.Add(a1);
 
@@ -241,7 +263,7 @@ namespace C_SlideShow
             Storyboard.SetTarget(a2, this);
             Storyboard.SetTargetProperty(a2, new PropertyPath(TileExpantionPanel.WidthProperty));
             a2.From = this.Width;
-            a2.To = rc.Width;
+            a2.To = rcDest.Width;
             a2.Duration = TimeSpan.FromSeconds(duration);
             storyboard.Children.Add(a2);
 
@@ -249,7 +271,7 @@ namespace C_SlideShow
             Storyboard.SetTarget(a3, this);
             Storyboard.SetTargetProperty(a3, new PropertyPath(TileExpantionPanel.HeightProperty));
             a3.From = this.Height;
-            a3.To = rc.Height;
+            a3.To = rcDest.Height;
             a3.Duration = TimeSpan.FromSeconds(duration);
             storyboard.Children.Add(a3);
 
