@@ -35,11 +35,6 @@
             </Grid>
         </Grid>
             
-        <Rectangle x:Name="FullScreenBase_TopLeft" Fill="Black" Visibility="Hidden"
-                   HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
-        <Rectangle x:Name="FullScreenBase_BottomRight" Fill="Black" Visibility="Hidden"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom"></Rectangle>
-
         <!-- タイル拡大パネル -->
         <local:TileExpantionPanel 
             x:Name="TileExpantionPanel"
@@ -49,6 +44,11 @@
             >
         </local:TileExpantionPanel>
 
+        <!-- 黒地背景 -->
+        <Rectangle x:Name="FullScreenBase_TopLeft" Fill="Black" Visibility="Hidden"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+        <Rectangle x:Name="FullScreenBase_BottomRight" Fill="Black" Visibility="Hidden"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom"></Rectangle>
 
         <!-- リサイズ枠 -->
         <Border x:Name="ResizeGrip"
