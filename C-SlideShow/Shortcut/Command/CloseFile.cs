@@ -32,6 +32,9 @@ namespace C_SlideShow.Shortcut.Command
         {
             Profile pf = MainWindow.Current.Setting.TempProfile;
 
+            // 履歴保存
+            MainWindow.Current.SaveHistoryItem();
+
             pf.Path.Value.Clear();
             MainWindow.Current.ImgContainerManager.ImagePool.Initialize(new string[] { }, false);
             MainWindow.Current.Reload(false);

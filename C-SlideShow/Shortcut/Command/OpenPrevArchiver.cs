@@ -38,6 +38,9 @@ namespace C_SlideShow.Shortcut.Command
         {
             Profile pf = MainWindow.Current.Setting.TempProfile;
 
+            // 履歴保存
+            MainWindow.Current.SaveHistoryItem();
+
             // 現在のコンテキスト
             ImageFileContext ifc = MainWindow.Current.ImgContainerManager.CurrentImageFileContext;
 
