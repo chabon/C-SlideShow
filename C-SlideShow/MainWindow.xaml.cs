@@ -1021,6 +1021,11 @@ namespace C_SlideShow
                 // ツールバー更新
                 UpdateToolbarViewing();
             }
+            else
+            {
+                NotificationBlock.Show(path + " は見つかりませんでした。", NotificationPriority.Normal, NotificationTime.Long, NotificationType.None);
+
+            }
         }
 
         public void ShowProfileEditDialog(ProfileEditDialogMode mode, UserProfileInfo targetUseProfileInfo)
