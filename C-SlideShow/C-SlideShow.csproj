@@ -181,6 +181,7 @@
     <Compile Include="Shortcut\Command\MoveZoomImageToLeft.cs" />
     <Compile Include="Shortcut\Command\ZoomReset.cs" />
     <Compile Include="Shortcut\Command\ZoomOutImage.cs" />
+    <Compile Include="Shortcut\Drag\TileExpantionPanelDragMove.cs" />
     <Compile Include="Shortcut\ICommand.cs" />
     <Compile Include="CommonControl\ColorPickerButton.xaml.cs">
       <DependentUpon>ColorPickerButton.xaml</DependentUpon>

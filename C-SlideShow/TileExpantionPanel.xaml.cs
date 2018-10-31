@@ -610,6 +610,15 @@ namespace C_SlideShow
             ExpandedBorder.Margin = new Thickness(m.Left + x, m.Top + y, m.Right, m.Bottom);
         }
 
+        public void MoveTo(double x, double y)
+        {
+            var m = ExpandedBorder.Margin;
+
+            ExpandedBorder.Width  = ExpandedBorder.ActualWidth;
+            ExpandedBorder.Height = ExpandedBorder.ActualHeight;
+            ExpandedBorder.Margin = new Thickness(x, y, m.Right, m.Bottom);
+        }
+
         /* ---------------------------------------------------- */
         //     ツールバー
         /* ---------------------------------------------------- */

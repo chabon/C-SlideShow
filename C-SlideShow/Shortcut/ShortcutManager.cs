@@ -44,11 +44,11 @@ namespace C_SlideShow.Shortcut
         // 長押しクリック開始座標(スクリーン座標系)
         Point longClickStartPos;
 
-        //// ウインドウドラッグの準備
-        //bool mainWindowDragMoveReady = false;
-
         // 左クリックでのウインドウドラッグを管理
         WindowDragMove windowDragMove;
+
+        // 拡大パネルのドラッグ移動を管理
+        TileExpantionPanelDragMove tileExpantionPanelDragMove;
 
         /* ---------------------------------------------------- */
         //       Constructor
@@ -81,10 +81,19 @@ namespace C_SlideShow.Shortcut
             windowDragMove = new WindowDragMove(MainWindow.Current);
             windowDragMove.CanDragStart = () => {
                 if( MainWindow.Current.Setting.TempProfile.IsFullScreenMode.Value ) return false;
-                //if( MainWindow.Current.TileExpantionPanel.IsShowing && MainWindow.Current.TileExpantionPanel.ZoomFactor > 1.0 ) return false;
+                if( MainWindow.Current.TileExpantionPanel.IsShowing && MainWindow.Current.TileExpantionPanel.ZoomFactor > 1.0 ) return false;
                 return true;
             };
             windowDragMove.DragMoved += (s, e) => { mouseButtonStateSet.L.CommandExecuted = true; };
+
+            // 左クリック後、拡大パネル拡大中ならパネルを移動可能に
+            tileExpantionPanelDragMove = new TileExpantionPanelDragMove(MainWindow.Current);
+            tileExpantionPanelDragMove.CanDragStart = () => {
+                var panel = MainWindow.Current.TileExpantionPanel;
+                if( panel.IsShowing && panel.IsAnimationCompleted && panel.ZoomFactor > 1.0 ) return true;
+                return false;
+            };
+            tileExpantionPanelDragMove.DragMoved += (s, e) => { mouseButtonStateSet.L.CommandExecuted = true; };
         }
 
         private void InitMouseGesture()
