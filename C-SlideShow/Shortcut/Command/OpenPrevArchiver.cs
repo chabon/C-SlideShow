@@ -106,7 +106,8 @@ namespace C_SlideShow.Shortcut.Command
             }
             else
             {
-                message = "前のフォルダ(書庫)： " + Path.GetFileName( nextPath );
+                string arc = Directory.Exists(nextPath) ? "フォルダ" :  "書庫";
+                message = "前の" + arc + "： " + Path.GetFileName( nextPath );
             }
             MainWindow.Current.NotificationBlock.Show(message, NotificationPriority.Normal, NotificationTime.Normal, NotificationType.None);
             MainWindow.Current.Refresh();
