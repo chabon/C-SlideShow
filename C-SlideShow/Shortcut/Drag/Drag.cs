@@ -32,6 +32,7 @@ namespace C_SlideShow.Shortcut.Drag
         public event EventHandler DragStart;
         public event EventHandler DragMoving;
         public event EventHandler DragMoved;
+        public event EventHandler DragCanceled; // ボタンは押されたが、ドラッグせずに離された
 
         // コンストラクタ
         public Drag(Window window)
@@ -67,6 +68,10 @@ namespace C_SlideShow.Shortcut.Drag
             if( ptMaxDiff.X > thresholdOfMaxDiff || ptMaxDiff.Y > thresholdOfMaxDiff )
             {
                 DragMoved?.Invoke( this, new EventArgs() );
+            }
+            else
+            {
+                DragCanceled?.Invoke( this, new EventArgs() );
             }
         }
 

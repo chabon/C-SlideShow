@@ -21,19 +21,35 @@ namespace C_SlideShow.Shortcut.Drag
         {
             panel = MainWindow.Current.TileExpantionPanel;
 
-            DragStart   += WindowDragMove_DragStart;
-            DragMoving  += WindowDragMove_DragMoving;
+            DragStart       += WindowDragMove_DragStart;
+            DragMoving      += WindowDragMove_DragMoving;
+            DragMoved       += TileExpantionPanelDragMove_DragMoved;
+            DragCanceled    += TileExpantionPanelDragMove_DragCanceled;
         }
+
 
         private void WindowDragMove_DragStart(object sender, EventArgs e)
         {
             panelPosInDragStart = new Point(panel.ExpandedBorder.Margin.Left, panel.ExpandedBorder.Margin.Top);
+            MainWindow.Current.Cursor = Cursors.SizeAll;
         }
+
 
         private void WindowDragMove_DragMoving(object sender, EventArgs e)
         {
             panel.MoveTo(panelPosInDragStart.X + ptDragMovingDiff.X, panelPosInDragStart.Y + ptDragMovingDiff.Y);
         }
 
+
+        private void TileExpantionPanelDragMove_DragMoved(object sender, EventArgs e)
+        {
+            MainWindow.Current.Cursor = Cursors.Arrow;
+        }
+
+
+        private void TileExpantionPanelDragMove_DragCanceled(object sender, EventArgs e)
+        {
+            MainWindow.Current.Cursor = Cursors.Arrow;
+        }
     }
 }
