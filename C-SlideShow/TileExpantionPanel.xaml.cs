@@ -131,7 +131,7 @@ namespace C_SlideShow
             this.Margin = new Thickness(rc.Left, rc.Top, 0, 0);
 
             // 列数・行数が1のときは、視覚効果を出すために初期値調整
-            if(MainWindow.Setting.TempProfile.NumofMatrix.Col == 1 && MainWindow.Setting.TempProfile.NumofMatrix.Row == 1 )
+            if(ParentContainer.NumofGrid == 1)
             {
                 this.Width = rc.Width - 20;
                 this.Height = rc.Height - 20;
@@ -232,7 +232,7 @@ namespace C_SlideShow
             Rect rcDest;
 
             // 列数・行数が1のときは、視覚効果を出すためにアニメーション先の矩形を調整
-            if(MainWindow.Setting.TempProfile.NumofMatrix.Col == 1 && MainWindow.Setting.TempProfile.NumofMatrix.Row == 1 )
+            if(ParentContainer.NumofGrid == 1)
             {
                 rcDest = new Rect(rc.Left + 10, rc.Top + 10, rc.Width - 20, rc.Height - 20);
             }
