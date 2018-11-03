@@ -228,7 +228,8 @@ namespace C_SlideShow
             ResetZoomAndMove();
 
             // コンテナ取得
-            this.ParentContainer = MainWindow.ImgContainerManager.Containers.First(c => c.ImageFileContextMapList.Any(m => m == this.TargetImgFileContext));
+            //this.ParentContainer = MainWindow.ImgContainerManager.Containers.First(c => c.ImageFileContextMapList.Any(m => m == this.TargetImgFileContext));
+            this.ParentContainer = MainWindow.ImgContainerManager.CurrentContainer;
 
             // タイルの矩形を取得(TargetBorderはファイルの移動によって変わっている可能性があるので再取得)
             var borderIndex = ParentContainer.ImageFileContextMapList.IndexOf(TargetImgFileContext);
