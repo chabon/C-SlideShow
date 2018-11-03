@@ -733,12 +733,6 @@ namespace C_SlideShow
             UpdateFileInfoAreaVisiblity();
         }
 
-        // エクスプローラーで開く
-        private void Toolbar_OpenExplorer_Click(object sender, RoutedEventArgs e)
-        {
-            TargetImgFileContext.OpenByExplorer();
-        }
-
         // クリップボードへコピー
         private void MenuItem_Copy_SubmenuOpened(object sender, RoutedEventArgs e)
         {
@@ -777,6 +771,24 @@ namespace C_SlideShow
 
         }
 
+        // 前の画像へ
+        private void Toolbar_GoToPrevImage_Click(object sender, RoutedEventArgs e)
+        {
+            if( IsShowing && IsAnimationCompleted ) { var t = GoToNextImage(-1); }
+        }
+
+        // 次の画像へ
+        private void Toolbar_GoToNextImage_Click(object sender, RoutedEventArgs e)
+        {
+            if( IsShowing && IsAnimationCompleted ) { var t = GoToNextImage(1); }
+        }
+
+        // エクスプローラーで開く
+        private void Toolbar_OpenExplorer_Click(object sender, RoutedEventArgs e)
+        {
+            TargetImgFileContext.OpenByExplorer();
+        }
+
         // 外部プログラムで画像を開く
         private void Toolbar_OpenByExternalApp_Click(object sender, RoutedEventArgs e)
         {
@@ -790,6 +802,7 @@ namespace C_SlideShow
             }
         }
 
+
         private void ToolbarButton_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             Key inputKey;
@@ -801,6 +814,7 @@ namespace C_SlideShow
             this.RaiseEvent(new KeyEventArgs(e.KeyboardDevice, e.InputSource, e.Timestamp, inputKey) { RoutedEvent = Keyboard.KeyDownEvent });
             e.Handled = true;
         }
+
 
 
         // end of class

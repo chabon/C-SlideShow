@@ -57,7 +57,7 @@
         </Grid>
 
         <!-- ツールバー -->
-        <Border Margin="10" 
+        <Border Margin="0,10" 
                 x:Name="ToolbarWrapper"
                 Opacity="0.9"
                 Visibility="Visible"
@@ -101,18 +101,6 @@
                            Width="16" Height="16"></Image>
                 </Button>
 
-                <!-- エクスプローラーで開く -->
-                <Button x:Name="Toolbar_OpenExplorer"
-                        ToolTip="エクスプローラーで開く"
-                        Style="{StaticResource ToolbarButtonStyle}"
-                        Click="Toolbar_OpenExplorer_Click"
-                        PreviewKeyDown="ToolbarButton_PreviewKeyDown"
-                        >
-                    <Image Source="Resources\folder_open.png" 
-                           RenderOptions.BitmapScalingMode="NearestNeighbor"
-                           Width="16" Height="16"></Image>
-                </Button>
-
                 <!-- クリップボードへコピー -->
                 <Border Style="{StaticResource ToolbarMenuBorderStyle}">
                     <Menu Style="{StaticResource ToolbarMenuStyle}">
@@ -133,6 +121,42 @@
                         </MenuItem>
                     </Menu>
                 </Border>
+
+                <!-- 前の画像 -->
+                <Button x:Name="Toolbar_GoToPrevImage"
+                        ToolTip="前の画像"
+                        Style="{StaticResource ToolbarButtonStyle}"
+                        Click="Toolbar_GoToPrevImage_Click"
+                        PreviewKeyDown="ToolbarButton_PreviewKeyDown"
+                        >
+                    <Image Source="Resources\move_prev.png" 
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Width="16" Height="16"></Image>
+                </Button>
+
+                <!-- 次の画像 -->
+                <Button x:Name="Toolbar_GoToNextImage"
+                        ToolTip="次の画像"
+                        Style="{StaticResource ToolbarButtonStyle}"
+                        Click="Toolbar_GoToNextImage_Click"
+                        PreviewKeyDown="ToolbarButton_PreviewKeyDown"
+                        >
+                    <Image Source="Resources\move_next.png" 
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Width="16" Height="16"></Image>
+                </Button>
+
+                <!-- エクスプローラーで開く -->
+                <Button x:Name="Toolbar_OpenExplorer"
+                        ToolTip="エクスプローラーで開く"
+                        Style="{StaticResource ToolbarButtonStyle}"
+                        Click="Toolbar_OpenExplorer_Click"
+                        PreviewKeyDown="ToolbarButton_PreviewKeyDown"
+                        >
+                    <Image Source="Resources\folder_open.png" 
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Width="16" Height="16"></Image>
+                </Button>
 
                 <!-- 外部プログラムで開く -->
                 <Button x:Name="Toolbar_OpenByExternalApp"
