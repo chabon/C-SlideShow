@@ -80,6 +80,8 @@ namespace C_SlideShow.Shortcut
                 case CommandID.ZoomInImage:                       return new ZoomInImage();                         // 画像の拡大率を[ ]%アップ
                 case CommandID.ZoomOutImage:                      return new ZoomOutImage();                        // 画像の拡大率を[ ]%ダウン
                 case CommandID.ZoomReset:                         return new ZoomReset();                           // 拡大率をリセット
+                case CommandID.GoToForwardImage:                  return new GoToForwardImage();                    // []枚先の画像へ移動
+                case CommandID.GoToBackwardImage:                 return new GoToBackwardImage();                   // []枚前の画像へ移動
                 case CommandID.MoveZoomImageToLeft:               return new MoveZoomImageToLeft();                 // 画像を[]px左に移動
                 case CommandID.MoveZoomImageToTop:                return new MoveZoomImageToRight();                // 画像を[]px上に移動
                 case CommandID.MoveZoomImageToRight:              return new MoveZoomImageToTop();                  // 画像を[]px右に移動

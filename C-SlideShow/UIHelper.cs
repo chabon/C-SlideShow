@@ -169,10 +169,12 @@ namespace C_SlideShow
                 if( pt.Y > ptWnd.Y + (2 * h3) )
                 {
                     panel.ToolbarWrapper.Visibility = Visibility.Visible;
+                    mainWindow.PageInfo.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     panel.ToolbarWrapper.Visibility = Visibility.Collapsed;
+                    mainWindow.PageInfo.Visibility = Visibility.Collapsed;
                 }
 
                 return;

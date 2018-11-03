@@ -560,8 +560,15 @@ namespace C_SlideShow
 
         public void UpdatePageInfo()
         {
-            int idx = ImgContainerManager.CurrentImageIndex;
+            int idx;
+            if( TileExpantionPanel.IsShowing ) {
+                idx = ImgContainerManager.ImagePool.ImageFileContextList.IndexOf(TileExpantionPanel.TargetImgFileContext);
+            }
+            else {
+                idx = ImgContainerManager.CurrentImageIndex;
+            }
             int num = idx + 1;
+
             int max = ImgContainerManager.ImagePool.ImageFileContextList.Count;
             if (max < 1) { num = 0; max = 0; }
             this.PageInfoText.Text = String.Format("{0} / {1}", num, max);

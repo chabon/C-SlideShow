@@ -74,6 +74,8 @@ namespace C_SlideShow.Shortcut
         ZoomInImage,                        // 画像の拡大率を[ ]%アップ
         ZoomOutImage,                       // 画像の拡大率を[ ]%ダウン
         ZoomReset,                          // 拡大率をリセット
+        GoToForwardImage,                   // []枚先の画像へ移動
+        GoToBackwardImage,                  // []枚前の画像へ移動
         MoveZoomImageToLeft,                // 画像を[]px左に移動
         MoveZoomImageToTop,                 // 画像を[]px上に移動
         MoveZoomImageToRight,               // 画像を[]px右に移動

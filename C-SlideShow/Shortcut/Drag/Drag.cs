@@ -35,7 +35,7 @@ namespace C_SlideShow.Shortcut.Drag
         public event EventHandler DragCanceled; // ボタンは押されたが、ドラッグせずに離された
 
         // コンストラクタ
-        public Drag(Window window)
+        protected Drag(Window window)
         {
             targetWindow = window;
             targetWindow.MouseLeftButtonDown += TargetWindow_MouseLeftButtonDown;

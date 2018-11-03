@@ -27,9 +27,15 @@ namespace C_SlideShow
     /// </summary>
     public partial class TileExpantionPanel : UserControl
     {
+        // フィールド
         private Storyboard  storyboard;
         private Point       lastZoomedPos; // 最後に拡大縮小をした後の位置(ExpandedBorder上の座標系)
+        private SemaphoreSlim semaphoreSlim_ForLoadImage        = new SemaphoreSlim(1, 1);  // セマフォ
+        private SemaphoreSlim semaphoreSlim_ForGoToNextImage    = new SemaphoreSlim(1, 1);
+        private CancellationTokenSource cts_ForLoadImage;    // Taskのキャンセルを管理
+        private CancellationTokenSource cts_ForGoToNextImage;
 
+        // プロパティ
         public MainWindow       MainWindow              { private get; set; }
         public double           ZoomFactor              { get; private set; } = 1.0;
         public bool             ExpandedDuringPlay      { get; set; } = false;
@@ -40,7 +46,6 @@ namespace C_SlideShow
         public ImageFileContext TargetImgFileContext    { get; private set; }
         public ImgContainer     ParentContainer         { get; private set; }
 
-        public CancellationTokenSource Cts { get; private set; }    // Taskのキャンセルを管理
 
 
         public TileExpantionPanel()
@@ -192,12 +197,9 @@ namespace C_SlideShow
 
             storyboard.Completed += (s, e) =>
             {
-                // コンテナを隠す
                 MainWindow.ImgContainerManager.Hide();
-
-                // ファイル情報表示
                 UpdateFileInfoAreaVisiblity();
-
+                MainWindow.UpdatePageInfo();
                 IsAnimationCompleted = true;
             };
             #endregion
@@ -216,7 +218,7 @@ namespace C_SlideShow
             if( !IsShowing || !IsAnimationCompleted ) return;
 
             // まだ読み込み中のTaskがあるならキャンセル
-            Cts?.Cancel();
+            cts_ForLoadImage?.Cancel();
 
             // ファイル情報を隠す
             this.FileInfoGrid.Visibility = Visibility.Hidden;
@@ -225,8 +227,14 @@ namespace C_SlideShow
             // ズーム解除
             ResetZoomAndMove();
 
-            // タイルの矩形を取得
+            // コンテナ取得
+            this.ParentContainer = MainWindow.ImgContainerManager.Containers.First(c => c.ImageFileContextMapList.Any(m => m == this.TargetImgFileContext));
+
+            // タイルの矩形を取得(TargetBorderはファイルの移動によって変わっている可能性があるので再取得)
+            var borderIndex = ParentContainer.ImageFileContextMapList.IndexOf(TargetImgFileContext);
+            this.TargetBorder = ParentContainer.MainGrid.Children[borderIndex] as Border;
             Rect rc = GetTileRect();
+
 
             // アニメーション先の矩形
             Rect rcDest;
@@ -302,6 +310,7 @@ namespace C_SlideShow
                 this.Visibility = Visibility.Hidden;
                 if( ExpandedDuringPlay ) MainWindow.ImgContainerManager.StartSlideShow(false);
                 IsAnimationCompleted = true;
+                MainWindow.UpdatePageInfo();
             };
 
             // コンテナを表示
@@ -315,46 +324,57 @@ namespace C_SlideShow
 
         private async Task LoadImage()
         {
-            ImageFileInfo fi = TargetImgFileContext.Info;
+            // すでに実行中ならキャンセル
+            cts_ForLoadImage?.Cancel();
 
-            // gif拡大時
-            if(TargetImgFileContext.Archiver.CanReadFile && Path.GetExtension( TargetImgFileContext.FilePath ).ToLower() == ".gif" )
-            {
-                var source = new BitmapImage();
-                source.BeginInit();
-                source.CacheOption = BitmapCacheOption.OnLoad;
-                source.CreateOptions = BitmapCreateOptions.None;
-                source.UriSource = new Uri(TargetImgFileContext.FilePath);
-                ImageBehavior.SetAnimatedSource(ExpandedImage, source);
-                ExpandedImage.Source = source;
-                source.EndInit();
-                source.Freeze();
-            }
-            else
-            {
-                ImageBehavior.SetAnimatedSource(ExpandedImage, null);
-                int pixel = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixel.Value;
+            // キャンセルトークン作成
+            var cts = new CancellationTokenSource();
+            cts_ForLoadImage = cts;
 
-                // ウインドウサイズに合わせたBitmapをロード
-                double p = MainWindow.MainContent.LayoutTransform.Value.M11;
-                Size winSize = new Size(MainWindow.ImgContainerManager.ContainerWidth * p, MainWindow.ImgContainerManager.ContainerHeight * p);
-                if(winSize.Width < fi.PixelSize.Width && winSize.Height < fi.PixelSize.Height ) // 本来の画像サイズがウインドウサイズより大きい時のみロード
+            await semaphoreSlim_ForLoadImage.WaitAsync();
+            try
+            {
+                // キャンセルされた
+                if( cts.Token.IsCancellationRequested ) return;
+
+                ImageFileInfo fi = TargetImgFileContext.Info;
+
+                // gif拡大時
+                if(TargetImgFileContext.Archiver.CanReadFile && Path.GetExtension( TargetImgFileContext.FilePath ).ToLower() == ".gif" )
                 {
-                    var cts1 = new CancellationTokenSource();
-                    this.Cts = cts1;
-                    var bitmap = await TargetImgFileContext.LoadBitmap(winSize);
-                    if( cts1.Token.IsCancellationRequested ) return;
-                    this.ExpandedImage.Source = bitmap;
+                    var source = new BitmapImage();
+                    source.BeginInit();
+                    source.CacheOption = BitmapCacheOption.OnLoad;
+                    source.CreateOptions = BitmapCreateOptions.None;
+                    source.UriSource = new Uri(TargetImgFileContext.FilePath);
+                    ImageBehavior.SetAnimatedSource(ExpandedImage, source);
+                    if( cts.Token.IsCancellationRequested ) return;
+                    ExpandedImage.Source = source;
+                    source.EndInit();
+                    source.Freeze();
                 }
+                else
+                {
+                    ImageBehavior.SetAnimatedSource(ExpandedImage, null);
+                    int pixel = MainWindow.Setting.TempProfile.BitmapDecodeTotalPixel.Value;
 
-                // 本来のサイズでBitmapをロード
-                var cts2 = new CancellationTokenSource();
-                this.Cts = cts2;
-                var trueBitmap = await TargetImgFileContext.LoadBitmap(Size.Empty);
-                if( cts2.Token.IsCancellationRequested ) return;
-                this.ExpandedImage.Source = trueBitmap;
+                    // ウインドウサイズに合わせたBitmapをロード
+                    //double p = MainWindow.MainContent.LayoutTransform.Value.M11;
+                    //Size winSize = new Size(MainWindow.ImgContainerManager.ContainerWidth * p, MainWindow.ImgContainerManager.ContainerHeight * p);
+                    //if(winSize.Width < fi.PixelSize.Width && winSize.Height < fi.PixelSize.Height ) // 本来の画像サイズがウインドウサイズより大きい時のみロード
+                    //{
+                    //    var bitmap = await TargetImgFileContext.LoadBitmap(winSize);
+                    //    if( cts.Token.IsCancellationRequested ) return;
+                    //    this.ExpandedImage.Source = bitmap;
+                    //}
+
+                    // 本来のサイズでBitmapをロード
+                    var trueBitmap = await TargetImgFileContext.LoadBitmap(Size.Empty);
+                    if( cts.Token.IsCancellationRequested ) return;
+                    this.ExpandedImage.Source = trueBitmap;
+                }
             }
-
+            finally { semaphoreSlim_ForLoadImage.Release(); } 
         }
 
         private void UpdateFileInfoText()
@@ -415,6 +435,7 @@ namespace C_SlideShow
                 {
                     FileInfoGrid.ToolTip = TargetImgFileContext.Archiver.ArchiverPath + "/" + TargetImgFileContext.FilePath;
                 }
+                ToolTipService.SetShowDuration(FileInfoGrid, 1000000);
             }
             catch
             {
@@ -639,6 +660,67 @@ namespace C_SlideShow
             ExpandedBorder.Width  = ExpandedBorder.ActualWidth;
             ExpandedBorder.Height = ExpandedBorder.ActualHeight;
             ExpandedBorder.Margin = new Thickness(x, y, m.Right, m.Bottom);
+        }
+
+        public async Task GoToNextImage(int diff)
+        {
+            MainWindow mw = MainWindow.Current;
+            var list = mw.ImgContainerManager.ImagePool.ImageFileContextList;
+
+            Func<int, int> getNextIndex = c =>
+            {
+                var next = c + diff;
+                if( next > list.Count - 1 ) next = next % list.Count;
+                else if(next < 0) {
+                    int p = next % list.Count;
+                    next = p == 0 ? 0 : list.Count + p;
+                }
+                return next;
+            };
+
+            // コンテキスト
+            var currentPanelIndex = list.IndexOf(TargetImgFileContext);
+            if( currentPanelIndex < 0 ) return;
+            var nextPanelIndex = getNextIndex(currentPanelIndex);
+            mw.UpdatePageInfo();
+
+            var nextContext = list[nextPanelIndex];
+            if( nextContext == null ) return;
+            this.TargetImgFileContext = nextContext;
+
+            var nextImgContainersIndex = nextPanelIndex;
+
+
+            // 次の画像へ移動(すでに取得済みのBitmapがあるなら利用)
+            if( TargetImgFileContext.BitmapImage != null )
+            {
+                ExpandedImage.Source = TargetImgFileContext.BitmapImage;
+                UpdateFileInfoText();
+            }
+
+            // まだ別スレッドで実行しているならキャンセル
+            cts_ForGoToNextImage?.Cancel();
+            cts_ForLoadImage?.Cancel();
+
+            // キャンセルトークン作成
+            var cts = new CancellationTokenSource();
+            cts_ForGoToNextImage = cts;
+
+            await semaphoreSlim_ForGoToNextImage.WaitAsync();
+            try
+            {
+                if( cts.Token.IsCancellationRequested ) return;
+
+                // メインコンテンツのイメージを移動(キャンセル対象外。ImageFileContextのマッピングを必ずコンテナにするため)
+                await mw.ImgContainerManager.ChangeCurrentIndex(nextImgContainersIndex);
+
+                if( cts.Token.IsCancellationRequested ) return;
+
+                // オリジナルサイズの次の画像を取得
+                await LoadImage();
+                UpdateFileInfoText();
+            }
+            finally { semaphoreSlim_ForGoToNextImage.Release(); } 
         }
 
         /* ---------------------------------------------------- */

@@ -134,7 +134,9 @@ namespace C_SlideShow
             defaultCommandMap.Add( new CommandMap(CommandID.ExitZoom,                   0,  null,   new KeyInput(ModifierKeys.None, Key.Escape), new MouseInput(MouseInputButton.R_Click, ModifierKeys.None), null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ZoomInImage,                50, null,   null, new MouseInput(MouseInputButton.WheelUp, ModifierKeys.None), null) );
             defaultCommandMap.Add( new CommandMap(CommandID.ZoomOutImage,               50, null,   null, new MouseInput(MouseInputButton.WheelDown, ModifierKeys.None), null) );
-            defaultCommandMap.Add( new CommandMap(CommandID.ZoomReset,                   0, null,   new KeyInput(ModifierKeys.None, Key.Back), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.ZoomReset,                   0, null,   new KeyInput(ModifierKeys.None, Key.R), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.GoToForwardImage,            1, null,   new KeyInput(ModifierKeys.None, Key.Enter), null, null) );
+            defaultCommandMap.Add( new CommandMap(CommandID.GoToBackwardImage,           1, null,   new KeyInput(ModifierKeys.None, Key.Back), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.MoveZoomImageToLeft,        50, null,   new KeyInput(ModifierKeys.None, Key.Right), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.MoveZoomImageToRight,       50, null,   new KeyInput(ModifierKeys.None, Key.Left), null, null) );
             defaultCommandMap.Add( new CommandMap(CommandID.MoveZoomImageToTop,         50, null,   new KeyInput(ModifierKeys.None, Key.Down), null, null) );
