@@ -896,6 +896,8 @@ namespace C_SlideShow
             DependencyObject source = ie as DependencyObject;
             if( source == null ) return null;
 
+            Debug.WriteLine("source : " + source.ToString() );
+
             // 拡大時は1つしか候補が無い
             if( TileExpantionPanel.IsShowing ) return TileExpantionPanel.TargetBorder;
 

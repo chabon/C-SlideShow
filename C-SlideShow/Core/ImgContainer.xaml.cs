@@ -210,6 +210,7 @@ namespace C_SlideShow.Core
 
                 // Border
                 Border border = new Border();
+                border.Background = new SolidColorBrush(Colors.Transparent); // Border内部の空白をクリック時にヒットテスト可能にするため
                 int tilePadding = TempProfile.TilePadding.Value;
                 if(tilePadding != 0) {
                     border.BorderThickness = new Thickness(tilePadding + 2);
