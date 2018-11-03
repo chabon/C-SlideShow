@@ -741,15 +741,15 @@ namespace C_SlideShow
 
             // ファイル
             MenuItem mi_file = new MenuItem();
-            mi_file.Header = Path.GetFileName("ファイル");
-            mi_file.ToolTip = Path.GetFileName("コピー後、エクスプローラーで貼り付けが出来ます");
+            mi_file.Header = "ファイル";
+            mi_file.ToolTip = "コピー後、エクスプローラーで貼り付けが出来ます";
             mi_file.Click += (s, ev) => { TargetImgFileContext.CopyFile(); };
             MenuItem_Copy.Items.Add(mi_file);
 
             // 画像データ
             MenuItem mi_image = new MenuItem();
-            mi_image.Header = Path.GetFileName("画像データ");
-            mi_image.ToolTip = Path.GetFileName("コピー後、ペイント等の画像編集ソフトへ貼り付けが出来ます");
+            mi_image.Header = "画像データ";
+            mi_image.ToolTip = "コピー後、ペイント等の画像編集ソフトへ貼り付けが出来ます";
             mi_image.Click += (s, ev) => { var t = TargetImgFileContext.CopyImageData(); };
             MenuItem_Copy.Items.Add(mi_image);
 
@@ -758,7 +758,7 @@ namespace C_SlideShow
             if( TargetImgFileContext.Archiver.CanReadFile ) filePath = TargetImgFileContext.FilePath;
             else filePath = TargetImgFileContext.Archiver.ArchiverPath;
             MenuItem mi_filePath = new MenuItem();
-            mi_filePath.Header = Path.GetFileName("ファイルパス");
+            mi_filePath.Header = "ファイルパス";
             mi_filePath.ToolTip = filePath;
             mi_filePath.Click += (s, ev) => { TargetImgFileContext.CopyFilePath(); };
             MenuItem_Copy.Items.Add(mi_filePath);

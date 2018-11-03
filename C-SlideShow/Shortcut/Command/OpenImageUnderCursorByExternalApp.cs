@@ -57,15 +57,23 @@ namespace C_SlideShow.Shortcut.Command
             if(ifc != null)
             {
                 ExternalAppInfo exAppInfo = mw.Setting.ExternalAppInfoList.FirstOrDefault(i => i.Name == this.StrValue);
-                if(exAppInfo == null )
+
+                try
                 {
-                    // 実行ファイル名を対象に検索
-                    exAppInfo = mw.Setting.ExternalAppInfoList.FirstOrDefault(i => System.IO.Path.GetFileName(i.Path) == this.StrValue);
+                    if(exAppInfo == null )
+                    {
+                        // 実行ファイル名を対象に検索
+                        exAppInfo = mw.Setting.ExternalAppInfoList.FirstOrDefault(i => System.IO.Path.GetFileName(i.Path) == this.StrValue);
+                    }
+                    if(exAppInfo == null )
+                    {
+                        // 実行ファイル名(拡張子抜き)を対象に検索
+                        exAppInfo = mw.Setting.ExternalAppInfoList.FirstOrDefault(i => System.IO.Path.GetFileNameWithoutExtension(i.Path) == this.StrValue);
+                    }
                 }
-                if(exAppInfo == null )
+                catch
                 {
-                    // 実行ファイル名(拡張子抜き)を対象に検索
-                    exAppInfo = mw.Setting.ExternalAppInfoList.FirstOrDefault(i => System.IO.Path.GetFileNameWithoutExtension(i.Path) == this.StrValue);
+                    exAppInfo = null;
                 }
 
                 if(exAppInfo != null )

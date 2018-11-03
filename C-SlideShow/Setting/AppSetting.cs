@@ -89,7 +89,8 @@ namespace C_SlideShow
             }
             else if(Path != null && Path != "")
             {
-                return System.IO.Path.GetFileName(Path);
+                try { return System.IO.Path.GetFileName(Path); }
+                catch { return Path; }
             }
             else
             {
