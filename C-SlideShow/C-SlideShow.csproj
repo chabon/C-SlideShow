@@ -83,6 +83,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Archiver\ArchiverFactory.cs" />
+    <Compile Include="Archiver\LzhArchiver.cs" />
     <Compile Include="Archiver\PdfArchiver.cs" />
     <Compile Include="CommonControl\HotkeyControl.xaml.cs">
       <DependentUpon>HotkeyControl.xaml</DependentUpon>
