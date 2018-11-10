@@ -29,6 +29,7 @@ namespace C_SlideShow
     {
         // フィールド
         private Storyboard  storyboard;
+        private bool        isImageFileChanged = false; // 一度でも拡大後画像の変更があったかどうか
         private Point       lastZoomedPos; // 最後に拡大縮小をした後の位置(ExpandedBorder上の座標系)
         private SemaphoreSlim semaphoreSlim_ForLoadImage        = new SemaphoreSlim(1, 1);  // セマフォ
         private SemaphoreSlim semaphoreSlim_ForGoToNextImage    = new SemaphoreSlim(1, 1);
@@ -67,10 +68,13 @@ namespace C_SlideShow
 
             // ターゲット
             this.TargetBorder = border;
-            ParentContainer = WpfTreeUtil.FindAncestor<ImgContainer>(border);
+            this.ParentContainer = WpfTreeUtil.FindAncestor<ImgContainer>(border);
             if( ParentContainer == null ) return;
             int idx = ParentContainer.MainGrid.Children.IndexOf(border);
             this.TargetImgFileContext = ParentContainer.ImageFileContextMapList[idx];
+
+            // 画像変更フラグ初期化
+            this.isImageFileChanged = false;
 
             // 設定プロファイル
             Profile pf = MainWindow.Setting.TempProfile;
@@ -227,13 +231,26 @@ namespace C_SlideShow
             // ズーム解除
             ResetZoomAndMove();
 
-            // コンテナ取得
-            //this.ParentContainer = MainWindow.ImgContainerManager.Containers.First(c => c.ImageFileContextMapList.Any(m => m == this.TargetImgFileContext));
-            this.ParentContainer = MainWindow.ImgContainerManager.CurrentContainer;
+            // もし一度でもファイルの移動があったら、ParentContainerとTargetBorderは再取得
+            if( isImageFileChanged )
+            {
+                this.ParentContainer = MainWindow.ImgContainerManager.CurrentContainer;
+                var borderIndex = ParentContainer.ImageFileContextMapList.IndexOf(TargetImgFileContext);
+                if(borderIndex < 0 )
+                {
+                    this.ParentContainer = MainWindow.ImgContainerManager.Containers.FirstOrDefault( c => c.CurrentIndex == 1);
+                    borderIndex = ParentContainer.ImageFileContextMapList.IndexOf(TargetImgFileContext);
+                }
+                if(borderIndex < 0 )
+                {
+                    this.ParentContainer = MainWindow.ImgContainerManager.Containers.First(c => c.ImageFileContextMapList.Any(m => m == this.TargetImgFileContext));
+                    borderIndex = ParentContainer.ImageFileContextMapList.IndexOf(TargetImgFileContext);
+                }
 
-            // タイルの矩形を取得(TargetBorderはファイルの移動によって変わっている可能性があるので再取得)
-            var borderIndex = ParentContainer.ImageFileContextMapList.IndexOf(TargetImgFileContext);
-            this.TargetBorder = ParentContainer.MainGrid.Children[borderIndex] as Border;
+                if(borderIndex >= 0) this.TargetBorder = ParentContainer.MainGrid.Children[borderIndex] as Border;
+            }
+
+            // タイルの矩形を取得
             Rect rc = GetTileRect();
 
 
@@ -688,6 +705,7 @@ namespace C_SlideShow
             var nextContext = list[nextPanelIndex];
             if( nextContext == null ) return;
             this.TargetImgFileContext = nextContext;
+            this.isImageFileChanged = true;
 
             var nextImgContainersIndex = nextPanelIndex;
 
