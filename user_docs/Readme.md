@@ -1,4 +1,4 @@
-# C-SlideShow version 4.0
+# C-SlideShow version 4.1
 
 
 ## 概要
